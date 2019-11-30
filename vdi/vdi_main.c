@@ -151,6 +151,19 @@ void screen(void)
      * the workstation is valid)
      */
     if (opcode != 2 && opcode != 101) {     /* if neither v_clswk() nor v_clsvwk() */
+        /*
+         * the following assignments are not required by EmuTOS, but
+         * ensure that the values in the lineA variables mirror those
+         * in the current virtual workstation, just like in Atari TOS.
+         */
         CUR_FONT = vwk->cur_font;
+        WRT_MODE = vwk->wrt_mode;
+        CLIP = vwk->clip;
+        XMINCL = vwk->xmn_clip;
+        YMINCL = vwk->ymn_clip;
+        XMAXCL = vwk->xmx_clip;
+        YMAXCL = vwk->ymx_clip;
+        font_ring[2] = vwk->loaded_fonts;
+        CUR_WORK = vwk;
     }
 }
