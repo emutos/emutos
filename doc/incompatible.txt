@@ -38,7 +38,7 @@ remain unusable due to error 1 above.
 
 Program: old game using fixed addresses
 ---------------------------------------
-Error: panic during game startup.
+Error: panic or hang during game startup.
 
 Bug analysis:
 Several old, floppy-only games load their data into fixed memory
@@ -46,7 +46,9 @@ addresses, which won't work when EmuTOS has loaded something else
 there.  This can be detected by tracing programs' OS calls with Hatari
 (--trace os_all) and checking the used addresses. For example, under
 older EmuTOS versions, the Gods game demo (from an ST Format cover disk)
-overwrote itself with its game data because of this, and crashed.
+overwrote itself with its game data because of this, and crashed.  Some
+games (e.g. Turrican) use very low memory areas that are also used by
+TOS, but choose those areas carefully.  This can never work with EmuTOS.
 
 Workarounds:
 In some games this can be worked around by either using the cartridge
