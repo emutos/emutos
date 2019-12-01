@@ -14,10 +14,7 @@
 #   make help
 #
 # C code (C) and assembler (S) source go in directories bios/, bdos/, ...
-# To modify the list of source code files, update the variables xxx_csrc
-# and xxx_ssrc below; each directories has a different set of build flags
-# indicated in variables xxx_copts and xxx_sopts below.
-# (xxx being the directory name)
+# To modify the list of source code files, update the variables xxx_src below.
 
 
 #
@@ -272,18 +269,6 @@ desk_src = deskstart.S deskmain.c gembind.c deskact.c deskapp.c deskdir.c \
 #
 
 cli_src = cmdasm.S cmdmain.c cmdedit.c cmdexec.c cmdint.c cmdparse.c cmdutil.c
-
-#
-# specific CC -c options for specific directories
-#
-
-bios_copts =
-bdos_copts =
-util_copts =
-cli_copts  =
-vdi_copts  =
-aes_copts  =
-desk_copts =
 
 #
 # Makefile functions
@@ -1009,16 +994,13 @@ obj/header.h: tools/mkheader.awk obj/country
 	awk -f tools/mkheader.awk $(COUNTRY) $(MAJOR_VERSION) $(MINOR_VERSION) $(FIX_VERSION) $(UNOFFICIAL) > $@
 
 #
-# build rules - the little black magic here allows for e.g.
-# $(bios_copts) to specify additional options for C source files
-# in bios/, and $(vdi_sopts) to specify additional options for
-# ASM source files in vdi/
+# build rules
 #
 
 TOCLEAN += obj/*.o
 
-CFILE_FLAGS = $(strip $(CFLAGS) $($(subst /,_,$(dir $<))copts))
-SFILE_FLAGS = $(strip $(CFLAGS) $($(subst /,_,$(dir $<))sopts))
+CFILE_FLAGS = $(strip $(CFLAGS))
+SFILE_FLAGS = $(strip $(CFLAGS))
 
 obj/%.o : %.tr.c
 	$(CC) $(CFILE_FLAGS) -c $< -o $@
