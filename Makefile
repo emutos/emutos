@@ -271,6 +271,12 @@ desk_src = deskstart.S deskmain.c gembind.c deskact.c deskapp.c deskdir.c \
 cli_src = cmdasm.S cmdmain.c cmdedit.c cmdexec.c cmdint.c cmdparse.c cmdutil.c
 
 #
+# source code to put at the end of the ROM
+#
+
+end_src = bios/endrom.c
+
+#
 # Makefile functions
 #
 
@@ -333,11 +339,12 @@ include country.mk
 # everything should work fine below.
 #
 
-SRC = $(foreach d,$(dirs),$(addprefix $(d)/,$($(d)_src)))
+SRC = $(foreach d,$(dirs),$(addprefix $(d)/,$($(d)_src))) $(end_src)
 
 CORE_OBJ = $(foreach d,$(core_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src)))) $(FONTOBJ) obj/version.o
 OPTIONAL_OBJ = $(foreach d,$(optional_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src))))
-OBJECTS = $(CORE_OBJ) $(OPTIONAL_OBJ)
+END_OBJ = $(patsubst %,obj/%.o,$(basename $(notdir $(end_src))))
+OBJECTS = $(CORE_OBJ) $(OPTIONAL_OBJ) $(END_OBJ)
 
 #
 # production targets
@@ -409,7 +416,7 @@ obj/emutospp.ld: emutos.ld include/config.h tosvars.ld
 TOCLEAN += *.img *.map
 
 emutos.img: $(OBJECTS) obj/emutospp.ld Makefile
-	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(LDFLAGS) -Wl,-Map=emutos.map -o emutos.img
+	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(END_OBJ) $(LDFLAGS) -Wl,-Map=emutos.map -o emutos.img
 	@if [ $$(($$(awk '/^\.data /{print $$3}' emutos.map))) -gt 0 ]; then \
 	  echo "### Warning: The DATA segment is not empty."; \
 	  echo "### Please examine emutos.map and use \"const\" where appropriate."; \

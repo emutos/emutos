@@ -64,9 +64,6 @@
 #ifdef MACHINE_FIREBEE
 #include "coldfire.h"
 #endif
-#if WITH_AES
-#include "../aes/aesstub.h"
-#endif
 #if WITH_CLI
 #include "../cli/clistub.h"
 #endif
@@ -1123,20 +1120,6 @@ const PFLONG bios_vecs[] = {
 };
 
 const UWORD bios_ent = ARRAY_SIZE(bios_vecs);
-
-/* GEM memory usage parameters block */
-const GEM_MUPB ui_mupb =
-{
-    GEM_MUPB_MAGIC, /* Magic value identifying this structure */
-    _end_os_stram,  /* End of the static ST-RAM used by the OS */
-#if WITH_AES
-    ui_start        /* AES entry point */
-#elif WITH_CLI
-    coma_start      /* EmuCON entry point */
-#else
-#  error You must provide a main UI
-#endif
-};
 
 #if CONF_WITH_EXTENDED_MOUSE
 
