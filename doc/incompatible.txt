@@ -114,39 +114,19 @@ user stack.  On exit, the user stack pointer is restored and during this
 a corrupted value is loaded into the SR, causing a trace excpetion.
 
 
-Program: (VDI) Invaders and Anduril
------------------------------------
-Error: keys to move an object are ignored (in Invaders, the '-' key; in
-Anduril, the 'h' & 'j' keys)
+Program: CTRL.ACC/CONTROL.ACC (from ST/STe Language Disks)
+----------------------------------------------------------
+Error: hangs on startup; eventually crashes with bus error
 
 Bug analysis:
-Both programs were written by "M.Dheus" who found that the most recent
-key input from the keyboard was stored at offset 0x6d from the address
-returned by Kbdvbase(), and used that to read the keyboard.  This was
-never documented by Atari, but was apparently true for all versions of
-TOS 1.  However it is not true for TOS 2, 3, or 4 (or EmuTOS).
+The program searches the buffer returned by shel_read() for lines
+beginning with '#a', '#b' and '#c' and never tests for buffer end.
+EmuTOS does not use these lines and only fakes the '#a' line for
+compatibility with EMULATOR.ACC.
 
-
-Program: Ramses
----------------
-Error: panic
-
-Bug analysis:
-Program calls the Line A initialization $A00A and gets the routine
-vectors in a2.  It gets the address of _v_hide_c, then starts doing
-undocumented things with the bytes of the actual routine:
-    https://sourceforge.net/p/emutos/mailman/message/30605378/
-
-
-Program: STVidPlay
-------------------
-Error: "Error in getting file location"
-
-Bug analysis:
-Program looks for a specific 2-byte sequence in the hard disk driver
-code pointed to by hdv_rw ($476).  If it doesn't find that sequence
-within bytes 6-48 (or thereabouts) of the start of the driver, it
-gives the error message.
+Workaround:
+Use a less-buggy control panel, e.g. XCONTROL.ACC from the TT or
+Falcon Language Disk.
 
 
 Program: Cubase Lite
@@ -161,17 +141,29 @@ could write a loader or TSR to change the etv_timer function so that
 Cubase will not crash.)
 
 
-Program: Reservoir Gods games (Bugger, Bunion, SkyFall, Sworm)
---------------------------------------------------------------
-Error: panic
+Program: (VDI) Invaders and Anduril
+-----------------------------------
+Error: keys to move an object are ignored (in Invaders, the '-' key; in
+Anduril, the 'h' & 'j' keys)
 
 Bug analysis:
-Games use an undocumented TOS4 vector for keyboard input instead of
-accessing kbdvec correctly.  This causes EmuTOS to panic.
+Both programs were written by "M.Dheus" who found that the most recent
+key input from the keyboard was stored at offset 0x6d from the address
+returned by Kbdvbase(), and used that to read the keyboard.  This was
+never documented by Atari, but was apparently true for all versions of
+TOS 1.  However it is not true for TOS 2, 3, or 4 (or EmuTOS).
 
-Workaround:
-This can be worked around with the following hack.prg:
-    https://sourceforge.net/p/emutos/mailman/message/26841274/
+
+Program: Luftschloss
+--------------------
+Error: Fails to load with an error message about the MPB variable.
+
+Bug analysis: Luftschloss is a reset resident RAM disk originally
+distributed with the German book "Scheibenkleister". It does its
+memory management itself, without using GEMDOS functions. For that,
+it needs to determine the location of an undocumented system variable,
+the memory parameter block (MPB). The heuristic it uses to find the
+memory address of that variable only works with Atari TOS.
 
 
 Program: OMIKRON.BASIC V3.01 (interpreter)
@@ -188,6 +180,63 @@ line-A routine to get the address of a variable reflecting the internal
 state of the mouse cursor.  This is done with the same code used in
 "Ramses" (see above).  This also fails on EmuTOS, resulting in another
 bus error.  There may be more accesses to undocumented variables.
+
+
+Program: Protracker v2 STE (Equinox version)
+--------------------------------------------
+Error: crash when "DISK OP." button is selected
+
+Bug analysis:
+The program relies on a TOS-specific code sequence, as follows:
+1. it searches the ROM (pointed to by location 4) for the first word
+   equal to 0x47e
+2. when found, it uses the longword immediately before as a pointer to
+   an address; in TOS2, this is a pointer to the mediachange handler
+3. it stores the long at offset 0x1c from that address in its data
+   segment; in TOS2, this is a pointer to (I think) two bytes of
+   status for the floppy drives
+Subsequently, when "DISK OP." is selected, the stored long is used as a
+pointer.  In TOS2, the value stored is $4216; in EmuTOS, it's zero,
+resulting in a crash.
+
+
+Program: Ramses
+---------------
+Error: panic
+
+Bug analysis:
+Program calls the Line A initialization $A00A and gets the routine
+vectors in a2.  It gets the address of _v_hide_c, then starts doing
+undocumented things with the bytes of the actual routine:
+    https://sourceforge.net/p/emutos/mailman/message/30605378/
+
+
+Program: Reservoir Gods games (Bugger, Bunion, SkyFall, Sworm)
+--------------------------------------------------------------
+Error: panic
+
+Bug analysis:
+Games use an undocumented TOS4 vector for keyboard input instead of
+accessing kbdvec correctly.  This causes EmuTOS to panic.
+
+Workaround:
+This can be worked around with the following hack.prg:
+    https://sourceforge.net/p/emutos/mailman/message/26841274/
+
+
+Program: Spectrum 512
+---------------------
+Error: crash during program initialisation
+
+Bug analysis:
+The program relies on a TOS-specific code sequence, as follows:
+1. it searches the VBL handler (pointed to by location $70) for the
+   first word containing a value of 0x6100
+2. when found, it uses the word immediately following as an index to
+   generate an address, and starts searching at that address for a
+   word containing a value of 0x8606
+Under EmuTOS, the address generated is a nonsense address which happens
+to be odd, causing an immediate address error.
 
 
 Program: STSpeech v2.0
@@ -210,52 +259,15 @@ many XBIOS calls).  Use program without BigDOS, or anything else doing
 a lot of XBIOS calls.
 
 
-Program: Protracker v2 STE (Equinox version)
---------------------------------------------
-Error: crash when "DISK OP." button is selected
+Program: STVidPlay
+------------------
+Error: "Error in getting file location"
 
 Bug analysis:
-The program relies on a TOS-specific code sequence, as follows:
-1. it searches the ROM (pointed to by location 4) for the first word
-   equal to 0x47e
-2. when found, it uses the longword immediately before as a pointer to
-   an address; in TOS2, this is a pointer to the mediachange handler
-3. it stores the long at offset 0x1c from that address in its data
-   segment; in TOS2, this is a pointer to (I think) two bytes of
-   status for the floppy drives
-Subsequently, when "DISK OP." is selected, the stored long is used as a
-pointer.  In TOS2, the value stored is $4216; in EmuTOS, it's zero,
-resulting in a crash.
-
-
-Program: Spectrum 512
----------------------
-Error: crash during program initialisation
-
-Bug analysis:
-The program relies on a TOS-specific code sequence, as follows:
-1. it searches the VBL handler (pointed to by location $70) for the
-   first word containing a value of 0x6100
-2. when found, it uses the word immediately following as an index to
-   generate an address, and starts searching at that address for a
-   word containing a value of 0x8606
-Under EmuTOS, the address generated is a nonsense address which happens
-to be odd, causing an immediate address error.
-
-
-Program: CTRL.ACC/CONTROL.ACC (from ST/STe Language Disks)
-----------------------------------------------------------
-Error: hangs on startup; eventually crashes with bus error
-
-Bug analysis:
-The program searches the buffer returned by shel_read() for lines
-beginning with '#a', '#b' and '#c' and never tests for buffer end.
-EmuTOS does not use these lines and only fakes the '#a' line for
-compatibility with EMULATOR.ACC.
-
-Workaround:
-Use a less-buggy control panel, e.g. XCONTROL.ACC from the TT or
-Falcon Language Disk.
+Program looks for a specific 2-byte sequence in the hard disk driver
+code pointed to by hdv_rw ($476).  If it doesn't find that sequence
+within bytes 6-48 (or thereabouts) of the start of the driver, it
+gives the error message.
 
 
 Program: Turbo ST 1.8 (and possibly other versions)
@@ -268,15 +280,3 @@ the VDI. The internal data structures of EmuTOS VDI differ from
 Atari's VDI implementation in TOS.
 Note: Turbo ST is known to cause drawing errors and to crash under
 Atari TOS, too.
-
-
-Program: Luftschloss
---------------------
-Error: Fails to load with an error message about the MPB variable.
-
-Bug analysis: Luftschloss is a reset resident RAM disk originally
-distributed with the German book "Scheibenkleister". It does its
-memory management itself, without using GEMDOS functions. For that,
-it needs to determine the location of an undocumented system variable,
-the memory parameter block (MPB). The heuristic it uses to find the
-memory address of that variable only works with Atari TOS.
