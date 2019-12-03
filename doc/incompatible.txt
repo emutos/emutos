@@ -63,6 +63,20 @@ best workaround is to use a version of the game that has been fixed to
 run from HD and with modern TOS versions.
 
 
+Program: Art for Kids
+---------------------
+Error: crash during program startup, before anything is displayed, when
+using 512K ROMs
+
+Bug analysis:
+The program uses the TOS version in the OS header to decide how to
+interpret the country code in os_conf.  If the version is not 4, the
+program assumes a valid country code and uses it as an index into an
+array of pointers.  EmuTOS 512K ROMs use a TOS version of 2, but set
+os_conf to 0xff to indicate multilanguage.  This causes a crash when the
+program indexes beyond the end of the array and loads a garbage pointer.
+
+
 Program: Awele v1.01
 --------------------
 Error: mono desktop colours are inverted after exiting program.
