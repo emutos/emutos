@@ -44,8 +44,6 @@ extern void     (*user_mot)(void);      /* user motion vector */
 extern Mcdb     mouse_cdb;              /* storage for mouse sprite */
 
 /* prototypes */
-static void cur_display(Mcdb *sprite, MCS *savebuf, WORD x, WORD y);
-static void cur_replace(MCS *savebuf);
 static void vb_draw(void);             /* user button vector */
 
 /* prototypes for functions in vdi_asm.S */
@@ -779,7 +777,7 @@ static void cur_display_clip(WORD op,Mcdb *sprite,MCS *mcs,UWORD *mask_start,UWO
  * is subject to left or right clipping, however, then it must lie
  * within one screen word (per plane), so we only save 32 bytes/plane.
  */
-static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
+void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
 {
     int row_count, plane, inc, op, dst_inc;
     UWORD * addr, * mask_start;
@@ -928,7 +926,7 @@ static void cur_display (Mcdb *sprite, MCS *mcs, WORD x, WORD y)
  *      v_planes    number of planes in destination
  *      v_lin_wr    line wrap (byte width of form)
  */
-static void cur_replace (MCS *mcs)
+void cur_replace (MCS *mcs)
 {
     WORD plane, row;
     UWORD *addr, *src, *dst;
@@ -976,21 +974,6 @@ static void cur_replace (MCS *mcs)
 
 
 /* line-A support */
-
-/* set by linea.S */
-WORD sprite_x, sprite_y;
-Mcdb *sprite_def;
-MCS *sprite_sav;
-
-void draw_sprite(void)
-{
-    cur_display(sprite_def, sprite_sav, sprite_x, sprite_y);
-}
-
-void undraw_sprite(void)
-{
-    cur_replace(sprite_sav);
-}
 
 void linea_show_mouse(void)
 {

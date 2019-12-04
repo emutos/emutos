@@ -21,8 +21,8 @@ struct blit_frame;
 void vditrap(void);
 
 /* shared VDI functions & VDI line-A wrapper functions */
-void draw_sprite(void);
-void undraw_sprite(void);
+void cur_display (struct Mcdb_ *sprite, struct _mcs *mcs, WORD x, WORD y);
+void cur_replace (struct _mcs *mcs);
 WORD get_pix(void);
 void put_pix(void);
 void text_blt(void);
@@ -36,11 +36,6 @@ void linea_line(void);
 void linea_fill(void);
 void linea_blit(struct blit_frame *info);
 void linea_raster(void);
-
-/* Line-A related variables */
-extern WORD sprite_x, sprite_y;
-extern struct Mcdb_ *sprite_def;
-extern struct _mcs *sprite_sav;
 
 /* End of the VDI BSS section.
  * This is referenced by the OSHEADER */

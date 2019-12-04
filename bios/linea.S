@@ -38,12 +38,8 @@
         .extern _linea_blit
         .extern _text_blt
 
-        .extern _sprite_x
-        .extern _sprite_y
-        .extern _sprite_def
-        .extern _sprite_sav
-        .extern _draw_sprite
-        .extern _undraw_sprite
+        .extern _cur_replace
+        .extern _cur_display
         .extern _linea_raster
         .extern _linea_fill
 
@@ -53,11 +49,13 @@
 
 // ==== Line-A handler ===============================
 _int_linea:
-        /* save regs as they are needed if this is sprite un/draw */
-        move.w d0,_sprite_x
-        move.w d1,_sprite_y
-        move.l a0,_sprite_def
-        move.l a2,_sprite_sav
+        /* save d0/d1/a0/a2 as they are needed for sprite undraw/draw */
+#ifdef __mcoldfire__
+        lea     linea_save,a1
+        movem.l d0/d1/a0/a2,(a1)
+#else
+        movem.l d0/d1/a0/a2,linea_save
+#endif
 #ifdef __mcoldfire__
         move.l  4(sp),a0        /* Get the opcode address */
 #else
@@ -104,14 +102,23 @@ _int_linea:
 #endif
 #endif /* ENABLE_KDEBUG */
 
-        lea     linea_vecs,a0
+        lea     linea_vecs,a1
 #ifdef __mcoldfire__
         lsl.l   #2,d0
 #else
         lsl.w   #2,d0
 #endif
-        move.l  0(a0,d0),a0
-        jsr     (a0)
+        move.l  0(a1,d0),a1
+        /* restore d0,d1,a0,a2 in case we're calling sprite undraw/draw */
+#ifdef __mcoldfire__
+        move.l  a1,-(sp)
+        lea     linea_save,a1
+        movem.l (a1),d0/d1/a0/a2
+        move.l  (sp)+,a1
+#else
+        movem.l linea_save,d0/d1/a0/a2
+#endif
+        jsr     (a1)
 linea_dispatch_pc:
         rte
 
@@ -125,6 +132,11 @@ wrong_linea:
         lea     10(sp),sp
 #endif /* ENABLE_KDEBUG */
         rte
+
+        .bss
+        .even
+linea_save:
+        .ds.l   4       /* d0, d1, a0, a2 */
 
         SECTION_RODATA
 
@@ -151,6 +163,21 @@ _linea_0:
         lea     linea_vecs,a2   // get pointer to table of the Line-A routines
         rts
 
+undraw_sprite:
+        move.l  a2,-(sp)        /* save area ptr */
+        jsr     _cur_replace
+        addq.l  #4,sp
+        rts
+
+draw_sprite:
+        move.w  d1,-(sp)        /* y coord of hotspot */
+        move.w  d0,-(sp)        /* x coord */
+        move.l  a2,-(sp)        /* save area ptr */
+        move.l  a0,-(sp)        /* new sprite */
+        jsr     _cur_display
+        lea     12(sp),sp
+        rts
+
 linea_blit:
         move.l  a6,-(sp)                // blit frame structure addr
         jsr     _linea_blit
@@ -168,19 +195,24 @@ linea_blit:
  * They are put_pix, get_pix.
  *
  * Several functions need a C-wrapper around utility functions shared
- * with VDI.  They are draw_sprite, undraw_sprite, linea_line,
- * linea_hline, linea_rect, linea_polygon, linea_raster, linea_fill.
- * Their arguments are in global variables/arrays.
+ * with VDI.  They are linea_line, linea_hline, linea_rect, linea_polygon,
+ * linea_raster, linea_fill.  Their arguments are in global variables/arrays.
  *
- * Bitblt has both a small C-wrapper and an ASM-wrapper, as the
- * pointer to its argument array is given in a register.
+ * Bitblt (linea_blit) has both a small C-wrapper and an ASM-wrapper, as
+ * the pointer to its argument array is given in a register.
  *
  * The assembly "text_blt" routine can be called directly because
  * it uses line-A variables which VDI just sets up before
  * calling it.
  *
- * Neochrome Master and old GFA programs can use all of them,
- * and many (even new) freeware games can still use bitblt.
+ * The undraw_sprite and draw_sprite routines are passed their arguments
+ * in registers.  Because lineA routines may be called directly (not via
+ * the lineA interface), we must preserve those registers until the actual
+ * routine is entered.  These routines are ASM wrappers for VDI utility
+ * functions.
+ *
+ * Neochrome Master and old GFA programs use all of the lineA routines,
+ * and many (even new) freeware games still use bitblt.
  *
  * It's probably only safe to run line-A-using programs in (1-4 plane)
  * ST/e modes.  Such programs can e.g. leave too little space for
@@ -200,8 +232,8 @@ linea_vecs:
         .dc.l   _linea_show_mouse      /* $9 - show mouse */
         .dc.l   _linea_hide_mouse      /* $A - hide cursor */
         .dc.l   _linea_transform_mouse /* $B - transform mouse */
-        .dc.l   _undraw_sprite  /* $C - undraw sprite */
-        .dc.l   _draw_sprite    /* $D - draw sprite */
+        .dc.l   undraw_sprite   /* $C - undraw sprite */
+        .dc.l   draw_sprite     /* $D - draw sprite */
         .dc.l   _linea_raster   /* $E - copy raster form */
         .dc.l   _linea_fill     /* $F - flood fill */
 linea_ents:
