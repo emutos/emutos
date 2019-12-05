@@ -61,7 +61,6 @@ _int_linea:
 #else
         move.l  2(sp),a0        /* Get the opcode address */
 #endif
-        move.l  a0,a1
         moveq   #0,d0
         move.w  (a0)+,d0        /* Get the opcode value */
 #ifdef __mcoldfire__
