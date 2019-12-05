@@ -63,6 +63,21 @@ best workaround is to use a version of the game that has been fixed to
 run from HD and with modern TOS versions.
 
 
+Program: old games using undocumented addresses for joystick/keyboard data
+--------------------------------------------------------------------------
+Error: joystick and/or keyboard is ignored.
+
+Bug analysis:
+Some old games monitor the joystick and/or keyboard by looking at words
+that are at offsets 0x3c/0x6c (respectively) from the address returned by
+Kbdvbase().  That was never documented by Atari, but is apparently true in
+all versions of TOS 1.  However it is not true for TOS 2/3/4 (or EmuTOS).
+
+Examples:
+Joystick monitoring: Douglas Rockmoor, Space Invaders
+Keyboard monitoring: (VDI) Invaders, Anduril
+
+
 Program: Art for Kids
 ---------------------
 Error: crash during program startup, before anything is displayed, when
@@ -139,19 +154,6 @@ function.  Cubase Lite tries to guess the address of that private
 function in an undocumented way, which crashes on EmuTOS.  (Somebody
 could write a loader or TSR to change the etv_timer function so that
 Cubase will not crash.)
-
-
-Program: (VDI) Invaders and Anduril
------------------------------------
-Error: keys to move an object are ignored (in Invaders, the '-' key; in
-Anduril, the 'h' & 'j' keys)
-
-Bug analysis:
-Both programs were written by "M.Dheus" who found that the most recent
-key input from the keyboard was stored at offset 0x6d from the address
-returned by Kbdvbase(), and used that to read the keyboard.  This was
-never documented by Atari, but was apparently true for all versions of
-TOS 1.  However it is not true for TOS 2, 3, or 4 (or EmuTOS).
 
 
 Program: Luftschloss
