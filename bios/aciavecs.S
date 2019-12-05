@@ -436,15 +436,15 @@ in_packet:
         lea     kbdbuf,a0
 #ifdef __mcoldfire__
         move.b  d0,0(a0,d1.l)
-        moveq   #0,d0
-        move.b  kbdlength,d0
-        subq.l  #1,d0
-        move.b  d0,kbdlength
+        moveq   #0,d1           // preserve d0 by using d1 as work reg
+        move.b  kbdlength,d1
+        subq.l  #1,d1
+        move.b  d1,kbdlength
         jeq     got_packet
-        moveq   #0,d0
-        move.w  kbdindex,d0
-        addq.l  #1,d0
-        move.w  d0,kbdindex
+        moveq   #0,d1
+        move.w  kbdindex,d1
+        addq.l  #1,d1
+        move.w  d1,kbdindex
 #else
         move.b  d0,0(a0,d1.w)
         sub.b   #1,kbdlength
@@ -453,16 +453,16 @@ in_packet:
 #endif
         rts
 
-// now I've got a full packet in buffer kbdbuf.
+// now I've got a full packet in buffer kbdbuf, and d0.b is the last byte received
 got_packet:
-        moveq.l #0,d0
-        move.b  ikbdstate,d0
+        moveq.l #0,d1           // preserve d0 by using d1 as work reg
+        move.b  ikbdstate,d1
 #ifdef __mcoldfire__
-        asl.l   #2,d0
+        asl.l   #2,d1
 #else
-        asl.w   #2,d0
+        asl.w   #2,d1
 #endif
-        move.l  action_table-4(pc,d0),a1
+        move.l  action_table-4(pc,d1),a1
         lea     kbdbuf,a0
         jmp     (a1)
 action_table:
@@ -496,6 +496,10 @@ kbd_clock:
 //
 // However, for IKBD packets 0xFE and 0xFF, the buffer will contain
 // (package header, joystick 0, joystick 1).
+//
+// For TOS compatibility (true up to at least TOS 3.06), we support the
+// following undocumented feature: on entry to the 'joyvec' routine,
+// d0.b contains the last data byte received.  
 //
 
 kbd_joys:
