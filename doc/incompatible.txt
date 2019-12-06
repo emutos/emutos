@@ -5,6 +5,11 @@ prevent them from running properly with EmuTOS, and whose problem has
 been definitively identified.  It is mainly intended to prevent these
 programs from being added to 'bugs.txt' in the future.
 
+Note: in many cases, programs that run on TOS 1.x but not on EmuTOS don't
+run on Atari TOS 2.06 either.  This is invariably caused by the use of
+undocumented addresses or interfaces, or trying to find some 'private'
+TOS address by the use of heuristics.
+
 
 Program: STOS programs
 ----------------------
@@ -73,9 +78,11 @@ that are at offsets 0x3c/0x6c (respectively) from the address returned by
 Kbdvbase().  That was never documented by Atari, but is apparently true in
 all versions of TOS 1.  However it is not true for TOS 2/3/4 (or EmuTOS).
 
-Examples:
-Joystick monitoring: Douglas Rockmoor, Space Invaders
-Keyboard monitoring: (VDI) Invaders, Anduril
+Some guilty programs:
+. Joystick monitoring:
+    Douglas Rockmoor, Space Invaders, Crystal Cave, Macro War, Brain Blasters
+. Keyboard monitoring:
+    (VDI) Invaders, Anduril, Brain Blasters
 
 
 Program: Art for Kids
@@ -241,6 +248,18 @@ Under EmuTOS, the address generated is a nonsense address which happens
 to be odd, causing an immediate address error.
 
 
+Program: Striker9
+-----------------
+Error: Cannot exit from startup screen
+
+Bug analysis:
+In its joystick vector handler, the program looks at the contents of
+register d1, which in Atari TOS 1 is an address within the joystick
+buffer, and ignores the interrupt if d1 bit 0 is 0.  In EmuTOS, d1 is
+not an address and it is always even.  This program does not work in
+TOS 2.06.
+
+
 Program: STSpeech v2.0
 ----------------------
 Error: panics due to stack corruption
@@ -270,6 +289,17 @@ Program looks for a specific 2-byte sequence in the hard disk driver
 code pointed to by hdv_rw ($476).  If it doesn't find that sequence
 within bytes 6-48 (or thereabouts) of the start of the driver, it
 gives the error message.
+
+
+Program: Super Cauldron demo
+----------------------------
+Error: Cannot exit from startup screen
+
+Bug analysis:
+Program gets the address of the IKBD handler, then inserts jumps to
+various fixed offsets within that handler into its own code.  The fact
+that it does not crash is pure chance; when run under TOS 2.06, it does
+crash.
 
 
 Program: Turbo ST 1.8 (and possibly other versions)
