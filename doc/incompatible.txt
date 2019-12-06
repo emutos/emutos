@@ -6,9 +6,10 @@ been definitively identified.  It is mainly intended to prevent these
 programs from being added to 'bugs.txt' in the future.
 
 Note: in many cases, programs that run on TOS 1.x but not on EmuTOS don't
-run on Atari TOS 2.06 either.  This is invariably caused by the use of
-undocumented addresses or interfaces, or trying to find some 'private'
-TOS address by the use of heuristics.
+run on Atari TOS 2.06 either.  Sometimes they might run on one language
+version but not another (e.g. ok on TOS 2.06UK, not on TOS 2.06US).  This
+is invariably caused by the use of undocumented addresses or interfaces,
+or trying to find some 'private' TOS address by the use of heuristics.
 
 
 Program: STOS programs
@@ -97,6 +98,9 @@ program assumes a valid country code and uses it as an index into an
 array of pointers.  EmuTOS 512K ROMs use a TOS version of 2, but set
 os_conf to 0xff to indicate multilanguage.  This causes a crash when the
 program indexes beyond the end of the array and loads a garbage pointer.
+
+Workaround:
+Use an EmuTOS 256K ROM.
 
 
 Program: Awele v1.01
