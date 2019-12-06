@@ -46,6 +46,9 @@ void flush_data_cache(void *start, long size);
 void invalidate_data_cache(void *start, long size);
 void invalidate_instruction_cache(void *start, long size);
 
+/* bios allocation of ST-RAM */
+UBYTE *balloc_stram(ULONG size, BOOL top);
+
 /* print a panic message both via kprintf and cprintf, then halt */
 void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
 

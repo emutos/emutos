@@ -316,6 +316,8 @@ void osinit_before_xmaddalt(void)
      */
     old_trap2 = (PFVOID) Setexc(0x22, (long)bdos_trap2);
 
+    bufl_init();    /* initialize BDOS buffer list */
+
     osmem_init();
     umem_init();
 }
@@ -327,8 +329,6 @@ void osinit_after_xmaddalt(void)
     /* Set up initial process. Required by Malloc() */
     run = &initial_basepage;
     run->p_flags = PF_STANDARD;
-
-    bufl_init();    /* initialize BDOS buffer list, now Malloc is available */
 
     time_init();
 

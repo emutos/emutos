@@ -21,7 +21,6 @@ extern UBYTE dskbuf[DSKBUF_SIZE]; /* In ST-RAM */
 
 /* Prototypes */
 void bmem_init(void);
-UBYTE *balloc_stram(ULONG size, BOOL top);
 
 /* BIOS function */
 

@@ -45,6 +45,13 @@ static void *create_chain(UBYTE *p,LONG n)
 
 /*
  * bufl_init - BDOS buffer list initialization
+ *
+ * this must be called before memory is initialised, because we use
+ * balloc_stram().  we use balloc_stram() because we must not use
+ * Malloc() until after we have finished booting.  this is because TOS
+ * doesn't, and some programs that are direct-booted from a disk may
+ * therefore assume that all memory from membot upwards is available
+ * (I'm looking at you, Dungeon Master).
  */
 void bufl_init(void)
 {
@@ -52,7 +59,7 @@ void bufl_init(void)
     LONG n;
 
     n = sizeof(BCB) + pun_ptr->max_sect_siz;
-    p = xmalloc(2L*NUMBUFS*n);
+    p = balloc_stram(2L*NUMBUFS*n, FALSE);
     if (!p)
         panic("bufl_init(%ld): no memory\n",2L*NUMBUFS*n);
 
