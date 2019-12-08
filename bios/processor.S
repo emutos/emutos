@@ -267,7 +267,7 @@ m68000:
         jne     pi_chk030
 
 // We're running on a 68020
-        move.l  #0x00000001,d0  // enable cache
+        move.l  #0x00000009,d0  // clear & enable cache
         jra     init_cacr
 
 pi_chk030:
@@ -286,7 +286,7 @@ pi_chk030:
 // On a 68ec030, we enable just the instruction cache, since we can't
 // set up a proper PMMU tree to avoid caching the I/O address area
 
-        move.l  #0x00000011,d0  // set IBE and EI only
+        move.l  #0x00000019,d0  // set IBE and CI/EI only
         jra     init_cacr
 
 // On a full 68030, if a PMMU tree is wanted, we must set it up before
@@ -299,13 +299,13 @@ m68030:
         PMOVE_TO_TC(init_tc)        // enable PMMU
         PMOVE_TO_TTR0(init_ttr0)    // override PMMU tree for accesses to
         PMOVE_TO_TTR1(init_ttr1)    //   0x01000000-0xfeffffff (see below for details)
-        move.l  #0x00003111,d0  // we set WA, DBE, ED, IBE and EI
+        move.l  #0x00003919,d0      // we set WA, DBE, CD/ED, IBE and CI/EI
 #else
 
 // A PMMU tree isn't wanted, so we avoid caching problems by only
 // enabling the instruction cache.
 
-        move.l  #0x00000011,d0  // we set IBE and EI only
+        move.l  #0x00000019,d0  // set IBE and CI/EI only
 #endif
 
 init_cacr:
@@ -316,7 +316,7 @@ pi_chk040:
         move.l  #0x80008000,d1  // set 040 CACR value: DE and IE
         cmpi.b  #40,_mcpu+3
         jeq     m68040
-        move.l  #0x80808000,d1  // set 060 CACR value: EDC, EBC and EIC
+        move.l  #0x80c08000,d1  // set 060 CACR value: EDC, EBC/CABC and EIC
         cmpi.b  #60,_mcpu+3
         jeq     m68060
         jra     pi_done
