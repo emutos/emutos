@@ -96,22 +96,19 @@ _detect_cpu:
         moveq   #30,d0          // no fault -> this is a 68030
         jra     exit
 
-// 68040 or 68060
+// 68040 or 68060 (or Apollo 68080)
 
 x040:   moveq   #40,d0          // assume 68040
         MOVEC_PCR_D1            // attempt to access the PCR
+        moveq   #60,d0          // no fault, assume 68060
 
 #if CONF_WITH_APOLLO_68080
-        moveq   #60,d0          // assume 68060
         ADDIWL_0_A0             // check for addiw.l instruction
-
 // Apollo 68080
-        moveq   #40,d0          // force 68040 detection
+        moveq   #40,d0          // no fault, force 68040 detection
         move.w  #1,_is_apollo_68080
-        jra     exit
 #endif
-x060:
-        moveq   #60,d0          // no fault -> this is 68060
+
 exit:
         move.l  a3,(0xf4).w     // restore stuff and exit
         move.l  a2,(0x2c).w
