@@ -248,9 +248,7 @@ nosfp:  move.l  a1,(0x08).w     // restore bus error
  * void processor_init(void) - sets mcpu and fputype.
  */
 _processor_init:
-#ifdef __mcoldfire__
-        // On ColdFire, the caches are enabled by the pre-OS
-#else
+#ifndef __mcoldfire__           // On ColdFire, the caches are enabled by the pre-OS
         jbsr    _detect_cpu
         swap    d0
         move.w  d0,_mcpu_subtype    // save processor subtype
@@ -362,10 +360,10 @@ m68060:
         move.l  d1,d0           // recover the enable value
         MOVEC_D0_CACR           // enable the caches
 
-#endif /* __mcoldfire__ */
-
 pi_done:
 #endif /* CONF_WITH_ADVANCED_CPU */
+
+#endif /* not __mcoldfire__ */
         rts
 
 /*
