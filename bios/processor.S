@@ -304,10 +304,7 @@ m68030:
 
         move.l  #0x00000019,d0  // set IBE and CI/EI only
 #endif
-
-init_cacr:
-        MOVEC_D0_CACR
-        jra     pi_done
+        jra     init_cacr
 
 pi_chk040:
         move.l  #0x80008000,d1  // set 040 CACR value: DE and IE
@@ -355,7 +352,9 @@ m68060:
         CINVA_BC                // invalidate the caches
         nop
         move.l  d1,d0           // recover the enable value
-        MOVEC_D0_CACR           // enable the caches
+
+init_cacr:
+        MOVEC_D0_CACR
 
 pi_done:
 #endif /* CONF_WITH_ADVANCED_CPU */
