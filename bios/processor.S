@@ -278,32 +278,29 @@ pi_chk030:
 // User would like a PMMU tree, so see if it's possible
 
         tst.w   _mcpu_subtype   // check for full 68030
-        jeq     m68030
-
-// On a 68ec030, we enable just the instruction cache, since we can't
-// set up a proper PMMU tree to avoid caching the I/O address area
-
-        move.l  #0x00000019,d0  // set IBE and CI/EI only
-        jra     init_cacr
+        jne     m68ec030
 
 // On a full 68030, if a PMMU tree is wanted, we must set it up before
 // enabling the data cache.  The PMMU tree will ensure that caching is
 // inhibited for access to i/o addresses.
 
-m68030:
         jsr     _setup_68030_pmmu
         PMOVE_TO_CRP(root_pointer_descriptor)   // tell system where tree is
         PMOVE_TO_TC(init_tc)        // enable PMMU
         PMOVE_TO_TTR0(init_ttr0)    // override PMMU tree for accesses to
         PMOVE_TO_TTR1(init_ttr1)    //   0x01000000-0xfeffffff (see below for details)
         move.l  #0x00003919,d0      // we set WA, DBE, CD/ED, IBE and CI/EI
-#else
+        jra     init_cacr
 
-// A PMMU tree isn't wanted, so we avoid caching problems by only
-// enabling the instruction cache.
+m68ec030:
+
+#endif
+
+// If user doesn't want a PMMU tree, or we're on a 68ec030, we enable
+// just the instruction cache, since we can't set up a proper PMMU
+// tree to avoid caching the I/O address area
 
         move.l  #0x00000019,d0  // set IBE and CI/EI only
-#endif
         jra     init_cacr
 
 pi_chk040:
