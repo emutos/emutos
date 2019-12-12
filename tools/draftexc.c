@@ -76,6 +76,10 @@ char *exclude_items[] =
     "BLITITEM",
     "SEP_OP1",
 #endif
+#if !CONF_WITH_CACHE_CONTROL
+    "CACHITEM",
+    "SEP_OP2",
+#endif
 
                                 /* other configurable items */
 #if !CONF_WITH_SHOW_FILE && !CONF_WITH_PRINTER_ICON /* print/show file */

@@ -143,6 +143,9 @@
 # ifndef CONF_WITH_BLITTER
 #  define CONF_WITH_BLITTER 0
 # endif
+# ifndef CONF_WITH_CACHE_CONTROL
+#  define CONF_WITH_CACHE_CONTROL 0
+# endif
 # ifndef CONF_WITH_SFP004
 #  define CONF_WITH_SFP004 0
 # endif
@@ -204,6 +207,9 @@
 # endif
 # ifndef CONF_WITH_APOLLO_68080
 #  define CONF_WITH_APOLLO_68080 0
+# endif
+# ifndef  CONF_WITH_CACHE_CONTROL
+#  define CONF_WITH_CACHE_CONTROL 0
 # endif
 # ifndef CONF_WITH_TT_MMU
 #  define CONF_WITH_TT_MMU 0
@@ -379,6 +385,9 @@
 # endif
 # ifndef CONF_WITH_APOLLO_68080
 #  define CONF_WITH_APOLLO_68080 0
+# endif
+# ifndef  CONF_WITH_CACHE_CONTROL
+#  define CONF_WITH_CACHE_CONTROL 0
 # endif
 # ifndef CONF_WITH_SCSI
 #  define CONF_WITH_SCSI 0
@@ -1323,6 +1332,17 @@
 #endif
 
 /*
+ * Set CONF_WITH_CACHE_CONTROL to 1 to include 'Cache' in the desktop menu
+ */
+#ifndef CONF_WITH_CACHE_CONTROL
+# ifdef __mcoldfire__
+#  define CONF_WITH_CACHE_CONTROL 0
+# else
+#  define CONF_WITH_CACHE_CONTROL 1
+# endif
+#endif
+
+/*
  * Set CONF_WITH_DESKTOP_CONFIG to 1 to enable the 'Desktop configuration'
  * dialog
  */
@@ -1631,6 +1651,9 @@
 # endif
 # if CONF_WITH_APOLLO_68080
 #  error CONF_WITH_APOLLO_68080 requires CONF_WITH_ADVANCED_CPU.
+# endif
+# if CONF_WITH_CACHE_CONTROL
+#  error CONF_WITH_CACHE_CONTROL requires CONF_WITH_ADVANCED_CPU.
 # endif
 #endif
 

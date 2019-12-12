@@ -176,6 +176,9 @@ static char separator[MAXLEN_SEPARATOR+1];
 
 static int can_change_resolution;
 static int blitter_is_present;
+#if CONF_WITH_CACHE_CONTROL
+static int cache_is_present;
+#endif
 static char *desk_rs_ptext;     /* see desk_xlate_fix() */
 
 #if CONF_WITH_READ_INF
@@ -187,6 +190,9 @@ static void detect_features(void)
 {
     can_change_resolution = rez_changeable();
     blitter_is_present = Blitmode(-1) & 0x0002;
+#if CONF_WITH_CACHE_CONTROL
+    cache_is_present = cache_exists();
+#endif
 }
 
 
@@ -206,6 +212,18 @@ static void display_free_stack(void)
 }
 #else
 #define display_free_stack()
+#endif
+
+
+#if CONF_WITH_CACHE_CONTROL
+/*
+ * Routine to set cache on/off: must be Supexec'd because the set_cache()
+ * function must run in supervisor state
+ */
+static void desktop_set_cache(void)
+{
+    set_cache(G.g_cache);
+}
 #endif
 
 
@@ -356,6 +374,19 @@ static void men_update(void)
     }
     else
         menu_ienable(tree, BLITITEM, FALSE);
+#endif
+
+#if CONF_WITH_CACHE_CONTROL
+    if (cache_is_present)
+    {
+        menu_ienable(tree, CACHITEM, TRUE);
+        menu_icheck(tree, CACHITEM, G.g_cache);
+    }
+    else
+    {
+        menu_ienable(tree, CACHITEM, FALSE);
+        menu_icheck(tree, CACHITEM, FALSE);
+    }
 #endif
 }
 
@@ -657,6 +688,13 @@ static WORD do_optnmenu(WORD item)
         G.g_blitter = !G.g_blitter;
         menu_icheck(G.a_trees[ADMENU], BLITITEM, G.g_blitter);  /* flip blit mode */
         Blitmode(G.g_blitter);
+        break;
+#endif
+#if CONF_WITH_CACHE_CONTROL
+    case CACHITEM:
+        G.g_cache = !G.g_cache;
+        menu_icheck(G.a_trees[ADMENU], CACHITEM, G.g_cache);    /* flip cache mode */
+        Supexec((LONG)desktop_set_cache);   /* uses G.g_cache */
         break;
 #endif
     }
@@ -1131,6 +1169,9 @@ static void cnx_put(void)
     cnxsave->cs_timefmt = G.g_ctimeform;
     cnxsave->cs_datefmt = G.g_cdateform;
     cnxsave->cs_blitter = G.g_blitter;
+#if CONF_WITH_CACHE_CONTROL
+    cnxsave->cs_cache = G.g_cache;
+#endif
 #if CONF_WITH_DESKTOP_CONFIG
     cnxsave->cs_appdir = G.g_appdir;
     cnxsave->cs_fullpath = G.g_fullpath;
@@ -1190,6 +1231,10 @@ static void cnx_get(void)
     G.g_ctimeform = cnxsave->cs_timefmt;
     G.g_cdateform = cnxsave->cs_datefmt;
     G.g_blitter   = cnxsave->cs_blitter;
+#if CONF_WITH_CACHE_CONTROL
+    G.g_cache     = cnxsave->cs_cache;
+    menu_icheck(G.a_trees[ADMENU], CACHITEM, G.g_cache);
+#endif
 #if CONF_WITH_DESKTOP_CONFIG
     G.g_appdir    = cnxsave->cs_appdir;
     G.g_fullpath  = cnxsave->cs_fullpath;

@@ -46,6 +46,11 @@ void flush_data_cache(void *start, long size);
 void invalidate_data_cache(void *start, long size);
 void invalidate_instruction_cache(void *start, long size);
 
+#if CONF_WITH_CACHE_CONTROL
+WORD cache_exists(void);
+void set_cache(WORD enable);
+#endif
+
 /* bios allocation of ST-RAM */
 UBYTE *balloc_stram(ULONG size, BOOL top);
 

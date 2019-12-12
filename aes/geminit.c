@@ -405,7 +405,7 @@ static void process_inf1(void)
  *
  *  The main function is to determine the auto-run program to be
  *  started, from the #Z line.  We also set the double-click speed
- *  and the blitter status (if applicable), from the #E line.
+ *  and the blitter/cache status (if applicable), from the #E line.
  *
  *  Returns:
  *      TRUE if initial program is a GEM program (normal)
@@ -426,15 +426,21 @@ static BOOL process_inf2(BOOL *isauto)
         if ( *pcurr++ != '#' )
             continue;
         tmp = *pcurr;
-        if (tmp == 'E')             /* #E 3A 11                     */
+        if (tmp == 'E')             /* #E 3A 11 vv vv 00            */
         {                           /* desktop environment          */
             pcurr += 2;
             pcurr = scan_2(pcurr, &env);
             ev_dclick(env & 0x07, TRUE);
+            pcurr = scan_2(pcurr, &env);    /* get desired blitter state */
 #if CONF_WITH_BLITTER
-            scan_2(pcurr, &env);    /* get desired blitter state */
             if (has_blitter)
                 Blitmode((env&0x80)?1:0);
+#endif
+#if CONF_WITH_CACHE_CONTROL
+            pcurr = scan_2(pcurr, &env);    /* skip over video bytes if present */
+            pcurr = scan_2(pcurr, &env);
+            scan_2(pcurr, &env);            /* get desired cache state */
+            set_cache((env&0x08)?0:1);
 #endif
         }
         else if (tmp == 'Z')        /* something like "#Z 01 C:\THING.APP@" */

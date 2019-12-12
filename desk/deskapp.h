@@ -145,6 +145,7 @@ typedef struct
     char cs_timefmt;            /* Time format */
     char cs_datefmt;            /* Date format */
     char cs_blitter;            /* Blitter enabled (boolean) */
+    char cs_cache;              /* Cache enabled (boolean) */
     char cs_appdir;             /* Appl dir is default for non-installed apps (boolean) */
     char cs_fullpath;           /* Full path for arg to non-installed apps (boolean) */
     WSAVE cs_wnode[NUM_WNODES]; /* window save info */
