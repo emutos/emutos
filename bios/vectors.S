@@ -295,6 +295,15 @@ is_ipl:
  * _int_vbl - Int 0x70 - VBL interrupt
  *
  * no video resolution change is done.
+ *
+ * The sequence of events within the VBL interrupt handler
+ * -------------------------------------------------------
+ * According to p.47 of "A Hitchhiker's Guide to the BIOS (November 1985)",
+ * vblqueue processing is done at the end of interrupt handling.  Both
+ * Atari TOS 1.04 and EmuTOS follow this (except that both do screen dump
+ * handling afterwards).  However, Atari TOS 2/3/4 do vblqueue handling
+ * right at the beginning of interrupt handling.  It is unclear whether
+ * this change has any practical consequences.
  */
 
 _int_vbl:
