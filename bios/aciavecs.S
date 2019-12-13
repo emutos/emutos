@@ -50,7 +50,7 @@
 // };
 //
 //- kbdvec (undocumented feature of TOS >= 2.0) is called with the
-//  received data byte in d0.
+//  received data byte in d0, and a pointer to the ikbd iorec in a0.
 //- The ikbdstate description in the Compendium is wrong. It should read:
 //  "When the ikbdstate variable is non-zero, it means that a packet is
 //  currently being retrieved. In that case, kbdlength represents the number
@@ -398,8 +398,9 @@ ikbdraw:
         jne     in_packet       // ikbdstate != 0 => go and add to the packet
         cmp.w   #0xf6,d0        // is byte a packet header?
         jcc     begin_packet    // byte >= 0xf6 => go begin receiving a packet
-        move.l  kbdvec,a0       // ordinary key byte in d0. jump in vector
-        jmp     (a0)            // stack is clean: no need to jsr.
+        lea     _ikbdiorec.w,a0 // set args for kbdvec: a0->iorec (d0=ikbd byte)
+        move.l  kbdvec,-(sp)    // push vector onto stack
+        rts                     // and go there (stack is clean, no need to jsr)
 
 begin_packet:
         move.b  d0,kbdbuf       // put the byte at beginning of the buffer
