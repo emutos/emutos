@@ -398,7 +398,7 @@ ikbdraw:
         jne     in_packet       // ikbdstate != 0 => go and add to the packet
         cmp.w   #0xf6,d0        // is byte a packet header?
         jcc     begin_packet    // byte >= 0xf6 => go begin receiving a packet
-        lea     _ikbdiorec.w,a0 // set args for kbdvec: a0->iorec (d0=ikbd byte)
+        lea     _ikbdiorec,a0   // set args for kbdvec: a0->iorec (d0=ikbd byte)
         move.l  kbdvec,-(sp)    // push vector onto stack
         rts                     // and go there (stack is clean, no need to jsr)
 
