@@ -58,19 +58,15 @@
 
 /* Known differences between this and Atari TOS:
  *
- * a) Although this doesn't appear to be documented, TOS sets up the
- * following registers before entering vectors ikbdsys and midisys:
- *   a0: address of the iorec structure
- *   a1: address of the ACIA control register
- *   a2: address of the error routine (vkbderr or vmiderr)
- *   d2: value of the ACIA status register
- * Currently EmuTOS does not setup these registers.
+ * a) Buffer usage: both EmuTOS and Atari TOS use a separate buffer for
+ * joystick reports.  However EmuTOS uses kbdbuf to accumulate all other
+ * IKBD packets, whereas Atari TOS uses four different buffers:
+ *  . kbdbuf (for response 0xf6)
+ *  . mousebuf (for response 0xf7)
+ *  . relmousebuf (for response 0xf8-0xfb)
+ *  . clockbuf (for response 0xfc)
  *
- * b) In EmuTOS the same buffer kbdbuf is used to accumulate the various IKBD
- * packets, whereas TOS uses five different buffers:
- *   statvec, mousevec (absolute), mousevec (relative), clockvec, joyvec.
- *
- * c) EmuTOS currently does not check errors at all. Atari TOS checks the
+ * b) EmuTOS currently does not check errors at all. Atari TOS checks the
  * following errors:
  *  - if an interrupt request was received and no full byte is ready to be
  *    read, then TOS jumps to the error vector;
