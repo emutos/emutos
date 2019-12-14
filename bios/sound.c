@@ -166,7 +166,7 @@ void sndirq(void)
     UBYTE instr;
 
     code = sndtable;
-    if (code == 0)
+    if (code == NULL)
         return;
 
     if (snddelay)
@@ -190,23 +190,19 @@ void sndirq(void)
     switch(instr)
     {
     case 0x80:
-        sndtmp = *code++;
+        sndtmp = *code++;           /* starting register value for 0x81 command */
         break;
     case 0x81:
-        PSG->control = *code++;
-        sndtmp += *code++;
-        PSG->data = sndtmp;
-        if (sndtmp != *code++)
-        {
-            code -= 4;
-        }
+        PSG->control = *code++;     /* register number */
+        sndtmp += *code++;          /* increment register value */
+        PSG->data = sndtmp;         /*  & send to register      */
+        if (sndtmp != *code++)      /* if current value != ending value, */
+            code -= 4;              /*  rewind to run again next time    */
         break;
-    default:
-        /* break; ??? */
-    case 0xff:
+    default:            /* all remaining commands (> 0x81) just set the delay */
         snddelay = *code++;
         if (snddelay == 0)
-            code = 0;
+            code = NULL;        /* end play */
         break;
     }
 
