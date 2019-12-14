@@ -163,7 +163,7 @@ LONG dosound(const UBYTE *table)
 void sndirq(void)
 {
     const UBYTE *code;
-    UBYTE instr;
+    UBYTE instr, data;
 
     code = sndtable;
     if (code == NULL)
@@ -175,35 +175,38 @@ void sndirq(void)
         return;
     }
 
-    while((instr = *code++) < 0x80)
+    while((instr = *code++) <= 0x80)
     {
+        data = *code++;
+        if (instr == 0x80)
+        {
+            sndtmp = data;          /* starting register value for 0x81 command */
+            continue;
+        }
+        /* other values are assumed to be PSG register numbers (0-15) */
         PSG->control = instr;
         if (instr == PSG_MULTI)
         {
             UBYTE tmp = PSG->control;
-            PSG->data = (tmp & PSG_PORT_MASK) | (*code++ & PSG_MIXER_MASK);
+            PSG->data = (tmp & PSG_PORT_MASK) | (data & PSG_MIXER_MASK);
         } else {
-            PSG->data = *code++;
+            PSG->data = data;
         }
     }
 
-    switch(instr)
+    if (instr == 0x81)
     {
-    case 0x80:
-        sndtmp = *code++;           /* starting register value for 0x81 command */
-        break;
-    case 0x81:
         PSG->control = *code++;     /* register number */
         sndtmp += *code++;          /* increment register value */
         PSG->data = sndtmp;         /*  & send to register      */
         if (sndtmp != *code++)      /* if current value != ending value, */
             code -= 4;              /*  rewind to run again next time    */
-        break;
-    default:            /* all remaining commands (> 0x81) just set the delay */
+    }
+    else                    /* all remaining commands (> 0x81) just set the delay */
+    {
         snddelay = *code++;
         if (snddelay == 0)
             code = NULL;        /* end play */
-        break;
     }
 
     sndtable = code;
