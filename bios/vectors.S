@@ -238,6 +238,22 @@ any_vec:
         lsr.l   #1, d0
         add.l   #1, d0
         move.l  d0, _proc_enum.w
+
+#if CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__)
+        // D0 is 1 if the exception number could not be computed
+        subq    #1, d0
+        bne     dump_stack
+        // exception vector offset is present on stack for 68010 and above
+        tst.w   _longframe
+        beq     dump_stack
+        move.w  6(sp), d0
+        ext.l   d0
+        andi.l  #0xfff, d0
+        lsr.l   #2, d0
+        move.l  d0, _proc_enum.w
+#endif /* CONF_WITH_ADVANCED_CPU && !defined(__mcoldfire__) */
+
+dump_stack:
         // dump 16 words from the stack
         movem.l (sp),d0-d7
 #ifdef __mcoldfire__
