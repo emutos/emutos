@@ -1,9 +1,11 @@
 Programs incompatible with EmuTOS
 =================================
-This is a list of programs that have program bugs or shortcomings that
-prevent them from running properly with EmuTOS, and whose problem has
-been definitively identified.  It is mainly intended to prevent these
-programs from being added to 'bugs.txt' in the future.
+This is a list of programs that have been found to contain bugs or
+shortcomings that prevent them from running properly with EmuTOS, and
+whose problem has been definitively identified.  It is mainly intended
+to prevent these programs from being added to 'bugs.txt' in the future.
+If you're an OS programmer, you may also find it slightly amusing to see
+the weird and wonderful ways some programmers have found to abuse an OS.
 
 Note: in many cases, programs that run on TOS 1.x but not on EmuTOS don't
 run on Atari TOS 2.06 either.  Sometimes they might run on one language
@@ -12,7 +14,10 @@ is invariably caused by the use of undocumented addresses or interfaces,
 or trying to find some 'private' TOS address by the use of heuristics.
 
 
-Program: STOS programs
+Common issues
+=============
+
+Category: STOS program
 ----------------------
 Error 1: joystick and/or keyboard input doesn't work.
 
@@ -41,9 +46,12 @@ Move the program from the AUTO folder to the root of the drive, and run
 it from there.  While STOS programs will then start, most of them will
 remain unusable due to error 1 above.
 
+Note: STOS programs can often be identified by the presence of *.MBK
+files (STOS memory bank files).
 
-Program: old game using fixed addresses
----------------------------------------
+
+Category: old game using fixed addresses
+----------------------------------------
 Error: panic or hang during game startup.
 
 Bug analysis:
@@ -69,8 +77,8 @@ best workaround is to use a version of the game that has been fixed to
 run from HD and with modern TOS versions.
 
 
-Program: old games using undocumented addresses for joystick/keyboard data
---------------------------------------------------------------------------
+Program: old game using undocumented addresses for joystick/keyboard data
+-------------------------------------------------------------------------
 Error: joystick and/or keyboard is ignored.
 
 Bug analysis:
@@ -86,6 +94,10 @@ Some guilty programs:
     (VDI) Invaders, Anduril, Brain Blasters
 
 
+
+Unique issues
+=============
+
 Program: Art for Kids
 ---------------------
 Error: crash during program startup, before anything is displayed, when
@@ -100,7 +112,7 @@ os_conf to 0xff to indicate multilanguage.  This causes a crash when the
 program indexes beyond the end of the array and loads a garbage pointer.
 
 Workaround:
-Use an EmuTOS 256K ROM.
+This is an STe program: use an EmuTOS 256K ROM.
 
 
 Program: Awele v1.01
@@ -212,6 +224,10 @@ Subsequently, when "DISK OP." is selected, the stored long is used as a
 pointer.  In TOS2, the value stored is $4216; in EmuTOS, it's zero,
 resulting in a crash.
 
+Workaround:
+Use an alternate tracker program.  There are many Protracker variants and
+other module tracker programs which work fine with EmuTOS.
+
 
 Program: Ramses
 ---------------
@@ -224,8 +240,8 @@ undocumented things with the bytes of the actual routine:
     https://sourceforge.net/p/emutos/mailman/message/30605378/
 
 
-Program: Reservoir Gods games (Bugger, Bunion, SkyFall, Sworm)
---------------------------------------------------------------
+Program: Reservoir Gods game (Bugger, Bunion, SkyFall, Sworm)
+-------------------------------------------------------------
 Error: panic
 
 Bug analysis:
