@@ -1516,7 +1516,7 @@ void centre_title(OBJECT *root)
 /*
  *  translate and fixup desktop objects
  */
-static void desk_xlate_fix(void)
+static WORD desk_xlate_fix(void)
 {
     OBJECT *tree = desk_rs_trees[ADDINFO];
     OBJECT *objlabel = &tree[DELABEL];
@@ -1554,16 +1554,15 @@ static void desk_xlate_fix(void)
     /* Create te_ptext strings */
     desk_rs_ptext = create_te_ptext(desk_rs_tedinfo, RS_NTED);
     if (!desk_rs_ptext)
-    {
-        KDEBUG(("insufficient memory for desktop te_ptext strings\n"));
-        nomem_alert();          /* infinite loop */
-    }
+        return -1;
 
     /*
      * perform special object alignment - this must be done after
      * translation and coordinate fixing
      */
     align_objects(desk_rs_obj, RS_NOBS);
+
+    return 0;
 }
 
 /* Fake a rsrc_gaddr for the ROM desktop: */
@@ -1658,7 +1657,11 @@ BOOL deskmain(void)
                 (LONG)RS_NOBS*sizeof(OBJECT)));
         nomem_alert();              /* infinite loop */
     }
-    desk_xlate_fix();               /* translates & fixes desktop */
+    if (desk_xlate_fix() < 0)       /* translates & fixes desktop */
+    {
+        KDEBUG(("insufficient memory for desktop te_ptext strings\n"));
+        nomem_alert();          /* infinite loop */
+    }
 
     /* initialize menus and dialogs */
     for (ii = 0; ii < RS_NTREE; ii++)
