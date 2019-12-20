@@ -320,7 +320,7 @@ static BOOL search_prompt(char *searchname)
     char filemask[LEN_ZFNAME];
     OBJECT *tree;
 
-    tree = G.a_trees[ADSEARCH];
+    tree = desk_rs_trees[ADSEARCH];
 
     /*
      * clear any wildcard in dialog
@@ -633,7 +633,7 @@ void fun_mask(WNODE *pw)
     char *maskptr, filemask[LEN_ZFNAME];
     OBJECT *tree;
 
-    tree = G.a_trees[ADFMASK];
+    tree = desk_rs_trees[ADFMASK];
 
     /*
      * get current filemask & insert in dialog
@@ -670,7 +670,7 @@ WORD fun_mkdir(WNODE *pw_node)
     char  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
     char  path[MAXPATHLEN];
 
-    tree = G.a_trees[ADMKDBOX];
+    tree = desk_rs_trees[ADMKDBOX];
     pp_node = &pw_node->w_pnode;
     ptmp = path;
     strcpy(ptmp, pp_node->p_spec);

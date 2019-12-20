@@ -260,7 +260,7 @@ static void men_update(void)
 {
     WORD item, napp, ndesk, nsel, ntrash, nwin, isapp;
     ANODE *appl;
-    OBJECT *tree = G.a_trees[ADMENU];
+    OBJECT *tree = desk_rs_trees[ADMENU];
     OBJECT *obj;
 
     /*
@@ -401,7 +401,7 @@ static WORD do_deskmenu(WORD item)
     {
     case ABOUITEM:
         display_free_stack();
-        tree = G.a_trees[ADDINFO];
+        tree = desk_rs_trees[ADDINFO];
         /* draw the form        */
         start_dialog(tree);
         while(!done)
@@ -545,7 +545,7 @@ static WORD do_filemenu(WORD item)
 static WORD do_viewmenu(WORD item)
 {
     WORD new, rc = 0;
-    OBJECT *menutree = G.a_trees[ADMENU];
+    OBJECT *menutree = desk_rs_trees[ADMENU];
 
     switch(item)
     {
@@ -686,14 +686,14 @@ static WORD do_optnmenu(WORD item)
 #if CONF_WITH_BLITTER
     case BLITITEM:
         G.g_blitter = !G.g_blitter;
-        menu_icheck(G.a_trees[ADMENU], BLITITEM, G.g_blitter);  /* flip blit mode */
+        menu_icheck(desk_rs_trees[ADMENU], BLITITEM, G.g_blitter);  /* flip blit mode */
         Blitmode(G.g_blitter);
         break;
 #endif
 #if CONF_WITH_CACHE_CONTROL
     case CACHITEM:
         G.g_cache = !G.g_cache;
-        menu_icheck(G.a_trees[ADMENU], CACHITEM, G.g_cache);    /* flip cache mode */
+        menu_icheck(desk_rs_trees[ADMENU], CACHITEM, G.g_cache);    /* flip cache mode */
         Supexec((LONG)desktop_set_cache);   /* uses G.g_cache */
         break;
 #endif
@@ -792,7 +792,7 @@ static WORD hndl_menu(WORD title, WORD item)
         break;
     }
 
-    menu_tnormal(G.a_trees[ADMENU], title, 1);
+    menu_tnormal(desk_rs_trees[ADMENU], title, 1);
 
     return done;
 }
@@ -938,7 +938,7 @@ static BOOL check_alt_letter_key(WORD thechar)
  */
 static WORD scan_menu(char type, char shortcut, WORD *itemptr)
 {
-    OBJECT *tree = G.a_trees[ADMENU];
+    OBJECT *tree = desk_rs_trees[ADMENU];
     OBJECT *obj;
     char *text, *p;
     WORD title_root, item_root, title, item;
@@ -1021,7 +1021,7 @@ static WORD hndl_kbd(WORD thechar)
     done = FALSE;
     if (title >= 0)
     {
-        menu_tnormal(G.a_trees[ADMENU], title, 0);
+        menu_tnormal(desk_rs_trees[ADMENU], title, 0);
         done = hndl_menu(title, item);
     }
 
@@ -1233,7 +1233,7 @@ static void cnx_get(void)
     G.g_blitter   = cnxsave->cs_blitter;
 #if CONF_WITH_CACHE_CONTROL
     G.g_cache     = cnxsave->cs_cache;
-    menu_icheck(G.a_trees[ADMENU], CACHITEM, G.g_cache);
+    menu_icheck(desk_rs_trees[ADMENU], CACHITEM, G.g_cache);
 #endif
 #if CONF_WITH_DESKTOP_CONFIG
     G.g_appdir    = cnxsave->cs_appdir;
@@ -1241,7 +1241,7 @@ static void cnx_get(void)
 #endif
 #if CONF_WITH_SIZE_TO_FIT
     G.g_ifit      = cnxsave->cs_sizefit;
-    menu_icheck(G.a_trees[ADMENU], FITITEM, G.g_ifit ? 1 : 0);
+    menu_icheck(desk_rs_trees[ADMENU], FITITEM, G.g_ifit ? 1 : 0);
 #endif
     G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
     G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
@@ -1663,8 +1663,7 @@ BOOL deskmain(void)
     /* initialize menus and dialogs */
     for (ii = 0; ii < RS_NTREE; ii++)
     {
-        rsrc_gaddr_rom(R_TREE, ii, (void **)&G.a_trees[ii]);
-        centre_title(G.a_trees[ii]);
+        centre_title(desk_rs_trees[ii]);
     }
 
     for (ii = 0; ii < RS_NBB; ii++) /* initialize bit images */
@@ -1697,7 +1696,7 @@ BOOL deskmain(void)
     desk_verify(DESKWH, FALSE);     /* initialise g_croot, g_cwin, g_wlastsel  */
 
     /* establish menu items */
-    menutree = G.a_trees[ADMENU];
+    menutree = desk_rs_trees[ADMENU];
     menu_icheck(menutree, ICONITEM+G.g_iview, 1);
     menu_icheck(menutree, NAMEITEM+G.g_isort, 1);
 #if CONF_WITH_SIZE_TO_FIT

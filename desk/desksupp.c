@@ -604,7 +604,7 @@ BOOL print_file(char *name,LONG bufsize,char *iobuf)
     handle = (WORD)rc;
 
     /* open dialog, set busy cursor */
-    tree = G.a_trees[ADPRINT];
+    tree = desk_rs_trees[ADPRINT];
     set_tedinfo_name(tree, PRNAME, filename_start(name));
     start_dialog(tree);
 
@@ -764,7 +764,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
      * set up for text output
      */
     graf_mouse(M_OFF, NULL);
-    menu_bar(G.a_trees[ADMENU],0);
+    menu_bar(desk_rs_trees[ADMENU],0);
     wind_update(BEG_UPDATE);
     form_dial(FMD_START, 0,0,0,0, 0,0,scr_width,scr_height);
     clear_screen();
@@ -799,7 +799,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     clear_screen();     /* neatness */
     form_dial(FMD_FINISH, 0,0,0,0, 0,0,scr_width,scr_height);
     wind_update(END_UPDATE);
-    menu_bar(G.a_trees[ADMENU],1);
+    menu_bar(desk_rs_trees[ADMENU],1);
     graf_mouse(M_ON, NULL);
 }
 #endif
@@ -1483,7 +1483,7 @@ void do_format(void)
     WORD exitobj, rc;
     WORD max_width, incr;
 
-    tree = G.a_trees[ADFORMAT];
+    tree = desk_rs_trees[ADFORMAT];
 
     /*
      * enable button(s) for existent drives, disable for non-existent

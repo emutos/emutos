@@ -90,7 +90,7 @@ void draw_dial(OBJECT *tree)
  */
 static WORD do_namecon(void)
 {
-    OBJECT *tree = G.a_trees[ADCPALER];
+    OBJECT *tree = desk_rs_trees[ADCPALER];
     WORD ob;
 
     desk_busy_off();
@@ -102,7 +102,7 @@ static WORD do_namecon(void)
         ml_havebox = TRUE;
     }
     form_do(tree, 0);
-    draw_dial(G.a_trees[ADCPYDEL]);
+    draw_dial(desk_rs_trees[ADCPYDEL]);
     desk_busy_on();
 
     ob = inf_gindex(tree, CAOK, 3) + CAOK;
@@ -295,7 +295,7 @@ static WORD d_dofoldel(char *ppath)
 static WORD output_fname(char *psrc_file, char *pdst_file)
 {
     WORD ob = 0, samefile;
-    OBJECT *tree = G.a_trees[ADCPALER];
+    OBJECT *tree = desk_rs_trees[ADCPALER];
     char ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], ml_fstr[LEN_ZFNAME];
     char old_dst[LEN_ZFNAME];
 
@@ -696,7 +696,7 @@ WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree,
 static WORD get_new_name(char *dstpth)
 {
     char ml_fsrc[LEN_ZFNAME], ml_fdst[LEN_ZFNAME], str[LEN_ZFNAME];
-    OBJECT *tree = G.a_trees[ADCPALER];
+    OBJECT *tree = desk_rs_trees[ADCPALER];
     WORD ob;
 
     fmt_str(filename_start(dstpth), ml_fsrc);   /* extract current folder name */
@@ -873,7 +873,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
     tree = NULL;
     if (op != OP_COUNT)
     {
-        tree = G.a_trees[ADCPYDEL];
+        tree = desk_rs_trees[ADCPYDEL];
         obj = tree + CDTITLE;
     }
 

@@ -490,7 +490,7 @@ WORD inf_file_folder(char *ppath, FNODE *pf)
     char poname[LEN_ZFNAME], pnname[LEN_ZFNAME];
     OBJECT *obj;
 
-    tree = G.a_trees[ADFFINFO];
+    tree = desk_rs_trees[ADFFINFO];
     deselect_all(tree);
 
     title = (pf->f_attr & FA_SUBDIR) ? STFOINFO : STFIINFO;
@@ -652,7 +652,7 @@ WORD inf_disk(char dr_id)
         return 1;
 
     desk_busy_on();
-    tree = G.a_trees[ADDISKIN];
+    tree = desk_rs_trees[ADDISKIN];
 
     srcpth[0] = dr_id;
     srcpth[1] = ':';
@@ -709,8 +709,8 @@ static WORD inf_which(OBJECT *tree, WORD baseobj, WORD numobj)
  */
 WORD inf_pref(void)
 {
-    OBJECT *tree1 = G.a_trees[ADSETPRE];
-    OBJECT *tree2 = G.a_trees[ADSETPR2];
+    OBJECT *tree1 = desk_rs_trees[ADSETPRE];
+    OBJECT *tree2 = desk_rs_trees[ADSETPR2];
     WORD oldtime, olddate;
     WORD sndefpref;
     WORD button;
@@ -863,7 +863,7 @@ BOOL inf_backgrounds(void)
         break;
     }
 
-    tree = G.a_trees[ADBKGND];
+    tree = desk_rs_trees[ADBKGND];
 
     /* hide colours that are not available in the current resolution */
     for (i = unused, obj = tree+BGCOL0+unused; i < 16; i++, obj++)
@@ -1018,7 +1018,7 @@ static void init_conf(OBJECT *tree, ANODE *pa)
  */
 void inf_conf(void)
 {
-    OBJECT *tree = G.a_trees[ADDESKCF];
+    OBJECT *tree = desk_rs_trees[ADDESKCF];
     ANODE *pa[NUM_FUNKEYS];
     WORD exitobj, redraw, current, i, n;
     BOOL done = FALSE;
@@ -1126,7 +1126,7 @@ WORD opn_appl(char *papname, char *ptail)
 {
     OBJECT *tree;
 
-    tree = G.a_trees[ADOPENAP];
+    tree = desk_rs_trees[ADOPENAP];
 
     set_tedinfo_name(tree, APPLNAME, papname);
     inf_sset(tree, APPLPARM, "");
