@@ -55,6 +55,7 @@
         .extern _timer_ms
         .extern _v_bas_ad
 
+        .extern _detect_monitor_change  // screen.c
         .extern _blink          // conout.c - console output
 
 // Note: this scheme is designed to print the exception number
@@ -310,8 +311,6 @@ is_ipl:
 /*
  * _int_vbl - Int 0x70 - VBL interrupt
  *
- * no video resolution change is done.
- *
  * The sequence of events within the VBL interrupt handler
  * -------------------------------------------------------
  * According to p.47 of "A Hitchhiker's Guide to the BIOS (November 1985)",
@@ -343,8 +342,10 @@ _int_vbl:
 #endif
         addq.l  #1, _vbclock.w          // count number of VBL interrupts
 
-        // TODO: Check for monitor switching on normal ST(E) here,
-        // and jump to _swv_vec if necessary...
+#if CONF_WITH_ATARI_VIDEO
+// check for monitor switching and jump to _swv_vec if necessary...
+        jsr     _detect_monitor_change
+#endif
 
         jsr     _blink                  // blink cursor
 

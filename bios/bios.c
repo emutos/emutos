@@ -304,6 +304,7 @@ static void bios_init(void)
     etv_timer = (ETV_TIMER_T) just_rts;
     etv_critic = default_etv_critic;
     etv_term = just_rts;
+    swv_vec = just_rts;
 
     /* setup default VBL queue with vbl_list[] */
     nvbls = ARRAY_SIZE(vbl_list);
@@ -433,6 +434,7 @@ static void bios_init(void)
     boot_status |= DOS_AVAILABLE;   /* track progress */
 
     /* Enable VBL processing */
+    swv_vec = os_header.reseth; /* reset system on monitor change & jump to _main */
     vblsem = 1;
 
 #if CONF_WITH_CARTRIDGE

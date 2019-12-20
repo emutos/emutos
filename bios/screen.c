@@ -37,6 +37,7 @@
 #include "amiga.h"
 #endif
 
+void detect_monitor_change(void);
 static void setphys(const UBYTE *addr);
 
 #if CONF_WITH_ATARI_VIDEO
@@ -1075,3 +1076,96 @@ void vsync(void)
     set_sr(old_sr);
 #endif /* CONF_WITH_ATARI_VIDEO */
 }
+
+#if CONF_WITH_ATARI_VIDEO
+/*
+ * detect_monitor_change(): called by VBL interrupt handler
+ *
+ * this checks if the current monitor mode (monochrome/colour) is the
+ * same as that set in the shifter.  if not, it calls swv_vec() which
+ * by default does a system restart.
+ */
+void detect_monitor_change(void)
+{
+    SBYTE monoflag;
+    volatile SBYTE *gpip = ((volatile SBYTE *)0xfffffa01);
+    volatile UBYTE *shifter;
+    UBYTE monores;
+    UBYTE curres;
+    UBYTE newres;
+
+    /* not supported on VIDEL */
+    if (HAS_VIDEL)
+        return;
+
+    monoflag = *gpip;
+    if (HAS_DMASOUND)
+    {
+        WORD sr = set_sr(0x2700);
+        SBYTE monoflag2;
+        SBYTE dmaplay;
+
+        for (;;)
+        {
+            dmaplay = *((volatile SBYTE *)0xffff8901);
+            monoflag = *gpip;
+            monoflag2 = *gpip;
+            if ((monoflag ^ monoflag2) < 0)
+                continue;
+            if (*((volatile SBYTE *)0xffff8901) == dmaplay)
+                break;
+        }
+
+        set_sr(sr);
+        if (dmaplay & 1)
+            monoflag = -monoflag;
+    }
+
+    if (HAS_TT_SHIFTER)
+    {
+        shifter = ((volatile UBYTE *)0xffff8262);
+        curres = *shifter & 7;
+        monores = TT_HIGH;
+    }
+    else    /* assumed ST(e) shifter */
+    {
+        shifter = ((volatile UBYTE *)0xffff8260);
+        curres = *shifter & 3;
+        monores = ST_HIGH;
+    }
+
+    if (curres == monores)  /* current resolution is mono */
+    {
+        if (monoflag >= 0)  /* mono monitor detected */
+            return;
+        /* colour monitor detected: switch resolution */
+        newres = defshiftmod;   /* use default shifter mode */
+        if (newres == monores)  /* but if it's mono, make it ST LOW */
+            newres = ST_LOW;
+    }
+    else        /* current resolution is a colour resolution */
+    {
+        if (monoflag < 0)   /* & colour monitor detected */
+            return;
+        /* mono monitor detected: switch resolution */
+#if 0
+        /*
+         * TOS 2.06 & 3.06 (at least) call this here to wait until just
+         * after a VBL.  it is surmised that this is because:
+         * (a) experience shows that at least some video hardware
+         *     misbehaves if the shifter value is not changed 'soon'
+         *     after the interrupt, and
+         * (b) in TOS 2/3, the vblqueue is processed before this routine
+         *     is called, and thus lengthy vblqueue function(s) could
+         *     trigger the misbehaviour.
+         */
+        vsync();
+#endif
+        newres = monores;
+    }
+
+    sshiftmod = newres;
+    *shifter = (*shifter & 0xf8) | newres;
+    (*swv_vec)();
+}
+#endif /* CONF_WITH_ATARI_VIDEO */

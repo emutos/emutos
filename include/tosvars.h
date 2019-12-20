@@ -43,6 +43,7 @@ extern UBYTE *v_bas_ad;
 
 extern const UWORD *colorptr;
 extern UBYTE *screenpt;
+extern UBYTE defshiftmod;
 extern UBYTE sshiftmod;
 
 extern UBYTE *phystop;
@@ -107,5 +108,7 @@ extern void (*kcl_hook)(void);
 extern ETV_TIMER_T etv_timer;
 extern LONG (*etv_critic)(WORD err,WORD dev);
 extern void (*etv_term)(void);
+
+extern void (*swv_vec)(void);
 
 #endif /* TOSVARS_H */
