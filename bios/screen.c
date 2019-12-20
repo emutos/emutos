@@ -1105,6 +1105,16 @@ void detect_monitor_change(void)
         SBYTE monoflag2;
         SBYTE dmaplay;
 
+        /*
+         * on systems with DMA sound, the 'DMA sound active' bit (bit 0
+         * of 0xffff8901) is XOR'ed with the monochrome detect bit before
+         * being presented at MFP GPIP bit 7.  therefore we must read both
+         * bits in order to determine the monitor type.  since the 'sound
+         * active' bit can be changed by the hardware at any time, we must
+         * avoid a race condition.  the following code waits for both the
+         * 'sound active' bit and MFP GPIP bit 7 to stabilise before
+         * determining the type of monitor connected.
+         */
         for (;;)
         {
             dmaplay = *((volatile SBYTE *)0xffff8901);
