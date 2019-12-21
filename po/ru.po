@@ -355,44 +355,44 @@ msgid "  Desktop info..."
 msgstr "  Информация о десктопе..."
 
 #: desk/desk_rsc.c
-msgid "  Open            ^O"
-msgstr "  Открыть               ^O"
+msgid "  Open"
+msgstr "  Открыть"
 
 #: desk/desk_rsc.c
-msgid "  Info/Rename...  ^I"
-msgstr "  Инфо/Переименовать... ^I"
+msgid "  Info/Rename..."
+msgstr "  Инфо/Переименовать..."
 
 #: desk/desk_rsc.c
-msgid "  New Folder...   ^N"
-msgstr "  Новая папка...        ^N"
+msgid "  New Folder..."
+msgstr "  Новая папка..."
 
 #: desk/desk_rsc.c
-msgid "  Close           ^U"
-msgstr "  На шаг вверх          ^U"
+msgid "  Close"
+msgstr "  На шаг вверх"
 
 #: desk/desk_rsc.c
-msgid "  Close window    ^W"
-msgstr "  Закрыть окно          ^W"
+msgid "  Close window"
+msgstr "  Закрыть окно"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
 msgstr "  Маска файлов..."
 
 #: desk/desk_rsc.c
-msgid "  Delete...       ^D"
-msgstr "  Удалить...            ^D"
+msgid "  Delete..."
+msgstr "  Удалить..."
 
 #: desk/desk_rsc.c
 msgid "  Format..."
 msgstr "  Форматировать..."
 
 #: desk/desk_rsc.c
-msgid "  Execute EmuCON  ^Z"
-msgstr "  Запустить EmuCON      ^Z"
+msgid "  Execute EmuCON"
+msgstr "  Запустить EmuCON"
 
 #: desk/desk_rsc.c
-msgid "  Shutdown        ^Q"
-msgstr "  Выключить             ^Q"
+msgid "  Shutdown"
+msgstr "  Выключить"
 
 #: desk/desk_rsc.c
 msgid "  Show as icons"
@@ -451,16 +451,16 @@ msgid "  Desktop configuration..."
 msgstr "  Конфигурация десктопа..."
 
 #: desk/desk_rsc.c
-msgid "  Change resolution...  ^R"
-msgstr "  Изменить разрешение...   ^R"
+msgid "  Change resolution..."
+msgstr "  Изменить разрешение..."
 
 #: desk/desk_rsc.c
 msgid "  Read .INF file..."
 msgstr "  Прочитать .INF-файл..."
 
 #: desk/desk_rsc.c
-msgid "  Save desktop...       ^S"
-msgstr "  Сохранить настройки...   ^S"
+msgid "  Save desktop..."
+msgstr "  Сохранить настройки..."
 
 #: desk/desk_rsc.c
 msgid "  Blitter"

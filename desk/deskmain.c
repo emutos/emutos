@@ -68,6 +68,10 @@ typedef struct {
 
 #define ESC     0x1b
 
+/* architectural */
+#define CHAR_WIDTH          8   /* in pixels */
+#define MIN_DESKMENU_WIDTH  20  /* in characters, compatible with Atari TOS */
+
 
 /*
  * the following will always be true unless unlikely changes occur
@@ -75,7 +79,7 @@ typedef struct {
  */
 #define TITLE_ROOT      (DESKMENU-1)
 #define ITEM_ROOT       (ABOUITEM-1)
-
+#define SHORTCUT_SIZE   3   /* allow for ' ^X' in menu items */
 
 /*
  * flags for communication between do_viewmenu(), desk_all()
@@ -135,6 +139,30 @@ static const UBYTE ILL_NOWIN[] = {
     0 };
 
 /*
+ * table that defines keyboard shortcut defaults to insert in menu items
+ *
+ * the table consists of pairs of values: ( item_object_number, character )
+ */
+static const UBYTE shortcut_table[] =
+{
+    OPENITEM, 'O',
+    SHOWITEM, 'I',
+    NFOLITEM, 'N',
+    CLOSITEM, 'U',
+    CLSWITEM, 'W',
+    DELTITEM, 'D',
+#if WITH_CLI
+    CLIITEM, 'Z',
+#endif
+#if CONF_WITH_SHUTDOWN
+    QUITITEM, 'Q',
+#endif
+    RESITEM, 'R',
+    SAVEITEM, 'S',
+    0
+};
+
+/*
  * table to map the keyboard arrow character to the corresponding
  * value to put in msg[3] of the WM_ARROWED msg
  *
@@ -180,6 +208,7 @@ static int blitter_is_present;
 static int cache_is_present;
 #endif
 static char *desk_rs_ptext;     /* see desk_xlate_fix() */
+static char *desk_rs_strings;   /* see copy_menu_items() */
 
 #if CONF_WITH_READ_INF
 static BOOL restart_desktop;    /* TRUE iff we need to restart the desktop */
@@ -939,7 +968,7 @@ static WORD scan_menu(char shortcut, WORD *itemptr)
 {
     OBJECT *tree = desk_rs_trees[ADMENU];
     OBJECT *obj;
-    char *text, *p;
+    char *p;
     WORD item_root, title, item;
 
     item_root = ITEM_ROOT;
@@ -954,11 +983,8 @@ static WORD scan_menu(char shortcut, WORD *itemptr)
                 continue;
             if ((obj->ob_type & 0x00ff) != G_STRING)    /* all items are strings */
                 continue;
-            text = (char *)obj->ob_spec;
-            p = strchr(text,'^');                       /* look for marker */
-            if (!p)
-                continue;
-            if (*(p+1) == shortcut)
+            p = (char *)obj->ob_spec + obj->ob_width/CHAR_WIDTH - SHORTCUT_SIZE;
+            if ((*p == '^') && (*(p+1) == shortcut))
             {
                 *itemptr = item;
                 return title;
@@ -1291,10 +1317,8 @@ static void cnx_get(void)
  *  separator lines
  *
  *  Note - the code below is based on the assumption that the width of
- *  the system font is eight (documented as such in lineavars.h)
+ *  the system font is CHAR_WIDTH pixels (documented as such in lineavars.h)
  */
-#define CHAR_WIDTH 8            /* in pixels */
-#define MIN_DESKMENU_WIDTH  20  /* in characters, compatible with Atari TOS */
 static void adjust_menu(OBJECT *obj_array)
 {
 #define OBJ(i) (&obj_array[i])
@@ -1512,6 +1536,95 @@ void centre_title(OBJECT *root)
 }
 
 /*
+ *  copy menu item strings from ROM to RAM
+ */
+static WORD copy_menu_items(void)
+{
+    OBJECT *tree = desk_rs_trees[ADMENU];
+    WORD dropdowns, item_root, item;
+    WORD count, width, max_width, size = 0;
+    char *p, *q;
+
+    dropdowns = tree->ob_tail;
+
+    /* calculate the amount of memory required */
+    for (item_root = tree[ITEM_ROOT].ob_next; item_root != dropdowns;
+                                                    item_root = tree[item_root].ob_next)
+    {
+        count = 0;
+        max_width = 0;
+        for (item = tree[item_root].ob_head; item != item_root; item = tree[item].ob_next)
+        {
+            q = (char *)tree[item].ob_spec;
+            if (*q != '-')          /* not a separator */
+            {
+                count++;
+                width = strlen(q);
+                if (width > max_width)
+                    max_width = width;
+            }
+        }
+        max_width += 1 + SHORTCUT_SIZE;
+        tree[item_root].ob_width = max_width;   /* remember for this menu */
+        size += count * max_width;
+    }
+
+    /* allocate space for strings */
+    desk_rs_strings = dos_alloc_anyram(size);
+    if (!desk_rs_strings)
+        return -1;
+
+    /* copy strings to RAM, padding with spaces & adjusting object pointers */
+    p = desk_rs_strings;
+    for (item_root = tree[ITEM_ROOT].ob_next; item_root != dropdowns;
+                                                    item_root = tree[item_root].ob_next)
+    {
+        width = tree[item_root].ob_width;
+        for (item = tree[item_root].ob_head; item != item_root; item = tree[item].ob_next)
+        {
+            q = (char *)tree[item].ob_spec;
+            if (*q != '-')      /* not a separator */
+            {
+                strcpy(p, q);   /* copy string, pad with spaces */
+                for (q = p+strlen(p); q < p+width-1; )
+                    *q++ = ' ';
+                *q++ = '\0';
+                tree[item].ob_spec = (LONG)p;
+                p = q;
+            }
+            tree[item].ob_width = width;    /* width-adjust all items */
+        }
+    }
+
+    return 0;
+}
+
+
+/*
+ *  install default menu shortcuts
+ *
+ *  the shortcut is inserted (as ^X) at the end of the menu item text,
+ *  with one space following
+ *
+ *  note: when this is called, ob_width has already been converted to pixels
+ */
+static void install_default_shortcuts(void)
+{
+    OBJECT *obj, *tree = desk_rs_trees[ADMENU];
+    const UBYTE *p;
+    char *q;
+
+    for (p = shortcut_table; *p; p += 2)
+    {
+        obj = &tree[*p];
+        q = (char *)obj->ob_spec + (obj->ob_width+CHAR_WIDTH-1)/CHAR_WIDTH - SHORTCUT_SIZE;
+        *q++ = '^';
+        *q = *(p+1);
+    }
+}
+
+
+/*
  *  translate and fixup desktop objects
  */
 static WORD desk_xlate_fix(void)
@@ -1524,6 +1637,10 @@ static WORD desk_xlate_fix(void)
 
     /* translate strings in objects */
     xlate_obj_array(desk_rs_obj, RS_NOBS);
+
+    /* copies menu item strings to RAM */
+    if (copy_menu_items() < 0)
+        return -1;
 
     /* insert the version number */
     objversion->ob_spec = (LONG) version;
@@ -1649,7 +1766,7 @@ BOOL deskmain(void)
     bzero(G.g_cnxsave, sizeof(CSAVE));
 
     /* initialize resources */
-    if (desk_rs_init() < 0)         /* copies ROM to RAM */
+    if (desk_rs_init() < 0)         /* copies OBJECTs and TEDINFOs in ROM to RAM */
     {
         KDEBUG(("insufficient memory for desktop objects (need %ld bytes)\n",
                 (LONG)RS_NOBS*sizeof(OBJECT)));
@@ -1657,7 +1774,7 @@ BOOL deskmain(void)
     }
     if (desk_xlate_fix() < 0)       /* translates & fixes desktop */
     {
-        KDEBUG(("insufficient memory for desktop te_ptext strings\n"));
+        KDEBUG(("insufficient memory for desktop strings\n"));
         nomem_alert();          /* infinite loop */
     }
 
@@ -1678,6 +1795,11 @@ BOOL deskmain(void)
      */
     strcpy(gl_amstr, desktop_str_addr(STAM));
     strcpy(gl_pmstr, desktop_str_addr(STPM));
+
+    /*
+     * install the default keyboard shortcuts in the menu strings
+     */
+    install_default_shortcuts();
 
     /* Initialize icons and apps from memory, or EMUDESK.INF,
      * or builtin defaults
@@ -1807,6 +1929,7 @@ BOOL deskmain(void)
         dos_free(G.g_cnxsave);      /* the context save area */
         dos_free(desk_rs_ptext);    /* the te_ptext fields for the EmuDesk resource */
         dos_free(desk_rs_obj);      /* the RAM copies of the Emudesk resource objects */
+        dos_free(desk_rs_strings);  /* the RAM copies of the EmuDesk menu item strings */
         desk_busy_off();
         rc = FALSE;                 /* _deskstart will call us again immediately */
     }

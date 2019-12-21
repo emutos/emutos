@@ -354,44 +354,44 @@ msgid "  Desktop info..."
 msgstr "  Info o desktopu..."
 
 #: desk/desk_rsc.c
-msgid "  Open            ^O"
-msgstr "  Otevøít         ^O"
+msgid "  Open"
+msgstr "  Otevøít"
 
 #: desk/desk_rsc.c
-msgid "  Info/Rename...  ^I"
-msgstr "  Info/Jméno...   ^I"
+msgid "  Info/Rename..."
+msgstr "  Info/Jméno..."
 
 #: desk/desk_rsc.c
-msgid "  New folder...   ^N"
-msgstr "  Nový adresáø... ^N"
+msgid "  New folder..."
+msgstr "  Nový adresáø..."
 
 #: desk/desk_rsc.c
-msgid "  Close           ^U"
-msgstr "  Zavøít          ^U"
+msgid "  Close"
+msgstr "  Zavøít"
 
 #: desk/desk_rsc.c
-msgid "  Close window    ^W"
-msgstr "  Zavøít okno     ^W"
+msgid "  Close window"
+msgstr "  Zavøít okno"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
 msgstr "  Nastavit masku..."
 
 #: desk/desk_rsc.c
-msgid "  Delete...       ^D"
-msgstr "  Smazat...       ^D"
+msgid "  Delete..."
+msgstr "  Smazat..."
 
 #: desk/desk_rsc.c
 msgid "  Format..."
 msgstr "  Formátovat..."
 
 #: desk/desk_rsc.c
-msgid "  Execute EmuCON  ^Z"
-msgstr "  Spustit EmuCON  ^Z"
+msgid "  Execute EmuCON"
+msgstr "  Spustit EmuCON"
 
 #: desk/desk_rsc.c
-msgid "  Shutdown        ^Q"
-msgstr "  Vypnout         ^Q"
+msgid "  Shutdown"
+msgstr "  Vypnout"
 
 #: desk/desk_rsc.c
 msgid "  Show as icons"
@@ -450,16 +450,16 @@ msgid "  Desktop configuration..."
 msgstr "  Konfigurace desktopu..."
 
 #: desk/desk_rsc.c
-msgid "  Change resolution...  ^R"
-msgstr "  Zmìnit rozli¹ení...   ^R"
+msgid "  Change resolution..."
+msgstr "  Zmìnit rozli¹ení..."
 
 #: desk/desk_rsc.c
 msgid "  Read .INF file..."
 msgstr "  Naèíst .INF soubor..."
 
 #: desk/desk_rsc.c
-msgid "  Save desktop...       ^S"
-msgstr "  Ulo¾it desktop...     ^S"
+msgid "  Save desktop..."
+msgstr "  Ulo¾it desktop..."
 
 #: desk/desk_rsc.c
 msgid "  Blitter"

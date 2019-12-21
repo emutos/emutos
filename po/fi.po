@@ -354,44 +354,44 @@ msgid "  Desktop info..."
 msgstr "  Ohjelmasta..."
 
 #: desk/desk_rsc.c
-msgid "  Open            ^O"
-msgstr "  Avaa                ^O"
+msgid "  Open"
+msgstr "  Avaa"
 
 #: desk/desk_rsc.c
-msgid "  Info/Rename...  ^I"
-msgstr "  Näytä tiedot...     ^I"
+msgid "  Info/Rename..."
+msgstr "  Näytä tiedot..."
 
 #: desk/desk_rsc.c
-msgid "  New folder...   ^N"
-msgstr "  Uusi kansio...      ^N"
+msgid "  New folder..."
+msgstr "  Uusi kansio..."
 
 #: desk/desk_rsc.c
-msgid "  Close           ^U"
-msgstr "  Sulje               ^U"
+msgid "  Close"
+msgstr "  Sulje"
 
 #: desk/desk_rsc.c
-msgid "  Close window    ^W"
-msgstr "  Sulje ikkuna        ^W"
+msgid "  Close window"
+msgstr "  Sulje ikkuna"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
 msgstr "  Aseta tiedostomaski..."
 
 #: desk/desk_rsc.c
-msgid "  Delete...       ^D"
-msgstr "  Poista...           ^D"
+msgid "  Delete..."
+msgstr "  Poista..."
 
 #: desk/desk_rsc.c
 msgid "  Format..."
 msgstr "  Alusta..."
 
 #: desk/desk_rsc.c
-msgid "  Execute EmuCON  ^Z"
-msgstr "  Käynnistä EmuCON    ^Z"
+msgid "  Execute EmuCON"
+msgstr "  Käynnistä EmuCON"
 
 #: desk/desk_rsc.c
-msgid "  Shutdown        ^Q"
-msgstr "  Pysäytä systeemi    ^Q"
+msgid "  Shutdown"
+msgstr "  Pysäytä systeemi"
 
 #: desk/desk_rsc.c
 msgid "  Show as icons"
@@ -450,16 +450,16 @@ msgid "  Desktop configuration..."
 msgstr "  Työpöytäasetukset..."
 
 #: desk/desk_rsc.c
-msgid "  Change resolution...  ^R"
-msgstr "  Vaihda tarkkuutta... ^R"
+msgid "  Change resolution..."
+msgstr "  Vaihda tarkkuutta..."
 
 #: desk/desk_rsc.c
 msgid "  Read .INF file..."
 msgstr "  Lue .INF tiedosto..."
 
 #: desk/desk_rsc.c
-msgid "  Save desktop...       ^S"
-msgstr "  Tallenna työpöytä... ^S"
+msgid "  Save desktop..."
+msgstr "  Tallenna työpöytä..."
 
 #: desk/desk_rsc.c
 msgid "  Blitter"

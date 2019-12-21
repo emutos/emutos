@@ -368,44 +368,44 @@ msgid "  Desktop info..."
 msgstr "  ¢¨¦­¦¨åœª Desktop..."
 
 #: desk/desk_rsc.c
-msgid "  Open            ^O"
-msgstr "  ê¤¦ š£˜                    ^O"
+msgid "  Open"
+msgstr "  ê¤¦ š£˜"
 
 #: desk/desk_rsc.c
-msgid "  Info/Rename...  ^I"
-msgstr "  ¢¨¦­¦¨åœª/‹œ«¦¤¦£˜©å˜... ^I"
+msgid "  Info/Rename..."
+msgstr "  ¢¨¦­¦¨åœª/‹œ«¦¤¦£˜©å˜..."
 
 #: desk/desk_rsc.c
-msgid "  New Folder...   ^N"
-msgstr "  Nâ¦ª ”á¡œ¢¦ª...            ^N"
+msgid "  New Folder..."
+msgstr "  Nâ¦ª ”á¡œ¢¦ª..."
 
 #: desk/desk_rsc.c
-msgid "  Close           ^U"
-msgstr "  ‰¢œå© £¦                   ^U"
+msgid "  Close"
+msgstr "  ‰¢œå© £¦"
 
 #: desk/desk_rsc.c
-msgid "  Close window    ^W"
-msgstr "  ‰¢œå© £¦ §˜¨˜Ÿç¨¦¬         ^W"
+msgid "  Close window"
+msgstr "  ‰¢œå© £¦ §˜¨˜Ÿç¨¦¬"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
 msgstr "  ¨ ©£æª £á©¡˜ª ˜¨®œå¦¬..."
 
 #: desk/desk_rsc.c
-msgid "  Delete...       ^D"
-msgstr "  ƒ ˜š¨˜­ã...                ^D"
+msgid "  Delete..."
+msgstr "  ƒ ˜š¨˜­ã..."
 
 #: desk/desk_rsc.c
 msgid "  Format..."
 msgstr "  ƒ ˜£æ¨­à©..."
 
 #: desk/desk_rsc.c
-msgid "  Execute EmuCON  ^Z"
-msgstr "  „¡«â¢œ© EmuCON            ^Z"
+msgid "  Execute EmuCON"
+msgstr "  „¡«â¢œ© EmuCON"
 
 #: desk/desk_rsc.c
-msgid "  Shutdown        ^Q"
-msgstr "  ’œ¨£˜« ©£æª                ^Q"
+msgid "  Shutdown"
+msgstr "  ’œ¨£˜« ©£æª"
 
 #: desk/desk_rsc.c
 msgid "  Show as icons"
@@ -464,16 +464,16 @@ msgid "  Desktop configuration..."
 msgstr "  ƒ ˜£æ¨­à© Desktop..."
 
 #: desk/desk_rsc.c
-msgid "  Change resolution...  ^R"
-msgstr "  €¢¢˜šã ˜¤á¢¬©ª...     ^R"
+msgid "  Change resolution..."
+msgstr "  €¢¢˜šã ˜¤á¢¬©ª..."
 
 #: desk/desk_rsc.c
 msgid "  Read .INF file..."
 msgstr "  €¤áš¤à© ˜¨®œå¦¬ .INF..."
 
 #: desk/desk_rsc.c
-msgid "  Save desktop...       ^S"
-msgstr "  €§¦Ÿã¡œ¬© desktop...  ^S"
+msgid "  Save desktop..."
+msgstr "  €§¦Ÿã¡œ¬© desktop..."
 
 #: desk/desk_rsc.c
 msgid "  Blitter"

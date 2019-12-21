@@ -358,44 +358,44 @@ msgid "  Desktop info..."
 msgstr "  Información del escritorio..."
 
 #: desk/desk_rsc.c
-msgid "  Open            ^O"
-msgstr "  Abrir                 ^O"
+msgid "  Open"
+msgstr "  Abrir"
 
 #: desk/desk_rsc.c
-msgid "  Info/Rename...  ^I"
-msgstr "  Info/Renombrar...     ^I"
+msgid "  Info/Rename..."
+msgstr "  Info/Renombrar..."
 
 #: desk/desk_rsc.c
-msgid "  New folder...   ^N"
-msgstr "  Nueva carpeta...      ^N"
+msgid "  New folder..."
+msgstr "  Nueva carpeta..."
 
 #: desk/desk_rsc.c
-msgid "  Close           ^U"
-msgstr "  Cerrar                ^U"
+msgid "  Close"
+msgstr "  Cerrar"
 
 #: desk/desk_rsc.c
-msgid "  Close window    ^W"
-msgstr "  Cerrar ventana        ^W"
+msgid "  Close window"
+msgstr "  Cerrar ventana"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
 msgstr "  Fijar máscara archivo..."
 
 #: desk/desk_rsc.c
-msgid "  Delete...       ^D"
-msgstr "  Borrar...             ^D"
+msgid "  Delete..."
+msgstr "  Borrar..."
 
 #: desk/desk_rsc.c
 msgid "  Format..."
 msgstr "  Formatear..."
 
 #: desk/desk_rsc.c
-msgid "  Execute EmuCON  ^Z"
-msgstr "  Ejecutar EmuCON       ^Z"
+msgid "  Execute EmuCON"
+msgstr "  Ejecutar EmuCON"
 
 #: desk/desk_rsc.c
-msgid "  Shutdown        ^Q"
-msgstr "  Cerrar sistema        ^Q"
+msgid "  Shutdown"
+msgstr "  Cerrar sistema"
 
 #: desk/desk_rsc.c
 msgid "  Show as icons"
@@ -454,16 +454,16 @@ msgid "  Desktop configuration..."
 msgstr "  Configuración de escritorio..."
 
 #: desk/desk_rsc.c
-msgid "  Change resolution...  ^R"
-msgstr "  Cambiar resolución...       ^R"
+msgid "  Change resolution..."
+msgstr "  Cambiar resolución..."
 
 #: desk/desk_rsc.c
 msgid "  Read .INF file..."
 msgstr "  Leer fichero .INF..."
 
 #: desk/desk_rsc.c
-msgid "  Save desktop...       ^S"
-msgstr "  Grabar escritorio...        ^S"
+msgid "  Save desktop..."
+msgstr "  Grabar escritorio..."
 
 #: desk/desk_rsc.c
 msgid "  Blitter"
