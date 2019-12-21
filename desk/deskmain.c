@@ -920,7 +920,7 @@ static BOOL check_alt_letter_key(WORD thechar)
 
 
 /*
- *  Scan desk menu for matching shortcut
+ *  Scan desk menu for matching shortcut (begins with '^')
  *
  *  Overview:
  *  A menu tree has two sides, sometimes referred to as BAR and DROPDOWNS.
@@ -932,21 +932,19 @@ static BOOL check_alt_letter_key(WORD thechar)
  *  If a match is found, the object numbers for title and item are
  *  returned.  If there is no match, -1 is returned.
  *
- *  Examples:
- *      to scan for ctl-X: set 'type' to '^', 'shortcut' to 'X'
- *      to scan for alt-Y: set 'type' to 0x07, 'shortcut' to 'Y'
+ *  Example:
+ *      to scan for ctl-X (shown as ^X): set 'shortcut' to 'X'
  */
-static WORD scan_menu(char type, char shortcut, WORD *itemptr)
+static WORD scan_menu(char shortcut, WORD *itemptr)
 {
     OBJECT *tree = desk_rs_trees[ADMENU];
     OBJECT *obj;
     char *text, *p;
-    WORD title_root, item_root, title, item;
+    WORD item_root, title, item;
 
-    title_root = TITLE_ROOT;
     item_root = ITEM_ROOT;
 
-    for (title = tree[title_root].ob_head; title != title_root;
+    for (title = tree[TITLE_ROOT].ob_head; title != TITLE_ROOT;
                     title = tree[title].ob_next, item_root = tree[item_root].ob_next)
     {
         for (item = tree[item_root].ob_head; item != item_root; item = tree[item].ob_next)
@@ -957,7 +955,7 @@ static WORD scan_menu(char type, char shortcut, WORD *itemptr)
             if ((obj->ob_type & 0x00ff) != G_STRING)    /* all items are strings */
                 continue;
             text = (char *)obj->ob_spec;
-            p = strchr(text,type);                      /* look for marker */
+            p = strchr(text,'^');                       /* look for marker */
             if (!p)
                 continue;
             if (*(p+1) == shortcut)
@@ -983,7 +981,7 @@ static WORD lookup_ascii_shortcut(WORD ascii, WORD *itemptr)
     if (ascii >= 0x20)      /* we only handle control characters */
         return -1;
 
-    return scan_menu('^', ascii|0x40, itemptr);
+    return scan_menu(ascii|0x40, itemptr);
 }
 
 
