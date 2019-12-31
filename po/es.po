@@ -7,7 +7,7 @@ msgstr ""
 "Last-Translator: Jordi Mestres Ruiz <ataristfan@gmail.com>\n"
 "Language-Team: Spanish\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ISO-8859-15\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: bios/bios.c
@@ -479,7 +479,7 @@ msgstr "Sólo lectura"
 
 #: desk/desk_rsc.c
 msgid "DISK INFORMATION"
-msgstr "INFORMACIÓN DEL DISCO"
+msgstr "INFORMACION DEL DISCO"
 
 #: desk/desk_rsc.c
 msgid "Version"
@@ -519,7 +519,7 @@ msgstr "Lea licencia.txt para más detalle"
 
 #: desk/desk_rsc.c
 msgid "OPEN APPLICATION"
-msgstr "ABRIR APLICACIÓN"
+msgstr "ABRIR APLICACION"
 
 #: desk/desk_rsc.c
 msgid "Parameters:"
@@ -551,7 +551,7 @@ msgstr "Icono:"
 
 #: desk/desk_rsc.c
 msgid "INSTALL APPLICATION"
-msgstr "INSTALAR APLICACIÓN"
+msgstr "INSTALAR APLICACION"
 
 #: desk/desk_rsc.c
 msgid "Boot status:"
@@ -687,11 +687,11 @@ msgstr "DMA"
 
 #: desk/desk_rsc.c
 msgid "SET FILE MASK"
-msgstr "FIJAR MÁSCARA FICHERO"
+msgstr "FIJAR MASCARA FICHERO"
 
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
-msgstr "CONFIGURACIÓN ESCRITORIO"
+msgstr "CONFIGURACION ESCRITORIO"
 
 #: desk/desk_rsc.c
 msgid "Default directory:"
@@ -707,7 +707,7 @@ msgstr "Teclas de función:"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
-msgstr "CAMBIAR RESOLUCIÓN"
+msgstr "CAMBIAR RESOLUCION"
 
 #: desk/desk_rsc.c
 msgid "ST Low"
@@ -807,11 +807,11 @@ msgstr "%ld bytes en %d elementos seleccionados."
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"
-msgstr "INFORMACIÓN DEL FICHERO"
+msgstr "INFORMACION DEL FICHERO"
 
 #: desk/desk_rsc.c
 msgid "FOLDER INFORMATION"
-msgstr "INFORMACIÓN DE LA CARPETA"
+msgstr "INFORMACION DE LA CARPETA"
 
 #: desk/desk_rsc.c
 msgid "COPY FILE(S)"
