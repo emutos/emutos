@@ -973,16 +973,16 @@ static void get_all_funkeys(ANODE **retptr)
 }
 
 
-/* variables for managing text scrolling */
+/* variables for managing text scrolling in function key display */
 static WORD textpos, maxpos;
 
 
 /*
- *  scroll text in desktop configuration dialog
+ *  scroll function key text in desktop configuration dialog
  *
  *  returns TRUE iff displayed text has changed
  */
-static BOOL scroll_conf(OBJECT *tree, ANODE *pa, WORD amount)
+static BOOL scroll_conf_funkeys(OBJECT *tree, ANODE *pa, WORD amount)
 {
     WORD newpos = textpos + amount;
 
@@ -1002,9 +1002,9 @@ static BOOL scroll_conf(OBJECT *tree, ANODE *pa, WORD amount)
 
 
 /*
- *  initialise desktop configuration dialog with ANODE info
+ *  initialise desktop configuration dialog with function key info
  */
-static void init_conf(OBJECT *tree, ANODE *pa)
+static void init_conf_funkeys(OBJECT *tree, ANODE *pa)
 {
     OBJECT  *obj;
     TEDINFO *ted;
@@ -1020,7 +1020,7 @@ static void init_conf(OBJECT *tree, ANODE *pa)
     if (maxpos < 0)
         maxpos = 0;
     textpos = 0;
-    scroll_conf(tree, pa, 0);
+    scroll_conf_funkeys(tree, pa, 0);
 }
 
 
@@ -1031,7 +1031,7 @@ void inf_conf(void)
 {
     OBJECT *tree = desk_rs_trees[ADDESKCF];
     ANODE *pa[NUM_FUNKEYS];
-    WORD exitobj, redraw, current, i, n;
+    WORD exitobj, redraw, current_funkey, i, n;
     BOOL done = FALSE;
 
     /* first, deselect all objects */
@@ -1057,6 +1057,9 @@ void inf_conf(void)
     memset(G.g_work+n, ' ', 40);    /* enough spaces to fill object's text field */
     inf_sset(tree, DCFREMEM, G.g_work);
 
+    /*
+     * function key setup
+     */
     /* get anode ptrs for all anodes with function keys */
     get_all_funkeys(pa);
 
@@ -1064,13 +1067,13 @@ void inf_conf(void)
     textpos = maxpos = 0;
 
     /* find lowest function key */
-    for (current = 0; current < NUM_FUNKEYS; current++)
-        if (pa[current])
+    for (current_funkey = 0; current_funkey < NUM_FUNKEYS; current_funkey++)
+        if (pa[current_funkey])
             break;
-    if (current < NUM_FUNKEYS)
-        init_conf(tree, pa[current]);
+    if (current_funkey < NUM_FUNKEYS)
+        init_conf_funkeys(tree, pa[current_funkey]);
     else
-        current = 0;    /* ensure legal value for array index */
+        current_funkey = 0;     /* ensure legal value for array index */
 
     /* interact with user */
     start_dialog(tree);
@@ -1081,33 +1084,33 @@ void inf_conf(void)
         switch(exitobj)
         {
         case DCFUNPRV:          /* previous function key assignment */
-            for (i = current-1; i >= 0; i--)            /* look for next lower */
+            for (i = current_funkey-1; i >= 0; i--)     /* look for next lower */
                 if (pa[i])
                     break;
             if (i >= 0)             /* found one */
             {
-                current = i;
-                init_conf(tree, pa[current]);
+                current_funkey = i;
+                init_conf_funkeys(tree, pa[current_funkey]);
                 redraw = DCFUNBOX;
             }
             break;
         case DCFUNNXT:          /* next function key assignment */
-            for (i = current+1; i < NUM_FUNKEYS; i++)   /* look for next higher */
+            for (i = current_funkey+1; i < NUM_FUNKEYS; i++)    /* look for next higher */
                 if (pa[i])
                     break;
             if (i < NUM_FUNKEYS)    /* found one */
             {
-                current = i;
-                init_conf(tree, pa[current]);
+                current_funkey = i;
+                init_conf_funkeys(tree, pa[current_funkey]);
                 redraw = DCFUNBOX;
             }
             break;
         case DCFUNLT:           /* handle scroll left */
-            if (scroll_conf(tree, pa[current], -1))
+            if (scroll_conf_funkeys(tree, pa[current_funkey], -1))
                 redraw = DCFUNPTH;
             break;
         case DCFUNRT:           /* handle scroll right */
-            if (scroll_conf(tree, pa[current], +1))
+            if (scroll_conf_funkeys(tree, pa[current_funkey], +1))
                 redraw = DCFUNPTH;
             break;
         case DCOK:
