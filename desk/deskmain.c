@@ -80,6 +80,7 @@ typedef struct {
 #define TITLE_ROOT      (DESKMENU-1)
 #define ITEM_ROOT       (ABOUITEM-1)
 #define SHORTCUT_SIZE   3   /* allow for ' ^X' in menu items */
+#define NUM_SHORTCUTS   33
 
 /*
  * flags for communication between do_viewmenu(), desk_all()
@@ -104,6 +105,14 @@ GLOBAL char     gl_amstr[4];
 GLOBAL char     gl_pmstr[4];
 
 GLOBAL WORD     gl_apid;
+
+/*
+ * actual shortcuts currently in use
+ *
+ * for more information, see the comments in default_shortcuts[] below
+ */
+GLOBAL UBYTE    menu_shortcuts[NUM_SHORTCUTS];
+
 
 /* forward declaration  */
 static void    cnx_put(void);
@@ -138,29 +147,160 @@ static const UBYTE ILL_NOWIN[] = {
 #endif
     0 };
 
+
 /*
- * table that defines keyboard shortcut defaults to insert in menu items
+ * array that defines the mapping of shortcuts to menu items
  *
- * the table consists of pairs of values: ( item_object_number, character )
+ * a value of 0 indicates that this menu item does not exist in this
+ * binary: any shortcut in the corresponding entry of the menu_shortcuts[]
+ * array will be ignored.
+ *
+ * WARNING: to save ROM space, we use a UBYTE instead of a WORD for the
+ * menu item number, on the assumption that it will not exceed 255.
+ *
+ * NOTE: any change to this MUST be synchronised with changes to the
+ * exclude_items[] array in tools/draftexc.c
  */
-static const UBYTE shortcut_table[] =
+static const UBYTE shortcut_mapping[NUM_SHORTCUTS] =
 {
-    OPENITEM, 'O',
-    SHOWITEM, 'I',
-    NFOLITEM, 'N',
-    CLOSITEM, 'U',
-    CLSWITEM, 'W',
-    DELTITEM, 'D',
+                /* 'File' menu */
+    OPENITEM,
+    SHOWITEM,
+#if CONF_WITH_SEARCH
+    SRCHITEM,
+#else
+    0,
+#endif
+    NFOLITEM,
+    CLOSITEM,
+    CLSWITEM,
+#if CONF_WITH_BOTTOMTOTOP
+    BTOPITEM,
+#else
+    0,
+#endif
+#if CONF_WITH_SELECTALL
+    SLCTITEM,
+#else
+    0,
+#endif
+#if CONF_WITH_FILEMASK
+    MASKITEM,
+#else
+    0,
+#endif
+    DELTITEM,
+#if CONF_WITH_FORMAT
+    FORMITEM,
+#else
+    0,
+#endif
 #if WITH_CLI
-    CLIITEM, 'Z',
+    CLIITEM,
+#else
+    0,
 #endif
 #if CONF_WITH_SHUTDOWN
-    QUITITEM, 'Q',
+    QUITITEM,
+#else
+    0,
 #endif
-    RESITEM, 'R',
-    SAVEITEM, 'S',
-    0
+                /* 'View' menu */
+    ICONITEM,
+    TEXTITEM,
+    NAMEITEM,
+    TYPEITEM,
+    SIZEITEM,
+    DATEITEM,
+    NSRTITEM,
+#if CONF_WITH_SIZE_TO_FIT
+    FITITEM,
+#else
+    0,
+#endif
+#if CONF_WITH_BACKGROUNDS
+    BACKGRND,
+#else
+    0,
+#endif
+                /* 'Options' menu */
+    IICNITEM,
+    IAPPITEM,
+    IDSKITEM,
+    RICNITEM,
+    PREFITEM,
+#if CONF_WITH_DESKTOP_CONFIG
+    CONFITEM,
+#else
+    0,
+#endif
+    RESITEM,
+#if CONF_WITH_READ_INF
+    READITEM,
+#else
+    0,
+#endif
+    SAVEITEM,
+#if CONF_WITH_BLITTER
+    BLITITEM,
+#else
+    0,
+#endif
+#if CONF_WITH_CACHE_CONTROL
+    CACHITEM,
+#else
+    0,
+#endif
 };
+
+
+/*
+ * array that defines the default keyboard shortcuts
+ *
+ * entries are uppercase characters, as displayed in the menu items; the actual
+ * shortcut is the corresponding control character.  a value of 0 indicates no
+ * shortcut for a specific item.
+ */
+static const UBYTE default_shortcuts[NUM_SHORTCUTS] =
+{
+            /* 'File' menu */
+    'O',        /* OPENITEM */
+    'I',        /* SHOWITEM */
+    0x00,       /* SRCHITEM */
+    'N',        /* NFOLITEM */
+    'U',        /* CLOSITEM */
+    'W',        /* CLSWITEM */
+    0x00,       /* BTOPITEM */
+    0x00,       /* SLCTITEM */
+    0x00,       /* MASKITEM */
+    'D',        /* DELTITEM */
+    0x00,       /* FORMITEM */
+    'Z',        /* CLIITEM */
+    'Q',        /* QUITITEM */
+            /* 'View' menu */
+    0x00,       /* ICONITEM */
+    0x00,       /* TEXTITEM */
+    0x00,       /* NAMEITEM */
+    0x00,       /* SIZEITEM */
+    0x00,       /* TYPEITEM */
+    0x00,       /* DATEITEM */
+    0x00,       /* NSRTITEM */
+    0x00,       /* FITITEM */
+    0x00,       /* BACKGRND */
+            /* 'Options' menu */
+    0x00,       /* IICNITEM */
+    0x00,       /* IAPPITEM */
+    0x00,       /* IDSKITEM */
+    0x00,       /* RICNITEM */
+    0x00,       /* PREFITEM */
+    0x00,       /* CONFITEM */
+    'R',        /* RESITEM */
+    0x00,       /* READITEM */
+    'S',        /* SAVEITEM */
+    0x00,       /* BLITITEM */
+    0x00,       /* CACHITEM */
+};
+
 
 /*
  * table to map the keyboard arrow character to the corresponding
@@ -949,54 +1089,6 @@ static BOOL check_alt_letter_key(WORD thechar)
 
 
 /*
- *  Scan desk menu for matching shortcut (begins with '^')
- *
- *  Overview:
- *  A menu tree has two sides, sometimes referred to as BAR and DROPDOWNS.
- *  The BAR side contains objects corresponding to the menu titles; the
- *  DROPDOWNS side contains the menu item objects.
- *
- *  We scan down both sides of the menu tree at the same time.  On the
- *  items side, we scan each G_STRING menu item for the specified shortcut.
- *  If a match is found, the object numbers for title and item are
- *  returned.  If there is no match, -1 is returned.
- *
- *  Example:
- *      to scan for ctl-X (shown as ^X): set 'shortcut' to 'X'
- */
-static WORD scan_menu(char shortcut, WORD *itemptr)
-{
-    OBJECT *tree = desk_rs_trees[ADMENU];
-    OBJECT *obj;
-    char *p;
-    WORD item_root, title, item;
-
-    item_root = ITEM_ROOT;
-
-    for (title = tree[TITLE_ROOT].ob_head; title != TITLE_ROOT;
-                    title = tree[title].ob_next, item_root = tree[item_root].ob_next)
-    {
-        for (item = tree[item_root].ob_head; item != item_root; item = tree[item].ob_next)
-        {
-            obj = &tree[item];
-            if (obj->ob_state & DISABLED)               /* ignore disabled items */
-                continue;
-            if ((obj->ob_type & 0x00ff) != G_STRING)    /* all items are strings */
-                continue;
-            p = (char *)obj->ob_spec + obj->ob_width/CHAR_WIDTH - SHORTCUT_SIZE;
-            if ((*p == '^') && (*(p+1) == shortcut))
-            {
-                *itemptr = item;
-                return title;
-            }
-        }
-    }
-
-    return -1;
-}
-
-
-/*
  * lookup ascii shortcut
  *
  * if found, returns menu title & updates 'item'
@@ -1004,10 +1096,33 @@ static WORD scan_menu(char shortcut, WORD *itemptr)
  */
 static WORD lookup_ascii_shortcut(WORD ascii, WORD *itemptr)
 {
+    OBJECT *tree = desk_rs_trees[ADMENU];
+    WORD i, n;
+
     if (ascii >= 0x20)      /* we only handle control characters */
         return -1;
 
-    return scan_menu(ascii|0x40, itemptr);
+    ascii |= 0x40;          /* convert to plain character */
+
+    for (i = 0; i < NUM_SHORTCUTS; i++)
+    {
+        n = shortcut_mapping[i];
+        if (!n)
+            continue;
+        if (ascii == menu_shortcuts[i])
+        {
+            if (tree[n].ob_state & DISABLED)    /* disabled - no match */
+                break;
+            *itemptr = n;
+            if (n >= IICNITEM)
+                return OPTNMENU;
+            if (n >= ICONITEM)
+                return VIEWMENU;
+            return FILEMENU;
+        }
+    }
+
+    return -1;
 }
 
 
@@ -1601,25 +1716,45 @@ static WORD copy_menu_items(void)
 
 
 /*
- *  install default menu shortcuts
+ *  install menu shortcuts
  *
  *  the shortcut is inserted (as ^X) at the end of the menu item text,
  *  with one space following
  *
  *  note: when this is called, ob_width has already been converted to pixels
  */
-static void install_default_shortcuts(void)
+static void install_shortcuts(void)
 {
     OBJECT *obj, *tree = desk_rs_trees[ADMENU];
-    const UBYTE *p;
-    char *q;
+    char *p, c;
+    WORD i, n;
 
-    for (p = shortcut_table; *p; p += 2)
+    for (i = 0; i < NUM_SHORTCUTS; i++)
     {
-        obj = &tree[*p];
-        q = (char *)obj->ob_spec + (obj->ob_width+CHAR_WIDTH-1)/CHAR_WIDTH - SHORTCUT_SIZE;
-        *q++ = '^';
-        *q = *(p+1);
+        n = shortcut_mapping[i];
+        /*
+         * check if menu item exists for this shortcut position; if not,
+         * we must clear any associated shortcut to ensure that the
+         * shortcut array matches the displayed menu items
+         */
+        if (!n)
+        {
+            menu_shortcuts[i] = 0x00;
+            continue;
+        }
+        obj = tree + n;
+        p = (char *)obj->ob_spec + (obj->ob_width+CHAR_WIDTH-1)/CHAR_WIDTH - SHORTCUT_SIZE;
+        c = menu_shortcuts[i];
+        if (c)  /* there is a shortcut, insert in menu item */
+        {
+            *p++ = '^';
+            *p = c;
+        }
+        else    /* there is no shortcut, blank out any existing one */
+        {
+            *p++ = ' ';
+            *p = ' ';
+        }
     }
 }
 
@@ -1797,14 +1932,19 @@ BOOL deskmain(void)
     strcpy(gl_pmstr, desktop_str_addr(STPM));
 
     /*
-     * install the default keyboard shortcuts in the menu strings
+     * initialize the keyboard shortcut array (may be updated by app_start())
      */
-    install_default_shortcuts();
+    memcpy(menu_shortcuts, default_shortcuts, NUM_SHORTCUTS);
 
     /* Initialize icons and apps from memory, or EMUDESK.INF,
      * or builtin defaults
      */
     app_start();
+
+    /*
+     * install the keyboard shortcuts in the menu strings
+     */
+    install_shortcuts();
 
     /*
      * initialize windows: win_view() initialises g_iview, g_isort
