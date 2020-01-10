@@ -73,7 +73,7 @@
 static char *fmt_time(UWORD time, char *fmt_string, char *ptime)
 {
     WORD hh, mm;
-    char *suffix = "";
+    char *suffix = "  ";
 
     hh = (time >> 11) & 0x001f;
     mm = (time >> 5) & 0x003f;
