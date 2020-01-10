@@ -293,6 +293,17 @@ static WORD format_fnode(LONG pfnode, char *pfmt)
         *pdst++ = ' ';
     pdst = fmt_time(pf->f_time, wide?"%02d:%02d %s":"%02d:%02d%s", pdst);
 
+    /*
+     * trim 2 trailing spaces (present iff 24H clock) which will make the
+     * line 36 characters wide.  this allows it to be written via 'fast
+     * text output' in a maximum-sized window in low-rez.
+     */
+    if (*(pdst-2) == ' ')
+    {
+        pdst -= 2;
+        *pdst = '\0';
+    }
+
     return (pdst-pfmt);
 }
 
