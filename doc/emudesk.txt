@@ -2,8 +2,7 @@ A brief user's guide to the newer features of EmuDesk, the EmuTOS desktop
 =========================================================================
 
 The current version of EmuDesk implements all of the features of the
-Atari TOS 1 desktop, plus most of the features of the TOS 2/3/4 desktop,
-including:
+Atari TOS 2/3/4 desktop, including:
 
 1) menu items
     . search
@@ -249,8 +248,8 @@ Desktop configuration
 This is not available.
 
 Other ROMs:
-This is a simplified version of the corresponding Atari TOS menu item.
-You may do the following:
+This is equivalent to the corresponding Atari TOS menu item.  You may do
+the following:
 . specify the default directory and input parameter for all applications
   that are not installed applications.  See "Install application" above,
   under 'Default dir' and 'Parameter', for further information.
@@ -259,6 +258,14 @@ You may do the following:
   the arrows: up/down arrows select the previous/next assigned function
   key (in key number sequence), and left/right arrows scroll along the
   full pathname of the program.
+. update shortcuts for menu items.  To update, use the up/down arrows to
+  select the desired shortcut, then enter a new letter in the 'Key:'
+  field.  You may also blank out the field to remove an existing shortcut.
+  To remove all existing shortcuts, select 'Clear all'.  Note that the
+  shortcuts are entered as capital letters, but are accessed from the
+  desktop via the corresponding control key.  Also, note that the list
+  of shortcuts is not updated until you click on 'OK'; if you make a
+  mistake, just click on 'Cancel'.
 This dialog also displays the current free memory (more accurately, the
 size of the largest free memory area) in KB (1KB = 1024 bytes).  For
 systems with alternate RAM, two numbers are displayed: the first is for
