@@ -69,7 +69,6 @@ typedef struct {
 #define ESC     0x1b
 
 /* architectural */
-#define CHAR_WIDTH          8   /* in pixels */
 #define MIN_DESKMENU_WIDTH  20  /* in characters, compatible with Atari TOS */
 
 
@@ -79,8 +78,6 @@ typedef struct {
  */
 #define TITLE_ROOT      (DESKMENU-1)
 #define ITEM_ROOT       (ABOUITEM-1)
-#define SHORTCUT_SIZE   3   /* allow for ' ^X' in menu items */
-#define NUM_SHORTCUTS   33
 
 /*
  * flags for communication between do_viewmenu(), desk_all()
@@ -161,7 +158,7 @@ static const UBYTE ILL_NOWIN[] = {
  * NOTE: any change to this MUST be synchronised with changes to the
  * exclude_items[] array in tools/draftexc.c
  */
-static const UBYTE shortcut_mapping[NUM_SHORTCUTS] =
+const UBYTE shortcut_mapping[NUM_SHORTCUTS] =
 {
                 /* 'File' menu */
     OPENITEM,
@@ -1723,7 +1720,7 @@ static WORD copy_menu_items(void)
  *
  *  note: when this is called, ob_width has already been converted to pixels
  */
-static void install_shortcuts(void)
+void install_shortcuts(void)
 {
     OBJECT *obj, *tree = desk_rs_trees[ADMENU];
     char *p, c;

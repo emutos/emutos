@@ -1025,13 +1025,108 @@ static void init_conf_funkeys(OBJECT *tree, ANODE *pa)
 
 
 /*
+ *  initialise desktop configuration dialog with shortcut info
+ */
+static void init_conf_shortcuts(OBJECT *tree, WORD shortcut_num)
+{
+    OBJECT *obj, *menu = desk_rs_trees[ADMENU];
+    char key;
+
+    /* insert current shortcut (if it exists) */
+    key = menu_shortcuts[shortcut_num];
+    if (!key)
+        key = ' ';
+    inf_sset(tree, DCMNUKEY, &key);
+
+    /* insert menu item text, without shortcut & with enough spaces to fill text field */
+    obj = menu + shortcut_mapping[shortcut_num];
+    strcpy(G.g_work, (char *)obj->ob_spec+2);
+    memset(G.g_work+strlen(G.g_work)-SHORTCUT_SIZE, ' ', 40);
+//was    strlcpy(G.g_work, (char *)obj->ob_spec+2, strlen((char *)obj->ob_spec)-SHORTCUT_SIZE);
+    inf_sset(tree, DCMNUTXT, G.g_work);
+}
+
+
+/*
+ *  copy the shortcut key from the resource to the shortcuts array
+ *
+ *  we check for a duplicate; if found, we issue an alert, giving the
+ *  user the choice of making the change (and zeroing out the duplicate
+ *  occurrence), or cancelling
+ */
+static void save_shortcut(OBJECT *tree, WORD n)
+{
+    char key[2];
+    WORD i;
+
+    inf_sget(tree, DCMNUKEY, key);
+
+    if ((key[0] >= 'A') && (key[0] <= 'Z'))
+    {
+        for (i = 0; i < NUM_SHORTCUTS; i++)
+        {
+            if (i == n)     /* ignore ourselves */
+                continue;
+            if (menu_shortcuts[i] == key[0])    /* duplicate shortcut */
+            {
+                if (fun_alert(2, STDUPCUT) != 1)    /* user cancelled */
+                    return;
+                menu_shortcuts[i] = 0x00;
+                break;
+            }
+        }
+    }
+    else
+    {
+        key[0] = 0x00;
+    }
+    
+    menu_shortcuts[n] = key[0];
+}
+
+
+/*
+ *  recover menu shortcuts
+ *
+ *  this rebuilds the shortcut array from the current contents of the
+ *  menu items
+ */
+static void recover_shortcuts(void)
+{
+    OBJECT *obj, *tree = desk_rs_trees[ADMENU];
+    char *p, c;
+    WORD i, n;
+
+    for (i = 0; i < NUM_SHORTCUTS; i++)
+    {
+        n = shortcut_mapping[i];
+        /*
+         * check if menu item exists for this shortcut position; if not,
+         * we must clear any associated shortcut to ensure that the
+         * shortcut array matches the displayed menu items
+         */
+        c = 0x00;       /* default value to enter */
+        if (n)          /* there is an associated menu item */
+        {
+            obj = tree + n;
+            p = (char *)obj->ob_spec + (obj->ob_width+CHAR_WIDTH-1)/CHAR_WIDTH - SHORTCUT_SIZE;
+            if (*p == '^')      /* there is a shortcut */
+                c = *(p+1);     /* so get it */
+        }
+        menu_shortcuts[i] = c;  /* update array */
+    }
+}
+
+
+/*
  *      Handle desktop configuration dialog
  */
 void inf_conf(void)
 {
     OBJECT *tree = desk_rs_trees[ADDESKCF];
     ANODE *pa[NUM_FUNKEYS];
-    WORD exitobj, redraw, current_funkey, i, n;
+    WORD exitobj, redraw, current_funkey, current_shortcut;
+    WORD i, n;
     BOOL done = FALSE;
 
     /* first, deselect all objects */
@@ -1075,6 +1170,18 @@ void inf_conf(void)
     else
         current_funkey = 0;     /* ensure legal value for array index */
 
+    /*
+     * menu shortcut setup
+     */
+    /* find lowest available menu item */
+    for (current_shortcut = 0; current_shortcut < NUM_SHORTCUTS; current_shortcut++)
+        if (shortcut_mapping[current_shortcut])
+            break;
+    if (current_shortcut < NUM_SHORTCUTS)
+        init_conf_shortcuts(tree, current_shortcut);
+    else
+        current_shortcut = 0;   /* "can't happen" */
+
     /* interact with user */
     start_dialog(tree);
     while(1)
@@ -1113,7 +1220,37 @@ void inf_conf(void)
             if (scroll_conf_funkeys(tree, pa[current_funkey], +1))
                 redraw = DCFUNPTH;
             break;
+        case DCMNUPRV:          /* previous menu item assignment */
+            save_shortcut(tree, current_shortcut);
+            for (i = current_shortcut-1; i >= 0; i--)   /* look for next lower */
+                if (shortcut_mapping[i])
+                    break;
+            if (i >= 0)             /* found one */
+            {
+                current_shortcut = i;
+                init_conf_shortcuts(tree, current_shortcut);
+                redraw = DCMNUBOX;
+            }
+            break;
+        case DCMNUNXT:          /* next menu item assignment */
+            save_shortcut(tree, current_shortcut);
+            for (i = current_shortcut+1; i < NUM_SHORTCUTS; i++)    /* look for next higher */
+                if (shortcut_mapping[i])
+                    break;
+            if (i < NUM_SHORTCUTS)  /* found one */
+            {
+                current_shortcut = i;
+                init_conf_shortcuts(tree, current_shortcut);
+                redraw = DCMNUBOX;
+            }
+            break;
+        case DCMNUCLR:          /* clear out all shortcuts */
+            memset(menu_shortcuts, 0x00, NUM_SHORTCUTS);
+            inf_sset(tree, DCMNUKEY, "");
+            redraw = DCMNUBOX;
+            break;
         case DCOK:
+            save_shortcut(tree, current_shortcut);
             G.g_appdir = inf_which(tree, DCDEFAPP, 2);
             G.g_fullpath = inf_which(tree, DCPMFULL, 2);
             FALLTHROUGH;
@@ -1127,8 +1264,13 @@ void inf_conf(void)
         if (redraw >= 0)
             draw_fld(tree, redraw);
     }
-    end_dialog(tree);
 
+    if (exitobj == DCOK)
+        install_shortcuts();    /* copy array to resource */
+    else
+        recover_shortcuts();    /* copy resource to array */
+
+    end_dialog(tree);
 }
 #endif
 
