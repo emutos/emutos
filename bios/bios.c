@@ -118,7 +118,14 @@ static void vecs_init(void)
      * To mimic Atari hardware behaviour, we copy the start of our OS there.
      * This may improve compatibility with some Atari software,
      * which may peek the OS version or reset address from there. */
-    ULONG_AT(0x00000000) = ((ULONG*)&os_header)[0]; /* Reset: Initial SSP */
+    {
+        /* Dereferencing zero is undefined behaviour, so we have to hide what
+         * we're doing here from the compiler, as otherwise it will assume
+         * this code will never be executed and delete it all.
+         */
+        ULONG * volatile zero_ptr = &ULONG_AT(0x00000000);
+        *zero_ptr = ((ULONG*)&os_header)[0];
+    }
     ULONG_AT(0x00000004) = ((ULONG*)&os_header)[1]; /* Reset: Initial PC */
 #endif
 
