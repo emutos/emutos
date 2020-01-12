@@ -747,7 +747,7 @@ void app_start(void)
     buf = dos_alloc_anyram(SIZE_SHELBUF);
     if (!buf)
     {
-        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %d bytes)\n",SIZE_SHELBUF));
+        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %ld bytes)\n",SIZE_SHELBUF));
         nomem_alert();          /* infinite loop */
     }
 
@@ -1065,7 +1065,7 @@ void app_save(WORD todisk)
     outbuf = dos_alloc_anyram(SIZE_SHELBUF+MAX_SIZE_INF_LINE);
     if (!outbuf)
     {
-        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %d bytes)\n",
+        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %ld bytes)\n",
                 SIZE_SHELBUF+MAX_SIZE_INF_LINE));
         nomem_alert();          /* infinite loop */
     }

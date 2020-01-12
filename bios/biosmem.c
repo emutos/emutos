@@ -19,6 +19,7 @@
 #include "tosvars.h"
 #include "bios.h"
 #include "biosext.h"
+#include "../vdi/vdistub.h"
 
 #if DBG_BALLOC
 static BOOL bmem_allowed;
