@@ -1042,7 +1042,6 @@ static void init_conf_shortcuts(OBJECT *tree, WORD shortcut_num)
     obj = menu + shortcut_mapping[shortcut_num];
     strcpy(G.g_work, (char *)obj->ob_spec+2);
     memset(G.g_work+strlen(G.g_work)-SHORTCUT_SIZE, ' ', 40);
-//was    strlcpy(G.g_work, (char *)obj->ob_spec+2, strlen((char *)obj->ob_spec)-SHORTCUT_SIZE);
     inf_sset(tree, DCMNUTXT, G.g_work);
 }
 
