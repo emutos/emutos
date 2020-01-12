@@ -713,6 +713,26 @@ static void build_inf(char *infbuf, WORD xcnt, WORD ycnt)
 
 
 /*
+ *  Allocate a temporary buffer
+ *
+ *  Note: if the buffer cannot be allocated, we never return!
+ */
+static char *must_alloc_buf(LONG size)
+{
+    char *buf;
+
+    buf = dos_alloc_anyram(size);
+    if (!buf)
+    {
+        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %ld bytes)\n",size));
+        nomem_alert();          /* infinite loop */
+    }
+
+    return buf;
+}
+
+
+/*
  *  Initialize the application list by reading in the EMUDESK.INF
  *  file, either from memory or from the disk if the shel_get
  *  indicates no message is there.
@@ -744,12 +764,7 @@ void app_start(void)
     }
 
     /* allocate a temporary buffer for EMUDESK.INF */
-    buf = dos_alloc_anyram(SIZE_SHELBUF);
-    if (!buf)
-    {
-        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %ld bytes)\n",SIZE_SHELBUF));
-        nomem_alert();          /* infinite loop */
-    }
+    buf = must_alloc_buf(SIZE_SHELBUF);
 
     G.g_wicon = (MAX_ICONTEXT_WIDTH * gl_wschar) + (2 * G.g_iblist[0].ib_xtext);
     G.g_hicon = G.g_iblist[0].ib_hicon + gl_hschar + 2;
@@ -1062,13 +1077,7 @@ void app_save(WORD todisk)
      * the shell buffer by at least the length of one line, so that we
      * only need to check for buffer overflow at the end of each line
      */
-    outbuf = dos_alloc_anyram(SIZE_SHELBUF+MAX_SIZE_INF_LINE);
-    if (!outbuf)
-    {
-        KDEBUG(("insufficient memory for temporary EMUDESK.INF buffer (need %ld bytes)\n",
-                SIZE_SHELBUF+MAX_SIZE_INF_LINE));
-        nomem_alert();          /* infinite loop */
-    }
+    outbuf = must_alloc_buf(SIZE_SHELBUF+MAX_SIZE_INF_LINE);
 
     shel_get(outbuf, CPDATA_LEN);
     inf_data = outbuf + CPDATA_LEN;
