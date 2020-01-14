@@ -1158,6 +1158,13 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
                 okay = fun_file2desk(pn_src, icontype, an_dest, dobj, keystate);
             }
         }
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        else    /* we are dragging an orphan desktop shortcut.  orphans happen */
+                /* when the corresponding file has been deleted or moved.      */
+        {
+            remove_locate_shortcut(sobj);   /* prompt user */
+        }
+#endif
         pn_close(pn_src);
         desk_clear(DESKWH);
     }

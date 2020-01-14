@@ -353,7 +353,7 @@ static DTA *file_exists(char *path, char *name)
 /*
  *  Prompt to Remove or Locate a shortcut
  */
-static void remove_locate_shortcut(WORD curr)
+void remove_locate_shortcut(WORD curr)
 {
     WORD rc, button;
     ANODE *pa;

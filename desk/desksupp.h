@@ -40,4 +40,8 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
 WORD set_default_path(char *path);
 BOOL valid_drive(char drive);
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
+void remove_locate_shortcut(WORD curr);
+#endif
+
 #endif  /* _DESKSUPP_H */
