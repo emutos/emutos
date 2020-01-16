@@ -29,6 +29,13 @@
 #define    TWOPI     3600
 
 /*
+ * the maximum value (in tenths of a degree) that can be looked up
+ * in sin_tbl[] below
+ */
+#define MAX_TABLE_ANGLE 896
+#define SINE_TABLE_SIZE ((MAX_TABLE_ANGLE/8)+1)
+
+/*
  * local GDP variables
  *
  * these are used to pass values to clc_arc(), clc_nsteps(), and clc_pts()
@@ -37,27 +44,37 @@ static WORD beg_ang, del_ang, end_ang;
 static WORD xc, xrad, yc, yrad;
 
 
-/* Sines of angles 0 - 90 degrees in 0.8 steps normalized between 0-32767. */
-static const WORD sin_tbl[114] = {
-     0,   457,   915,  1372,  1829,  2286,  2742,  3197,
-  3653,  4107,  4560,  5013,  5465,  5915,  6364,  6813,
-  7259,  7705,  8149,  8591,  9032,  9471,  9908, 10343,
- 10776, 11207, 11636, 12062, 12487, 12908, 13328, 13744,
- 14158, 14569, 14978, 15383, 15786, 16185, 16581, 16974,
- 17364, 17750, 18133, 18512, 18888, 19260, 19628, 19993,
- 20353, 20710, 21062, 21411, 21755, 22095, 22431, 22762,
- 23089, 23411, 23729, 24042, 24351, 24654, 24953, 25247,
- 25537, 25821, 26100, 26374, 26643, 26907, 27165, 27418,
- 27666, 27909, 28146, 28377, 28603, 28823, 29038, 29247,
- 29451, 29648, 29840, 30026, 30207, 30381, 30549, 30712,
- 30868, 31019, 31163, 31302, 31434, 31560, 31680, 31794,
- 31901, 32003, 32098, 32187, 32269, 32345, 32415, 32479,
- 32537, 32587, 32632, 32670, 32702, 32728, 32747, 32760,
- 32766, 32767
+/*
+ * Sines of angles 0-90 degrees in 0.8 degree steps, normalized to 0-65536
+ *
+ * NOTE: because of the construction of this table, there is no entry for
+ * exactly 90 degrees (the final entry is for 89.6 degrees).  We take
+ * advantage of this to scale to a maximum value which we cannot actually
+ * return.  We special-case the maximum value in clc_pts() which is the
+ * only place where we use this table.
+ */
+static const UWORD sin_tbl[SINE_TABLE_SIZE] = {
+     0,   915,  1830,  2744,  3658,  4572,  5484,  6395,
+  7305,  8214,  9121, 10026, 10929, 11831, 12729, 13626,
+ 14519, 15410, 16298, 17183, 18064, 18942, 19816, 20686,
+ 21553, 22415, 23272, 24125, 24974, 25817, 26656, 27489,
+ 28317, 29140, 29956, 30767, 31572, 32371, 33163, 33949,
+ 34729, 35501, 36267, 37026, 37777, 38521, 39258, 39986,
+ 40708, 41421, 42126, 42823, 43511, 44191, 44862, 45525,
+ 46179, 46824, 47459, 48086, 48703, 49310, 49908, 50496,
+ 51075, 51643, 52201, 52750, 53287, 53815, 54332, 54838,
+ 55334, 55819, 56293, 56756, 57208, 57649, 58078, 58497,
+ 58903, 59299, 59683, 60055, 60415, 60764, 61101, 61426,
+ 61739, 62040, 62328, 62605, 62870, 63122, 63362, 63589,
+ 63804, 64007, 64197, 64375, 64540, 64693, 64833, 64960,
+ 65075, 65177, 65266, 65343, 65407, 65458, 65496, 65522,
+ 65534
 };
 
 
-/* precalculated sine/cosine values used in gdp_rbox() */
+/* precalculated sine/cosine values used in gdp_rbox()
+ * NOTE: these are scaled to a max value of 32767!
+ */
 #define Isin225     12539
 #define Isin450     23170
 #define Isin675     30273
@@ -69,38 +86,20 @@ static const WORD sin_tbl[114] = {
 /*
  * Isin - Returns integer sine between 0 and 32767
  *
- * Uses integer lookup table sin_tbl[]. Expects angle in tenths of
- * degree 0 - 32767; angles >3599 will be normalised to 0-3599.
- * Assumes positive angles only.
+ * Input is the angle in tenths of a degree, 0 to 900
  */
-static WORD Isin(WORD angle)
+static UWORD Isin(WORD angle)
 {
-    WORD index, remainder, tmpsin;      /* holder for sin. */
-    WORD negative = 0;
+    UWORD index, remainder, tmpsin;
 
-    while (angle >= TWOPI)      /* normalise angle to 0-3599 inclusive */
-        angle -= TWOPI;
-
-    if (angle > 3*HALFPI) {
-        /* fourth quadrant */
-        angle = TWOPI - angle;
-        negative = 1;
-    } else if (angle > 2*HALFPI) {
-        /* third quadrant */
-        angle -= PI;
-        negative = 1;
-    } else if (angle > HALFPI) {
-        /* second quadrant */
-        angle = PI - angle;
-    }
     index = angle >> 3;
     remainder = angle & 7;
     tmpsin = sin_tbl[index];
+
     if (remainder != 0)         /* add interpolation. */
         tmpsin += ((sin_tbl[index + 1] - tmpsin) * remainder) >> 3;
-    if (negative)
-        tmpsin = -tmpsin;
-    return (tmpsin);
+
+    return tmpsin;
 }
 
 
@@ -108,15 +107,11 @@ static WORD Isin(WORD angle)
 /*
  * Icos - Return integer cosine between 0 and 32767
  *
- * Assumes positive angles only.
+ * Input is the angle in tenths of a degree, 0 to 900
  */
-static WORD Icos(WORD angle)
+static UWORD Icos(UWORD angle)
 {
-    if (angle >= TWOPI)         /* partial normalisation to prevent */
-        angle -= TWOPI;         /*  possible arithmetic overflow    */
-    angle = angle + HALFPI;
-
-    return Isin(angle);         /* Isin() will fully normalise */
+    return Isin(HALFPI-angle);
 }
 
 
@@ -125,10 +120,52 @@ static WORD Icos(WORD angle)
  * clc_pts - calculates and saves an endpoint position (in raster
  *           coordinates), based on the input angle and xc/yc/xrad/yrad
  */
+#define X_NEGATIVE 0x02     /* values in 'negative' flag below */
+#define Y_NEGATIVE 0x01
 static void clc_pts(Point *point, WORD angle)
 {
-    point->x = mul_div(Icos(angle), xrad, 32767) + xc;
-    point->y = yc - mul_div(Isin(angle), yrad, 32767);
+    WORD xdiff, ydiff;
+    WORD negative = Y_NEGATIVE;     /* default for first quadrant */
+
+    while (angle >= TWOPI)          /* normalise angle to 0-3599 inclusive */
+        angle -= TWOPI;
+
+    if (angle > 3*HALFPI) {         /* fourth quadrant */
+        angle = TWOPI - angle;
+        negative = 0;
+    } else if (angle > PI) {        /* third quadrant */
+        angle -= PI;
+        negative = X_NEGATIVE;
+    } else if (angle > HALFPI) {    /* second quadrant */
+        angle = PI - angle;
+        negative = X_NEGATIVE|Y_NEGATIVE;
+    }
+
+    /* handle the values not handled by the table */
+    if (angle > MAX_TABLE_ANGLE)
+    {
+        xdiff = 0;
+        ydiff = yrad;
+    }
+    else if (angle < HALFPI-MAX_TABLE_ANGLE)
+    {
+        xdiff = xrad;
+        ydiff = 0;
+    }
+    else
+    {
+        xdiff = umul_shift(Icos(angle), xrad);
+        ydiff = umul_shift(Isin(angle), yrad);
+    }
+
+    if (negative & X_NEGATIVE)
+        xdiff = -xdiff;
+        
+    if (negative & Y_NEGATIVE)
+        ydiff = -ydiff;
+
+    point->x = xc + xdiff;
+    point->y = yc + ydiff;
 }
 
 

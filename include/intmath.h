@@ -61,6 +61,29 @@ static __inline__ WORD mul_div(WORD m1, WORD m2, WORD d1)
 }
 
 /*
+ * umul_shift - unsigned integer multiply and divide-via-shift, with rounding
+ *
+ * returns (m1 * m2 + 32768) / 65536
+ *
+ * while the operands are UWORD, the intermediate result is ULONG.
+ *
+ * WARNING: the technique used presupposes that the absolute
+ * value of the intermediate result is < 2**31.
+ */
+static __inline__ UWORD umul_shift(UWORD m1, UWORD m2)
+{
+    __asm__ (
+      "mulu %1,%0\n\t"
+      "addi.l #32768,%0\n\t"
+      "swap %0"
+    : "+d"(m1)
+    : "idm"(m2)
+    );
+
+    return m1;
+}
+
+/*
  * muls - signed integer multiply
  *
  * multiply two signed shorts, returning a signed long
