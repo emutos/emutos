@@ -478,7 +478,7 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
     }
 #endif
 
-    centre = width - 2;
+    centre = width - 2 - 1; /* -1 because of the way we construct the innermost loops */
 
     switch(attr->wrt_mode) {
     case WM_ERASE:          /* erase (reverse transparent) mode */
@@ -495,7 +495,7 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                 if (color & 0x0001) {
                     *work |= pattern & leftmask;    /* left section */
                     work += vplanes;
-                    for (n = 0; n < centre; n++) {  /* centre section */
+                    for (n = centre; n >= 0; n--) { /* centre section */
                         *work |= pattern;
                         work += vplanes;
                     }
@@ -505,7 +505,7 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                 } else {
                     *work &= ~(pattern & leftmask); /* left section */
                     work += vplanes;
-                    for (n = 0; n < centre; n++) {  /* centre section */
+                    for (n = centre; n >= 0; n--) { /* centre section */
                         *work &= ~pattern;
                         work += vplanes;
                     }
@@ -531,7 +531,7 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
 
                 *work ^= pattern & leftmask;        /* left section */
                 work += vplanes;
-                for (n = 0; n < centre; n++) {      /* centre section */
+                for (n = centre; n >= 0; n--) {     /* centre section */
                     *work ^= pattern;
                     work += vplanes;
                 }
@@ -557,7 +557,7 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                 if (color & 0x0001) {
                     *work |= pattern & leftmask;    /* left section */
                     work += vplanes;
-                    for (n = 0; n < centre; n++) {  /* centre section */
+                    for (n = centre; n >= 0; n--) { /* centre section */
                         *work |= pattern;
                         work += vplanes;
                     }
@@ -567,7 +567,7 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                 } else {
                     *work &= ~(pattern & leftmask); /* left section */
                     work += vplanes;
-                    for (n = 0; n < centre; n++) {  /* centre section */
+                    for (n = centre; n >= 0; n--) { /* centre section */
                         *work &= ~pattern;
                         work += vplanes;
                     }
@@ -595,7 +595,7 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                 data |= pattern & leftmask;
                 *work = data;
                 work += vplanes;
-                for (n = 0; n < centre; n++) {      /* centre section */
+                for (n = centre; n >= 0; n--) {     /* centre section */
                     *work = pattern;
                     work += vplanes;
                 }
