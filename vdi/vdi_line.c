@@ -490,32 +490,47 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
             for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
                 UWORD pattern = ~attr->patptr[patind];
+                int n;
 
                 if (color & 0x0001) {
                     *work |= pattern & leftmask;    /* left section */
                     work += vplanes;
+#ifdef __mcoldfire__
+                    for (n = centre; n >= 0; n--) { /* centre section */
+                        *work |= pattern;
+                        work += vplanes;
+                    }
+#else
                     if (centre >= 0) {              /* centre section */
-                        int n = centre;
+                        n = centre;
                         __asm ("1:\n\t"
                                "or.w %2,(%1)\n\t"
                                "adda.w %3,%1\n\t"
-                               "dbra %0,1b" : "+d"(n), "+a"(work) : "r"(pattern),
+                               "dbra %0,1b" : "+d"(n), "+a"(work) : "d"(pattern),
                                               "r"(2*vplanes) : "memory", "cc");
                     }
+#endif
                     if (rightmask) {                /* right section */
                         *work |= pattern & rightmask;
                     }
                 } else {
                     *work &= ~(pattern & leftmask); /* left section */
                     work += vplanes;
-                    if (centre >= 0) {                  /* centre section */
-                        int n = centre;
+#ifdef __mcoldfire__
+                    for (n = centre; n >= 0; n--) { /* centre section */
+                        *work &= ~pattern;
+                        work += vplanes;
+                    }
+#else
+                    if (centre >= 0) {              /* centre section */
+                        n = centre;
                         __asm ("1:\n\t"
                                "and.w %2,(%1)\n\t"
                                "adda.w %3,%1\n\t"
-                               "dbra %0,1b" : "+d"(n), "+a"(work) : "r"(~pattern),
+                               "dbra %0,1b" : "+d"(n), "+a"(work) : "d"(~pattern),
                                               "r"(2*vplanes) : "memory", "cc");
                     }
+#endif
                     if (rightmask) {                /* right section */
                         *work &= ~(pattern & rightmask);
                     }
@@ -534,17 +549,25 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
             for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
                 UWORD pattern = attr->patptr[patind];
+                int n;
 
                 *work ^= pattern & leftmask;        /* left section */
                 work += vplanes;
+#ifdef __mcoldfire__
+                for (n = centre; n >= 0; n--) {    /* centre section */
+                    *work ^= pattern;
+                    work += vplanes;
+                }
+#else
                 if (centre >= 0) {                  /* centre section */
-                    int n = centre;
+                    n = centre;
                     __asm ("1:\n\t"
                            "eor.w %2,(%1)\n\t"
                            "adda.w %3,%1\n\t"
-                           "dbra %0,1b" : "+d"(n), "+a"(work) : "r"(pattern),
+                           "dbra %0,1b" : "+d"(n), "+a"(work) : "d"(pattern),
                                           "r"(2*vplanes) : "memory", "cc");
                 }
+#endif
                 if (rightmask) {                    /* right section */
                     *work ^= pattern & rightmask;
                 }
@@ -562,32 +585,47 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
             for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
                 UWORD *work = addr;
                 UWORD pattern = attr->patptr[patind];
+                int n;
 
                 if (color & 0x0001) {
                     *work |= pattern & leftmask;    /* left section */
                     work += vplanes;
+#ifdef __mcoldfire__
+                    for (n = centre; n >= 0; n--) { /* centre section */
+                        *work |= pattern;
+                        work += vplanes;
+                    }
+#else
                     if (centre >= 0) {              /* centre section */
-                        int n = centre;
+                        n = centre;
                         __asm ("1:\n\t"
                                "or.w %2,(%1)\n\t"
                                "adda.w %3,%1\n\t"
-                               "dbra %0,1b" : "+d"(n), "+a"(work) : "r"(pattern),
+                               "dbra %0,1b" : "+d"(n), "+a"(work) : "d"(pattern),
                                               "r"(2*vplanes) : "memory", "cc");
                     }
+#endif
                     if (rightmask) {                /* right section */
                         *work |= pattern & rightmask;
                     }
                 } else {
                     *work &= ~(pattern & leftmask); /* left section */
                     work += vplanes;
+#ifdef __mcoldfire__
+                    for (n = centre; n >= 0; n--) { /* centre section */
+                        *work &= ~pattern;
+                        work += vplanes;
+                    }
+#else
                     if (centre >= 0) {              /* centre section */
-                        int n = centre;
+                        n = centre;
                         __asm ("1:\n\t"
                                "and.w %2,(%1)\n\t"
                                "adda.w %3,%1\n\t"
-                               "dbra %0,1b" : "+d"(n), "+a"(work) : "r"(~pattern),
+                               "dbra %0,1b" : "+d"(n), "+a"(work) : "d"(~pattern),
                                               "r"(2*vplanes) : "memory", "cc");
                     }
+#endif
                     if (rightmask) {                /* right section */
                         *work &= ~(pattern & rightmask);
                     }
@@ -606,19 +644,27 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
             for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
                 UWORD data, *work = addr;
                 UWORD pattern = (color & 0x0001) ? attr->patptr[patind] : 0x0000;
+                int n;
 
                 data = *work & ~leftmask;           /* left section */
                 data |= pattern & leftmask;
                 *work = data;
                 work += vplanes;
+#ifdef __mcoldfire__
+                for (n = centre; n >= 0; n--) {     /* centre section */
+                    *work = pattern;
+                    work += vplanes;
+                }
+#else
                 if (centre >= 0) {                  /* centre section */
-                    int n = centre;
+                    n = centre;
                     __asm ("1:\n\t"
                            "move.w %2,(%1)\n\t"
                            "adda.w %3,%1\n\t"
                            "dbra %0,1b" : "+d"(n), "+a"(work) : "r"(pattern),
                                           "r"(2*vplanes) : "memory", "cc");
                 }
+#endif
                 if (rightmask) {                    /* right section */
                     data = *work & ~rightmask;
                     data |= pattern & rightmask;
