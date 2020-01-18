@@ -793,20 +793,16 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
 
         if (newsel)
         {
-            if (touchob)        /* clear selection of any touched object */
-                tree[touchob].ob_state &= ~SELECTED;
             strcpy(ad_fname, selname + 1);
             ob_draw(tree, FSSELECT, MAX_DEPTH);
+            if (!cont)
+                ob_change(tree, FSOK, SELECTED, TRUE);
             newsel = FALSE;
         }
 
         if (value)
             curr = fs_nscroll(tree, &sel, curr, count, touchob, value);
     }
-
-    /* if CANCEL wasn't selected, force OK */
-    if (!(tree[FSCANCEL].ob_state & SELECTED))
-        tree[FSOK].ob_state |= SELECTED;
 
     /* return path and file name to caller */
     strcpy(pipath, locstr);
