@@ -443,6 +443,9 @@ static void select_drive(OBJECT *treeaddr, WORD drive, WORD redraw)
     WORD i, olddrive = -1;
     OBJECT *obj, *start = treeaddr+DRIVE_OFFSET;
 
+    if ((drive < 0) || (drive >= NM_DRIVES))    /* invalid, don't change selected */
+        return;
+
     for (i = 0, obj = start; i < NM_DRIVES; i++, obj++)
     {
         if (obj->ob_state & SELECTED)
