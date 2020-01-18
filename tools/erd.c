@@ -3118,8 +3118,10 @@ PRIVATE char *my_strupr(char *string)
 {
 char *p = string;
 
-    while (*p)
-        *p++ = toupper(*p);
+    while (*p) {
+        *p = toupper(*p);
+        p++;
+    }
 
     return string;
 }
