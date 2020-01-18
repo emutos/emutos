@@ -302,17 +302,19 @@ __extension__                             \
 #define regsafe_call(addr)                         \
 __extension__                                      \
 ({__asm__ volatile ("lea     -60(sp),sp\n\t"       \
-                    "movem.l d0-d7/a0-a6,(sp)");   \
-  ((void (*)(void))addr)();                        \
-  __asm__ volatile ("movem.l (sp),d0-d7/a0-a6\n\t" \
-                    "lea     60(sp),sp");          \
+                    "movem.l d0-d7/a0-a6,(sp)\n\t" \
+                    "jsr (%0)\n\t"                 \
+                    "movem.l (sp),d0-d7/a0-a6\n\t" \
+                    "lea     60(sp),sp"            \
+                    : : "a"(addr));  \
 })
 #else
 #define regsafe_call(addr)                         \
 __extension__                                      \
-({__asm__ volatile ("movem.l d0-d7/a0-a6,-(sp)");  \
-  ((void (*)(void))addr)();                        \
-  __asm__ volatile ("movem.l (sp)+,d0-d7/a0-a6");  \
+({__asm__ volatile ("movem.l d0-d7/a0-a6,-(sp)\n\t"\
+                    "jsr (%0)\n\t"                 \
+                    "movem.l (sp)+,d0-d7/a0-a6"    \
+                    : : "a"(addr));  \
 })
 #endif
 
