@@ -638,9 +638,9 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
             if (error == 1)     /* only retry once; this avoids continual retries */
             {                   /* due to e.g. missing/unformatted floppy disk    */
                 /*
-                 * if path was changed, reset it; otherwise initial
-                 * path was was wrong, so set it to the root of the
-                 * current drive.  retry in either case.
+                 * if we have an error & the path was changed, reset it;
+                 * otherwise the initial path must have been wrong, so set it
+                 * to the root of the current drive.  retry in either case.
                  */
                 newlist = TRUE;                     /* make it retry */
                 if (strcmp(locstr,locold) != 0)     /* path was changed */
