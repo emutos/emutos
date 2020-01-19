@@ -626,13 +626,11 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
         if (newlist)
         {
             fs_sel(sel, NORMAL);
-            if ((touchob == FSOK) || (touchob == FSCANCEL))
-                ob_change(tree, touchob, NORMAL, TRUE);
             inf_sset(tree, FSDIRECT, locstr);
             pstr = fs_pspec(locstr, NULL);
             strcpy(pstr, mask);
             curr = 0;
-            sel = touchob = 0;
+            sel = 0;
             newlist = FALSE;
             if (fs_newdir(locstr, mask, tree, &count))  /* ok reading dir */
                 error = 0;
@@ -653,7 +651,6 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
                 else
                 {
                     sprintf(locstr,"%c:\\%s",'A'+dos_gdrv(),mask);
-                    strcpy(locold,locstr);
                 }
             }
             strcpy(locold,locstr);
