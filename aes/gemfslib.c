@@ -787,8 +787,11 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
         {
             inf_sset(tree, FSDIRECT, locstr);
             set_mask(mask, locstr);             /* set mask */
-            selname[1] = '\0';                  /* selected is empty */
-            newsel = TRUE;
+            if (!error)                         /* if newlist is NOT due to an error, */
+            {
+                selname[1] = '\0';              /* clear out the selection            */
+                newsel = TRUE;
+            }
         }
 
         if (newsel)
