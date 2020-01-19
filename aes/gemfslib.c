@@ -646,12 +646,12 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
                 if (strcmp(locstr,locold) != 0)     /* path was changed */
                 {                                   /* so try to recover */
                     strcpy(locstr,locold);
-                    select_drive(tree,get_drive(locstr),TRUE);
                 }
                 else
                 {
                     sprintf(locstr,"%c:\\%s",'A'+dos_gdrv(),mask);
                 }
+                select_drive(tree,get_drive(locstr),TRUE);
             }
             strcpy(locold,locstr);
         }
