@@ -921,7 +921,11 @@ void app_start(void)
             }
             break;
 #endif
-#if CONF_WITH_DESKTOP_CONFIG
+        /*
+         * Menu item shortcuts can only be saved to EMUDESK.INF if
+         * CONF_WITH_DESKTOP_CONFIG is enabled.  However, we allow all
+         * versions of the ROM to _load_ menu item shortcuts.
+         */
         case 'K':                       /* menu item shortcuts */
             pcurr++;
             for (i = 0; i < NUM_SHORTCUTS; i++)
@@ -931,7 +935,6 @@ void app_start(void)
                 menu_shortcuts[i] = (UBYTE)temp;
             }
         break;
-#endif
         }
     }
 
