@@ -257,7 +257,10 @@ This is equivalent to the corresponding Atari TOS menu item.  You may do
 the following:
 . specify the default directory and input parameter for all applications
   that are not installed applications.  See "Install application" above,
-  under 'Default dir' and 'Parameter', for further information.
+  under 'Default dir' and 'Parameter', for further information.  Note
+  that, if you do not have a saved desktop (EMUDESK.INF), the initial
+  defaults for these two buttons are the opposite of those in Atari TOS;
+  we believe the EmuTOS defaults are better choices for most software.
 . display the function keys (and corresponding programs) that have been
   assigned via the "Install application..." menu item.  To display, use
   the arrows: up/down arrows select the previous/next assigned function

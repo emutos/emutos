@@ -112,6 +112,8 @@
 #define INF_E5_ISFULL   0x20    /* 1 => pass full path in args (else filename only) */
 #define INF_E5_NOSIZE   0x10    /* 1 => disable 'size to fit' for windows */
 #define INF_E5_NOCACHE  0x08    /* 1 => disable cache */
+                                /* following are defaults if no .INF */
+#define INF_E5_DEFAULT  (INF_E5_APPDIR|INF_E5_ISFULL)
 
                             /* 'Q' bytes 1-6 (default desktop/window pattern/colour values) */
 #define INF_Q1_DEFAULT  (IP_4PATT << 4) | BLACK     /* desktop, 1 plane */
@@ -169,7 +171,7 @@ static char     *atextptr;      /* current pointer within ANODE text buffer */
  */
 static const char desk_inf_data1[] =
     "#R 01\r\n"                         /* INF_REV_LEVEL */
-    "#E 1A E1\r\n"                      /* INF_E1_DEFAULT and INF_E2_DEFAULT */
+    "#E 1A E1 00 00 60\r\n"             /* INF_E1_DEFAULT, INF_E2_DEFAULT, INF_E5_DEFAULT */
 #if CONF_WITH_BACKGROUNDS
     "#Q 41 40 43 40 43 40\r\n"          /* INF_Q1_DEFAULT -> INF_Q6_DEFAULT */
 #endif
