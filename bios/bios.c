@@ -117,16 +117,18 @@ static void vecs_init(void)
      * On other machines, there is actual RAM at that place.
      * To mimic Atari hardware behaviour, we copy the start of our OS there.
      * This may improve compatibility with some Atari software,
-     * which may peek the OS version or reset address from there. */
-    {
-        /* Dereferencing zero is undefined behaviour, so we have to hide what
-         * we're doing here from the compiler, as otherwise it will assume
-         * this code will never be executed and delete it all.
-         */
-        ULONG * volatile zero_ptr = &ULONG_AT(0x00000000);
-        *zero_ptr = ((ULONG*)&os_header)[0];
-    }
-    ULONG_AT(0x00000004) = ((ULONG*)&os_header)[1]; /* Reset: Initial PC */
+     * which may peek the OS version or reset address from there.
+     * As C forbids from dereferencing the NULL pointer, we use assembly. */
+    __asm__ volatile
+    (
+        "move.l  %0,a0\n\t"         /* a0 = ROM */
+        "suba.l  a1,a1\n\t"         /* a1 = 0 */
+        "move.l  (a0)+,(a1)+\n\t"   /* Reset: Initial SSP */
+        "move.l  (a0),(a1)"         /* Reset: Initial PC */
+    : /* outputs */
+    : "g"(&os_header) /* inputs */
+    : "a0", "a1", "cc" AND_MEMORY
+    );
 #endif
 
     /* Initialize the exception vectors.
