@@ -286,7 +286,7 @@ static void bios_init(void)
      */
     if ((mcpu == 30)
      && ((cookie_mch == MCH_ST) || (cookie_mch == MCH_STE) || (cookie_mch == MCH_MSTE)))
-        has_blitter = blitter_is_enabled = 0;
+        has_blitter = 0;
 #endif
 
     /* Set up the BIOS console output */
