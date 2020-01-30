@@ -152,6 +152,17 @@ user stack.  On exit, the user stack pointer is restored and during this
 a corrupted value is loaded into the SR, causing a trace excpetion.
 
 
+Program: CP/M-Z80 Emulator by SoftDesign
+----------------------------------------
+Error: Crashes with bus error when loading CP/M-Z80 disk.
+
+Bug analysis:
+The program expects to find the initial environment at the fixed memory
+address 0x840. This address is used by Atari TOS 1.00 - 2.06 but it is
+undocumented. The initial environment of EmuTOS is located elsewhere in
+RAM.
+
+
 Program: CTRL.ACC/CONTROL.ACC (from ST/STe Language Disks)
 ----------------------------------------------------------
 Error: hangs on startup; eventually crashes with bus error
