@@ -21,7 +21,6 @@
 #include "has.h"        /* for blitter-related items */
 
 
-#if CONF_WITH_BLITTER
 /*
  * private structure for parameter passing
  */
@@ -38,6 +37,7 @@ typedef struct
  */
 #define STD_PATMSKS ((1u<<15) | (1u<<7) | (1u<<3) | (1u<<1) | (1u<<0))
 
+#if CONF_WITH_BLITTER
 /*
  * blitter ops for draw/nodraw cases for wrt_mode 0-3
  */
@@ -170,6 +170,28 @@ void vdi_vql_attributes(Vwk * vwk)
 }
 
 
+/*
+ * set up values required by the horizontal line drawing functions
+ *
+ * This figures out the sizes of the left, centre, and right sections.
+ * If the line lies entirely within a WORD, then the centre and right
+ * section sizes will be zero; if the line spans two WORDs, then the
+ * centre size will be zero.
+ * It also initialises the screen pointer.
+ */
+static __inline__ void draw_rect_setup(BLITPARM *b, const VwkAttrib *attr, const Rect *rect)
+{
+    b->leftmask = 0xffff >> (rect->x1 & 0x0f);
+    b->rightmask = 0xffff << (15 - (rect->x2 & 0x0f));
+    b->width = (rect->x2 >> 4) - (rect->x1 >> 4) + 1;
+    if (b->width == 1) {                /* i.e. all bits within 1 WORD */
+        b->leftmask &= b->rightmask;    /* so combine masks */
+        b->rightmask = 0;
+    }
+    b->addr = get_start_addr(rect->x1, rect->y1);   /* init address ptr */
+}
+
+
 #if CONF_WITH_BLITTER
 #if CONF_WITH_VDI_VERTLINE
 /*
@@ -263,12 +285,17 @@ static BOOL hwblit_vertical_line(const Line *line, WORD wrt_mode, UWORD color)
 /*
  * draw a single horizontal line using the blitter
  */
-static BOOL hwblit_horizontal_line(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
+static BOOL hwblit_horizontal_line(const VwkAttrib *attr, const Rect *rect)
 {
     const UWORD *patptr = attr->patptr;
     UWORD color = attr->color;
-    UWORD *screen_addr = b->addr;
+    UWORD *screen_addr;
     int patindex, plane;
+    BLITPARM b;
+
+    /* set up masks, width, screen address pointer */
+    draw_rect_setup(&b, attr, rect);
+    screen_addr = b.addr;
 
     /*
      * since the blitter doesn't see the data cache, and we may be in
@@ -277,14 +304,14 @@ static BOOL hwblit_horizontal_line(const VwkAttrib *attr, const Rect *rect, BLIT
      * is overkill, but note that the current cache control routines
      * ignore the length specification & act on the whole cache anyway.
      */
-    flush_data_cache(b->addr, v_lin_wr);
+    flush_data_cache(b.addr, v_lin_wr);
 
     BLITTER->src_x_incr = 0;
-    BLITTER->endmask_1 = b->leftmask;
+    BLITTER->endmask_1 = b.leftmask;
     BLITTER->endmask_2 = 0xffff;
-    BLITTER->endmask_3 = b->rightmask;
+    BLITTER->endmask_3 = b.rightmask;
     BLITTER->dst_x_incr = v_planes * sizeof(WORD);
-    BLITTER->x_count = b->width;
+    BLITTER->x_count = b.width;
     BLITTER->hop = HOP_HALFTONE_ONLY;
     BLITTER->status = 0;            /* LINENO = 0 */
     BLITTER->skew = 0;
@@ -320,7 +347,7 @@ static BOOL hwblit_horizontal_line(const VwkAttrib *attr, const Rect *rect, BLIT
      * we've modified a screen line behind the cpu's back, so we must
      * invalidate any cached screen data.
      */
-    invalidate_data_cache(b->addr,v_lin_wr);
+    invalidate_data_cache(b.addr,v_lin_wr);
 
     return TRUE;
 }
@@ -331,15 +358,16 @@ static BOOL hwblit_horizontal_line(const VwkAttrib *attr, const Rect *rect, BLIT
  *
  * Please refer to draw_rect_common for further information
  */
-static BOOL hwblit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
+static BOOL hwblit_rect_common(const VwkAttrib *attr, const Rect *rect)
 {
     const UWORD patmsk = attr->patmsk;
     const UWORD *patptr = attr->patptr;
     UWORD color = attr->color;
     const WORD ycount = rect->y2 - rect->y1 + 1;
-    UWORD *screen_addr = b->addr;
+    UWORD *screen_addr;
     UBYTE status;
     int i, plane;
+    BLITPARM b;
 
     /*
      * the following blitter code works for 'standard' values of patmsk
@@ -349,18 +377,22 @@ static BOOL hwblit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM
     if ((patmsk >= 16) || ((STD_PATMSKS & (1u<<patmsk)) == 0))
         return FALSE;
 
+    /* set up masks, width, screen address pointer */
+    draw_rect_setup(&b, attr, rect);
+    screen_addr = b.addr;
+
     /*
      * flush the data cache to ensure that the screen memory is current
      */
-    flush_data_cache(b->addr, v_lin_wr*ycount);
+    flush_data_cache(b.addr, v_lin_wr*ycount);
 
     BLITTER->src_x_incr = 0;
-    BLITTER->endmask_1 = b->leftmask;
+    BLITTER->endmask_1 = b.leftmask;
     BLITTER->endmask_2 = 0xffff;
-    BLITTER->endmask_3 = b->rightmask;
+    BLITTER->endmask_3 = b.rightmask;
     BLITTER->dst_x_incr = v_planes * sizeof(WORD);
-    BLITTER->dst_y_incr = v_lin_wr - (v_planes*sizeof(WORD)*(b->width-1));
-    BLITTER->x_count = b->width;
+    BLITTER->dst_y_incr = v_lin_wr - (v_planes*sizeof(WORD)*(b.width-1));
+    BLITTER->x_count = b.width;
     status = BUSY | (rect->y1 & LINENO);    /* NOHOG mode */
     BLITTER->skew = 0;
 
@@ -403,7 +435,7 @@ static BOOL hwblit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM
     /*
      * invalidate any cached screen data
      */
-    invalidate_data_cache(b->addr, v_lin_wr*ycount);
+    invalidate_data_cache(b.addr, v_lin_wr*ycount);
 
     return TRUE;
 }
@@ -411,19 +443,15 @@ static BOOL hwblit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM
 
 
 /*
- * draw_rect_common - draw one or more horizontal lines
+ * swblit_rect_common - draw one or more horizontal lines via software
  *
  * This code does the following:
- *  1. Figures out the sizes of the left, centre, and right sections.  If
- *     the line lies entirely within a WORD, then the centre and right
- *     section sizes will be zero; if the line spans two WORDs, then the
- *     centre size will be zero.
- *  2. The outermost control is via a switch() statement depending on
+ *  1. The outermost control is via a switch() statement depending on
  *     the current drawing mode.
- *  3. Within each case, the outermost loop processes one scan line per
+ *  2. Within each case, the outermost loop processes one scan line per
  *     iteration.
- *  4. Within this loop, the video planes are processed in sequence.
- *  5. Within this, the left section is processed, then the centre and/or
+ *  3. Within this loop, the video planes are processed in sequence.
+ *  4. Within this, the left section is processed, then the centre and/or
  *     right sections (if they exist).
  *
  * NOTE: this code seems rather longwinded and repetitive.  In fact it
@@ -434,66 +462,33 @@ static BOOL hwblit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM
  * 8MHz ST or 16MHz Falcon.  You are strongly advised not to change this
  * without a lot of careful thought & performance testing!
  */
-void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
+static void OPTIMIZE_SMALL swblit_rect_common(const VwkAttrib *attr, const Rect *rect)
 {
-    UWORD leftmask, rightmask, *addr;
     const UWORD patmsk = attr->patmsk;
     const int vplanes = v_planes;
     const int yinc = (v_lin_wr>>1) - vplanes;
-    int width, centre, y;
-#if CONF_WITH_BLITTER
+    int centre, y;
     BLITPARM b;
-#endif
 
-    leftmask = 0xffff >> (rect->x1 & 0x0f);
-    rightmask = 0xffff << (15 - (rect->x2 & 0x0f));
-    width = (rect->x2 >> 4) - (rect->x1 >> 4) + 1;
-    if (width == 1) {           /* i.e. all bits within 1 WORD */
-        leftmask &= rightmask;  /* so combine masks */
-        rightmask = 0;
-    }
-    addr = get_start_addr(rect->x1,rect->y1);   /* init address ptr */
+    /* set up masks, width, screen address pointer */
+    draw_rect_setup(&b, attr, rect);
 
-#if CONF_WITH_BLITTER
-    if (blitter_is_enabled)
-    {
-        b.leftmask = leftmask;
-        b.rightmask = rightmask;
-        b.width = width;
-        b.addr = addr;
-
-        /*
-         * special handling for common horizontal line case
-         */
-        if (rect->y1 == rect->y2)
-        {
-            if (hwblit_horizontal_line(attr, rect, &b)) /* if it ran ok, */
-                return;                             /* we're done    */
-        }
-        else
-        {
-            if (hwblit_rect_common(attr, rect, &b)) /* if it ran ok, */
-                return;                             /* we're done    */
-        }
-    }
-#endif
-
-    centre = width - 2 - 1; /* -1 because of the way we construct the innermost loops */
+    centre = b.width - 2 - 1;   /* -1 because of the way we construct the innermost loops */
 
     switch(attr->wrt_mode) {
     case WM_ERASE:          /* erase (reverse transparent) mode */
-        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+        for (y = rect->y1; y <= rect->y2; y++, b.addr += yinc) {
             int patind = patmsk & y;   /* starting pattern */
             int plane;
             UWORD color;
 
-            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
-                UWORD *work = addr;
+            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, b.addr++) {
+                UWORD *work = b.addr;
                 UWORD pattern = ~attr->patptr[patind];
                 int n;
 
                 if (color & 0x0001) {
-                    *work |= pattern & leftmask;    /* left section */
+                    *work |= pattern & b.leftmask;  /* left section */
                     work += vplanes;
 #ifdef __mcoldfire__
                     for (n = centre; n >= 0; n--) { /* centre section */
@@ -510,11 +505,11 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                                               "r"(2*vplanes) : "memory", "cc");
                     }
 #endif
-                    if (rightmask) {                /* right section */
-                        *work |= pattern & rightmask;
+                    if (b.rightmask) {              /* right section */
+                        *work |= pattern & b.rightmask;
                     }
                 } else {
-                    *work &= ~(pattern & leftmask); /* left section */
+                    *work &= ~(pattern & b.leftmask);   /* left section */
                     work += vplanes;
 #ifdef __mcoldfire__
                     for (n = centre; n >= 0; n--) { /* centre section */
@@ -531,8 +526,8 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                                               "r"(2*vplanes) : "memory", "cc");
                     }
 #endif
-                    if (rightmask) {                /* right section */
-                        *work &= ~(pattern & rightmask);
+                    if (b.rightmask) {              /* right section */
+                        *work &= ~(pattern & b.rightmask);
                     }
                 }
                 if (attr->multifill)
@@ -541,17 +536,17 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
         }
         break;
     case WM_XOR:            /* xor mode */
-        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+        for (y = rect->y1; y <= rect->y2; y++, b.addr += yinc) {
             int patind = patmsk & y;   /* starting pattern */
             int plane;
             UWORD color;
 
-            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
-                UWORD *work = addr;
+            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, b.addr++) {
+                UWORD *work = b.addr;
                 UWORD pattern = attr->patptr[patind];
                 int n;
 
-                *work ^= pattern & leftmask;        /* left section */
+                *work ^= pattern & b.leftmask;      /* left section */
                 work += vplanes;
 #ifdef __mcoldfire__
                 for (n = centre; n >= 0; n--) {    /* centre section */
@@ -568,8 +563,8 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                                           "r"(2*vplanes) : "memory", "cc");
                 }
 #endif
-                if (rightmask) {                    /* right section */
-                    *work ^= pattern & rightmask;
+                if (b.rightmask) {                  /* right section */
+                    *work ^= pattern & b.rightmask;
                 }
                 if (attr->multifill)
                     patind += 16;                   /* advance pattern data */
@@ -577,18 +572,18 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
         }
         break;
     case WM_TRANS:          /* transparent mode */
-        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+        for (y = rect->y1; y <= rect->y2; y++, b.addr += yinc) {
             int patind = patmsk & y;   /* starting pattern */
             int plane;
             UWORD color;
 
-            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
-                UWORD *work = addr;
+            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, b.addr++) {
+                UWORD *work = b.addr;
                 UWORD pattern = attr->patptr[patind];
                 int n;
 
                 if (color & 0x0001) {
-                    *work |= pattern & leftmask;    /* left section */
+                    *work |= pattern & b.leftmask;  /* left section */
                     work += vplanes;
 #ifdef __mcoldfire__
                     for (n = centre; n >= 0; n--) { /* centre section */
@@ -605,11 +600,11 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                                               "r"(2*vplanes) : "memory", "cc");
                     }
 #endif
-                    if (rightmask) {                /* right section */
-                        *work |= pattern & rightmask;
+                    if (b.rightmask) {              /* right section */
+                        *work |= pattern & b.rightmask;
                     }
                 } else {
-                    *work &= ~(pattern & leftmask); /* left section */
+                    *work &= ~(pattern & b.leftmask);   /* left section */
                     work += vplanes;
 #ifdef __mcoldfire__
                     for (n = centre; n >= 0; n--) { /* centre section */
@@ -626,8 +621,8 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                                               "r"(2*vplanes) : "memory", "cc");
                     }
 #endif
-                    if (rightmask) {                /* right section */
-                        *work &= ~(pattern & rightmask);
+                    if (b.rightmask) {              /* right section */
+                        *work &= ~(pattern & b.rightmask);
                     }
                 }
                 if (attr->multifill)
@@ -636,18 +631,18 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
         }
         break;
     default:                /* replace mode */
-        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+        for (y = rect->y1; y <= rect->y2; y++, b.addr += yinc) {
             int patind = patmsk & y;   /* starting pattern */
             int plane;
             UWORD color;
 
-            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, addr++) {
-                UWORD data, *work = addr;
+            for (plane = 0, color = attr->color; plane < vplanes; plane++, color>>=1, b.addr++) {
+                UWORD data, *work = b.addr;
                 UWORD pattern = (color & 0x0001) ? attr->patptr[patind] : 0x0000;
                 int n;
 
-                data = *work & ~leftmask;           /* left section */
-                data |= pattern & leftmask;
+                data = *work & ~b.leftmask;         /* left section */
+                data |= pattern & b.leftmask;
                 *work = data;
                 work += vplanes;
 #ifdef __mcoldfire__
@@ -665,9 +660,9 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
                                           "r"(2*vplanes) : "memory", "cc");
                 }
 #endif
-                if (rightmask) {                    /* right section */
-                    data = *work & ~rightmask;
-                    data |= pattern & rightmask;
+                if (b.rightmask) {                  /* right section */
+                    data = *work & ~b.rightmask;
+                    data |= pattern & b.rightmask;
                     *work = data;
                 }
                 if (attr->multifill)
@@ -676,6 +671,36 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
         }
         break;
     }
+}
+
+
+/*
+ * draw_rect_common - draw one or more horizontal lines
+ *
+ * calls the hardware or software blitter code to perform the blit
+ */
+void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
+{
+#if CONF_WITH_BLITTER
+    if (blitter_is_enabled)
+    {
+        /*
+         * special handling for common horizontal line case
+         */
+        if (rect->y1 == rect->y2)
+        {
+            if (hwblit_horizontal_line(attr, rect)) /* if it ran ok, */
+                return;                             /* we're done    */
+        }
+        else
+        {
+            if (hwblit_rect_common(attr, rect))     /* if it ran ok, */
+                return;                             /* we're done    */
+        }
+    }
+#endif
+
+    swblit_rect_common(attr, rect);
 }
 
 
