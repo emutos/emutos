@@ -197,7 +197,7 @@ static __inline__ void draw_rect_setup(BLITPARM *b, const VwkAttrib *attr, const
 /*
  * draw a single vertical line using the blitter
  */
-static BOOL hwblit_vertical_line(const Line *line, WORD wrt_mode, UWORD color)
+static void hwblit_vertical_line(const Line *line, WORD wrt_mode, UWORD color)
 {
     WORD i, plane, dy, yinc, height, start_line;
     UWORD mask;
@@ -276,8 +276,6 @@ static BOOL hwblit_vertical_line(const Line *line, WORD wrt_mode, UWORD color)
     for (i = height & 0x000f; i; i--)
         rolw1(mask);
     LN_MASK = mask;
-
-    return TRUE;
 }
 #endif
 
@@ -285,7 +283,7 @@ static BOOL hwblit_vertical_line(const Line *line, WORD wrt_mode, UWORD color)
 /*
  * draw a single horizontal line using the blitter
  */
-static BOOL hwblit_horizontal_line(const VwkAttrib *attr, const Rect *rect)
+static void hwblit_horizontal_line(const VwkAttrib *attr, const Rect *rect)
 {
     const UWORD *patptr = attr->patptr;
     UWORD color = attr->color;
@@ -348,8 +346,6 @@ static BOOL hwblit_horizontal_line(const VwkAttrib *attr, const Rect *rect)
      * invalidate any cached screen data.
      */
     invalidate_data_cache(b.addr,v_lin_wr);
-
-    return TRUE;
 }
 
 
@@ -689,8 +685,8 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
          */
         if (rect->y1 == rect->y2)
         {
-            if (hwblit_horizontal_line(attr, rect)) /* if it ran ok, */
-                return;                             /* we're done    */
+            hwblit_horizontal_line(attr, rect);
+            return;
         }
         else
         {
