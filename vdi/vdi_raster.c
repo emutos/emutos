@@ -279,12 +279,12 @@ void vdi_vr_trnfm(Vwk * vwk)
 
 #if CONF_WITH_BLITTER
 /*
- * blitter_do_blit()
+ * hwblit_raster()
  *
  * Interface to hardware blitter for raster functions
  */
 static void
-blitter_do_blit(blit *blt)
+hwblit_raster(blit *blt)
 {
     LONG length;
     /*
@@ -702,7 +702,7 @@ bit_blt (void)
 #if CONF_WITH_BLITTER
         if (blitter_is_enabled)
         {
-            blitter_do_blit(blt);
+            hwblit_raster(blt);
         }
         else
 #endif
@@ -710,7 +710,7 @@ bit_blt (void)
             do_blit(blt);
         }
 #else
-        blitter_do_blit(blt);
+        hwblit_raster(blt);
 #endif
 
         s_addr += blit_info->s_nxpl;          /* a0-> start of next src plane   */

@@ -175,7 +175,7 @@ void vdi_vql_attributes(Vwk * vwk)
 /*
  * draw a single vertical line using the blitter
  */
-static BOOL blit_vline(const Line *line, WORD wrt_mode, UWORD color)
+static BOOL hwblit_vertical_line(const Line *line, WORD wrt_mode, UWORD color)
 {
     WORD i, plane, dy, yinc, height, start_line;
     UWORD mask;
@@ -263,7 +263,7 @@ static BOOL blit_vline(const Line *line, WORD wrt_mode, UWORD color)
 /*
  * draw a single horizontal line using the blitter
  */
-static BOOL blit_hline(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
+static BOOL hwblit_horizontal_line(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
 {
     const UWORD *patptr = attr->patptr;
     UWORD color = attr->color;
@@ -327,11 +327,11 @@ static BOOL blit_hline(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
 
 
 /*
- * blit_rect_common: blitter version of draw_rect_common
+ * hwblit_rect_common: blitter version of draw_rect_common
  *
  * Please refer to draw_rect_common for further information
  */
-static BOOL blit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
+static BOOL hwblit_rect_common(const VwkAttrib *attr, const Rect *rect, BLITPARM *b)
 {
     const UWORD patmsk = attr->patmsk;
     const UWORD *patptr = attr->patptr;
@@ -467,12 +467,12 @@ void OPTIMIZE_SMALL draw_rect_common(const VwkAttrib *attr, const Rect *rect)
          */
         if (rect->y1 == rect->y2)
         {
-            if (blit_hline(attr, rect, &b))         /* if it ran ok, */
+            if (hwblit_horizontal_line(attr, rect, &b)) /* if it ran ok, */
                 return;                             /* we're done    */
         }
         else
         {
-            if (blit_rect_common(attr, rect, &b))   /* if it ran ok, */
+            if (hwblit_rect_common(attr, rect, &b)) /* if it ran ok, */
                 return;                             /* we're done    */
         }
     }
@@ -1917,7 +1917,7 @@ void abline(const Line *line, const WORD wrt_mode, UWORD color)
 #if CONF_WITH_BLITTER
         if (blitter_is_enabled)
         {
-            blit_vline(line, wrt_mode, color);
+            hwblit_vertical_line(line, wrt_mode, color);
             return;
         }
         else
