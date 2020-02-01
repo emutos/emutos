@@ -281,75 +281,6 @@ static void hwblit_vertical_line(const Line *line, WORD wrt_mode, UWORD color)
 
 
 /*
- * draw a single horizontal line using the blitter
- */
-static void hwblit_horizontal_line(const VwkAttrib *attr, const Rect *rect)
-{
-    const UWORD *patptr = attr->patptr;
-    UWORD color = attr->color;
-    UWORD *screen_addr;
-    int patindex, plane;
-    BLITPARM b;
-
-    /* set up masks, width, screen address pointer */
-    draw_rect_setup(&b, attr, rect);
-    screen_addr = b.addr;
-
-    /*
-     * since the blitter doesn't see the data cache, and we may be in
-     * copyback mode (e.g. the FireBee), we must flush the data cache
-     * first to ensure that the screen memory is current.  the following
-     * is overkill, but note that the current cache control routines
-     * ignore the length specification & act on the whole cache anyway.
-     */
-    flush_data_cache(b.addr, v_lin_wr);
-
-    BLITTER->src_x_incr = 0;
-    BLITTER->endmask_1 = b.leftmask;
-    BLITTER->endmask_2 = 0xffff;
-    BLITTER->endmask_3 = b.rightmask;
-    BLITTER->dst_x_incr = v_planes * sizeof(WORD);
-    BLITTER->x_count = b.width;
-    BLITTER->hop = HOP_HALFTONE_ONLY;
-    BLITTER->status = 0;            /* LINENO = 0 */
-    BLITTER->skew = 0;
-
-    patindex = rect->y1 & attr->patmsk;
-
-    for (plane = 0; plane < v_planes; plane++, color >>= 1)
-    {
-        BLITTER->halftone[0] = patptr[patindex];
-        if (attr->multifill)
-            patindex += 16;
-        BLITTER->dst_addr = screen_addr++;
-        BLITTER->y_count = 1;
-        BLITTER->op = (color & 1) ? op_draw[attr->wrt_mode]: op_nodraw[attr->wrt_mode];
-
-        /*
-         * we run the blitter in the Atari-recommended way: use no-HOG mode,
-         * and manually restart the blitter until it's done.
-         */
-        BLITTER->status = BUSY;     /* no-HOG mode */
-        __asm__ __volatile__(
-        "lea    0xFFFF8A3C,a0\n\t"
-        "0:\n\t"
-        "tas    (a0)\n\t"
-        "nop\n\t"
-        "jbmi   0b\n\t"
-        :
-        :
-        : "a0", "memory", "cc"
-        );
-    }
-    /*
-     * we've modified a screen line behind the cpu's back, so we must
-     * invalidate any cached screen data.
-     */
-    invalidate_data_cache(b.addr,v_lin_wr);
-}
-
-
-/*
  * hwblit_rect_common: blitter version of draw_rect_common
  *
  * Please refer to draw_rect_common for further information
@@ -680,19 +611,8 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
 #if CONF_WITH_BLITTER
     if (blitter_is_enabled)
     {
-        /*
-         * special handling for common horizontal line case
-         */
-        if (rect->y1 == rect->y2)
-        {
-            hwblit_horizontal_line(attr, rect);
-            return;
-        }
-        else
-        {
-            if (hwblit_rect_common(attr, rect))     /* if it ran ok, */
-                return;                             /* we're done    */
-        }
+        if (hwblit_rect_common(attr, rect))     /* if it ran ok, */
+            return;                             /* we're done    */
     }
 #endif
 
