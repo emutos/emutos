@@ -297,12 +297,22 @@ static BOOL hwblit_rect_common(const VwkAttrib *attr, const Rect *rect)
     BLITPARM b;
 
     /*
-     * the following blitter code works for 'standard' values of patmsk
-     * (i.e. 0, 1, 3, 7, or 15).  if we have a non-standard value, we
-     * handle it via the non-blitter code.
+     * check for 'non-standard' values of patmsk:
+     *  . if multifill is set, patmsk must be 15
+     *  . if multifill is *not* set, patmsk must be 0, 1, 3, 7, or 15
+     * if we have a non-standard value, we currently handle it via the
+     * non-hardware-blitter code.
      */
-    if ((patmsk >= 16) || ((STD_PATMSKS & (1u<<patmsk)) == 0))
-        return FALSE;
+    if (attr->multifill)
+    {
+        if (patmsk != 15)
+            return FALSE;
+    }
+    else
+    {
+        if ((patmsk >= 16) || ((STD_PATMSKS & (1u<<patmsk)) == 0))
+            return FALSE;
+    }
 
     /* set up masks, width, screen address pointer */
     draw_rect_setup(&b, attr, rect);
