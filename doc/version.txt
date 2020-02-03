@@ -1,0 +1,40 @@
+Detecting the EmuTOS version
+============================
+
+It has always been possible to detect the presence of EmuTOS (rather
+than TOS), by looking at the last 4 bytes of the osheader structure
+(which is located at the start of the ROM).  This contains the ASCII
+bytes 'ETOS' if EmuTOS is the OS.  However, the various version numbers
+that are available from fixed locations or via system calls are not
+directly related to the EmuTOS version; rather they contain the version
+of Atari TOS that is 'closest' to the current EmuTOS version in available
+features/behaviour.  So it has not been possible to easily determine the
+version of EmuTOS from the binary.
+
+As of 29/October/2019, EmuTOS version information is available via a new
+structure called the 'Extended OS header'.  It is located at offset 0x34
+from the beginning of the ROM, and you may check for its presence by
+verifying that the first 4 bytes are ASCII 'OSEX'.
+
+Following 'OSEX' is a long containing the length of the entire structure
+(currently 20), and then 4 binary bytes containing the version, in the
+following sequence:
+    . major version
+    . minor version
+    . fix version
+        normally zero, but would be non-zero for a hot-fix release (also
+        for versions earlier than 1.0, e.g. version 0.9.12 has 12 here)
+    . unofficial flag
+        zero indicates an official release, otherwise it's a snapshot
+        or custom release
+For example, for official release 1.0, the 4 bytes are 0x01000000; for
+a snapshot release based on official release 11.5, the 4 bytes would
+be 0x0b050001.
+
+Following this is a long containing the offset to the version string as
+displayed on the EmuTOS startup screen and the EmuDesk 'About' dialog box.
+NOTE: this offset is from the start of the ROM, *not* the start of the
+header extension!
+
+Finally (at the moment) there is a long containing various flags which
+are not related to the EmuTOS version.
