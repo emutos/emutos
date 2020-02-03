@@ -265,15 +265,15 @@ static const UBYTE default_shortcuts[NUM_SHORTCUTS] =
     'I',        /* SHOWITEM */
     0x00,       /* SRCHITEM */
     'N',        /* NFOLITEM */
-    'U',        /* CLOSITEM */
-    'W',        /* CLSWITEM */
-    0x00,       /* BTOPITEM */
-    0x00,       /* SLCTITEM */
+    'H',        /* CLOSITEM */
+    'U',        /* CLSWITEM */
+    'W',        /* BTOPITEM */
+    'A',        /* SLCTITEM */
     0x00,       /* MASKITEM */
     'D',        /* DELTITEM */
     0x00,       /* FORMITEM */
     'Z',        /* CLIITEM */
-    'Q',        /* QUITITEM */
+    0x00,       /* QUITITEM */
             /* 'View' menu */
     0x00,       /* ICONITEM */
     0x00,       /* TEXTITEM */
