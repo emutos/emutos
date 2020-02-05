@@ -32,8 +32,8 @@ typedef struct
     WORD            dst_x_incr;         /* destination X increment */
     WORD            dst_y_incr;         /* destination Y increment */
     volatile UWORD  *dst_addr;          /* destination address */
-    volatile WORD   x_count;            /* X count */
-    volatile WORD   y_count;            /* Y count */
+    volatile UWORD  x_count;            /* X count */
+    volatile UWORD  y_count;            /* Y count */
     UBYTE           hop;                /* HOP */
     UBYTE           op;                 /* OP */
     volatile UBYTE  status;             /* status bits & line# */
