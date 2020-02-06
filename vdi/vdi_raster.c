@@ -38,7 +38,7 @@
 #define GetMemW(addr) ((ULONG)*(UWORD*)(addr))
 #define SetMemW(addr, val) *(UWORD*)(addr) = val
 
-/* register-equivalent variables used by software blitter */
+/* structure passed to raster blit functions */
 typedef struct {
     UWORD          halftone[16];
     WORD           src_x_inc, src_y_inc;
@@ -500,33 +500,12 @@ do_blit(BLITVARS * blt)
  * not provide an interface to the hardware.
  *
  * In:
- *  blit_info   pointer to 34 byte input parameter block
+ *  blit_info   pointer to 76 byte input parameter block
  *
  * Note: This is a translation of the original assembler code in the Atari
  * blitter document, with the addition that source and destination are
  * allowed to overlap.  Original source code comments are mostly preserved.
  */
-
-/* I n p u t   p a r a m e t e r   b l o c k   o f f s e t s */
-
-#define SRC_FORM  0 /* Base address of source memory form .l: */
-#define SRC_NXWD  4 /* Offset between words in source plane .w: */
-#define SRC_NXLN  6 /* Source form width .w: */
-#define SRC_NXPL  8 /* Offset between source planes .w: */
-#define SRC_XMIN 10 /* Source blt rectangle minimum X .w: */
-#define SRC_YMIN 12 /* Source blt rectangle minimum Y .w: */
-
-#define DST_FORM 14 /* Base address of destination memory form .l: */
-#define DST_NXWD 18 /* Offset between words in destination plane.w: */
-#define DST_NXLN 20 /* Destination form width .w: */
-#define DST_NXPL 22 /* Offset between destination planes .w: */
-#define DST_XMIN 24 /* Destination blt rectangle minimum X .w: */
-#define DST_YMIN 26 /* Destination blt rectangle minimum Y .w: */
-
-#define WIDTH    28 /* Width of blt rectangle .w: */
-#define HEIGHT   30 /* Height of blt rectangle .w: */
-#define PLANES   32 /* Number of planes to blt .w: */
-
 static void
 bit_blt (void)
 {
