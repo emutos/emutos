@@ -185,14 +185,12 @@ typedef struct {
 
 
 #if ASM_BLIT_IS_AVAILABLE
-void fast_bit_blt(void);    /* defined in vdi_blit.S */
+void fast_bit_blt(struct blit_frame *blit_info);    /* defined in vdi_blit.S */
 #endif
 
-/* holds VDI internal info for bit_blt() */
+/* holds VDI internal info for bit_blt(), fast_bit_blt() */
 static struct blit_frame vdi_info;
 
-/* which blit information to use, should be set before calling bit_blt() */
-struct blit_frame *blit_info;
 
 /*
  * vdi_vr_trnfm - transform screen bitmaps
@@ -506,8 +504,7 @@ do_blit(BLITVARS * blt)
  * blitter document, with the addition that source and destination are
  * allowed to overlap.  Original source code comments are mostly preserved.
  */
-static void
-bit_blt (void)
+static void bit_blt(struct blit_frame *blit_info)
 {
     WORD plane;
     UWORD s_xmin, s_xmax;
@@ -987,21 +984,19 @@ cpy_raster(struct raster_t *raster, struct blit_frame *info)
      * (a) the blitter isn't configured, or
      * (b) it's configured but not available.
      */
-    blit_info = info;
-
 #if ASM_BLIT_IS_AVAILABLE
 #if CONF_WITH_BLITTER
     if (blitter_is_enabled)
     {
-        bit_blt();
+        bit_blt(info);
     }
     else
 #endif
     {
-        fast_bit_blt();
+        fast_bit_blt(info);
     }
 #else
-    bit_blt();
+    bit_blt(info);
 #endif
 }
 
@@ -1071,7 +1066,6 @@ void linea_blit(struct blit_frame *info)
     info->s_ymax = info->s_ymin + info->b_ht - 1;
     info->d_xmax = info->d_xmin + info->b_wd - 1;
     info->d_ymax = info->d_ymin + info->b_ht - 1;
-    blit_info = info;
 
     /*
      * call assembler blit routine or C-implementation.  we call the
@@ -1083,14 +1077,14 @@ void linea_blit(struct blit_frame *info)
 #if CONF_WITH_BLITTER
     if (blitter_is_enabled)
     {
-        bit_blt();
+        bit_blt(info);
     }
     else
 #endif
     {
-        fast_bit_blt();
+        fast_bit_blt(info);
     }
 #else
-    bit_blt();
+    bit_blt(info);
 #endif
 }

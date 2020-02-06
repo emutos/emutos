@@ -12,7 +12,6 @@
 
         .globl  _fast_bit_blt
 
-        .extern _blit_info
         .extern _PTSIN
 
 // The following defines are offsets inside fringe code fragments
@@ -789,16 +788,15 @@ f2op_15:
 //
 // _fast_bit_blt - wrapper for bit_blt
 //
-// It emulates the link opcode by adding the FRAME_LEN onto the a6
-// register. That way the rest of the assembler stuff can stay, as
+// It emulates the link opcode by setting a6 to FRAME_LEN plus the passed
+// address.  That way the rest of the assembler stuff can stay as
 // it is for now - some of it is also used for text blitting.
 _fast_bit_blt:
         // A wrapper, so save and set up registers
+        movea.l 4(sp),a0                // a0 -> start of frame
         movem.l d2-d7/a2-a6,-(sp)
 
-        movea.l _blit_info, a6          // get info structure addr
-
-        add.l   #FRAME_LEN, a6          // emulate link opcode
+        lea     FRAME_LEN(a0),a6        // emulate link opcode
 
         move.w  S_XMIN(a6),d0           // clipped Xmin source
         move.w  D_XMIN(a6),d2           // clipped Xmin destination
