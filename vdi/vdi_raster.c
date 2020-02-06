@@ -38,9 +38,8 @@
 #define GetMemW(addr) ((ULONG)*(UWORD*)(addr))
 #define SetMemW(addr, val) *(UWORD*)(addr) = val
 
-/* blitter registers */
-typedef struct blit blit;
-struct blit {
+/* register-equivalent variables used by software blitter */
+typedef struct {
     UWORD          halftone[16];
     WORD           src_x_inc, src_y_inc;
     ULONG          src_addr;
@@ -49,7 +48,8 @@ struct blit {
     ULONG          dst_addr;
     UWORD          x_cnt, y_cnt;
     UBYTE          hop, op, status, skew;
-};
+} BLITVARS;
+
 
 /* setting of skew flags */
 
@@ -284,7 +284,7 @@ void vdi_vr_trnfm(Vwk * vwk)
  * Interface to hardware blitter for raster functions
  */
 static void
-hwblit_raster(blit *blt)
+hwblit_raster(BLITVARS *blt)
 {
     LONG length;
     /*
@@ -343,7 +343,7 @@ hwblit_raster(blit *blt)
  * processing removed since it is always called with a HOP value of 2 (source)
  */
 static void
-do_blit(blit * blt)
+do_blit(BLITVARS * blt)
 {
     ULONG   blt_src_in;
     UWORD   blt_src_out, blt_dst_in, blt_dst_out, mask_out;
@@ -538,10 +538,10 @@ bit_blt (void)
     WORD s_span, s_xmin_off, s_xmax_off;
     WORD d_span, d_xmin_off, d_xmax_off;
     ULONG s_addr, d_addr;
-    blit blitter;
+    BLITVARS blitter;
 
     /* a5-> BLiTTER register block */
-    blit * blt = &blitter;
+    BLITVARS *blt = &blitter;
 
     /* Calculate Xmax coordinates from Xmin coordinates and width */
     s_xmin = blit_info->s_xmin;               /* d0<- src Xmin */
