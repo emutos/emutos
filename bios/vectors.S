@@ -647,13 +647,10 @@ _int_priv:
         jne     pi_not30
 
 pi_020or030:
-        // on 68020/030, invalidate the i-cache line we just modified
-        move.l  a0,d0                   // get full address
-        andi.l  #0x000000fc,d0          //  zero out unused bits
-        MOVEC_D0_CAAR                   //   & set caar -> index/longword of cache line
+        // on 68020/030, invalidate the entire tiny instruction cache
         MOVEC_CACR_D0                   // get current cacr
-        ori.b   #0x04,d0                // set the CEI bit
-        MOVEC_D0_CACR                   // invalidate the line
+        ori.b   #0x08,d0                // set the CI bit
+        MOVEC_D0_CACR                   // invalidate the I cache
         jra     pi_next
 
 pi_not30:
