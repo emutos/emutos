@@ -17,6 +17,8 @@
 /* Create a plain binary file, without any header */
 OUTPUT_FORMAT(binary)
 
+#if !EMUTOS_LIVES_IN_RAM
+
 /* The ROM address depends on the target */
 #if defined (MACHINE_AMIGA)
 # define ROM_ORIGIN 0x00fc0000
@@ -34,13 +36,17 @@ OUTPUT_FORMAT(binary)
  */
 #define ROM_LENGTH 1M /* Maximum size before I/O area */
 
+#endif /* !EMUTOS_LIVES_IN_RAM */
+
 /* Memory regions of a typical Atari computer.
  * Only start addresses matter. Lengths just need to be large enough.
  */
 MEMORY
 {
     stram : ORIGIN = 0x00000000, LENGTH = 14M
+#if !EMUTOS_LIVES_IN_RAM
     rom : ORIGIN = ROM_ORIGIN, LENGTH = ROM_LENGTH
+#endif
 #if CONF_WITH_STATIC_ALT_RAM
     altram : ORIGIN = STATIC_ALT_RAM_ADDRESS, LENGTH = 1M
 #endif
