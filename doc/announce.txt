@@ -125,6 +125,7 @@ EmuTOS also supports the following Atari-compatible hardware:
 - Nova/ET4000 graphics card
 - Nova/Mach32 graphics card
 - Volksfarben/ET4000 graphics card
+- Wittich Imagine for the MegaST/ET4000 graphics card
 - SD/MMC
 - The Native Features interface to some degree
 
