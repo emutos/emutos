@@ -260,8 +260,7 @@ WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
         cont = FALSE;
 
     /* handle click on another editable field */
-    if (cont &&
-        ((flags & HIDETREE) || (state & DISABLED) || !(flags & EDITABLE)))
+    if (cont && !(flags & EDITABLE))
         new_obj = 0;
 
     *pnew_obj = new_obj | orword;
