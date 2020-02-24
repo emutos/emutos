@@ -24,6 +24,7 @@
 #include "aesvars.h"
 #include "obdefs.h"
 #include "gem_rsc.h"
+#include "biosbind.h"
 
 #include "gemwmlib.h"
 #include "gemrslib.h"
@@ -324,7 +325,7 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
             next_obj = ob_find(tree, ROOT, MAX_DEPTH, rets[0], rets[1]);
             if (next_obj == NIL)
             {
-                sound(TRUE, 440, 2);
+                Bconout(2, 0x07);   /* bell sound */
                 next_obj = 0;
             }
             else
