@@ -750,7 +750,7 @@ WORD inf_pref(void)
     else
         tree1[SPCOWNO].ob_state |= SELECTED;
 
-    sndefpref = !sound(FALSE, 0xFFFF, 0);
+    sndefpref = !disable_sound(-1);
     if (sndefpref)
         tree1[SPSEYES].ob_state |= SELECTED;
     else
@@ -811,7 +811,7 @@ WORD inf_pref(void)
         G.g_ccopypref = inf_which(tree1, SPCCYES, 2);
         G.g_covwrpref = inf_which(tree1, SPCOWYES, 2);
         sndefpref = inf_which(tree1, SPSEYES, 2);
-        sound(FALSE, !sndefpref, 0);
+        disable_sound(sndefpref ? 0 : 1);
 
         G.g_cdclkpref = inf_gindex(tree2, SPDC1, 5);
         G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);

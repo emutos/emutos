@@ -191,52 +191,60 @@ static const char desk_inf_data2[] =
 
 
 /*
- *  sound() - an internal routine used by the desktop
- *
- *  This routine has two functions:
- *  1. play a sound (iff isfreq==TRUE)
- *      'freq' is the frequency in Hz; must be > 0
- *      'dura' is the duration in ~250msec units: must be < 32
- *  2. enable/disable sound playing by this function (iff isfreq==FALSE)
- *      'freq' is the control:
- *          -1 => do nothing
- *           0 => enable
- *           otherwise disable
- *      'dura' is not used
- *
- *  in both cases, the function returns the current disabled state, as
- *  set previously (0 => enabled, otherwise disabled)
+ * variables used by disable_sound() / play_sound() routines
  */
-WORD sound(WORD isfreq, WORD freq, WORD dura)
+static UBYTE snddat[16];    /* read later from interrupt! */
+static BOOL sound_is_disabled;
+
+
+/*
+ *  disable_sound()
+ *
+ *  This routine enables/disables sound playing by the sound() function,
+ *  depending on 'control':
+ *      >0 => disable
+ *       0 => enable
+ *      <0 => do nothing
+ *
+ *  in all cases, the function returns the current status
+ *  (TRUE = disabled, FALSE = enabled)
+ */
+BOOL disable_sound(WORD control)
+{
+    if (control > 0)
+        sound_is_disabled = TRUE;
+    else if (control == 0)
+        sound_is_disabled = FALSE;
+
+    return sound_is_disabled;
+}
+
+
+/*
+ *  play_sound()
+ *
+ *  This routine plays a sound:
+ *      'frequency' is the frequency in Hz; must be > 0
+ *      'duration' is the duration in ~250msec units: must be > 0 & < 32
+ */
+void play_sound(UWORD frequency, UWORD duration)
 {
     UWORD tp; /* 12 bit oscillation frequency setting value */
-    static UBYTE snddat[16]; /* Will be read later from interrupt! */
-    static WORD disabled;
 
-    if (isfreq)     /* Play a sound? */
-    {
-        if (disabled)
-            return 1;
+    if (sound_is_disabled)
+        return;
 
-        tp = divu(125000L,freq);
-        snddat[0] = 0;  snddat[1] = LOBYTE(tp);     /* channel A pitch lo */
-        snddat[2] = 1;  snddat[3] = HIBYTE(tp);     /* channel A pitch hi */
-        snddat[4] = 7;  snddat[5] = 0xFE;
-        snddat[6] = 8;  snddat[7] = 0x10;                   /* amplitude: envelop */
-        snddat[8] = 11;  snddat[9] = 0;                     /* envelope lo */
-        snddat[10] = 12;  snddat[11] = dura * 8;            /* envelope hi */
-        snddat[12] = 13;  snddat[13] = 9;                   /* envelope type */
-        snddat[14] = 0xFF;  snddat[15] = 0;
+    tp = divu(125000L, frequency);
+    snddat[0] = 0;      snddat[1] = LOBYTE(tp);     /* channel A pitch lo */
+    snddat[2] = 1;      snddat[3] = HIBYTE(tp);     /* channel A pitch hi */
+    snddat[4] = 7;      snddat[5] = 0xFE;
+    snddat[6] = 8;      snddat[7] = 0x10;           /* amplitude: envelop */
+    snddat[8] = 11;     snddat[9] = 0;              /* envelope lo */
+    snddat[10] = 12;    snddat[11] = duration * 8;  /* envelope hi */
+    snddat[12] = 13;    snddat[13] = 9;             /* envelope type */
+    snddat[14] = 0xFF;  snddat[15] = 0;
 
-        Dosound((LONG)snddat);
-    }
-    else            /* else enable/disable sound */
-    {
-        if (freq != -1)
-            disabled = freq;
-    }
-
-    return disabled;
+    Dosound((LONG)snddat);
 }
 
 
@@ -944,7 +952,7 @@ void app_start(void)
                 cnxsave->cs_timefmt = TIMEFORM_IDT;
             else
                 cnxsave->cs_timefmt = (envr & INF_E2_24HCLOCK) ? TIMEFORM_24H : TIMEFORM_12H;
-            sound(FALSE, !(envr & INF_E2_SOUND), 0);
+            disable_sound((envr & INF_E2_SOUND) ? 0 : 1);
 
             pcurr = scan_2(pcurr, &dummy);  /* skip video stuff */
             pcurr = scan_2(pcurr, &dummy);
@@ -1173,7 +1181,7 @@ void app_save(WORD todisk)
         env2 |= INF_E2_24HCLOCK;
         break;
     }
-    env2 |= sound(FALSE, 0xFFFF, 0)  ? 0x00 : INF_E2_SOUND;
+    env2 |= disable_sound(-1) ? 0x00 : INF_E2_SOUND;
     mode = desk_get_videomode();
     env5 = (cnxsave->cs_sort == CS_NOSORT) ? INF_E5_NOSORT : 0;
 #if CONF_WITH_DESKTOP_CONFIG

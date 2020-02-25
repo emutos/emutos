@@ -580,7 +580,7 @@ static WORD do_deskmenu(WORD item)
                 int i;
                 for (i = 0; i < 23; i++)
                 {
-                    sound(TRUE, freq[i], dura[i]);
+                    play_sound(freq[i], dura[i]);
                     evnt_timer(dura[i]*64, 0);
                 }
 #endif
