@@ -27,56 +27,6 @@
 
 
 /*
- *  sound() - an internal routine used by the AES and desktop
- *
- *  This routine has two functions:
- *  1. play a sound (iff isfreq==TRUE)
- *      'freq' is the frequency in Hz; must be > 0
- *      'dura' is the duration in ~250msec units: must be < 32
- *  2. enable/disable sound playing by this function (iff isfreq==FALSE)
- *      'freq' is the control:
- *          -1 => do nothing
- *           0 => enable
- *           otherwise disable
- *      'dura' is not used
- *
- *  in both cases, the function returns the current disabled state, as
- *  set previously (0 => enabled, otherwise disabled)
- */
-WORD sound(WORD isfreq, WORD freq, WORD dura)
-{
-    UWORD tp; /* 12 bit oscillation frequency setting value */
-    static UBYTE snddat[16]; /* Will be read later from interrupt! */
-    static WORD disabled;
-
-    if (isfreq)     /* Play a sound? */
-    {
-        if (disabled)
-            return 1;
-
-        tp = divu(125000L,freq);
-        snddat[0] = 0;  snddat[1] = LOBYTE(tp);     /* channel A pitch lo */
-        snddat[2] = 1;  snddat[3] = HIBYTE(tp);     /* channel A pitch hi */
-        snddat[4] = 7;  snddat[5] = 0xFE;
-        snddat[6] = 8;  snddat[7] = 0x10;                   /* amplitude: envelop */
-        snddat[8] = 11;  snddat[9] = 0;                     /* envelope lo */
-        snddat[10] = 12;  snddat[11] = dura * 8;            /* envelope hi */
-        snddat[12] = 13;  snddat[13] = 9;                   /* envelope type */
-        snddat[14] = 0xFF;  snddat[15] = 0;
-
-        Dosound((LONG)snddat);
-    }
-    else            /* else enable/disable sound */
-    {
-        if (freq != -1)
-            disabled = freq;
-    }
-
-    return disabled;
-}
-
-
-/*
  *  Convert 'normal' filename to a value suitable for formatting
  *  with a TEDINFO FFFFFFFF.FFF text string.  For example:
  *      . 'SAMPLE.PRG' is converted to 'SAMPLE  PRG'
