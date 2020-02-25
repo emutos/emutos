@@ -153,12 +153,12 @@ void chkkbd(void)
         return;
 
     kstat = gsx_kstate();
-    achar = gsx_char();
-    if (achar && (gl_mowner->p_cda->c_q.c_cnt >= KBD_SIZE))
-    {
-        achar = 0x0;                        /* buffer overrun       */
-        sound(TRUE, 880, 2);
-    }
+    achar = 0;
+
+    /* only get a key if there's room in the buffer */
+    if (gl_mowner->p_cda->c_q.c_cnt < KBD_SIZE)
+        achar = gsx_char();     /* returns 0 if no key available */
+
     if (achar || (kstat != kstate))
     {
         disable_interrupts();
