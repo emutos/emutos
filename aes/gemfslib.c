@@ -188,7 +188,11 @@ static WORD fs_active(char *ppath, char *pspec, WORD *pcount)
     dos_sdta(&D.g_dta);
     ret = dos_sfirst(allpath, FA_SUBDIR);
 
-    while (ret == 0)
+    /*
+     * like Atari TOS, we silently ignore any filenames that we don't
+     * have room for.  this should be an extremely rare occurrence.
+     */
+    while((ret == 0) && (thefile < nm_files))
     {
         /* if it is a real file or directory then save it and set
          * the first byte to tell which
@@ -202,12 +206,6 @@ static WORD fs_active(char *ppath, char *pspec, WORD *pcount)
             }
         }
         ret = dos_snext();
-
-        if (thefile >= nm_files)    /* too many files */
-        {
-            sound(TRUE, 660, 4);
-            break;
-        }
     }
 
     *pcount = thefile;
