@@ -320,13 +320,13 @@ static const WORD arrow_table[] =
 #if CONF_WITH_EASTER_EGG
 /* easter egg */
 #define EGG_NOTES   23      /* number of notes to play */
-static const WORD freq[EGG_NOTES] =
+static const UWORD freq[EGG_NOTES] =
 {
         262, 349, 329, 293, 349, 392, 440, 392, 349, 329, 262, 293,
         349, 262, 262, 293, 330, 349, 465, 440, 392, 349, 698
 };
 
-static const WORD dura[EGG_NOTES] =
+static const UBYTE dura[EGG_NOTES] =
 {
         4, 12, 4, 12, 4, 6, 2, 4, 4, 12, 4, 4,
         4, 4, 4, 4, 4, 4, 4, 12, 4, 8, 4
