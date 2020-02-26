@@ -319,13 +319,14 @@ static const WORD arrow_table[] =
 
 #if CONF_WITH_EASTER_EGG
 /* easter egg */
-static const WORD  freq[]=
+#define EGG_NOTES   23      /* number of notes to play */
+static const WORD freq[EGG_NOTES] =
 {
         262, 349, 329, 293, 349, 392, 440, 392, 349, 329, 262, 293,
         349, 262, 262, 293, 330, 349, 465, 440, 392, 349, 698
 };
 
-static const WORD  dura[]=
+static const WORD dura[EGG_NOTES] =
 {
         4, 12, 4, 12, 4, 6, 2, 4, 4, 12, 4, 4,
         4, 4, 4, 4, 4, 4, 4, 12, 4, 8, 4
@@ -580,7 +581,7 @@ static WORD do_deskmenu(WORD item)
                 if (!disable_sound(-1))
                 {
                     int i;
-                    for (i = 0; i < 23; i++)
+                    for (i = 0; i < EGG_NOTES; i++)
                     {
                         play_sound(freq[i], dura[i]);
                         evnt_timer(dura[i]*64, 0);
