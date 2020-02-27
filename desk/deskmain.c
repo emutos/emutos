@@ -578,14 +578,11 @@ static WORD do_deskmenu(WORD item)
             if (touchob == DEICON)
             {
 #if CONF_WITH_EASTER_EGG
-                if (!disable_sound(-1))
+                int i;
+                for (i = 0; i < EGG_NOTES; i++)
                 {
-                    int i;
-                    for (i = 0; i < EGG_NOTES; i++)
-                    {
-                        play_sound(freq[i], dura[i]);
-                        evnt_timer(dura[i]*64, 0);
-                    }
+                    play_sound(freq[i], dura[i]);
+                    evnt_timer(dura[i]*64, 0);
                 }
 #endif
             }

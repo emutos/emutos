@@ -723,7 +723,6 @@ WORD inf_pref(void)
     OBJECT *tree1 = desk_rs_trees[ADSETPRE];
     OBJECT *tree2 = desk_rs_trees[ADSETPR2];
     WORD oldtime, olddate;
-    WORD sndefpref;
     WORD button;
 
     /*
@@ -749,12 +748,6 @@ WORD inf_pref(void)
         tree1[SPCOWYES].ob_state |= SELECTED;
     else
         tree1[SPCOWNO].ob_state |= SELECTED;
-
-    sndefpref = !disable_sound(-1);
-    if (sndefpref)
-        tree1[SPSEYES].ob_state |= SELECTED;
-    else
-        tree1[SPSENO].ob_state |= SELECTED;
 
     /* select buttons corresponding to current state of more preferences */
     G.g_cdclkpref = evnt_dclick(0, FALSE);
@@ -810,8 +803,6 @@ WORD inf_pref(void)
         G.g_cdelepref = inf_which(tree1, SPCDYES, 2);
         G.g_ccopypref = inf_which(tree1, SPCCYES, 2);
         G.g_covwrpref = inf_which(tree1, SPCOWYES, 2);
-        sndefpref = inf_which(tree1, SPSEYES, 2);
-        disable_sound(sndefpref ? 0 : 1);
 
         G.g_cdclkpref = inf_gindex(tree2, SPDC1, 5);
         G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);

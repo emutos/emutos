@@ -165,7 +165,6 @@ void app_blddesk(void);
 ANODE *app_afind_by_id(WORD obid);
 ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, WORD *pisapp);
 void nomem_alert(void) NORETURN;
-BOOL disable_sound(WORD control);
 void play_sound(UWORD frequency, UWORD duration);
 
 #if CONF_WITH_READ_INF

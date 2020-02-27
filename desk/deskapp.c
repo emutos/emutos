@@ -99,9 +99,8 @@
 #define INF_E2_MNUCLICK 0x08    /* 1 => click to drop down menus */
 #define INF_E2_DAYMONTH 0x04    /* 1 => day before month */
 #define INF_E2_24HCLOCK 0x02    /* 1 => 24 hour clock */
-#define INF_E2_SOUND    0x01    /* 1 => sound effects on */
                                 /* following are defaults if no .INF */
-#define INF_E2_DEFAULT  (INF_E2_BLITTER|INF_E2_IDTDATE|INF_E2_IDTTIME|INF_E2_SOUND)
+#define INF_E2_DEFAULT  (INF_E2_BLITTER|INF_E2_IDTDATE|INF_E2_IDTTIME)
 
                             /* 'E' bytes 3-4 are video mode (see process_inf1() in aes/geminit.c) */
 
@@ -171,7 +170,7 @@ static char     *atextptr;      /* current pointer within ANODE text buffer */
  */
 static const char desk_inf_data1[] =
     "#R 01\r\n"                         /* INF_REV_LEVEL */
-    "#E 1A E1 00 00 60\r\n"             /* INF_E1_DEFAULT, INF_E2_DEFAULT, INF_E5_DEFAULT */
+    "#E 1A E0 00 00 60\r\n"             /* INF_E1_DEFAULT, INF_E2_DEFAULT, INF_E5_DEFAULT */
 #if CONF_WITH_BACKGROUNDS
     "#Q 41 40 43 40 43 40\r\n"          /* INF_Q1_DEFAULT -> INF_Q6_DEFAULT */
 #endif
@@ -191,33 +190,9 @@ static const char desk_inf_data2[] =
 
 
 /*
- * variables used by disable_sound() / play_sound() routines
+ * variables used by play_sound() routine
  */
 static UBYTE snddat[16];    /* read later from interrupt! */
-static BOOL sound_is_disabled;
-
-
-/*
- *  disable_sound()
- *
- *  This routine enables/disables sound playing by the sound() function,
- *  depending on 'control':
- *      >0 => disable
- *       0 => enable
- *      <0 => do nothing
- *
- *  in all cases, the function returns the current status
- *  (TRUE = disabled, FALSE = enabled)
- */
-BOOL disable_sound(WORD control)
-{
-    if (control > 0)
-        sound_is_disabled = TRUE;
-    else if (control == 0)
-        sound_is_disabled = FALSE;
-
-    return sound_is_disabled;
-}
 
 
 /*
@@ -230,9 +205,6 @@ BOOL disable_sound(WORD control)
 void play_sound(UWORD frequency, UWORD duration)
 {
     UWORD tp; /* 12 bit oscillation frequency setting value */
-
-    if (sound_is_disabled)
-        return;
 
     tp = divu(125000L, frequency);
     snddat[0] = 0;      snddat[1] = LOBYTE(tp);     /* channel A pitch lo */
@@ -952,7 +924,6 @@ void app_start(void)
                 cnxsave->cs_timefmt = TIMEFORM_IDT;
             else
                 cnxsave->cs_timefmt = (envr & INF_E2_24HCLOCK) ? TIMEFORM_24H : TIMEFORM_12H;
-            disable_sound((envr & INF_E2_SOUND) ? 0 : 1);
 
             pcurr = scan_2(pcurr, &dummy);  /* skip video stuff */
             pcurr = scan_2(pcurr, &dummy);
@@ -1181,7 +1152,6 @@ void app_save(WORD todisk)
         env2 |= INF_E2_24HCLOCK;
         break;
     }
-    env2 |= disable_sound(-1) ? 0x00 : INF_E2_SOUND;
     mode = desk_get_videomode();
     env5 = (cnxsave->cs_sort == CS_NOSORT) ? INF_E5_NOSORT : 0;
 #if CONF_WITH_DESKTOP_CONFIG
