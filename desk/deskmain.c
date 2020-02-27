@@ -29,6 +29,7 @@
 #include "gemdos.h"
 #include "optimize.h"
 #include "gsxdefs.h"
+#include "intmath.h"
 
 #include "deskbind.h"
 #include "deskglob.h"
@@ -350,6 +351,37 @@ static char *desk_rs_strings;   /* see copy_menu_items() */
 
 #if CONF_WITH_READ_INF
 static BOOL restart_desktop;    /* TRUE iff we need to restart the desktop */
+#endif
+
+
+#if CONF_WITH_EASTER_EGG
+/* array used by play_sound() routine */
+static UBYTE snddat[16];        /* read later by interrupt handler */
+
+
+/*
+ *  play_sound()
+ *
+ *  This routine plays a sound:
+ *      'frequency' is the frequency in Hz; must be > 0
+ *      'duration' is the duration in ~250msec units: must be > 0 & < 32
+ */
+static void play_sound(UWORD frequency, UWORD duration)
+{
+    UWORD tp; /* 12 bit oscillation frequency setting value */
+
+    tp = divu(125000L, frequency);
+    snddat[0] = 0;      snddat[1] = LOBYTE(tp);     /* channel A pitch lo */
+    snddat[2] = 1;      snddat[3] = HIBYTE(tp);     /* channel A pitch hi */
+    snddat[4] = 7;      snddat[5] = 0xFE;
+    snddat[6] = 8;      snddat[7] = 0x10;           /* amplitude: envelope */
+    snddat[8] = 11;     snddat[9] = 0;              /* envelope lo */
+    snddat[10] = 12;    snddat[11] = duration * 8;  /* envelope hi */
+    snddat[12] = 13;    snddat[13] = 9;             /* envelope type */
+    snddat[14] = 0xFF;  snddat[15] = 0;
+
+    Dosound((LONG)snddat);
+}
 #endif
 
 
