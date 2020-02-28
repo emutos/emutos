@@ -247,10 +247,10 @@ static WORD check(char *in_char, char valchar)
         upcase = FALSE;
         break;
     case 'A':           /* A..Z, <SPACE> */
-        rstr = "a..zA..Z ";
+        rstr = "A..Z ";
         break;
     case 'N':           /* 0..9, A..Z, <SPACE> */
-        rstr = "a..zA..Z0..9 ";
+        rstr = "A..Z0..9 ";
         break;
     case 'a':           /* a..z, A..Z, <SPACE> */
         rstr = "a..zA..Z ";
@@ -261,16 +261,16 @@ static WORD check(char *in_char, char valchar)
         upcase = FALSE;
         break;
     case 'F':           /* DOS filename + ':', '?', '*' */
-        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~:?*";
+        rstr = "a..zA..Z0..9$#&@!%()-{}'`_^~:?*";
         break;
     case 'f':           /* DOS filename */
-        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~";
+        rstr = "a..zA..Z0..9$#&@!%()-{}'`_^~";
         break;
-    case 'P':           /* DOS pathname + '?', '*', '.', ',' */
-        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~\\?*:.,";
+    case 'P':           /* DOS pathname + '?', '*', '.' */
+        rstr = "a..zA..Z0..9$#&@!%()-{}'`_^~\\?*:.";
         break;
     case 'p':           /* DOS pathname */
-        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~\\:";
+        rstr = "a..zA..Z0..9$#&@!%()-{}'`_^~\\:";
         break;
     case 'X':           /* anything */
         return TRUE;
