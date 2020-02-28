@@ -33,6 +33,22 @@
 #include "scancode.h"
 
 
+/*
+ * validation strings used in check()
+ *
+ * note that most documentation on this is incorrect.  the following
+ * strings agree with TOS 2/3/4 actual usage.
+ */
+#define VALIDATE_N "0..9A..Z \x80\x8e\x8f\x90\x92\x99\x9a\x9e\xa5\xb5\xb6\xb7\xb8\xc2..$dc"
+#define VALIDATE_A (VALIDATE_N+4)               /* 0..9 are omitted */
+#define VALIDATE_n "0..9a..zA..Z \x80..\xff"
+#define VALIDATE_a (VALIDATE_n+4)               /* 0..9 are omitted */
+#define VALIDATE_F ":?*a..zA..Z0..9_\x80..\xff"
+#define VALIDATE_f (VALIDATE_F+3)               /* :?* are omitted */
+#define VALIDATE_P ".?*a..zA..Z0..9_\\:\x80..\xff"
+#define VALIDATE_p (VALIDATE_P+3)               /* .?* are omitted */
+
+
 static TEDINFO  edblk;
 
 
@@ -247,30 +263,30 @@ static WORD check(char *in_char, char valchar)
         upcase = FALSE;
         break;
     case 'A':           /* A..Z, <SPACE>, uppercase non-Roman */
-        rstr = "A..Z \x80\x8e\x8f\x90\x92\x99\x9a\x9e\xa5\xb5\xb6\xb7\xb8\xc2..$dc";
+        rstr = VALIDATE_A;
         break;
     case 'N':           /* 0..9, A..Z, <SPACE>, uppercase non-Roman */
-        rstr = "0..9A..Z \x80\x8e\x8f\x90\x92\x99\x9a\x9e\xa5\xb5\xb6\xb7\xb8\xc2..$dc";
+        rstr = VALIDATE_N;
         break;
     case 'a':           /* a..z, A..Z, <SPACE>, 0x80..0xff */
-        rstr = "a..zA..Z \x80..\xff";
+        rstr = VALIDATE_a;
         upcase = FALSE;
         break;
     case 'n':           /* 0..9, a..z, A..Z, <SPACE>, 0x80..0xff */
-        rstr = "0..9a..zA..Z \x80..\xff";
+        rstr = VALIDATE_n;
         upcase = FALSE;
         break;
     case 'F':           /* ':', '?', '*' + DOS filename */
-        rstr = ":?*a..zA..Z0..9_\x80..\xff";
+        rstr = VALIDATE_F;
         break;
     case 'f':           /* DOS filename */
-        rstr = "a..zA..Z0..9_\x80..\xff";
+        rstr = VALIDATE_f;
         break;
     case 'P':           /* '.', '?', '*' + DOS pathname */
-        rstr = ".?*a..zA..Z0..9_\\:\x80..\xff";
+        rstr = VALIDATE_P;
         break;
     case 'p':           /* DOS pathname */
-        rstr = "a..zA..Z0..9_\\:\x80..\xff";
+        rstr = VALIDATE_p;
         break;
     case 'X':           /* anything */
         return TRUE;
