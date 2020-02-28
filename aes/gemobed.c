@@ -246,31 +246,31 @@ static WORD check(char *in_char, char valchar)
         rstr = "0..9";
         upcase = FALSE;
         break;
-    case 'A':           /* A..Z, <SPACE> */
-        rstr = "A..Z ";
+    case 'A':           /* A..Z, <SPACE>, uppercase non-Roman */
+        rstr = "A..Z \x80\x8e\x8f\x90\x92\x99\x9a\x9e\xa5\xb5\xb6\xb7\xb8\xc2..$dc";
         break;
-    case 'N':           /* 0..9, A..Z, <SPACE> */
-        rstr = "A..Z0..9 ";
+    case 'N':           /* 0..9, A..Z, <SPACE>, uppercase non-Roman */
+        rstr = "0..9A..Z \x80\x8e\x8f\x90\x92\x99\x9a\x9e\xa5\xb5\xb6\xb7\xb8\xc2..$dc";
         break;
-    case 'a':           /* a..z, A..Z, <SPACE> */
-        rstr = "a..zA..Z ";
+    case 'a':           /* a..z, A..Z, <SPACE>, 0x80..0xff */
+        rstr = "a..zA..Z \x80..\xff";
         upcase = FALSE;
         break;
-    case 'n':           /* 0..9, a..z, A..Z, <SPACE> */
-        rstr = "a..zA..Z0..9 ";
+    case 'n':           /* 0..9, a..z, A..Z, <SPACE>, 0x80..0xff */
+        rstr = "0..9a..zA..Z \x80..\xff";
         upcase = FALSE;
         break;
-    case 'F':           /* DOS filename + ':', '?', '*' */
-        rstr = "a..zA..Z0..9$#&@!%()-{}'`_^~:?*";
+    case 'F':           /* ':', '?', '*' + DOS filename */
+        rstr = ":?*a..zA..Z0..9_\x80..\xff";
         break;
     case 'f':           /* DOS filename */
-        rstr = "a..zA..Z0..9$#&@!%()-{}'`_^~";
+        rstr = "a..zA..Z0..9_\x80..\xff";
         break;
-    case 'P':           /* DOS pathname + '?', '*', '.' */
-        rstr = "a..zA..Z0..9$#&@!%()-{}'`_^~\\?*:.";
+    case 'P':           /* '.', '?', '*' + DOS pathname */
+        rstr = ".?*a..zA..Z0..9_\\:\x80..\xff";
         break;
     case 'p':           /* DOS pathname */
-        rstr = "a..zA..Z0..9$#&@!%()-{}'`_^~\\:";
+        rstr = "a..zA..Z0..9_\\:\x80..\xff";
         break;
     case 'X':           /* anything */
         return TRUE;
