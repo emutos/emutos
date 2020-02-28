@@ -242,29 +242,17 @@ static WORD check(char *in_char, char valchar)
     rstr = NULL;
     switch(valchar)
     {
-    case '9':           /* 0..9                 */
+    case '9':           /* 0..9 */
         rstr = "0..9";
         upcase = FALSE;
         break;
-    case 'A':           /* A..Z, <space>        */
+    case 'A':           /* A..Z, <SPACE> */
         rstr = "a..zA..Z ";
         break;
-    case 'N':           /* 0..9, A..Z, <SPACE>  */
+    case 'N':           /* 0..9, A..Z, <SPACE> */
         rstr = "a..zA..Z0..9 ";
         break;
-    case 'P':           /* DOS pathname + '\', '?', '*', ':','.',','*/
-        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~\\?*:.,";
-        break;
-    case 'p':           /* DOS pathname + '\` + ':'     */
-        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~\\:";
-        break;
-    case 'F':           /* DOS filename + ':', '?' + '*' */
-        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~:?*";
-        break;
-    case 'f':           /* DOS filename */
-        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~";
-        break;
-    case 'a':           /* a..z, A..Z, <SPACE>  */
+    case 'a':           /* a..z, A..Z, <SPACE> */
         rstr = "a..zA..Z ";
         upcase = FALSE;
         break;
@@ -272,10 +260,22 @@ static WORD check(char *in_char, char valchar)
         rstr = "a..zA..Z0..9 ";
         upcase = FALSE;
         break;
-    case 'x':           /* anything, but upcase */
-        *in_char = toupper(*in_char);
+    case 'F':           /* DOS filename + ':', '?', '*' */
+        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~:?*";
+        break;
+    case 'f':           /* DOS filename */
+        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~";
+        break;
+    case 'P':           /* DOS pathname + '?', '*', '.', ',' */
+        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~\\?*:.,";
+        break;
+    case 'p':           /* DOS pathname */
+        rstr = "a..zA..Z0..9 $#&@!%()-{}'`_^~\\:";
+        break;
+    case 'X':           /* anything */
         return TRUE;
-    case 'X':           /* anything             */
+    case 'x':           /* anything, but change lowercase to uppercase */
+        *in_char = toupper(*in_char);
         return TRUE;
     }
 
