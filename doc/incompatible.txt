@@ -178,28 +178,29 @@ Use a less-buggy control panel, e.g. XCONTROL.ACC from the TT or
 Falcon Language Disk.
 
 
-Program: Cubase Lite
---------------------
+Program: Cubase v2 & Lite
+-------------------------
 Error: panic
 
 Bug analysis:
-On TOS 1.62 etv_timer vector is a delegate to an internal private
-function.  Cubase Lite tries to guess the address of that private
-function in an undocumented way, which crashes on EmuTOS.  (Somebody
-could write a loader or TSR to change the etv_timer function so that
-Cubase will not crash.)
+On TOS (v1.62) etv_timer vector is a delegate to an internal private
+function.  Cubase tries to guess the address of that private function
+in an undocumented way, which crashes on EmuTOS. If that is patched,
+crash happens on next private function which Cubase tries to search
+for.
 
 
 Program: Luftschloss
 --------------------
 Error: Fails to load with an error message about the MPB variable.
 
-Bug analysis: Luftschloss is a reset resident RAM disk originally
-distributed with the German book "Scheibenkleister". It does its
-memory management itself, without using GEMDOS functions. For that,
-it needs to determine the location of an undocumented system variable,
-the memory parameter block (MPB). The heuristic it uses to find the
-memory address of that variable only works with Atari TOS.
+Bug analysis:
+Luftschloss is a reset resident RAM disk originally distributed with
+the German book "Scheibenkleister". It does its memory management
+itself, without using GEMDOS functions. For that, it needs to
+determine the location of an undocumented system variable, the memory
+parameter block (MPB). The heuristic it uses to find the memory
+address of that variable only works with Atari TOS.
 
 
 Program: OMIKRON.BASIC V3.01 (interpreter)
