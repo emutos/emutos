@@ -40,6 +40,7 @@ but the keyboard layout to Norwegian/Swedish.
 Due to size limitations, the 192 KB ROMs contain:
 - no EmuCON
 - limited desktop features (comparable to Atari TOS 1)
+- no builtin text file viewer and print function
 
 These ROM images have been built using:
 make all192
