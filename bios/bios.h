@@ -34,6 +34,7 @@ void bconout_str(WORD handle, const char* str);
 
 /* Line-A functions */
 void linea_init(void); /* initialize variables */
+void set_screen_shift(void);    /* set shift amount for screen address calcs */
 
 /* functions below implemented in panicasm.S */
 

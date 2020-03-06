@@ -34,6 +34,15 @@ UBYTE v_planes_shift;
 
 MCS *mcs_ptr;   /* ptr to current mouse cursor save area, based on v_planes */
 
+
+/*
+ * set_screen_shift() - sets v_planes_shift from the current value of v_planes
+ */
+void set_screen_shift(void)
+{
+    v_planes_shift = shift_offset[v_planes];
+}
+
 /*
  * linea_init - init linea variables
  */
@@ -44,7 +53,7 @@ void linea_init(void)
     screen_get_current_mode_info(&v_planes, &V_REZ_HZ, &V_REZ_VT);
 
     /* precalculate shift value to optimize pixel address calculations */
-    v_planes_shift = shift_offset[v_planes];
+    set_screen_shift();
 
     v_lin_wr = V_REZ_HZ / 8 * v_planes;     /* bytes per line */
     BYTES_LIN = v_lin_wr;       /* I think BYTES_LIN = v_lin_wr (PES) */

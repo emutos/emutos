@@ -462,6 +462,7 @@ static void bios_init(void)
         if ((V_REZ_HZ != save_hz) || (V_REZ_VT != save_vt) || (v_planes != save_pl))
         {
             set_rez_hacked();
+            set_screen_shift();     /* set shift amount for screen address calc */
             font_set_default(-1);   /* set default font */
             vt52_init();            /* initialize the vt52 console */
         }
