@@ -40,6 +40,10 @@ typedef struct
     UBYTE           skew;               /* FXSR, NFSR, & skew */
 } BLIT;
 
+#endif
+
+/* the following are used by the blitter and the blitter emulation code */
+
 /*
  * values for hop
  */
@@ -55,6 +59,12 @@ typedef struct
 #define HOG         0x40
 #define SMUDGE      0x20
 #define LINENO      0x0f
-#endif
+
+/*
+ * values for skew
+ */
+#define FXSR    0x80
+#define NFSR    0x40
+#define SKEW    0x0f
 
 #endif

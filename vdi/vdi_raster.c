@@ -27,14 +27,6 @@
 
 
 #if CONF_WITH_BLITTER || !ASM_BLIT_IS_AVAILABLE
-#define FXSR    0x80
-#define NFSR    0x40
-#define SKEW    0x0f
-#define BUSY    0x80
-#define HOG     0x40
-#define SMUDGE  0x20
-#define LINENO  0x0f
-
 #define GetMemW(addr) ((ULONG)*(UWORD*)(addr))
 #define SetMemW(addr, val) *(UWORD*)(addr) = val
 
@@ -81,20 +73,17 @@ typedef struct {
  *                            |..dddddddddddddd|dddddddddddddd..|
  */
 
-#define mSkewFXSR    0x80
-#define mSkewNFSR    0x40
-
 static const UBYTE skew_flags[8] = {
                         /* for blit direction Right->Left */
-    mSkewNFSR,              /* Source span < Destination span */
-    mSkewFXSR,              /* Source span > Destination span */
-    mSkewNFSR+mSkewFXSR,    /* Spans equal, Shift Source right */
+    NFSR,                   /* Source span < Destination span */
+    FXSR,                   /* Source span > Destination span */
+    NFSR+FXSR,              /* Spans equal, Shift Source right */
     0,                      /* Spans equal, Shift Source left */
                         /* for blit direction Left->Right */
-    mSkewNFSR,              /* Source span < Destination span */
-    mSkewFXSR,              /* Source span > Destination span */
+    NFSR,                   /* Source span < Destination span */
+    FXSR,                   /* Source span > Destination span */
     0,                      /* Spans equal, Shift Source right */
-    mSkewNFSR+mSkewFXSR     /* Spans equal, Shift Source left */
+    NFSR+FXSR               /* Spans equal, Shift Source left */
 };
 #endif
 
@@ -645,15 +634,12 @@ static void bit_blt(struct blit_frame *blit_info)
      */
     if (!s_span && !d_span) {
         blt->src_x_inc = skew;          /* sets skew direction */
-        blt->skew = skew ? (skew & 0x0f) : mSkewFXSR;
+        blt->skew = skew ? (skew & 0x0f) : FXSR;
     } else {
         blt->skew = (skew & 0x0f) | skew_flags[skew_idx];
     }
 
-    /* BLiTTER REGISTER MASKS */
-#define mHOP_Source  0x02
-#define mHOP_Halftone 0x01
-    blt->hop = mHOP_Source;   /* word */    /* set HOP to source only */
+    blt->hop = HOP_SOURCE_ONLY;         /* set HOP to source only */
 
     for (plane = 0; plane < blit_info->plane_ct; plane++) {
         int op_tabidx;
