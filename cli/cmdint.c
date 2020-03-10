@@ -210,10 +210,26 @@ PRIVATE LONG run_cd(WORD argc,char **argv)
 {
 char path[MAXPATHLEN];
 LONG rc;
+char *p;
 
-    if (argc != 1)
-        return Dsetpath(argv[1]);
+    p = argv[1];
 
+    if (argc != 1) {
+        /* if the path specifies a drive, we need to temporarily change to
+         * that drive. We do that unconditionnally to save a bit of memory,
+         * and also to validate that the drive is still valid */
+        if (strlen(p) >= 2 && p[1] == ':') {
+            WORD current_drive = Dgetdrv();
+            if ((rc = run_setdrv(1,&p))) return rc;
+            rc = Dsetpath(p);
+            Dsetdrv(current_drive);
+            return rc;
+        }
+        else
+            return Dsetpath(p);
+    }
+
+    /* just output current path */
     rc = get_path(path);
     outputnl(path);
 
