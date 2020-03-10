@@ -1024,7 +1024,8 @@ void setpalette(const UWORD *palettePtr)
     KDEBUG(("Setpalette("));
     for(i = 0 ; i <= max ; i++) {
         KDEBUG(("%03x", palettePtr[i]));
-        if(i < 15) KDEBUG((" "));
+        if(i < 15)
+            KDEBUG((" "));
     }
     KDEBUG((")\n"));
 #endif

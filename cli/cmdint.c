@@ -220,7 +220,8 @@ char *p;
          * and also to validate that the drive is still valid */
         if (strlen(p) >= 2 && p[1] == ':') {
             WORD current_drive = Dgetdrv();
-            if ((rc = run_setdrv(1,&p))) return rc;
+            if ((rc = run_setdrv(1,&p)))
+                return rc;
             rc = Dsetpath(p);
             Dsetdrv(current_drive);
             return rc;

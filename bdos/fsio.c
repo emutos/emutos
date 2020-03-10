@@ -416,7 +416,8 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
             {
                 nrecs += dm->m_clsiz;
                 nbyts += dm->m_clsizb;
-                if (!num) goto mulio;
+                if (!num)
+                    goto mulio;
             }
             else
             {

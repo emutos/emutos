@@ -792,10 +792,14 @@ void linea_rect(void)
     Rect line;
 
     if (CLIP) {
-        if (X1 < XMINCL) X1 = XMINCL;
-        if (X2 > XMAXCL) X2 = XMAXCL;
-        if (Y1 < YMINCL) Y1 = YMINCL;
-        if (Y2 > YMAXCL) Y2 = YMAXCL;
+        if (X1 < XMINCL)
+            X1 = XMINCL;
+        if (X2 > XMAXCL)
+            X2 = XMAXCL;
+        if (Y1 < YMINCL)
+            Y1 = YMINCL;
+        if (Y2 > YMAXCL)
+            Y2 = YMAXCL;
     }
     line.x1 = X1;
     line.x2 = X2;
