@@ -264,7 +264,7 @@ static WORD count_accs(void)
     if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
         return 0;
 
-    strcpy(D.g_work,"*.ACC");
+    strcpy(D.g_work,"\\*.ACC");
     dos_sdta(&D.g_dta);
 
     for (i = 0; i < NUM_ACCS; i++)
