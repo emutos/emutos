@@ -32,7 +32,7 @@
 #define AF_APPDIR 0x0010        /* use application dir (else top window) */
 #define AF_ISFULL 0x0020        /* use full path (else filename only) */
 #define AF_AUTORUN 0x0080       /* this program is to be autorun */
-                            /* flags applicable to window icons */
+                            /* flags applicable to icons */
 #define AF_ISEXEC 0x4000        /* this is an executable file */
 #define AF_WINDOW 0x8000        /* this is an anode for a window icon */
 

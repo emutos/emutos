@@ -1334,7 +1334,11 @@ void app_blddesk(void)
             pa->a_obid = obid;
 
             /* choose appropriate icon */
-            icon = (pa->a_aicon < 0) ? pa->a_dicon : pa->a_aicon;
+            if ((pa->a_dicon < 0)
+             || ((pa->a_type == AT_ISFILE) && (pa->a_flags & AF_ISEXEC)))
+                icon = pa->a_aicon;
+            else
+                icon = pa->a_dicon;
 
             /* build object */
             pob = &G.g_screen[obid];

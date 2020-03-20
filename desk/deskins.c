@@ -52,6 +52,19 @@
 static ICONBLK ib;
 
 
+#ifdef ENABLE_KDEBUG
+static void anode_dump(char *msg)
+{
+    ANODE *pa;
+
+    kprintf("%s:\n",msg);
+    for (pa = G.g_ahead; pa; pa = pa->a_next)
+        kprintf("  flags=0x%04x,type=%d,aicon=%d,dicon=%d,appl=%s,data=%s\n",
+                pa->a_flags,pa->a_type,pa->a_aicon,pa->a_dicon,pa->a_pappl,pa->a_pdata);
+}
+#endif
+
+
 /*
  *  Routine to tell if an icon has an associated document type
  */
@@ -794,7 +807,7 @@ static WORD install_desktop_icon(ANODE *pa)
 }
 
 
-#if CONF_WITH_WINDOW_ICONS
+#if CONF_WITH_DESKTOP_SHORTCUTS || CONF_WITH_WINDOW_ICONS
 
 #define EXT_LENGTH 3
 static const char exec_ext[][EXT_LENGTH+1] = { "TOS", "TTP", "PRG", "APP", "GTP" };
@@ -818,8 +831,10 @@ static BOOL is_executable(const char *filename)
 
     return FALSE;
 }
+#endif
 
 
+#if CONF_WITH_WINDOW_ICONS
 /*
  * set icon numbers into ANODE
  */
@@ -1174,6 +1189,8 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
          * set up the new ANODE
          */
         newpa->a_flags = (pa->a_flags & ~AF_WINDOW) | AF_ISDESK;
+        if ((pa->a_type == AT_ISFILE) && is_executable(pf->f_name))
+            newpa->a_flags |= AF_ISEXEC;
         newpa->a_funkey = 0;
         newpa->a_letter = '\0';
         newpa->a_type = pa->a_type;
