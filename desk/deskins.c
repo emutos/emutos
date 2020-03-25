@@ -1080,11 +1080,11 @@ WORD ins_icon(WORD sobj)
     /*
      * handle one or more desktop icons
      */
-    if ( (i_find(DESKWH, sobj, NULL, NULL)) )
+    if ( (app_afind_by_id(sobj)) )
     {
         for ( ; sobj; sobj = win_isel(G.g_screen, DROOT, sobj))
         {
-            pa = i_find(DESKWH, sobj, NULL, NULL);
+            pa = app_afind_by_id(sobj);
             if (pa)
             {
                 rc = install_desktop_icon(pa);
@@ -1131,7 +1131,7 @@ WORD rmv_icon(WORD sobj)
 
     for ( ; sobj; sobj = win_isel(G.g_screen, DROOT, sobj))
     {
-        pa = i_find(DESKWH,sobj,NULL,NULL);
+        pa = app_afind_by_id(sobj);
         if (!pa)
             continue;
         if (pa->a_flags & AF_ISDESK)

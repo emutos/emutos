@@ -1122,7 +1122,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
     ANODE *an_src;
     char path[MAXPATHLEN];
 
-    an_src = i_find(DESKWH, sobj, NULL, NULL);
+    an_src = app_afind_by_id(sobj);
 
 #if CONF_WITH_DESKTOP_SHORTCUTS
     if ((an_src->a_type == AT_ISFILE) || (an_src->a_type == AT_ISFOLD))
@@ -1188,7 +1188,7 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
     sobj = 0;
     while ((sobj = win_isel(G.g_screen, DROOT, sobj)))
     {
-        an_src = i_find(DESKWH, sobj, NULL, NULL);
+        an_src = app_afind_by_id(sobj);
         if (an_src)
         {
             switch(an_src->a_type)
@@ -1228,7 +1228,7 @@ static void fun_desk2desk(WORD dobj, WORD keystate)
     sobj  = 0;
     while ((sobj = win_isel(G.g_screen, DROOT, sobj)))
     {
-        source = i_find(DESKWH, sobj, NULL, NULL);
+        source = app_afind_by_id(sobj);
         if (!source || (source == target))
             continue;
         switch(source->a_type)
@@ -1338,13 +1338,13 @@ void fun_del(WORD sobj)
      * if the item selected is on the desktop, there may be other desktop
      * items that have been selected; make sure we process all of them
      */
-    if ( (i_find(DESKWH, sobj, NULL, NULL)) )
+    if ( (app_afind_by_id(sobj)) )
     {
         if (wants_to_delete_files() == FALSE)   /* i.e. remove icons or cancel */
             return;
         for ( ; sobj; sobj = win_isel(G.g_screen, DROOT, sobj))
         {
-            pa = i_find(DESKWH,sobj,NULL,NULL);
+            pa = app_afind_by_id(sobj);
             if (!pa)
                 continue;
             switch(pa->a_type) {
