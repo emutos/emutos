@@ -422,7 +422,7 @@ WORD ins_app(WORD curr)
      *
      * if not, we handle first-time installation later below.
      */
-    if (G.g_cwin == 0)  /* we're on the desktop, so this is a shortcut icon */
+    if (G.g_cwin == DESKWH) /* we're on the desktop, so this is a shortcut icon */
     {
         ANODE *temppa;
 
