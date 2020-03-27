@@ -817,12 +817,10 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, char *tail)
 {
     WNODE *pw;
-    WORD ret, done;
+    WORD ret;
     WORD isgraf, isparm, installed_datafile;
-    char *pcmd, *ptail, *p;
+    char *ptail, *p;
     char app_path[MAXPATHLEN];
-
-    done = FALSE;
 
 #if CONF_WITH_DESKTOP_SHORTCUTS
     /*
@@ -840,7 +838,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
         if (!file_exists(pathname, pname))
         {
             remove_locate_shortcut(curr);
-            return done;
+            return FALSE;
         }
         tmp = app_afind_by_name(AT_ISFILE, AF_ISDESK|AF_WINDOW, pathname, pname, &isapp);
         if (tmp)
@@ -890,22 +888,31 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
         return FALSE;
     }
 
-    /*
-     * see if application was selected directly or a
-     * data file with an associated primary application
-     */
     G.g_work[1] = '\0';
     ptail = G.g_work + 1;   /* arguments go here */
-    ret = TRUE;
 
+    /*
+     * see if application was selected directly or via a
+     * data file with an associated primary application
+     */
     if (installed_datafile)
     {
         /*
          * the user has selected a file with an extension that matches
-         * an installed application.  we set up to open the application,
-         * with a command tail based on the application flags.
+         * an installed application.
+         *
+         * first check that the application exists, since it may be being
+         * invoked by an outdated entry for an installed application.
          */
-        pcmd = pa->a_pappl;
+        if (!file_exists(pa->a_pappl, NULL))
+        {
+            fun_alert_merge(1, STFILENF, filename_start(pa->a_pappl));
+            return FALSE;
+        }
+        /*
+         * set up to open the application, with a command tail based on
+         * the application flags.
+         */
         strcpy(ptail,pa->a_pargs);
         p = ptail + strlen(ptail);
 
@@ -915,81 +922,70 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
             p = filename_start(p);
         }
         strcpy(p,pname);        /* the filename always goes on the end */
+        return pro_run(isgraf, pa->a_pappl, G.g_work, G.g_cwin, curr);
     }
-    else
+
+    /*
+     * the file was selected directly, perhaps by dropping another file
+     * on to it.  first, build full pathname for pro_run() or show_file()
+     */
+    strcpy(app_path, pathname);
+    p = filename_start(app_path);
+    strcpy(p, pname);
+
+    /*
+     * if the selected file is an application, run it
+     */
+    if (isapp)
     {
-        /* build full pathname for pro_run() or show_file() */
-        strcpy(app_path, pathname);
-        p = filename_start(app_path);
-        strcpy(p, pname);
-        if (isapp)
-        {
+        ret = TRUE;
 #if CONF_WITH_DESKTOP_SHORTCUTS
-            if (tail)
-            {
-                /*
-                 * the user has dropped a file on to an application,
-                 * so we already know the tail to pass
-                 */
-                strcpy(ptail, tail);
-            } else
-#endif
-            if (isparm)
-            {
-                /*
-                 * the user has selected a .TTP or .GTP application,
-                 * so we need to prompt for the parameters to pass
-                 */
-                ret = opn_appl(pname, ptail);
-            }
-            pcmd = app_path;
-        }
-        else
+        if (tail)
         {
             /*
-             * the user has selected a file with an extension which
-             * does not match any installed application
+             * the user has dropped a file on to an application,
+             * so we already know the tail to pass
              */
-#if CONF_WITH_SHOW_FILE
-            ret = fun_alert(1, STSHOW);
-            if (ret != 3)   /* user said "Show" or "Print" */
-            {
-                char *iobuf = dos_alloc_anyram(IOBUFSIZE);
-                if (iobuf)
-                {
-                    if (ret == 1)
-                        show_file(app_path, IOBUFSIZE, iobuf);
-                    else
-                        print_file(app_path, IOBUFSIZE, iobuf);
-                    dos_free(iobuf);
-                }
-                else
-                    malloc_fail_alert();
-            }
-#else
-            fun_alert(1, STNOAPPL);
+            strcpy(ptail, tail);
+        } else
 #endif
-            ret = FALSE;    /* don't run any application */
-        }
-    }
-
-    if (ret)
-    {
-        /*
-         * the user wants to run an application: we first check that
-         * it exists, since it may be being invoked by an outdated
-         * entry for an installed application.
-         */
-        if (!file_exists(pcmd, NULL))
+        if (isparm)
         {
-            fun_alert_merge(1, STFILENF, filename_start(pcmd));
-            return FALSE;
+            /*
+             * the user has selected a .TTP or .GTP application,
+             * so we need to prompt for the parameters to pass
+             */
+            ret = opn_appl(pname, ptail);
         }
-        /* G.g_work+1 is already set up */
-        done = pro_run(isgraf, pcmd, G.g_work, G.g_cwin, curr);
+        return ret ? pro_run(isgraf, app_path, G.g_work, G.g_cwin, curr) : FALSE;
     }
 
-    return done;
+    /*
+     * the user has selected a file which is not an application and
+     * which does not have an extension that matches any installed
+     * application. if configured, we prompt for Show or Print.
+     */
+#if CONF_WITH_SHOW_FILE
+    ret = fun_alert(1, STSHOW);
+    if (ret != 3)   /* user said "Show" or "Print" */
+    {
+        char *iobuf = dos_alloc_anyram(IOBUFSIZE);
+        if (iobuf)
+        {
+            if (ret == 1)
+                show_file(app_path, IOBUFSIZE, iobuf);
+            else
+                print_file(app_path, IOBUFSIZE, iobuf);
+            dos_free(iobuf);
+        }
+        else
+            malloc_fail_alert();
+    }
+#else
+    fun_alert(1, STNOAPPL);
+#endif
+
+    return FALSE;
 }
 
 
