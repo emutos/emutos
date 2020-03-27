@@ -719,7 +719,8 @@ ULONG initial_vram_size(void)
     if (HAS_VIDEL)
         return FALCON_VRAM_SIZE;
     else if (HAS_TT_SHIFTER)
-        return shifter_vram_size(TT_HIGH);
+        /* TT TOS allocates 256 bytes more than actually needed. */
+        return shifter_vram_size(TT_HIGH) + 0x100ul;
     else
     {
         /* ST TOS rounds the VRAM size to upper kilobyte, so we do. */
