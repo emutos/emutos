@@ -1426,6 +1426,15 @@
 #endif
 
 /*
+ * Set CONF_WITH_VIEWER_SUPPORT to 1 to include the ability to define
+ * a default viewer for files (invoked if no other application has a
+ * matching document type)
+ */
+#ifndef CONF_WITH_VIEWER_SUPPORT
+# define CONF_WITH_VIEWER_SUPPORT 1
+#endif
+
+/*
  * Set CONF_WITH_WINDOW_ICONS to 1 to include the icons for files & folders
  */
 #ifndef CONF_WITH_WINDOW_ICONS

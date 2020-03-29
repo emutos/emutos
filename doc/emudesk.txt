@@ -153,6 +153,13 @@ Finally, you can set "autoboot" for one application (only): this will
 launch that application during system initialisation, immediately before
 the desktop itself runs.
 
+EmuTOS-only feature:
+If you specify an extension of * or ???, the application will be treated
+as the "default viewer".  This is only called when trying to open a file
+whose extension is not handled by any other application.  Only one default
+viewer can be active at any time: specifying a new default viewer will
+silently remove any existing one.
+
 To use "Install application...", highlight one or more applications and
 click on "Install application...".  In the dialog box, the application
 name of the first application selected will be prefilled.  The following

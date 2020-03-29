@@ -31,6 +31,7 @@
 #define AF_ISPARM 0x0008        /* requires input parameters (TTP or GTP) */
 #define AF_APPDIR 0x0010        /* use application dir (else top window) */
 #define AF_ISFULL 0x0020        /* use full path (else filename only) */
+#define AF_VIEWER 0x0040        /* this program is the default file viewer */
 #define AF_AUTORUN 0x0080       /* this program is to be autorun */
                             /* flags applicable to icons */
 #define AF_ISEXEC 0x4000        /* this is an executable file */
@@ -168,6 +169,10 @@ void nomem_alert(void) NORETURN;
 
 #if CONF_WITH_READ_INF
 BOOL app_read_inf(void);
+#endif
+
+#if CONF_WITH_VIEWER_SUPPORT
+ANODE *app_afind_viewer(void);
 #endif
 
 #endif  /* _DESKAPP_H */

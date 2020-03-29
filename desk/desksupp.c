@@ -840,7 +840,7 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
             remove_locate_shortcut(curr);
             return FALSE;
         }
-        tmp = app_afind_by_name(AT_ISFILE, AF_ISDESK|AF_WINDOW, pathname, pname, &isapp);
+        tmp = app_afind_by_name(AT_ISFILE, AF_ISDESK|AF_WINDOW|AF_VIEWER, pathname, pname, &isapp);
         if (tmp)
             pa = tmp;
     }
@@ -959,6 +959,22 @@ WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, cha
         }
         return ret ? pro_run(isgraf, app_path, G.g_work, G.g_cwin, curr) : FALSE;
     }
+
+    /*
+     * the user has selected a file which is not an application and
+     * which does not have an extension that matches a 'normal' installed
+     * application. if configured, we run the default viewer (if present).
+     */
+#if CONF_WITH_VIEWER_SUPPORT
+    pa = app_afind_viewer();
+    if (pa)
+    {
+        strcpy(ptail, app_path);
+        KDEBUG(("Running default viewer %s: isgraf=%d, tail=%s\n",
+                pa->a_pappl,pa->a_flags&AF_ISCRYS,ptail));
+        return pro_run(pa->a_flags&AF_ISCRYS, pa->a_pappl, G.g_work, G.g_cwin, curr);
+    }
+#endif
 
     /*
      * the user has selected a file which is not an application and
@@ -1626,6 +1642,10 @@ void refresh_drive(WORD drive)
 /*
  *  Given an icon index, go find the ANODE which it represents
  *
+ *  NOTE: normally, the anode for the default viewer is not included
+ *  in the search.  The caller of this function may request its inclusion
+ *  by negating the value of the window handle that is passed.
+ *
  *  . returns ptr to corresponding FNODE via arg3
  *  . if checking a window (arg1 != 0), then return an indicator via arg4:
  *      TRUE if the matching ANODE indicates the item is an application,
@@ -1654,14 +1674,22 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
     }
     else
     {
+        WORD ignore = AF_ISDESK|AF_WINDOW|AF_VIEWER;
+        if (wh < 0)
+        {
+            wh = -wh;
+            ignore &= ~AF_VIEWER;   /* include default viewer anode */
+        }
         pw = win_find(wh);
         if (pw)
         {
             if (item >= 0)
                 pf = G.g_screeninfo[item].fnptr;
             if (pf)
+            {
                 pa = app_afind_by_name((pf->f_attr&FA_SUBDIR)?AT_ISFOLD:AT_ISFILE,
-                            AF_ISDESK|AF_WINDOW, pw->w_pnode.p_spec, pf->f_name, &isapp);
+                                        ignore, pw->w_pnode.p_spec, pf->f_name, &isapp);
+            }
         }
     }
 

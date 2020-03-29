@@ -25,4 +25,8 @@ void ins_shortcut(WORD wh, WORD mx, WORD my);
 WORD rmv_icon(WORD sobj);
 void snap_icon(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff);
 
+#if CONF_WITH_VIEWER_SUPPORT
+BOOL is_viewer(ANODE *pa);
+#endif
+
 #endif  /* _DESKINS_H */

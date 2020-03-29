@@ -80,6 +80,31 @@ WORD is_installed(ANODE *pa)
 }
 
 
+#if CONF_WITH_VIEWER_SUPPORT
+/*
+ *  Routine to tell if an anode is suitable as an installed viewer
+ */
+BOOL is_viewer(ANODE *pa)
+{
+    WORD i;
+    char *p;
+
+    if ((pa->a_type != AT_ISFILE) || (pa->a_aicon < 0))
+        return FALSE;
+
+    for (i = 0, p = pa->a_pdata+2; i < LEN_ZEXT; i++, p++)
+    {
+        if (*p == '*')
+            break;
+        if (*p != '?')
+            return FALSE;
+    }
+
+    return TRUE;
+}
+#endif
+
+
 /*
  *  Check if icon grid position (x,y) is free
  */
@@ -319,6 +344,28 @@ static void clear_all_autorun(void)
 }
 
 
+#if CONF_WITH_VIEWER_SUPPORT
+/*
+ * remove all ANODEs that have the viewer flag set: we expect there
+ * will be a maximum of 1, but we handle any number
+ */
+static void remove_all_viewers(void)
+{
+    ANODE *pa, *next;
+
+    for (pa = G.g_ahead; pa; pa = next)
+    {
+        next = pa->a_next;      /* remember in case we free below */
+        if (pa->a_flags & AF_VIEWER)
+        {
+            KDEBUG(("removing existing default viewer %s\n",pa->a_pappl));
+            app_free(pa);
+        }
+    }
+}
+#endif
+
+
 /*
  * convert ascii to WORD
  *
@@ -406,7 +453,8 @@ WORD ins_app(WORD curr)
     char name[LEN_ZFNAME];
     char pathname[MAXPATHLEN];
 
-    pa = i_find(G.g_cwin, curr, &pf, &isapp);
+    /* set handle -ve to include the default viewer in this lookup */
+    pa = i_find(-G.g_cwin, curr, &pf, &isapp);
     if (!pa)
         return 0;
 
@@ -582,6 +630,15 @@ WORD ins_app(WORD curr)
 
             inf_sget(tree,APARGS,name);
             scan_str(name,&pa->a_pargs);
+
+#if CONF_WITH_VIEWER_SUPPORT
+            if (is_viewer(pa))
+            {
+                remove_all_viewers();       /* remove any existing default viewer(s) */
+                pa->a_flags |= AF_VIEWER;   /* mark app as default viewer */
+                KDEBUG(("adding new default viewer %s\n",pa->a_pappl));
+            }
+#endif
 
             pa->a_aicon = IG_APPL;
             pa->a_dicon = IG_DOCU;
@@ -1167,7 +1224,7 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
     sobj = 0;
     while ((sobj = win_isel(G.g_screen, G.g_croot, sobj)))
     {
-        pa = i_find(wh, sobj, &pf, NULL);   /* get ANODE of source */
+        pa = i_find(wh, sobj, &pf, NULL); /* get ANODE of source */
         if (!pa)
             continue;
         pw = win_find(wh);                  /* get WNODE of source */

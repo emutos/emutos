@@ -395,6 +395,14 @@ static char *app_parse(char *pcurr, ANODE *pa)
     }
     pcurr = scan_str(pcurr, &pa->a_pargs);
 
+#if CONF_WITH_VIEWER_SUPPORT
+    if (is_viewer(pa))
+    {
+        pa->a_flags |= AF_VIEWER;   /* mark app as default viewer if appropriate */
+        KDEBUG(("Found default viewer %s when parsing EMUDESK.INF\n",pa->a_pappl));
+    }
+#endif
+
     return pcurr;
 }
 
@@ -1423,6 +1431,20 @@ ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, WORD
 
     return NULL;
 }
+
+
+#if CONF_WITH_VIEWER_SUPPORT
+ANODE *app_afind_viewer(void)
+{
+    ANODE *pa;
+
+    for (pa = G.g_ahead; pa; pa = pa->a_next)
+        if (pa->a_flags & AF_VIEWER)
+            break;
+
+    return pa;
+}
+#endif
 
 
 #if CONF_WITH_READ_INF
