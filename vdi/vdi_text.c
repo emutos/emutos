@@ -542,6 +542,28 @@ void vdi_v_gtext(Vwk * vwk)
     output_text(vwk, CONTRL[3], INTIN, -1, NULL);
 }
 
+#if CONF_WITH_GDOS
+/*
+ * trnsfont - converts a font to standard form
+ *
+ * The routine just does byte swapping.
+ *
+ * input:
+ *     FWIDTH = width of font data in bytes.
+ *     DELY   = number of scan lines in font.
+ *     FBASE  = starting address of the font data.
+ */
+static void trnsfont(void)
+{
+    WORD cnt, i;
+    UWORD *addr;
+
+    cnt = (FWIDTH * DELY) / sizeof(*addr);
+    for (i = 0, addr = (UWORD *)FBASE; i < cnt; i++, addr++)
+        swpw(*addr);
+}
+#endif
+
 void text_init2(Vwk * vwk)
 {
     vwk->cur_font = def_font;
@@ -615,6 +637,19 @@ void text_init(void)
                 i++;            /* Increment count of heights */
             }
             /* end if system font */
+
+#if CONF_WITH_GDOS
+            /*
+             * all builtin fonts have standard format, so this test is
+             * only useful when we are supporting loaded fonts
+             */
+            if (!(fnt_ptr->flags & F_STDFORM)) {
+                FBASE = fnt_ptr->dat_table;
+                FWIDTH = fnt_ptr->form_width;
+                DELY = fnt_ptr->form_height;
+                trnsfont();
+            }
+#endif
         } while ((fnt_ptr = fnt_ptr->next_font));
     }
     DEV_TAB[5] = i;                     /* number of sizes */
@@ -1265,14 +1300,74 @@ void gdp_justified(Vwk * vwk)
 
 void vdi_vst_load_fonts(Vwk * vwk)
 {
+#if CONF_WITH_GDOS
+    WORD id, count, *control;
+
+    const Fonthead *first_font;
+
+    /* Init some common variables */
+    control = CONTRL;
+    *(control + 4) = 1;
+
+    /* You only get one chance to load fonts.  If fonts are linked in, exit  */
+    if (vwk->loaded_fonts) {
+        INTOUT[0] = 0;
+        return;
+    }
+
+    /* The inputs to this routine are :         */
+    /* CONTRL[7-8]   = Pointer to scratch buffer    */
+    /* CONTRL[9]     = Offset to buffer 2       */
+    /* CONTRL[10-11] = Pointer to first font    */
+
+    /* Init the global structures           */
+    vwk->scrpt2 = *(control + 9);
+    vwk->scrtchp = (WORD *) *((LONG *) (control + 7));
+
+    first_font = (const Fonthead *) *((LONG *) (control + 10));
+    vwk->loaded_fonts = first_font;
+
+    /* Find out how many distinct font id numbers have just been linked in. */
+    id = -1;
+    count = 0;
+
+    do {
+        /* Update the count of font id numbers, if necessary. */
+        if (first_font->font_id != id) {
+            id = first_font->font_id;
+            count++;
+        }
+
+        /* Make sure the font is in device specific format. */
+        if (!(first_font->flags & F_STDFORM)) {
+            FBASE = first_font->dat_table;
+            FWIDTH = first_font->form_width;
+            DELY = first_font->form_height;
+            trnsfont();
+            ((Fonthead *)first_font)->flags |= F_STDFORM;
+        }
+        first_font = first_font->next_font;
+    } while (first_font);
+
+    /* Update the device table count of faces. */
+    vwk->num_fonts += count;
+    INTOUT[0] = count;
+#else
     CONTRL[4] = 1;
     INTOUT[0] = 0;      /* we loaded no new fonts */
+#endif
 }
 
 
 void vdi_vst_unload_fonts(Vwk * vwk)
 {
-    /* nothing to do */
+#if CONF_WITH_GDOS
+    /* Since we always unload all fonts, this is easy. */
+    vwk->loaded_fonts = NULL;           /* No fonts installed */
+    vwk->scrpt2 = SCRATCHBUF_OFFSET;    /* Reset pointers to default buffers */
+    vwk->scrtchp = vdishare.deftxbuf;
+    vwk->num_fonts = font_count;        /* Reset font count to default */
+#endif
 }
 
 
