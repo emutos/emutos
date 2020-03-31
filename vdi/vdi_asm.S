@@ -38,16 +38,13 @@ _vditrap:
         rte
 
 no_vdi:
-        cmp.w   #0xfffe,d0              // vq_gdos call?
-        jeq     what_gdos
-
         cmp.w   #0xffff,d0              // query for jsr:able address?
         jeq     query
 
-        rte
-
-what_gdos:
-        move.l  #-2, d0                 // -2  -  no GDOS installed
+/*
+ * Just like Atari TOS, we leave d0 unchanged, indicating the absence of
+ * GDOS if this is called with -2 in the low-order word of d0.
+ */
         rte
 
 query:
