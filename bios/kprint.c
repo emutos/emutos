@@ -31,6 +31,7 @@
 #include "super.h"      /* for Super() and SuperToUser() */
 #include "../bdos/bdosstub.h"
 #include "ikbd.h"
+#include "midi.h"
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
