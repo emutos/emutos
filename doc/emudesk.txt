@@ -153,12 +153,12 @@ Finally, you can set "autoboot" for one application (only): this will
 launch that application during system initialisation, immediately before
 the desktop itself runs.
 
-EmuTOS-only feature:
-If you specify an extension of * or ???, the application will be treated
-as the "default viewer".  This is only called when trying to open a file
-whose extension is not handled by any other application.  Only one default
-viewer can be active at any time: specifying a new default viewer will
-silently remove any existing one.
+| EmuTOS-only feature:
+| If you specify an extension of * or ???, the application will be treated
+| as the "default viewer".  This is only called when trying to open a file
+| whose extension is not handled by any other application.  Only one default
+| viewer can be active at any time: specifying a new default viewer will
+| silently remove any existing one.
 
 To use "Install application...", highlight one or more applications and
 click on "Install application...".  In the dialog box, the application
@@ -346,31 +346,32 @@ consumes about 300 bytes of RAM, so if you are short of memory, avoid
 putting too many icons in EMUICON.RSC.
 
 
-User-assignable mouse cursors
-=============================
-When the AES starts up, it looks for an optional file called EMUCURS.RSC
-in the root directory of the boot drive.  This file should be a standard
-Atari resource file, containing 8 ICONBLKs; each ICONBLK is a container
-for a mouse cursor.  If the file is found, these cursors are used instead
-of the builtin cursors.  The usage is as described for the AES graf_mouse()
-call:
-    0   arrow
-    1   text cursor / i-beam
-    2   busy bee / hourglass
-    3   pointing hand
-    4   flat hand
-    5   thin cross
-    6   thick cross
-    7   outline cross
-
-A sample EMUCURS.RSC file is shipped with the release in the EXTRAS folder;
-the mouse cursors in it are the same as the builtin ones.  Also shipped
-is the corresponding EMUCURS.DEF file for use by a resource editor.
-
-NOTE: Because the mouse cursors are not really ICONBLKs (though they are
-stored as such within the resource), editing them with a standard resource
-editor is difficult.  Thorsten Otto's ORCS resource editor has special
-support for mouse cursors and is the recommended tool for modifying them.
+| EmuTOS-only feature:
+| User-assignable mouse cursors
+| =============================
+| When the AES starts up, it looks for an optional file called EMUCURS.RSC
+| in the root directory of the boot drive.  This file should be a standard
+| Atari resource file, containing 8 ICONBLKs; each ICONBLK is a container
+| for a mouse cursor.  If the file is found, these cursors are used instead
+| of the builtin cursors.  The usage is as described for the AES graf_mouse()
+| call:
+|     0   arrow
+|     1   text cursor / i-beam
+|     2   busy bee / hourglass
+|     3   pointing hand
+|     4   flat hand
+|     5   thin cross
+|     6   thick cross
+|     7   outline cross
+|
+| A sample EMUCURS.RSC file is shipped with the release in the EXTRAS folder;
+| the mouse cursors in it are the same as the builtin ones.  Also shipped
+| is the corresponding EMUCURS.DEF file for use by a resource editor.
+|
+| NOTE: Because the mouse cursors are not really ICONBLKs (though they are
+| stored as such within the resource), editing them with a standard resource
+| editor is difficult.  Thorsten Otto's ORCS resource editor has special
+| support for mouse cursors and is the recommended tool for modifying them.
 
 
 Open disk window via keyboard shortcut
@@ -383,8 +384,7 @@ changed by the user.
 
 NOTE: unlike TOS2/3/4, shortcuts with the Ctrl modifier do NOT update
 the drive assigned to the currently topped window; instead, they are
-assigned to menu item shortcuts.  At the moment, these assignments are
-also permanent.
+assigned to menu item shortcuts.  See "Desktop configuration" above.
 
 
 Desktop shortcuts
