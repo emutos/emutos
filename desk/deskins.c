@@ -86,19 +86,22 @@ WORD is_installed(ANODE *pa)
  */
 BOOL is_viewer(ANODE *pa)
 {
-    WORD i;
     char *p;
 
-    if ((pa->a_type != AT_ISFILE) || (pa->a_aicon < 0))
+    /*
+     * must be a file with non-negative icon numbers
+     */
+    if ((pa->a_type != AT_ISFILE) || (pa->a_aicon < 0) || (pa->a_dicon < 0))
         return FALSE;
 
-    for (i = 0, p = pa->a_pdata+2; i < LEN_ZEXT; i++, p++)
-    {
-        if (*p == '*')
-            break;
-        if (*p != '?')
-            return FALSE;
-    }
+    /*
+     * pdata must be an all-wildcard spec
+     *
+     * note that this test assumes that the spec is well-formed
+     */
+    for (p = pa->a_pdata; *p; p++)
+        if ((*p != '*') && (*p != '?') && (*p != '.'))
+             return FALSE;
 
     return TRUE;
 }
@@ -625,6 +628,8 @@ WORD ins_app(WORD curr)
 
             strcpy(name,"*.");
             inf_sget(tree,APDOCTYP,name+2);
+            if (name[2] == '*')         /* prevent a badly-formed wildcard spec */
+                name[3] = '\0';
             if (!installed || strcmp(name,pa->a_pdata)) /* doc type has changed */
                 scan_str(name,&pa->a_pdata);
 
