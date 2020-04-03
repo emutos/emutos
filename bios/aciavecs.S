@@ -500,22 +500,16 @@ kbd_clock:
 //
 
 kbd_joys:
-        lea     joybuf,a1
-        move.b  (a0)+,(a1)+
-        move.b  (a0)+,(a1)+
-        move.b  (a0),(a1)
-        subq.l  #1,a1           // point to joystick0 data
-        jra     joy_next
+        addq.l  #1,a0           // 0xfd packet: point after src header
 kbd_joy0:
-        lea     joybuf,a1
-        move.b  (a0)+,(a1)
-        move.b  (a0),1(a1)
+        moveq.l #1,d1           // 0xfd, 0xfe: dest offset for second byte
         jra     joy_next
 kbd_joy1:
+        moveq.l #2,d1           // 0xff packet: dest offset for second byte
+joy_next:
         lea     joybuf,a1
         move.b  (a0)+,(a1)
-        move.b  (a0),2(a1)
-joy_next:
+        move.b  (a0),(a1,d1)
         move.l  a1,a0
         move.l  joyvec,a1
 
