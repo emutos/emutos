@@ -35,7 +35,7 @@ void do_format(void);
 void malloc_fail_alert(void);
 BOOL print_file(char *name, LONG bufsize, char *iobuf);
 void refresh_drive(WORD drive);
-void refresh_window(WNODE *pw);
+void refresh_window(WNODE *pw, BOOL force_mediach);
 ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
 WORD set_default_path(char *path);
 BOOL valid_drive(char drive);

@@ -53,6 +53,9 @@
 #include "biosext.h"
 #include "lineavars.h"      /* for MOUSE_BT */
 
+/* Needed to force media change */
+#define MEDIACHANGE     0x02
+#define READSEC         0x00
 
 #if CONF_WITH_FORMAT
 /*
@@ -1607,10 +1610,26 @@ void do_format(void)
  *  Routine to re-read and redisplay the directory associated with
  *  the specified window
  */
-void refresh_window(WNODE *pw)
+void refresh_window(WNODE *pw, BOOL force_mediach)
 {
+    char drive;
+
     if (!pw->w_id)      /* desktop */
         return;
+
+    /*
+     * For floppy drives, allow a forced media change by a call
+     * to Rwabs() with buffer == NULL.
+     */
+    if (force_mediach)
+    {
+        drive = pw->w_pnode.p_spec[0];
+        if (drive == 'A' || drive == 'B')
+        {
+            KDEBUG(("Forcing media change for drive %c\n", drive));
+            Rwabs(READSEC, (LONG)NULL, MEDIACHANGE, 0, drive - 'A', 0);
+        }
+    }
 
     /* make sure we don't open a new window */
     do_fopen(pw, 0, pw->w_pnode.p_spec, FALSE);
@@ -1632,7 +1651,7 @@ void refresh_drive(WORD drive)
             if (pw->w_pnode.p_spec[0] == drive)
             {
                 fun_close(pw, CLOSE_TO_ROOT);   /* what Atari TOS does */
-                refresh_window(pw);
+                refresh_window(pw, FALSE);
             }
         }
     }

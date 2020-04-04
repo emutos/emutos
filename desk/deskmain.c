@@ -1167,7 +1167,7 @@ static WORD hndl_kbd(WORD thechar)
     {
         pw = win_ontop();
         if (pw)
-            refresh_window(pw);
+            refresh_window(pw, TRUE);
         return FALSE;
     }
 

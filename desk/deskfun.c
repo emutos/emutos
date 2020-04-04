@@ -653,7 +653,7 @@ void fun_mask(WNODE *pw)
     {
         inf_sget(tree, FMMASK, filemask);
         unfmt_str(filemask, maskptr);
-        refresh_window(pw);
+        refresh_window(pw, FALSE);
     }
 }
 #endif
