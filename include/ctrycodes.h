@@ -46,6 +46,7 @@
  * https://github.com/freemint/freemint/blob/master/sys/keyboard.c#L93
  * https://github.com/freemint/freemint/blob/master/xaaes/src.km/init.c#L164
  */
+#define COUNTRY_PL 17   /* Poland */
 #define COUNTRY_RU 19   /* Russia */
 #define COUNTRY_GR 31   /* Greece */
 
