@@ -6,8 +6,8 @@ These ROMs are suitable for the following hardware:
 - emulators of the above
 
 Note: Extra hardware is autodetected, but the following TT- and
-Falcon-specific hardware is not supported: MMU, video, SCSI, NVRAM,
-and the second MFP of a TT.
+Falcon-specific hardware is not supported: memory control unit,
+video, SCSI, NVRAM, and the second MFP of a TT.
 
 The desktop features are comparable to Atari TOS 2.
 
