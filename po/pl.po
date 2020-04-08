@@ -14,60 +14,63 @@ msgstr ""
 msgid ""
 "System halted!\n"
 msgstr ""
+"Zatrzymano system!\n"
 
 #: bios/initinfo.c
 msgid "GEMDOS drives"
-msgstr ""
+msgstr "Dyski GEMDOS"
 
 #: bios/initinfo.c
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #: bios/initinfo.c desk/deskinf.c
 msgid "KB"
-msgstr ""
+msgstr "KB"
 
 #: bios/initinfo.c
 msgid "EmuTOS Version"
-msgstr ""
+msgstr "Wersja EmuTOS"
 
 #: bios/initinfo.c
 msgid "CPU type"
-msgstr ""
+msgstr "Typ CPU"
 
 #: bios/initinfo.c
 msgid "Machine"
-msgstr ""
+msgstr "Komputer"
 
 #: bios/initinfo.c
 msgid "Boot time"
-msgstr ""
+msgstr "Czas uruchomienia"
 
 #: bios/initinfo.c
 msgid "Hold <Control> to skip AUTO/ACC"
-msgstr ""
+msgstr "Przytrzymaj Ctrl, by pomin±æ auto-boot"
 
 #: bios/initinfo.c
 msgid "Hold <Alternate> to skip HDD boot"
-msgstr ""
+msgstr "Przytrzymaj Alt, by pomin±æ start z HDD"
 
 #: bios/initinfo.c
 msgid "Press key 'X' to boot from X:"
-msgstr ""
+msgstr "Wci¶nij X, by uruchomiæ z X:"
 
 #: bios/initinfo.c
 msgid "Press <Esc> to run an early console"
-msgstr ""
+msgstr "Wci¶nij Esc, by w³±czyæ terminal"
 
 #: bios/initinfo.c
 msgid "Hold <Shift> to pause this screen"
-msgstr ""
+msgstr "Przytrzymaj Shift by zatrzymaæ ten ekran"
 
 #: bios/kprint.c
 msgid ""
 "\n"
 "*** Press any key to continue ***"
 msgstr ""
+"\n"
+"*** Wci¶nij dowolny klawisz, by kontynuowaæ"
 
 #: bdos/osmem.c
 msgid ""
@@ -75,71 +78,92 @@ msgid ""
 "Use FOLDR100.PRG to get more.\n"
 "System halted!\n"
 msgstr ""
+"\033EBrak dostêpnej pamiêci.\n"
+"U¿yj FOLDR100.PRG, by uzyskaæ wiêcej.\n"
+"Zatrzymano system!\n"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "Drive:"
-msgstr ""
+msgstr "Dysk:"
 
 #: aes/gem_rsc.c
 msgid "Selection: ________.___"
-msgstr ""
+msgstr "Wybór: ________.___"
 
 #: aes/gem_rsc.c
 msgid "Directory:"
-msgstr ""
+msgstr "Katalog:"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "Cancel"
-msgstr ""
+msgstr "Anuluj"
 
 #: aes/gem_rsc.c
 msgid "[1]["
 "The disk in drive %c: is|"
 "physically write-protected.][Cancel|Retry]"
-msgstr ""
+msgstr "[1]["
+"Dysk w stacji %c: jest|"
+"fizycznie chroniony|"
+"przed zapisem.][Anuluj|Ponów]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
 "Drive %c: is not responding.|"
 "Please check the disk drive,|"
 "or insert a disk.][Cancel|Retry]"
-msgstr ""
+msgstr "[2]["
+"Stacja %c: nie odpowiada.|"
+"Proszê sprawdziæ stacjê|"
+"dyskietek, lub wstawiæ dysk.][Anuluj|Ponów]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
 "Data on the disk in drive %c:|"
 "may be damaged.][Cancel|Retry]"
-msgstr ""
+msgstr "[1]["
+"Dane na dysku w stacji %c:|"
+"mog± by popsute.][Anuluj|Ponów]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
 "This application cannot read|"
 "data on the disk in drive %c:.][Cancel|Retry]"
-msgstr ""
+msgstr "[2]["
+"Ten program nie mo¿e przeczytaæ|"
+"danych na dysku w stacji %c:.][Anuluj|Ponów]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
 "Your output device is not|"
 "receiving data.][Cancel|Retry]"
-msgstr ""
+msgstr "[1]["
+"Twoje urz±dzenie wyj¶cia nie|"
+"otrzymuje danych.][Anuluj|Ponów]"
 
 #: aes/gem_rsc.c
 msgid "[3]["
 "An error has occurred in GEM.|"
 "Please contact the EmuTOS|"
 "Development Team.][Cancel]"
-msgstr ""
+msgstr "[3]["
+"Wyst±pi³ b³±d w GEM.|"
+"Proszê skontaktowaæ siê z|"
+"deweloperami EmuTOS.][Anuluj]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
 "This application cannot|"
 "find the folder or file|"
 "you just tried to access.][  OK  ]"
-msgstr ""
+msgstr "[2]["
+"Ten program nie mo¿e|"
+"znale¼æ folderu lub pliku,|"
+"którego próbowa³e¶ u¿yæ.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -148,7 +172,11 @@ msgid "[1]["
 "document.  To make room,|"
 "close any document that|"
 "you do not need.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Ten program nie ma miejsca,|"
+"by otworzyæ nastêpny|"
+"dokument. By zrobiæ miejsce,|"
+"zamknij nieu¿ywane dokumenty.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -156,13 +184,19 @@ msgid "[1]["
 "already exists in the|"
 "directory, or this item|"
 "is set to Read Only status.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Przedmiot z t± nazw± ju¿|"
+"istnieje w katalogu,|"
+"lub przedmiot jest ustawiony|"
+"na status Tylko odczyt.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
 "The drive you specified|"
 "does not exist.][Cancel]"
-msgstr ""
+msgstr "[1]["
+"Dysk, który okre¶lono|"
+"nie istnieje.][Anuluj]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -170,682 +204,707 @@ msgid "[1]["
 "in your computer for the|"
 "application you just tried|"
 "to run.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nie ma wystarczaj±cej|"
+"pamiêci w komputerze dla|"
+"programu, który chciano|"
+"uruchomiæ.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[3]["
 "TOS error #%u.][Cancel]"
-msgstr ""
+msgstr "[3]["
+"B³±d TOS nr %u.][Anuluj]"
 
 #: aes/gem_rsc.c
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
-msgstr ""
+msgstr "[3]["
+"Niewspierana funkcja AES|"
+"nr #%d.][Anuluj]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
 "Not enough memory for|"
 "this directory][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Brak pamiêci dla tego|"
+"katalogu][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "ITEM SELECTOR"
-msgstr ""
+msgstr "SELEKTOR PRZEDMIOTÓW"
 
 #: desk/desk_rsc.c
 msgid "Number of folders: _____"
-msgstr ""
+msgstr "Liczba folderów: _____"
 
 #: desk/desk_rsc.c
 msgid "Number of files: _____"
-msgstr ""
+msgstr "Liczba plików: _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"
-msgstr ""
+msgstr "Pomiñ"
 
 #: desk/desk_rsc.c
 msgid "Install"
-msgstr ""
+msgstr "Dodaj"
 
 #: desk/desk_rsc.c
 msgid "Remove"
-msgstr ""
+msgstr "Usuñ"
 
 #: desk/desk_rsc.c
 msgid "Yes"
-msgstr ""
+msgstr "Tak"
 
 #: desk/desk_rsc.c
 msgid "No"
-msgstr ""
+msgstr "Nie"
 
 #: desk/desk_rsc.c
 msgid "Name: ________.___"
-msgstr ""
+msgstr "Nazwa: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size: __________"
-msgstr ""
+msgstr "Rozmiar: __________"
 
 #: desk/desk_rsc.c
 msgid "Date: __________"
-msgstr ""
+msgstr "Data: __________"
 
 #: desk/desk_rsc.c
 msgid "Time: __:__ __"
-msgstr ""
+msgstr "Czas: __:__ __"
 
 #: desk/desk_rsc.c
 msgid "Drive identifier:     _"
-msgstr ""
+msgstr "Okre¶lenie dysku:    _"
 
 #: desk/desk_rsc.c
 msgid "Disk label: ________.___"
-msgstr ""
+msgstr "Etykieta dysku: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Bytes used: __________"
-msgstr ""
+msgstr "Bajty u¿yte: __________"
 
 #: desk/desk_rsc.c
 msgid "Bytes available: __________"
-msgstr ""
+msgstr "Bajty wolne: __________"
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
-msgstr ""
+msgstr "Okre¶lenie: _:"
 
 #: desk/desk_rsc.c
 msgid "Label: ____________"
-msgstr ""
+msgstr "Etykieta: ____________"
 
 #: desk/desk_rsc.c
 msgid "Application name: ________.___"
-msgstr ""
+msgstr "Nazwa programu: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Arguments: ___________"
-msgstr ""
+msgstr "Argumenty: ___________"
 
 #: desk/desk_rsc.c
 msgid "Document type: ___"
-msgstr ""
+msgstr "Typ dokumentu: ___"
 
 #: desk/desk_rsc.c
 msgid "Install as: F__"
-msgstr ""
+msgstr "Dodaj jako: F__"
 
 #: desk/desk_rsc.c
 msgid "Current name: ________.___"
-msgstr ""
+msgstr "Aktualna nazwa: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Copy's name: ________.___"
-msgstr ""
+msgstr "Nazwa kopii: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Key: ^_"
-msgstr ""
+msgstr "Klawisz: ^_"
 
 #: desk/desk_rsc.c
 msgid "Free RAM: _____________________"
-msgstr ""
+msgstr "Wolny RAM: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
-msgstr ""
+msgstr "Etykieta: ________.___"
 
 #: desk/desk_rsc.c
 msgid " Desk "
-msgstr ""
+msgstr " Pulpit "
 
 #: desk/desk_rsc.c
 msgid " File "
-msgstr ""
+msgstr " Plik "
 
 #: desk/desk_rsc.c
 msgid " View "
-msgstr ""
+msgstr " Widok "
 
 #: desk/desk_rsc.c
 msgid " Options "
-msgstr ""
+msgstr " Opcje"
 
 #: desk/desk_rsc.c
 msgid "  Desktop info..."
-msgstr ""
+msgstr "  Info o Pulpicie..."
 
 #: desk/desk_rsc.c
 msgid "  Open"
-msgstr ""
+msgstr "  Otwórz"
 
 #: desk/desk_rsc.c
 msgid "  Info/Rename..."
-msgstr ""
+msgstr "  Info/Zm. nazwy..."
 
 #: desk/desk_rsc.c
 msgid "  Search..."
-msgstr ""
+msgstr "  Szukaj..."
 
 #: desk/desk_rsc.c
 msgid "  New folder..."
-msgstr ""
+msgstr "  Nowy folder..."
 
 #: desk/desk_rsc.c
 msgid "  Close folder"
-msgstr ""
+msgstr "  Zamknij folder"
 
 #: desk/desk_rsc.c
 msgid "  Close top window"
-msgstr ""
+msgstr "  Zamknij górne okno"
 
 #: desk/desk_rsc.c
 msgid "  Cycle windows"
-msgstr ""
+msgstr "  Cykluj okna"
 
 #: desk/desk_rsc.c
 msgid "  Select all items"
-msgstr ""
+msgstr "  Wybierz wszystkie przedmioty"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
-msgstr ""
+msgstr "  Ustaw maskê pliku"
 
 #: desk/desk_rsc.c
 msgid "  Delete..."
-msgstr ""
+msgstr "  Usuñ..."
 
 #: desk/desk_rsc.c
 msgid "  Format floppy..."
-msgstr ""
+msgstr "  Form. dyskietkê..."
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
-msgstr ""
+msgstr "  Uruchom EmuCON"
 
 #: desk/desk_rsc.c
 msgid "  Shutdown"
-msgstr ""
+msgstr "  Wy³±cz"
 
 #: desk/desk_rsc.c
 msgid "  Show as icons"
-msgstr ""
+msgstr "  Poka¿ jako ikony"
 
 #: desk/desk_rsc.c
 msgid "  Show as text"
-msgstr ""
+msgstr "  Poka¿ jako tekst"
 
 #: desk/desk_rsc.c
 msgid "  Sort by name"
-msgstr ""
+msgstr "  Sortuj - nazwa"
 
 #: desk/desk_rsc.c
 msgid "  Sort by type"
-msgstr ""
+msgstr "  Sortuj - typ"
 
 #: desk/desk_rsc.c
 msgid "  Sort by size"
-msgstr ""
+msgstr "  Sortuj - Rozmiar"
 
 #: desk/desk_rsc.c
 msgid "  Sort by date"
-msgstr ""
+msgstr "  Sortuj - data"
 
 #: desk/desk_rsc.c
 msgid "  No sort"
-msgstr ""
+msgstr "  Nie sortuj"
 
 #: desk/desk_rsc.c
 msgid "  Size to fit"
-msgstr ""
+msgstr "  Pasuj±cy rozmiar"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
-msgstr ""
+msgstr "  Ustaw t³o..."
 
 #: desk/desk_rsc.c
 msgid "  Install icon..."
-msgstr ""
+msgstr "  Dodaj ikonê..."
 
 #: desk/desk_rsc.c
 msgid "  Install application..."
-msgstr ""
+msgstr "  Dodaj program..."
 
 #: desk/desk_rsc.c
 msgid "  Install devices"
-msgstr ""
+msgstr "  Dodaj urz±dzenia"
 
 #: desk/desk_rsc.c
 msgid "  Remove desktop icon"
-msgstr ""
+msgstr "  Usuñ ikonê"
 
 #: desk/desk_rsc.c
 msgid "  Set preferences..."
-msgstr ""
+msgstr "  Ustawienia..."
 
 #: desk/desk_rsc.c
 msgid "  Desktop configuration..."
-msgstr ""
+msgstr "  Konfig. pulpitu"
 
 #: desk/desk_rsc.c
 msgid "  Change resolution..."
-msgstr ""
+msgstr "  Zmieñ rozdzielo¶æ..."
 
 #: desk/desk_rsc.c
 msgid "  Read .INF file..."
-msgstr ""
+msgstr "  Przeczytaj plik .INF..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop..."
-msgstr ""
+msgstr "  Zapisz pulpit..."
 
 #: desk/desk_rsc.c
 msgid "  Blitter"
-msgstr ""
+msgstr "  Blitter"
 
 #: desk/desk_rsc.c
 msgid "  Cache"
-msgstr ""
+msgstr "  Cache"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
-msgstr ""
+msgstr "Odczyt/Zapis"
 
 #: desk/desk_rsc.c
 msgid "Read-Only"
-msgstr ""
+msgstr "Tylko odczyt"
 
 #: desk/desk_rsc.c
 msgid "DISK INFORMATION"
-msgstr ""
+msgstr "INFORMACJE O DYSKU"
 
 #: desk/desk_rsc.c
 msgid "Version"
-msgstr ""
+msgstr "Wersja"
 
 #: desk/desk_rsc.c
 msgid "Copyright \275 2001-"
-msgstr ""
+msgstr "Pr. aut. \275 2001-"
 
 #: desk/desk_rsc.c
 msgid "The EmuTOS development team"
-msgstr ""
+msgstr "Deweloperzy EmuTOS"
 
 #: desk/desk_rsc.c
 msgid "Based on 'GPLed' sources"
-msgstr ""
+msgstr "Bazowane na 'zGPLowanych' ¼ród³ach"
 
 #: desk/desk_rsc.c
 msgid "\275 1987 Digital Research, Inc."
-msgstr ""
+msgstr "\275 1987 Digital Research, Inc."
 
 #: desk/desk_rsc.c
 msgid "\275 1999 Caldera Thin Clients, Inc."
-msgstr ""
+msgstr "\275 1999 Caldera Thin Clients, Inc."
 
 #: desk/desk_rsc.c
 msgid "\275 2001 Lineo, Inc."
-msgstr ""
+msgstr "\275 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c
 msgid "EmuTOS is distributed under the GPL"
-msgstr ""
+msgstr "EmuTOS jest dystrybutowany po GPL"
 
 #: desk/desk_rsc.c
 msgid "See doc\\license.txt for details"
-msgstr ""
+msgstr "Zobacz doc\\license.txt po info"
 
 #: desk/desk_rsc.c
 msgid "OPEN APPLICATION"
-msgstr ""
+msgstr "OTWÓRZ PROGRAM"
 
 #: desk/desk_rsc.c
 msgid "Parameters:"
-msgstr ""
+msgstr "Parametry:"
 
 #: desk/desk_rsc.c
 msgid "INSTALL DESKTOP ICON"
-msgstr ""
+msgstr "DODAJ IKONÊ"
 
 #: desk/desk_rsc.c
 msgid "Item type:"
-msgstr ""
+msgstr "Typ przedmiotu:"
 
 #: desk/desk_rsc.c
 msgid "Drive"
-msgstr ""
+msgstr "St. dysk."
 
 #: desk/desk_rsc.c
 msgid "Trash can"
-msgstr ""
+msgstr "Kosz"
 
 #: desk/desk_rsc.c
 msgid "Printer"
-msgstr ""
+msgstr "Drukarka"
 
 #: desk/desk_rsc.c
 msgid "Icon:"
-msgstr ""
+msgstr "Ikona:"
 
 #: desk/desk_rsc.c
 msgid "INSTALL APPLICATION"
-msgstr ""
+msgstr "DODAJ PROGRAM"
 
 #: desk/desk_rsc.c
 msgid "Boot status:"
-msgstr ""
+msgstr "Status startu:"
 
 #: desk/desk_rsc.c
 msgid "Auto"
-msgstr ""
+msgstr "Auto"
 
 #: desk/desk_rsc.c
 msgid "Normal"
-msgstr ""
+msgstr "Normalnie"
 
 #: desk/desk_rsc.c
 msgid "Application type:"
-msgstr ""
+msgstr "Typ programu:"
 
 #: desk/desk_rsc.c
 msgid "Default dir:"
-msgstr ""
+msgstr "Domy¶lny katalog"
 
 #: desk/desk_rsc.c
 msgid "Application"
-msgstr ""
+msgstr "Program"
 
 #: desk/desk_rsc.c
 msgid "Window"
-msgstr ""
+msgstr "Okno"
 
 #: desk/desk_rsc.c
 msgid "Parameter:"
-msgstr ""
+msgstr "Parametr"
 
 #: desk/desk_rsc.c
 msgid "Full path"
-msgstr ""
+msgstr "Pe³. ¶cie¿."
 
 #: desk/desk_rsc.c
 msgid "File name"
-msgstr ""
+msgstr "Nazwa pl."
 
 #: desk/desk_rsc.c
 msgid "NAME CONFLICT DURING COPY"
-msgstr ""
+msgstr "KONFLIKT NAZW PODCZAS KOPIOWANIA"
 
 #: desk/desk_rsc.c
 msgid "Stop"
-msgstr ""
+msgstr "Stop"
 
 #: desk/desk_rsc.c
 msgid "NEW FOLDER"
-msgstr ""
+msgstr "NOWY FOLDER"
 
 #: desk/desk_rsc.c
 msgid "SEARCH FILE"
-msgstr ""
+msgstr "SZUKAJ PLIKU"
 
 #: desk/desk_rsc.c
 msgid "PRINT FILE"
-msgstr ""
+msgstr "WYDRUKUJ PLIK"
 
 #: desk/desk_rsc.c
 msgid "SET PREFERENCES"
-msgstr ""
+msgstr "USTAWIENIA"
 
 #: desk/desk_rsc.c
 msgid "Confirm deletes:"
-msgstr ""
+msgstr "Potwierdzanie usuniêæ:"
 
 #: desk/desk_rsc.c
 msgid "Confirm copies:"
-msgstr ""
+msgstr "Potwierdzanie kopii:"
 
 #: desk/desk_rsc.c
 msgid "Confirm overwrites:"
-msgstr ""
+msgstr "Potwierdzanie nadpisañ:"
 
 #: desk/desk_rsc.c
 msgid "More preferences"
-msgstr ""
+msgstr "Wiêcej ustawieñ"
 
 #: desk/desk_rsc.c
 msgid "Double-click speed:"
-msgstr ""
+msgstr "Szybko¶æ dwu-klikniêcia"
 
 #: desk/desk_rsc.c
 msgid "To drop down menus:"
-msgstr ""
+msgstr "By rozwijaæ menu:"
 
 #: desk/desk_rsc.c
 msgid "Click"
-msgstr ""
+msgstr "Kliknij"
 
 #: desk/desk_rsc.c
 msgid "No click"
-msgstr ""
+msgstr "Nie klikaj"
 
 #: desk/desk_rsc.c
 msgid "Time format:"
-msgstr ""
+msgstr "Format czasu:"
 
 #: desk/desk_rsc.c
 msgid "Default"
-msgstr ""
+msgstr "Domy¶lne"
 
 #: desk/desk_rsc.c
 msgid "12H"
-msgstr ""
+msgstr "12 godz."
 
 #: desk/desk_rsc.c
 msgid "24H"
-msgstr ""
+msgstr "24 godz."
 
 #: desk/desk_rsc.c
 msgid "Date format:"
-msgstr ""
+msgstr "Format daty:"
 
 #: desk/desk_rsc.c
 msgid "MDY"
-msgstr ""
+msgstr "MDR"
 
 #: desk/desk_rsc.c
 msgid "DMY"
-msgstr ""
+msgstr "DMR"
 
 #: desk/desk_rsc.c
 msgid "SET FILE MASK"
-msgstr ""
+msgstr "USTAW MASKÊ PLIKU"
 
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
-msgstr ""
+msgstr "KONFIGURACJA PULPITU"
 
 #: desk/desk_rsc.c
 msgid "Default directory:"
-msgstr ""
+msgstr "Domy¶lny katalog:"
 
 #: desk/desk_rsc.c
 msgid "Input parameter:"
-msgstr ""
+msgstr "Parametr:"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"
-msgstr ""
+msgstr "Klawisze funkcji:"
 
 #: desk/desk_rsc.c
 msgid "Menu shortcut keys:"
-msgstr ""
+msgstr "Skróty klawiszowe menu:"
 
 #: desk/desk_rsc.c
 msgid "Clear all"
-msgstr ""
+msgstr "Wyczy¶æ wszystkie"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
-msgstr ""
+msgstr "USTAW ROZDZIELCZO¦Æ"
 
 #: desk/desk_rsc.c
 msgid "ST Low"
-msgstr ""
+msgstr "ST Niskie"
 
 #: desk/desk_rsc.c
 msgid "ST Medium"
-msgstr ""
+msgstr "ST ¦rednie"
 
 #: desk/desk_rsc.c
 msgid "ST High"
-msgstr ""
+msgstr "ST Wysokie"
 
 #: desk/desk_rsc.c
 msgid "TT Low"
-msgstr ""
+msgstr "TT Niskie"
 
 #: desk/desk_rsc.c
 msgid "TT Medium"
-msgstr ""
+msgstr "TT ¦rednie"
 
 #: desk/desk_rsc.c
 msgid "High"
-msgstr ""
+msgstr "Wysokie"
 
 #: desk/desk_rsc.c
 msgid "Medium"
-msgstr ""
+msgstr "¦rednie"
 
 #: desk/desk_rsc.c
 msgid "Low"
-msgstr ""
+msgstr "Niskie"
 
 #: desk/desk_rsc.c
 msgid "ST Compatible"
-msgstr ""
+msgstr "Komp. z ST"
 
 #: desk/desk_rsc.c
 msgid "INSTALL WINDOW ICON"
-msgstr ""
+msgstr "DODAJ IKONÊ OKNA"
 
 #: desk/desk_rsc.c
 msgid "Folder"
-msgstr ""
+msgstr "Folder"
 
 #: desk/desk_rsc.c
 msgid "File"
-msgstr ""
+msgstr "Plik"
+
+#: desk/desk_rsc.c
+msgid "Monochrome only"
+msgstr "Tylko cz.-b."
 
 #: desk/desk_rsc.c
 msgid "FORMAT FLOPPY DISKETTE"
-msgstr ""
+msgstr "FORMATUJ DYSKIETKÊ"
 
 #: desk/desk_rsc.c
 msgid "Single sided"
-msgstr ""
+msgstr "Jedno-stronna"
 
 #: desk/desk_rsc.c
 msgid "Double sided"
-msgstr ""
+msgstr "Dwu-stronna"
 
 #: desk/desk_rsc.c
 msgid "High density"
-msgstr ""
+msgstr "Wysokiej gêsto¶ci"
 
 #: desk/desk_rsc.c
 msgid "SET BACKGROUND"
-msgstr ""
+msgstr "USTAW T£O"
 
 #: desk/desk_rsc.c
 msgid "Select:"
-msgstr ""
+msgstr "Wybierz:"
 
 #: desk/desk_rsc.c
 msgid "Desktop"
-msgstr ""
+msgstr "Pulpit"
 
 #: desk/desk_rsc.c
 msgid "Style:"
-msgstr ""
+msgstr "Styl:"
 
 #: desk/desk_rsc.c
 msgid "Color:"
-msgstr ""
+msgstr "Kolor:"
 
 #: desk/desk_rsc.c
 msgid "%ld bytes used in %d items."
-msgstr ""
+msgstr "%ld bajty/ów u¿yte przez %d przedm."
 
 #: desk/desk_rsc.c
 msgid "%ld bytes used in %d selected items."
-msgstr ""
+msgstr "%ld bajty/ów u¿yte przez %d wybrany przedm."
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"
-msgstr ""
+msgstr "INFORMACJE O PLIKU"
 
 #: desk/desk_rsc.c
 msgid "FOLDER INFORMATION"
-msgstr ""
+msgstr "INFORMACJE O FOLDERZE"
 
 #: desk/desk_rsc.c
 msgid "COPY FILE(S)"
-msgstr ""
+msgstr "SKOPIUJ PLIK(I)"
 
 #: desk/desk_rsc.c
 msgid "MOVE FILE(S)"
-msgstr ""
+msgstr "PRZENIE¦ PLIK(I)"
 
 #: desk/desk_rsc.c
 msgid "DELETE FILE(S)"
-msgstr ""
+msgstr "USUÑ PLIKI"
 
 #: desk/desk_rsc.c
 msgid "DISK"
-msgstr ""
+msgstr "DYSK"
 
 #: desk/desk_rsc.c
 msgid "TRASH"
-msgstr ""
+msgstr "KOSZ"
 
 #: desk/desk_rsc.c
 msgid "PRINTER"
-msgstr ""
+msgstr "DRUKARKA"
 
 #: desk/desk_rsc.c
 msgid "-More-"
-msgstr ""
+msgstr "-Wiêcej-"
 
 #: desk/desk_rsc.c
 msgid "-End of file-"
-msgstr ""
+msgstr "-Koniec-"
 
 #: desk/desk_rsc.c
 msgid "-File read error-"
-msgstr ""
+msgstr "-B³±d odczytu pliku-"
 
 #: desk/desk_rsc.c
 msgid "Locate item"
-msgstr ""
+msgstr "Znajd¼ przedmiot"
 
 #: desk/desk_rsc.c
 msgid "Select .INF file"
-msgstr ""
+msgstr "Wybierz plik .INF"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
-msgstr ""
+msgstr "[2]["
+"Zmieniæ rozdzielczo¶æ?][ Tak | Nie ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Show or print this document?][Show|Print|Cancel]"
-msgstr ""
+msgstr "[2]["
+"Pokazaæ czy wydrukowaæ ten|"
+"dokument?][Poka¿|Wydrukuj|Anuluj]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Print error!][ Retry | Cancel ]"
-msgstr ""
+msgstr "[1]["
+"B³±d druku!][Ponów|Anuluj]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"This document type has no|"
+"associated application.][  OK  ]"
+msgstr "[1]["
+"Ten typ dokumentu nie ma|"
+"powi±zanego programu.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -853,56 +912,76 @@ msgid "[1]["
 "windows.  Please close a|"
 "window that you are not|"
 "using.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Pulpit GEM nie ma wiêcej|"
+"okien. Proszê zamkn±æ okno,|"
+"którego ju¿ nie u¿ywasz.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Illegal directory operation!][ Skip | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Niedozwolona operacja katalogu!][Pomiñ|Przerwij]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Illegal operation!][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Niedozwolona operacja!][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Abort this operation?][ Yes | No ]"
-msgstr ""
+msgstr "[2]["
+"Przerwaæ t± operacjê][ Tak | Nie ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Do you want to delete all|"
 "the files on drive %c: ?][Yes| No ]"
-msgstr ""
+msgstr "[2]["
+"Czy chcesz usun±æ wszystkie|"
+"pliki na dysku %c:?][ Tak | Nie ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Sorry, the desktop cannot|"
 "install any more icons|"
 "or applications.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Niestety, pulpit nie mo¿e|"
+"doda¿ wiêcej ikon lub|"
+"programów.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "You cannot create a folder|"
 "with that name. Please retry|"
 "with a new name, or cancel.][Cancel|Retry]"
-msgstr ""
+msgstr "[2]["
+"Nie mo¿esz utworzyæ folderu|"
+"z t± nazw±. Spróbuj ponownie|"
+"z now± nazw± lub anuluj.][Anuluj|Ponów]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Drive %c: does not have|"
 "enough room for this|"
 "operation.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Dysk %c: nie ma wyst.|"
+"du¿o miejsca na t±|"
+"operacjê.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
 "down the directory path.][  OK  ]"
-msgstr ""
+msgstr "[3]["
+"Nie mo¿esz stworzyæ lub|"
+"mieæ dostêpu do folderu|"
+"tak daleko w ¶cie¿ce katalogu.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
@@ -910,517 +989,580 @@ msgid "[3]["
 "a file or folder with that|"
 "name, because the pathname|"
 "is too long.][  OK  ]"
-msgstr ""
+msgstr "[3]["
+"Nie mo¿esz stworzyæ lub|"
+"mieæ dostêpu do pliku lub|"
+"folderu z t± nazw±, poniewa¿|"
+"nazwa ¶cie¿ki jest zbyt d³uga.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "%s is used to|"
 "permanently delete files|"
 "or folders.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"%s jest u¿ywane, by|"
+"trwale usuwaæ pliki|"
+"lub foldery.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "%s|"
 "is a printer.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"%s|"
+"jest drukark±.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"You cannot drag applications,|"
+"files or folders onto the|"
+"Desktop.][  OK  ]"
+msgstr "[1]["
+"Nie mo¿esz przeci±gaæ|"
+"programów, plików lub|"
+"folder na pulpit.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
-msgstr ""
+msgstr "[2]["
+"Zapisaæ pulpit?][  OK  |Anuluj]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Do you want to remove icons|"
 "or delete files?][Icons|Files|Cancel]"
-msgstr ""
+msgstr "[2]["
+"Chcesz usun±æ ikony czy pliki?][Ikony|Pliki|Anuluj]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Invalid function key value.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Niew³a¶ciwa warto¶æ klawisza|"
+"funkcji.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Function key already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
-msgstr ""
+msgstr "[2]["
+"Klawisz funkcji ju¿|"
+"przydzielony. Chcesz go|"
+"znów przydzieliæ?][  OK  |Anuluj]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
 "Not enough memory to|"
 "initialise EmuDesk.|"
 "You must reboot.][  OK  ]"
-msgstr ""
+msgstr "[3]["
+"Brak pamiêci, by|"
+"uruchomiæ EmuDesk.|"
+"Musisz zrestartowaæ.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "%s not found.|"
 "Do you want to remove the|"
 "icon or locate the item?][Remove|Locate|Cancel]"
-msgstr ""
+msgstr "[2]["
+"Nie znaleziono %s.|"
+"Chcesz usun±æ ikonê,|"
+"czy znale¼æ plik?][ Usuñ |Znajd¼|Anuluj]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Please select icon type.][Desktop|Window|Cancel]"
-msgstr ""
+msgstr "[1]["
+"Proszê wybraæ typ ikony.][Pulpit| Okno |Anuluj]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "No matching file type.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Brak pasuj±cego typu plików.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
 "Formatting error. The target|"
 "disk may be write-protected|"
 "or unusable.][ Retry | Abort ]"
-msgstr ""
+msgstr "[3]["
+"B³±d formatowania. Cel mo¿e|"
+"byæ chroniony przed zapisem|"
+"lub nie do u¿ycia.][ Ponów |Przerwij]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "This disk has %ld bytes|"
 "available to the user.][ Continue | Quit ]"
-msgstr ""
+msgstr "[1]["
+"Ten dysk ma %ld bajty/ów|"
+"dostêpnych dla u¿ytkownika.][Kontynuuj|  Wyjd¼  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Drive %s: does not exist.][ Cancel ]"
-msgstr ""
+msgstr "[1]["
+"Stacja %s: nie istnieje.][Anuluj]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "No drive identifier.][ Retry ]"
-msgstr ""
+msgstr "[1]["
+"Brak okre¶lenia stacji.][ Ponów ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot delete file|"
 "%s][ Skip | Retry | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Nie mo¿na usun±æ pliku|"
+"%s][ Pomiñ | Ponów |Przerwij]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot delete directory|"
 "%s][ Skip | Retry | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Nie mo¿na usun±æ folderu|"
+"%s][ Pomiñ | Ponów |Przerwij]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Not enough memory.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Brak pamiêci.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "%s not found.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nie znaleziono %s.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot open file|"
 "%s][ Skip | Retry | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Nie mo¿na otworzy± pliku"
+"%s][ Pomiñ | Ponów |Przerwij]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot create file|"
 "%s][ Skip | Retry | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Nie mo¿na stworzyæ pliku|"
+"%s][ Pomiñ | Ponów |Przerwij]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot read file|"
 "%s][ Skip | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Nie mo¿na przeczytaæ pliku|"
+"%s][ Pomiñ |Przerwij]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot write file|"
 "%s][ Skip | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Nie mo¿na wpisaæ do pliku|"
+"%s][ Pomiñ |Przerwij]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Rename error!][ Retry | Cancel ]"
-msgstr ""
+msgstr "[1]["
+"B³±d zmiany nazwy!][Ponów|Anuluj]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Failed to set default|"
 "directory.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nie uda³o siê ustawiæ|"
+"domy¶lnego katalogu.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Illegal .INF file format.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Niedozwolony format pliku .INF.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Continue to search?][  OK  |Cancel]"
-msgstr ""
+msgstr "[2]["
+"Wci±¿ szukaæ?][  OK  |Anuluj]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "No more files.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nie ma wiêcej plików.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Last key is already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
-msgstr ""
+msgstr "[2]["
+"Osrany klawisz jest ju¿|"
+"przypisany. Chcesz go|"
+"przypisaæ jeszcze raz?][  OK  |Anuluj]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
-msgstr ""
+msgstr "Kopiuj <filespec> ... do standardowego wyj¶cia"
 
 #: cli/cmdint.c
 msgid "Change current directory to <dir>"
-msgstr ""
+msgstr "Zmieñ aktualny katalog do <katalog>"
 
 #: cli/cmdint.c
 msgid "or display current directory"
-msgstr ""
+msgstr "lub wy¶wietl aktualny katalog"
 
 #: cli/cmdint.c
 msgid "Change attributes for <filename>"
-msgstr ""
+msgstr "Zmieñ atrybuty dla <nazwapliku>"
 
 #: cli/cmdint.c
 msgid "<mode> specifies the new attribute(s):"
-msgstr ""
+msgstr "<tryb> okre¶la nowy/e atrybut(y)"
 
 #: cli/cmdint.c
 msgid "r=read-only  h=hidden  s=system  -=none"
-msgstr ""
+msgstr "r=tylko do odczytu h=ukryty s=systemowy -=brak"
 
 #: cli/cmdint.c
 msgid "Clear screen"
-msgstr ""
+msgstr "Wyczy¶æ ekran"
 
 #: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dest>"
-msgstr ""
+msgstr "Kopiuj pliki pasuj±ce do <filespec> do <cel>"
 
 #: cli/cmdint.c
 msgid "If <filespec> matches multiple files,"
-msgstr ""
+msgstr "Je¶li <filespec> pasuje do wielu plików,"
 
 #: cli/cmdint.c
 msgid "<dest> must be a directory"
-msgstr ""
+msgstr "<cel> musi byæ katalogiem"
 
 #: cli/cmdint.c
 msgid "Copy <string> ... to standard output"
-msgstr ""
+msgstr "Kopiuj <ci±g-znaków> ... do standartowego wyj¶cia"
 
 #: cli/cmdint.c
 msgid "Strings may be surrounded by \"\""
-msgstr ""
+msgstr "Ci±gi znaków mog± byæ otoczone przez \"\""
 
 #: cli/cmdint.c
 msgid "Exit EmuCON2"
-msgstr ""
+msgstr "Opu¶æ EmuCON2"
 
 #: cli/cmdint.c
 msgid "Get help about <cmd> or list available commands"
-msgstr ""
+msgstr "Otrzymaj pomoc na temat <komenda> lub wylistuj dostêpne komendy"
 
 #: cli/cmdint.c
 msgid "Use HELP ALL for help on all commands"
-msgstr ""
+msgstr "U¿yj HELP ALL, by wylistowaæ wszystkie komendy"
 
 #: cli/cmdint.c
 msgid "Use HELP EDIT for help on line editing"
-msgstr ""
+msgstr "U¿yj HELP EDIT, by wy¶wietliæ pomoc na temat edytowania linii"
 
 #: cli/cmdint.c
 msgid "List files (default terse, horizontal)"
-msgstr ""
+msgstr "Wylistuj pliki (domy¶lnie zwiêz³e, poziome)"
 
 #: cli/cmdint.c
 msgid "Specify -l for detailed list"
-msgstr ""
+msgstr "Okre¶l -l po szczegó³ow± listê"
 
 #: cli/cmdint.c
 msgid "Create directory <dir>"
-msgstr ""
+msgstr "Stwórz katalog <katalog>"
 
 #: cli/cmdint.c
 msgid "Set or display console settings:"
-msgstr ""
+msgstr "Ustaw lub wy¶wietl ustawienia terminala"
 
 #: cli/cmdint.c
 msgid "res for screen resolution (0,1)[ST] (0,1,2,4,7)[TT];"
-msgstr ""
+msgstr "res dla rozdzielczo¶ci (0,1)[ST] (0,1,2,4,7)[TT];"
 
 #: cli/cmdint.c
 msgid "delay/rate for the keyboard"
-msgstr ""
+msgstr "opó¼nienie/szybko¶æ dla klawiatury"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> to standard output,"
-msgstr ""
+msgstr "Kopiuj <filespec> do standardowego wyj¶cia,"
 
 #: cli/cmdint.c
 msgid "pausing every screenful"
-msgstr ""
+msgstr "zatrzymuj±c co jeden ekran danych"
 
 #: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dir>,"
-msgstr ""
+msgstr "Kopiuj pliki pasuj±ce do <filespec> to <katalog>,"
 
 #: cli/cmdint.c
 msgid "then delete input files"
-msgstr ""
+msgstr "a po tym usuñ pliki wej¶cia"
 
 #: cli/cmdint.c
 msgid "Set search path for external programs"
-msgstr ""
+msgstr "Ustaw ¶cie¿kê wyszukiwania dla programów zewnêtrznych"
 
 #: cli/cmdint.c
 msgid "or display current search path"
-msgstr ""
+msgstr "lub wy¶wietl aktualn± ¶cie¿kê wyszukiwania"
 
 #: cli/cmdint.c
 msgid "Display current drive and directory"
-msgstr ""
+msgstr "Wy¶wietl aktualny dysk i katalog"
 
 #: cli/cmdint.c
 msgid "Rename <oldname> to <newname>"
-msgstr ""
+msgstr "Zmieñ nazwê <staranazwa> na <nowanazwa>"
 
 #: cli/cmdint.c
 msgid "Delete files matching <filespec>"
-msgstr ""
+msgstr "Usuñ pliki pasuj±ce do <filespec>"
 
 #: cli/cmdint.c
 msgid "Specify -q to be prompted each time"
-msgstr ""
+msgstr "Okre¶l -q, by byæ pytanym za ka¿dym razem"
 
 #: cli/cmdint.c
 msgid "Delete directory <dir>"
-msgstr ""
+msgstr "Usuñ katalog <katalog>"
 
 #: cli/cmdint.c
 msgid "Show info for <drive> or current drive"
-msgstr ""
+msgstr "Poka¿ informacje dla <dysk> lub aktualnego dysku"
 
 #: cli/cmdint.c
 msgid "Display GEMDOS version"
-msgstr ""
+msgstr "Wy¶wietl wersjê GEMDOS"
 
 #: cli/cmdint.c
 msgid "Set line wrap or show current status"
-msgstr ""
+msgstr "Ustaw zawijanie wierszy lub poka¿ aktualny status"
 
 #: cli/cmdint.c
 msgid "up/down arrow = previous/next line in history"
-msgstr ""
+msgstr "Strza³ka w górê/dó³ = poprzednia/nastêpna linia w historii"
 
 #: cli/cmdint.c
 msgid "left/right arrow = previous/next character"
-msgstr ""
+msgstr "Strza³ka w lewo/prawo = poprzedni/nastêpny znak"
 
 #: cli/cmdint.c
 msgid "control-left/right arrow = previous/next word"
-msgstr ""
+msgstr "Ctrl-lewo/Ctrl-prawo = poprz./nast. s³owo"
 
 #: cli/cmdint.c
 msgid "invalid mode argument"
-msgstr ""
+msgstr "nieprawid³owy argument MODE"
 
 #: cli/cmdint.c
 msgid "Builtin commands:"
-msgstr ""
+msgstr "Wbudowane komendy:"
 
 #: cli/cmdint.c
 msgid "Listing of "
-msgstr ""
+msgstr "Listowanie "
 
 #: cli/cmdint.c
 msgid "Status for CON:"
-msgstr ""
+msgstr "Status dla CON:"
 
 #: cli/cmdint.c
 msgid "  Resolution:     "
-msgstr ""
+msgstr "  Rozdzielczo¶æ:     "
 
 #: cli/cmdint.c
 msgid "  Keyboard delay: "
-msgstr ""
+msgstr "  Opó¼nienie klaw.: "
 
 #: cli/cmdint.c
 msgid "  Keyboard rate:  "
-msgstr ""
+msgstr "  Szybko¶æ klaw.:  "
 
 #: cli/cmdint.c
 msgid "(empty)"
-msgstr ""
+msgstr "(puste)"
 
 #: cli/cmdint.c
 msgid "Delete ALL matching files"
-msgstr ""
+msgstr "Usun±æ WSZYSTKIE pasuj±ce pliki"
 
 #: cli/cmdint.c
 msgid "Delete file "
-msgstr ""
+msgstr "Usun±æ plik"
 
 #: cli/cmdint.c
 msgid "Allocation info for drive "
-msgstr ""
+msgstr "Informacje o alokacji dla dysku"
 
 #: cli/cmdint.c
 msgid "  Size (bytes):   "
-msgstr ""
+msgstr "  Rozmiar (bajty):   "
 
 #: cli/cmdint.c
 msgid "  Bytes used:     "
-msgstr ""
+msgstr "  Bajty u¿yte:     "
 
 #: cli/cmdint.c
 msgid "  Bytes free:     "
-msgstr ""
+msgstr "  Bajty wolne:     "
 
 #: cli/cmdint.c
 msgid "  Total clusters: "
-msgstr ""
+msgstr "  Grupy: "
 
 #: cli/cmdint.c
 msgid "  Free clusters:  "
-msgstr ""
+msgstr "  Wolne grupy:  "
 
 #: cli/cmdint.c
 msgid "  Sectors/cluster:"
-msgstr ""
+msgstr "  Sektory/grupa:"
 
 #: cli/cmdint.c
 msgid "  Bytes/sector:   "
-msgstr ""
+msgstr "  Bajty/sektor:   "
 
 #: cli/cmdint.c
 msgid " is not a directory"
-msgstr ""
+msgstr " nie jest katalogiem"
 
 #: cli/cmdint.c
 msgid " and "
-msgstr ""
+msgstr " i "
 
 #: cli/cmdint.c
 msgid "Copying "
-msgstr ""
+msgstr "Kopiowanie "
 
 #: cli/cmdint.c
 msgid " to "
-msgstr ""
+msgstr " do "
 
 #: cli/cmdint.c
 msgid " ... deleting "
-msgstr ""
+msgstr " ... usuwanie "
 
 #: cli/cmdint.c
 msgid " ... done"
-msgstr ""
+msgstr " ... gotowe"
 
 #: cli/cmdint.c
 msgid " or "
-msgstr ""
+msgstr " lub "
 
 #: cli/cmdint.c
 msgid "CR to continue ..."
-msgstr ""
+msgstr "CR, by kontynuowa"
 
 #: cli/cmdint.c
 msgid "--More--"
-msgstr ""
+msgstr "--Wiêcej--"
 
 #: cli/cmdmain.c
 msgid "Welcome to EmuCON2 version "
-msgstr ""
+msgstr "Witam to EmuCON2, wersja "
 
 #: cli/cmdmain.c
 msgid "Type HELP for builtin commands"
-msgstr ""
+msgstr "Wpisz HELP po wbudowane komendy"
 
 #: cli/cmdmain.c
 msgid "warning: no history buffers"
-msgstr ""
+msgstr "uwaga: brak buforów historii"
 
 #: cli/cmdparse.c
 msgid "more than one redirection"
-msgstr ""
+msgstr "wiêcej ni¿ jedno przeadresowanie"
 
 #: cli/cmdparse.c
 msgid "no filename for redirection"
-msgstr ""
+msgstr "brak nazwy pliku dla przeadresowania"
 
 #: cli/cmdparse.c
 msgid "error in quoted field"
-msgstr ""
+msgstr "b³±d w zacytowanym polu"
 
 #: cli/cmdparse.c
 msgid "error parsing line"
-msgstr ""
+msgstr "b³±d analizowania linii"
 
 #: cli/cmdutil.c
 msgid "file not found"
-msgstr ""
+msgstr "plik nie znaleziony"
 
 #: cli/cmdutil.c
 msgid "path not found"
-msgstr ""
+msgstr "¶cie¿ka nie znaleziona"
 
 #: cli/cmdutil.c
 msgid "no more file handles"
-msgstr ""
+msgstr "brak uchwytów do plików"
 
 #: cli/cmdutil.c
 msgid "can't create file"
-msgstr ""
+msgstr "nie mo¿na stworzyæ pliku"
 
 #: cli/cmdutil.c
 msgid "not enough memory"
-msgstr ""
+msgstr "brak pamiêci"
 
 #: cli/cmdutil.c
 msgid "invalid drive"
-msgstr ""
+msgstr "niew³a¶ciwy dysk"
 
 #: cli/cmdutil.c
 msgid "interrupted"
-msgstr ""
+msgstr "przerwano"
 
 #: cli/cmdutil.c
 msgid "invalid path"
-msgstr ""
+msgstr "nieprawid³owa ¶cie¿ka"
 
 #: cli/cmdutil.c
 msgid "can't write to disk (full?)"
-msgstr ""
+msgstr "nie mo¿na zapisaæ do dysku (pe³ny?)"
 
 #: cli/cmdutil.c
 msgid "cmdline too long"
-msgstr ""
+msgstr "linia komendy zbyt d³uga"
 
 #: cli/cmdutil.c
 msgid "directory not empty"
-msgstr ""
+msgstr "katalog nie jest pusty"
 
 #: cli/cmdutil.c
 msgid "can't delete file (read-only?)"
-msgstr ""
+msgstr "nie mo¿na usun±æ pliku (tylko do odczytu?)"
 
 #: cli/cmdutil.c
 msgid "invalid parameter"
-msgstr ""
+msgstr "niew³a¶ciwy parametr"
 
 #: cli/cmdutil.c
 msgid "wrong number of arguments"
-msgstr ""
+msgstr "z³a ilo¶æ argumentów"
 
 #: cli/cmdutil.c
 msgid "error code %ld"
-msgstr ""
-
+msgstr "kod b³êdu %ld"
