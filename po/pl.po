@@ -229,7 +229,7 @@ msgid "[1]["
 "this directory][  OK  ]"
 msgstr "[1]["
 "Brak pamiêci dla tego|"
-"katalogu][  OK  ]"
+"katalogu.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "ITEM SELECTOR"
@@ -509,7 +509,7 @@ msgstr "Wersja"
 
 #: desk/desk_rsc.c
 msgid "Copyright \275 2001-"
-msgstr "Pr. aut. \275 2001-"
+msgstr "Pr. aut. (C) 2001-"
 
 #: desk/desk_rsc.c
 msgid "The EmuTOS development team"
@@ -933,7 +933,7 @@ msgstr "[1]["
 msgid "[2]["
 "Abort this operation?][ Yes | No ]"
 msgstr "[2]["
-"Przerwaæ t± operacjê][ Tak | Nie ]"
+"Przerwaæ t± operacjê?][ Tak | Nie ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
@@ -1147,7 +1147,7 @@ msgid "[1]["
 "Cannot open file|"
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
-"Nie mo¿na otworzy± pliku"
+"Nie mo¿na otworzyæ pliku|"
 "%s][ Pomiñ | Ponów |Przerwij]"
 
 #: desk/desk_rsc.c
@@ -1211,9 +1211,9 @@ msgid "[2]["
 "Last key is already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
 msgstr "[2]["
-"Osrany klawisz jest ju¿|"
-"przypisany. Chcesz go|"
-"przypisaæ jeszcze raz?][  OK  |Anuluj]"
+"Ostatni klawisz jest ju¿|"
+"przypisany. Przypisaæ|"
+"jeszcze raz?][  OK  |Anuluj]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
