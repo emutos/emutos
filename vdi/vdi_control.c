@@ -421,12 +421,12 @@ void vdi_v_opnwk(Vwk * vwk)
     }
 
     /* Copy data from linea variables */
-    xres = V_REZ_HZ - 1;
+    xres = V_REZ_HZ - 1;        /* xres/yres are DEV_TAB[0]/[1] */
     yres = V_REZ_VT - 1;
     INQ_TAB[4] = v_planes;
 
     /* get pixel sizes for use by routines in vdi_gdp.c & vdi_line.c */
-    get_pixel_size(&xsize,&ysize);
+    get_pixel_size(&xsize,&ysize);  /* xsize/ysize are DEV_TAB[3]/[4] */
 
     /* Indicate whether LUT is supported */
     if ((INQ_TAB[4] == 16) || (get_monitor_type() == MON_MONO))
@@ -435,7 +435,7 @@ void vdi_v_opnwk(Vwk * vwk)
 
     /* Calculate colors allowed at one time */
     if (INQ_TAB[4] < 8)
-        numcolors = 2<<(v_planes-1);
+        numcolors = 2<<(v_planes-1);/* numcolors is DEV_TAB[13] */
     else
         numcolors = 256;
 
