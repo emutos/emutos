@@ -1756,6 +1756,12 @@
 # endif
 #endif
 
+#if !CONF_WITH_FDC
+# if CONF_WITH_FORMAT
+#  error CONF_WITH_FORMAT requires CONF_WITH_FDC.
+# endif
+#endif
+
 
 /*
  * Sanity checks for debugging options
