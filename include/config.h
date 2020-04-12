@@ -1685,6 +1685,9 @@
 # if CONF_WITH_STATIC_ALT_RAM
 #  error CONF_WITH_STATIC_ALT_RAM requires CONF_WITH_ALT_RAM.
 # endif
+# if CONF_WITH_TTRAM
+#  error CONF_WITH_TTRAM requires CONF_WITH_ALT_RAM.
+# endif
 #endif
 
 #ifndef STATIC_ALT_RAM_ADDRESS
@@ -1693,12 +1696,6 @@
 # endif
 # ifdef STATIC_ALT_RAM_SIZE
 #  error STATIC_ALT_RAM_SIZE requires STATIC_ALT_RAM_ADDRESS.
-# endif
-#endif
-
-#if !CONF_WITH_ALT_RAM
-# if CONF_WITH_TTRAM
-#  error CONF_WITH_TTRAM requires CONF_WITH_ALT_RAM.
 # endif
 #endif
 
