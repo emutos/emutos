@@ -74,6 +74,7 @@ extern UBYTE v_planes_shift; /* pixel to address helper */
 
 /* determine monitor type, ... */
 WORD get_monitor_type(void);
+WORD get_palette(void);
 void get_pixel_size(WORD *width,WORD *height);
 int rez_changeable(void);
 WORD check_moderez(WORD moderez);

@@ -765,6 +765,51 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
 #endif
 }
 
+/*
+ * used by vdi_v_opnwk()
+ *
+ * returns the palette (number of colour choices) for the current hardware
+ */
+WORD get_palette(void)
+{
+#ifdef MACHINE_AMIGA
+    return 2;               /* we currently only support monochrome */
+#else
+    WORD palette;
+
+#if CONF_WITH_VIDEL
+    /* we return the same values as Atari TOS 4.04 */
+    if (has_videl)
+    {
+        WORD mode = vsetmode(-1);
+        if ((mode&VIDEL_COMPAT)
+         || ((mode&VIDEL_BPPMASK) == VIDEL_4BPP))
+            return 4096;
+        return 0;
+    }
+#endif
+
+    palette = 4096;         /* for STe/TT colour modes */
+
+    switch(sshiftmod) {
+    case ST_HIGH:
+#if CONF_WITH_TT_SHIFTER
+    case TT_HIGH:
+#endif
+        return 2;
+    case ST_LOW:
+    case ST_MEDIUM:
+#if CONF_WITH_STE_SHIFTER
+        if (has_ste_shifter)
+            break;
+#endif
+        palette = 512;     /* colour modes on plain ST */
+    }
+
+    return palette;
+#endif
+}
+
 /* returns 'standard' pixel sizes */
 static __inline__ void get_std_pixel_size(WORD *width,WORD *height)
 {

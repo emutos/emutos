@@ -439,6 +439,9 @@ void vdi_v_opnwk(Vwk * vwk)
     else
         numcolors = 256;
 
+    /* get palette (COLOR.CPX from the MegaSTe language disk cares about this) */
+    DEV_TAB[39] = get_palette();
+
     /* initialize the vwk pointer array */
     vwk = &phys_work;
     vwk_ptr[VDI_PHYS_HANDLE] = vwk;
