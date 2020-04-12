@@ -1738,26 +1738,10 @@
 # endif
 #endif
 
-#if !CONF_WITH_SCC
-# if SCC_DEBUG_PRINT
-#  error SCC_DEBUG_PRINT requires CONF_WITH_SCC.
-# endif
-#endif
-
-#if !CONF_WITH_COLDFIRE_RS232
-# if COLDFIRE_DEBUG_PRINT
-#  error COLDFIRE_DEBUG_PRINT requires CONF_WITH_COLDFIRE_RS232.
-# endif
-#endif
-
 #if !CONF_SERIAL_CONSOLE
 # if CONF_SERIAL_CONSOLE_ANSI
 #  error CONF_SERIAL_CONSOLE_ANSI requires CONF_SERIAL_CONSOLE.
 # endif
-#endif
-
-#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT) > 1
-# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1.
 #endif
 
 #if !CONF_WITH_ACSI
@@ -1771,6 +1755,28 @@
 #  error CONF_WITH_XBIOS_SOUND requires CONF_WITH_DMASOUND.
 # endif
 #endif
+
+
+/*
+ * Sanity checks for debugging options
+ */
+
+#if !CONF_WITH_SCC
+# if SCC_DEBUG_PRINT
+#  error SCC_DEBUG_PRINT requires CONF_WITH_SCC.
+# endif
+#endif
+
+#if !CONF_WITH_COLDFIRE_RS232
+# if COLDFIRE_DEBUG_PRINT
+#  error COLDFIRE_DEBUG_PRINT requires CONF_WITH_COLDFIRE_RS232.
+# endif
+#endif
+
+#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT) > 1
+# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1.
+#endif
+
 
 /*
  * Sanity checks for features on specific target machines
