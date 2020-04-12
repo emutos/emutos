@@ -15,7 +15,6 @@
  */
 
 #include "emutos.h"
-#include "cookie.h"
 #include "biosdefs.h"
 #include "country.h"
 #include "nvram.h"
