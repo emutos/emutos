@@ -60,9 +60,6 @@
 
 #if CONF_WITH_XHDI
 
-long xhdi_vec(UWORD opcode, ...);   /* In bios/natfeat.S */
-
-void create_XHDI_cookie(void);
 void init_XHDI_drvmap(void);
 long xhdi_handler(UWORD *stack);
 

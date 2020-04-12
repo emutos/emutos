@@ -691,7 +691,7 @@ void fill_cookie_jar(void)
 #endif
 
 #if CONF_WITH_XHDI
-    create_XHDI_cookie();
+    cookie_add(COOKIE_XHDI, (long)xhdi_vec);
 #endif
 
 #if !CONF_WITH_MFP

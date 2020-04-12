@@ -61,6 +61,11 @@ extern long cookie_akp;
 BOOL detect_32bit_address_bus(void);
 #endif
 
+/* XHDI vector table */
+#if CONF_WITH_XHDI
+long xhdi_vec(UWORD opcode, ...);   /* In bios/natfeat.S */
+#endif
+
 /* detect the available hardware */
 void machine_detect(void);
 
