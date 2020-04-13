@@ -521,15 +521,15 @@ msgstr "Bazowane na 'zGPLowanych' ¼ród³ach"
 
 #: desk/desk_rsc.c
 msgid "\275 1987 Digital Research, Inc."
-msgstr "\275 1987 Digital Research, Inc."
+msgstr "(C) 1987 Digital Research, Inc."
 
 #: desk/desk_rsc.c
 msgid "\275 1999 Caldera Thin Clients, Inc."
-msgstr "\275 1999 Caldera Thin Clients, Inc."
+msgstr "(C) 1999 Caldera Thin Clients, Inc."
 
 #: desk/desk_rsc.c
 msgid "\275 2001 Lineo, Inc."
-msgstr "\275 2001 Lineo, Inc."
+msgstr "(C) 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c
 msgid "EmuTOS is distributed under the GPL"
