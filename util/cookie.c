@@ -14,6 +14,11 @@
 #include "cookie.h"
 #include "tosvars.h"
 
+#define DEF_IDT_TIME    (1<<12)     /* 24-hour clock */
+#define DEF_IDT_DATE    (2<<8)      /* YY-MM-DD */
+#define DEF_IDT_SEP     '/'
+#define DEFAULT_IDT     (DEF_IDT_TIME | DEF_IDT_DATE | DEF_IDT_SEP)
+
 /* the default cookie jar, in the bss */
 
 static struct cookie dflt_jar[20];
@@ -71,6 +76,19 @@ BOOL cookie_get(LONG tag, LONG *pvalue)
     }
 
     return FALSE;    
+}
+
+/*
+ * get the current value of the _IDT cookie; used by EmuDesk
+ */
+LONG get_idt_cookie(void)
+{
+    LONG idt;
+
+    if (cookie_get(COOKIE_IDT, &idt))
+        return idt;
+
+    return DEFAULT_IDT; /* "can't happen" ... */
 }
 
 #if CONF_WITH_FRB

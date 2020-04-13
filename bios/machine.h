@@ -47,6 +47,7 @@ extern long cookie_fdc;
 extern long cookie_swi;
 #endif
 extern long cookie_akp;
+extern long cookie_idt;
 
 /*
  * these are != 0 if the feature is present

@@ -209,6 +209,8 @@ void do_wredraw(WORD w_handle, GRECT *gptr)
             root = pw->w_root;
     }
 
+    G.g_idt = Supexec((LONG)get_idt_cookie);    /* current _IDT for format_fnode() */
+
     graf_mouse(M_OFF, NULL);
 
     wind_get_grect(w_handle, WF_FIRSTXYWH, &t);

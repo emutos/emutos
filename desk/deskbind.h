@@ -184,6 +184,8 @@ typedef struct
 /*GLOBAL*/ char         g_appdir;               /* default is app dir (boolean) */
 /*GLOBAL*/ char         g_fullpath;             /* full path for arg (boolean)  */
 
+/*GLOBAL*/ LONG         g_idt;                  /* value from _IDT cookie */
+
 /*GLOBAL*/ char         g_work[256];            /* general text work area */
 
                                             /* icon-related globals: */

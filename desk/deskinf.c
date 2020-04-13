@@ -81,7 +81,7 @@ static char *fmt_time(UWORD time, char *fmt_string, char *ptime)
     switch(G.g_ctimeform)
     {
     case TIMEFORM_IDT:
-        if ((cookie_idt&IDT_TMASK) == IDT_24H)
+        if ((G.g_idt&IDT_TMASK) == IDT_24H)
             break;
         FALLTHROUGH; /* else 12 hour clock */
     case TIMEFORM_12H:
@@ -137,10 +137,10 @@ static char *fmt_date(UWORD date, BOOL fourdigit, char *pdate)
     switch(G.g_cdateform)
     {
     case DATEFORM_IDT:
-        tmp = cookie_idt & IDT_SMASK;   /* separator */
+        tmp = G.g_idt & IDT_SMASK;  /* separator */
         if (tmp)
             separator = tmp;
-        format = cookie_idt&IDT_DMASK;
+        format = G.g_idt&IDT_DMASK;
         break;
     case DATEFORM_DMY:
         format = IDT_DDMMYY;
