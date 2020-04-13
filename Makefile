@@ -193,7 +193,7 @@ bios_src += lowstram.c
 
 # Other BIOS sources can be put in any order
 bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
-             biosmem.c blkdev.c chardev.c clock.c conout.c cookie.c country.c \
+             biosmem.c blkdev.c chardev.c clock.c conout.c country.c \
              disk.c dma.c dmasound.c floppy.c font.c ide.c ikbd.c initinfo.c \
              kprint.c kprintasm.S linea.S lineainit.c lineavars.S machine.c \
              mfp.c midi.c mouse.c natfeat.S natfeats.c nvram.c panicasm.S \
@@ -218,7 +218,7 @@ bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
 # source code in util/
 #
 
-util_src = doprintf.c intmath.c langs.c memmove.S memset.S miscasm.S \
+util_src = cookie.c doprintf.c intmath.c langs.c memmove.S memset.S miscasm.S \
            nls.c nlsasm.S setjmp.S string.c
 
 # The functions in the following modules are used by the AES and EmuDesk
