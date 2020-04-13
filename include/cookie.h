@@ -93,4 +93,8 @@ BOOL cookie_get(LONG tag, LONG *pvalue);
 UBYTE *get_frb_cookie(void);
 #endif
 
+#if CONF_WITH_FDC
+WORD get_floppy_type(void);     /* from _FDC cookie */
+#endif
+
 #endif

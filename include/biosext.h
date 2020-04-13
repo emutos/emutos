@@ -97,8 +97,5 @@ WORD amiga_vgetmode(void);
 
 /* Cookies. FIXME: Should not be accessed directly from upper layers */
 extern long cookie_idt;
-#if CONF_WITH_FDC
-extern long cookie_fdc;
-#endif
 
 #endif /* BIOSEXT_H */

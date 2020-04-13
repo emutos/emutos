@@ -88,3 +88,20 @@ UBYTE *get_frb_cookie(void)
     return NULL;
 }
 #endif
+
+#if CONF_WITH_FDC
+/*
+ * get the type of floppy drive(s), from the _FDC cookie
+ *
+ * returns 0 if DD, 1 if HD
+ */
+WORD get_floppy_type(void)
+{
+    LONG value;
+
+    if (cookie_get(COOKIE_FDC, &value))
+        return value>>24;
+
+    return 0;
+}
+#endif

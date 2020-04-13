@@ -30,6 +30,7 @@
 #include "biosdefs.h"
 #include "xbiosbind.h"
 #include "gemerror.h"
+#include "cookie.h"
 
 #include "aesdefs.h"
 #include "deskbind.h"
@@ -1559,7 +1560,7 @@ void do_format(void)
      * adjust the initial default formatting option, hiding
      * the high density option if not available
      */
-    if ((cookie_fdc>>24) == 0)
+    if (Supexec((LONG)get_floppy_type) == 0)
     {
         if (tree[FMT_HD].ob_state & SELECTED)   /* first time */
         {
