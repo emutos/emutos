@@ -12,7 +12,6 @@
 
 #include "emutos.h"
 #include "cookie.h"
-#include "processor.h"
 #include "tosvars.h"
 
 /* the default cookie jar, in the bss */
