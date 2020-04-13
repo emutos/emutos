@@ -87,6 +87,8 @@ struct cookie {
 
 void cookie_init(void);
 void cookie_add(long tag, long val);
+BOOL cookie_get(LONG tag, LONG *pvalue);
+
 #if CONF_WITH_FRB
 UBYTE *get_frb_cookie(void);
 #endif

@@ -48,6 +48,31 @@ void cookie_add(long tag, long value)
     }
 }
 
+/*
+ * get cookie
+ *
+ * returns TRUE if found, FALSE if not
+ *
+ * if found, and the second argument is non-NULL, copies the cookie value
+ * into the variable pointed to by the second arg
+ */
+BOOL cookie_get(LONG tag, LONG *pvalue)
+{
+    struct cookie *jar;
+
+    for (jar = (struct cookie *)p_cookies; jar->tag; jar++)
+    {
+        if (jar->tag == tag)
+        {
+            if (pvalue)
+                *pvalue = jar->value;
+            return TRUE;
+        }
+    }
+
+    return FALSE;    
+}
+
 #if CONF_WITH_FRB
 /*
  * get the current value of the _FRB cookie; we must do this
@@ -55,11 +80,10 @@ void cookie_add(long tag, long value)
  */
 UBYTE *get_frb_cookie(void)
 {
-    struct cookie *jar;
+    UBYTE *frbvalue;
 
-    for (jar = (struct cookie *)p_cookies; jar->tag; jar++)
-        if (jar->tag == COOKIE_FRB)
-            return (UBYTE *)(jar->value);
+    if (cookie_get(COOKIE_FRB, (LONG *)&frbvalue))
+        return frbvalue;
 
     return NULL;
 }
