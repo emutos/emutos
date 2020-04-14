@@ -899,24 +899,15 @@ LONG flopfmt(UBYTE *buf, WORD *skew, WORD dev, WORD spt,
     if (magic != 0x87654321UL)
         return EBADSF;          /* just like TOS4 */
 
-    density = DENSITY_DD;       /* default density */
-    switch(finfo[dev].drive_type) {
-    case HD_DRIVE:
-        if ((spt >= 13) && (spt <= 20)) {
-            density = DENSITY_HD;
-            track_size = TRACK_SIZE_HD;
-            leader = LEADER_HD;
-            break;
-        }
-        FALLTHROUGH;
-    case DD_DRIVE:
-        if ((spt >= 1) && (spt <= 10)) {
-            track_size = TRACK_SIZE_DD;
-            leader = LEADER_DD;
-            break;
-        }
-        FALLTHROUGH;
-    default:
+    if ((spt >= 13) && (spt <= 20)) {
+        density = DENSITY_HD;
+        track_size = TRACK_SIZE_HD;
+        leader = LEADER_HD;
+    } else if ((spt >= 1) && (spt <= 10)) {
+        density = DENSITY_DD;
+        track_size = TRACK_SIZE_DD;
+        leader = LEADER_DD;
+    } else {
         return EBADSF;          /* consistent, at least :-) */
     }
 
