@@ -82,7 +82,7 @@ static void write_big_endian_short(uint16_t* p, uint16_t value)
     union
     {
         uint16_t s;
-        uint8_t b[4];
+        uint8_t b[2];
     } u;
 
     u.b[0] = (value >> 8);
