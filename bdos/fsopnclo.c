@@ -107,8 +107,7 @@ long ixcreat(char *name, UBYTE attr)
 
     /* first find path */
 
-    if ((long)(dn = findit(name,&s,0)) < 0) /* M01.01.1212.01 */
-        return (long)dn;
+    dn = findit(name,&s,0);
     if (!dn)                                /* M01.01.1214.01 */
         return EPTHNF;
 
@@ -235,8 +234,7 @@ static long ixopen(char *name, int mod)
     long pos;
 
     /* first find path */
-    if ((long)(dn = findit(name,&s,0)) < 0)         /* M01.01.1212.01 */
-        return (long)dn;
+    dn = findit(name,&s,0);
     if (!dn)                                        /* M01.01.1214.01 */
         return EFILNF;
 
@@ -535,8 +533,7 @@ long xunlink(char *name)
 
     /* first find path */
 
-    if ((long)(dn = findit(name,&s,0)) < 0)                 /* M01.01.1212.01 */
-        return (long)dn;
+    dn = findit(name,&s,0);
     if (!dn)                                                /* M01.01.1214.01 */
         return EFILNF;
 

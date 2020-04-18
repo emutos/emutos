@@ -297,8 +297,7 @@ long xrmdir(char *p)
     long pos;
     const char *s;
 
-    if ((long)(d = findit(p,&s,1)) < 0)     /* M01.01.1212.01 */
-        return (long)d;
+    d = findit(p,&s,1);
     if (!d)                                 /* M01.01.1214.01 */
         return EPTHNF;
 
@@ -390,9 +389,8 @@ long xchmod(char *p, int wrt, UBYTE mod)
     const char *s;
     long pos;
 
-    if ((long)(dn = findit(p,&s,0)) < 0)    /* M01.01.1212.01 */
-        return (long)dn;
-    if (!(long)dn)                          /* M01.01.1214.01 */
+    dn = findit(p,&s,0);
+    if (!dn)                                /* M01.01.1214.01 */
         return EPTHNF;
 
     pos = 0;
@@ -444,8 +442,7 @@ long ixsfirst(char *name, WORD att, DTAINFO *addr)
     if (att != FA_VOL)
         att |= (FA_ARCHIVE|FA_RO);
 
-    if ((long)(dn = findit(name,&s,0)) < 0) /* M01.01.1212.01 */
-        return (long)dn;
+    dn = findit(name,&s,0);
     if (!dn)
         return EPTHNF;
 
@@ -894,8 +891,7 @@ long xrename(int n, char *p1, char *p2)
     if (!ixsfirst(p2,FA_SUBDIR,(DTAINFO *)0L))       /* check if new path exists */
         return EACCDN;
 
-    if ((long)(dn1 = findit(p1,&s1,0)) < 0)          /* M01.01.1212.01 */
-        return (long)dn1;
+    dn1 = findit(p1,&s1,0);
     if (!dn1)                                        /* M01.01.1214.01 */
         return EPTHNF;
 
@@ -955,8 +951,6 @@ long xrename(int n, char *p1, char *p2)
     dn2 = findit(p2,&s2,0);
     dn1->d_flag &= ~DND_LOCKED;
 
-    if ((long)dn2 < 0)
-        return (long)dn2;
     if (!dn2)                                        /* M01.01.1214.01 */
         return EPTHNF;
 
@@ -1096,7 +1090,6 @@ long xrename(int n, char *p1, char *p2)
 long xchdir(char *p)
 {
     DND *dnd;
-    long rc;
     int olddir, newdir, dlog;
     const char *s;
 
@@ -1116,9 +1109,7 @@ long xchdir(char *p)
     /*
      * get the DND for the new directory
      */
-    rc = (long)(dnd = findit(p,&s,1));
-    if (rc < 0L)
-        return rc;
+    dnd = findit(p,&s,1);
     if (!dnd)
         return EPTHNF;
 
@@ -1388,6 +1379,8 @@ static const long negone = { -1L };
  */
 /*  name: name of file/dir
  * dflag: T: name is for a directory
+ *
+ * returns NULL if not found
  */
 DND *findit(char *name, const char **sp, int dflag)
 {
@@ -1402,8 +1395,9 @@ DND *findit(char *name, const char **sp, int dflag)
     n = name;
     KDEBUG(("findit(%s)\n",n));
 
-    if ((long)(p = dcrack(&n)) < 0)                     /* M01.01.1214.01 */
-        return p;
+    p = dcrack(&n);
+    if (!p)
+        return NULL;
 
     /*
      *  Force scan() to read from the beginning of the directory again,
@@ -1666,14 +1660,13 @@ static DND *makdnd(DND *p, FCB *b)
  *      path element.
  *
  *  returns
- *      ptr to DND for 1st element in path, or error
+ *      ptr to DND for 1st element in path, or NULL for error
  */
 static DND *dcrack(const char **np)
 {
     const char *n;
     DND *p;
     int d;
-    LONG l;                                             /* M01.01.1212.01 */
 
     KDEBUG(("\n dcrack(%p -> '%s')",np,*np));
 
@@ -1691,8 +1684,8 @@ static DND *dcrack(const char **np)
         d = run->p_curdrv;      /*    assume default            */
 
     /* M01.01.1212.01 */
-    if ((l=ckdrv(d, TRUE)) < 0) /*  check for valid drive & log */
-        return (DND *)l;        /*    in.  abort if error       */
+    if (ckdrv(d, TRUE) < 0)     /*  check for valid drive & log in */
+        return NULL;            /*    abort if error               */
 
     /*
      *  if the pathspec begins with SLASH, then the first element is
