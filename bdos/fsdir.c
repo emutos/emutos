@@ -169,18 +169,18 @@ static LONG freed_dnds, freed_ofds; /* count of DNDs & OFDs made available */
 
 
 /*
- *  namlen - parameter points to a character string of 11 bytes max
+ *  namlen - parameter points to a character string of FNAMELEN bytes max
  */
 static int namlen(char *s11)                            /* M01.01.1107.01 */
 {
     int i, len;
 
-    for (i = len = 1; i <= 11; i++, s11++)
+    for (i = len = 1; i <= FNAMELEN; i++, s11++)
     {
         if (*s11 && (*s11 != ' '))
         {
             len++;
-            if (i == 9)
+            if (i == FNAMELEN-2)
                 len++;
         }
     }
@@ -456,7 +456,7 @@ long ixsfirst(char *name, WORD att, DTAINFO *addr)
     if (addr)
     {
         OFD *ofd = dn->d_ofd;
-        memcpy(addr->dt_name, s, 12);
+        memcpy(addr->dt_name, s, FNAMELEN+1);   /* filename + attr */
         if (!ofd->o_dnode)              /* i.e. root directory */
         {
             addr->dt_offset_drive = pos;
@@ -527,7 +527,7 @@ long xsfirst(char *name, int att)
  */
 static FCB *ixsnext(DTAINFO *dt)
 {
-    char name[12];
+    char name[FNAMELEN+1];
     UBYTE *buf, *bufend;
     DMD *dmd;
     BCB *bcb;
@@ -541,7 +541,7 @@ static FCB *ixsnext(DTAINFO *dt)
         return NULL;
 
     builds(dt->dt_name,name);   /* build FCB-style name */
-    name[11] = dt->dt_attr;
+    name[FNAMELEN] = dt->dt_attr;
 
     dmd = drvtbl[drive];
 
@@ -789,11 +789,11 @@ void builds(const char *s1, char *s2)
     int i;
     char c;
 
-    for (i = 0; (i < 8) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
+    for (i = 0; (i < LEN_ZNODE) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
             (*s1 != '.') && (*s1 != ' '); i++)
         *s2++ = toupper(*s1++);
 
-    if (i == 8)
+    if (i == LEN_ZNODE)
         while (*s1 && (*s1 != '.') && (*s1 != SLASH))
             s1++;
 
@@ -805,16 +805,16 @@ void builds(const char *s1, char *s2)
     if (*s1 == '.')
         s1++;
 
-    for ( ; i < 8; i++)
+    for ( ; i < LEN_ZNODE; i++)
         *s2++ = c;
 
-    for (i = 0; (i < 3) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
+    for (i = 0; (i < LEN_ZEXT) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
             (*s1 != '.') && (*s1 != ' '); i++)
         *s2++ = toupper(*s1++);
 
     c = (*s1 == '*') ? '?' : ' ';
 
-    for ( ; i < 3; i++)
+    for ( ; i < LEN_ZEXT; i++)
         *s2++ = c;
 }
 
@@ -880,7 +880,7 @@ long xrename(int n, char *p1, char *p2)
     DMD *dmd1, *dmd2;
     CLNO strtcl1, strtcl2, temp;
     const char *s1, *s2;
-    char buf[11];
+    char buf[FNAMELEN];
     UBYTE att;
     int hnew;
     long posp;
@@ -1034,7 +1034,7 @@ long xrename(int n, char *p1, char *p2)
             }
 
             /* set attribute for this file in parent directory */
-            if (update_fcb(fdparent,fd2->o_dirbyt+11,1L,&att) < 0)
+            if (update_fcb(fdparent,fd2->o_dirbyt+FNAMELEN,1L,&att) < 0)
             {
                 KDEBUG(("xrename(): can't update parent's attr byte\n"));
                 return EINTRN;
@@ -1052,7 +1052,7 @@ long xrename(int n, char *p1, char *p2)
     else                        /* rename within directory */
     {
         builds(s2,buf);             /* build disk version of name */
-        if (update_fcb(fd,posp,11L,(UBYTE *)buf) < 0)   /* just overwrite the FCB */
+        if (update_fcb(fd,posp,FNAMELEN,(UBYTE *)buf) < 0)  /* just overwrite the FCB */
         {
             KDEBUG(("xrename(): can't update FCB with new name\n"));
             return EACCDN;
@@ -1280,17 +1280,17 @@ static char *packit(char *s, char *d)
     if (*s)
     {
         s0 = s;
-        for (i = 0; (i < 8) && (*s) && (*s != ' '); i++)
+        for (i = 0; (i < LEN_ZNODE) && (*s) && (*s != ' '); i++)
             *d++ = *s++;
 
         if (*s0 != '.') /* not a special directory entry */
         {
-            s = s0 + 8; /* ext */
+            s = s0 + LEN_ZNODE; /* ext */
 
             if (*s != ' ')
             {
                 *d++ = '.';
-                for (i = 0; (i < 3) && (*s) && (*s != ' '); i++)
+                for (i = 0; (i < LEN_ZEXT) && (*s) && (*s != ' '); i++)
                     *d++ = *s++;
             }
         }
@@ -1316,22 +1316,22 @@ static void unpackit(const char *src, char *dst)
     int i;
 
     /* initialise destination */
-    memset(dst,' ',11);
+    memset(dst,' ',FNAMELEN);
 
     /* process NAME */
-    for (i = 0, s = src, d = dst; (i < 8) && *s && (*s != '.'); i++)
+    for (i = 0, s = src, d = dst; (i < LEN_ZNODE) && *s && (*s != '.'); i++)
         *d++ = *s++;
 
-    /* find start of EXT (just in case NAME is >8 chars long) */
+    /* find start of EXT (just in case NAME is >LEN_ZNODE chars long) */
     while(*s)
         if (*s++ == '.')
             break;
 
     /* process EXT */
-    for (i = 0, d = dst+8; (i < 3) && *s; i++)
+    for (i = 0, d = dst+LEN_ZNODE; (i < LEN_ZEXT) && *s; i++)
         *d++ = *s++;
 
-    *(dst+11) = '\0';
+    *(dst+FNAMELEN) = '\0';
 }
 
 
@@ -1388,7 +1388,7 @@ DND *findit(char *name, const char **sp, int dflag)
     const char *n;
     DND *pp, *newp;
     int i;
-    char s[11];
+    char s[FNAMELEN];
 
     /* crack directory and drive */
 
@@ -1441,7 +1441,7 @@ DND *findit(char *name, const char **sp, int dflag)
          *     we should rescan the whole directory and make sure they
          *     are all logged in.
          */
-        while(p && (strncasecmp(s,p->d_name,11) != 0))
+        while(p && (strncasecmp(s,p->d_name,FNAMELEN) != 0))
         {
             newp = p->d_right;          /*  next sibling        */
 
@@ -1494,7 +1494,7 @@ DND *findit(char *name, const char **sp, int dflag)
  */
 FCB *scan(DND *dnd, const char *n, WORD att, LONG *posp)
 {
-    char name[12];
+    char name[FNAMELEN+1];
     FCB *fcb;
     OFD *fd;
     DND *dnd1;
@@ -1504,7 +1504,7 @@ FCB *scan(DND *dnd, const char *n, WORD att, LONG *posp)
 
     m = 0;                  /*  have_match = false                  */
     builds(n,name);         /*  format name into dir format         */
-    name[11] = att;
+    name[FNAMELEN] = att;
 
     dnd1 = 0; /* dummy to avoid warning */
 
@@ -1644,7 +1644,7 @@ static DND *makdnd(DND *p, FCB *b)
     p1->d_dirpos = fd->o_bytnum - 32;
     p1->d_td.time = b->f_td.time;   /* note: DND time/date are  */
     p1->d_td.date = b->f_td.date;   /*  actually little-endian! */
-    memcpy(p1->d_name, b->f_name, 11);
+    memcpy(p1->d_name, b->f_name, FNAMELEN);
 
     KDEBUG(("\n makdnd(%p)",p1));
 
@@ -1779,7 +1779,7 @@ static BOOL match(char *s1, char *s2)
      **  skip VFAT long file name entries
      */
 
-    if (s2[11] == FA_LFN)
+    if (s2[FNAMELEN] == FA_LFN)
         return FALSE;
 
     /*
@@ -1799,7 +1799,7 @@ static BOOL match(char *s1, char *s2)
      **  compare names
      */
 
-    for (i = 0; i < 11; i++, s1++, s2++)
+    for (i = 0; i < FNAMELEN; i++, s1++, s2++)
         if (*s1 != '?')
             if (toupper(*s1) != toupper(*s2))
                 return FALSE;
@@ -1844,7 +1844,7 @@ static DND *getdnd(char *n, DND *d)
 
     for (dnd = d->d_left; dnd; dnd = dnd->d_right)
     {
-        if (strncasecmp(n,dnd->d_name,11) == 0)
+        if (strncasecmp(n,dnd->d_name,FNAMELEN) == 0)
             return dnd;
     }
 

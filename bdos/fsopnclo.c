@@ -99,7 +99,7 @@ long ixcreat(char *name, UBYTE attr)
     OFD *fd;
     FCB *f;
     const char *s;
-    char n[2], a[11];                       /*  M01.01.03   */
+    char n[2], a[FNAMELEN];                 /*  M01.01.03   */
     int i, f2;                              /*  M01.01.03   */
     long pos, rc;
 
@@ -190,7 +190,7 @@ long ixcreat(char *name, UBYTE attr)
     f->f_clust = 0;
     f->f_fileln = 0;
     ixlseek(fd,pos);
-    ixwrite(fd,11L,a);              /* write name, set dirty flag */
+    ixwrite(fd,FNAMELEN,a);         /* write name, set dirty flag */
     ixclose(fd,CL_DIR);             /* partial close to flush */
     ixlseek(fd,pos);
     s = (char*) ixread(fd,32L,NULL);
@@ -479,7 +479,7 @@ long ixclose(OFD *fd, int part)
         else
             attr |= FA_ARCHIVE;             /* set the archive flag for files */
 
-        ixlseek(fd->o_dirfil,fd->o_dirbyt+11);  /* seek to attrib byte */
+        ixlseek(fd->o_dirfil,fd->o_dirbyt+FNAMELEN);/* seek to attrib byte */
         ixwrite(fd->o_dirfil,1,&attr);          /*  & rewrite it       */
         fd->o_flag &= ~O_DIRTY;             /* not dirty any more */
     }

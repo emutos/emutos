@@ -30,6 +30,7 @@
  */
 
 #define SLASH '\\'
+#define FNAMELEN    (LEN_ZNODE+LEN_ZEXT)    /* as found in dirs etc */
 
 /*
  * the following values are used by Atari TOS:
@@ -163,7 +164,7 @@ struct _ofd
  */
 typedef struct
 {
-    char f_name[11];
+    char f_name[FNAMELEN];
     UBYTE f_attrib;
     UBYTE f_fill[10];
     DOSTIME f_td;           /* time, date */
@@ -186,7 +187,7 @@ typedef struct
  */
 struct _dnd         /* directory node descriptor */
 {
-    char d_name[11];    /*  directory name                      */
+    char d_name[FNAMELEN];  /*  directory name                  */
     UBYTE d_fill;       /*  attributes?                         */
     UWORD d_flag;
     CLNO d_strtcl;      /*  starting cluster number of dir      */
