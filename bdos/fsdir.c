@@ -1388,7 +1388,7 @@ DND *findit(char *name, const char **sp, int dflag)
     const char *n;
     DND *pp, *newp;
     int i;
-    char s[FNAMELEN];
+    char s[FNAMELEN], *q;
 
     /* crack directory and drive */
 
@@ -1417,6 +1417,14 @@ DND *findit(char *name, const char **sp, int dflag)
             i = -i;             /*  num chars is 1 or 2  */
             goto scanxt;
         }
+
+        /*
+         * wildcards in pathnames are forbidden [note: getpath() has
+         * already converted a wildcard of '*' into a series of '?']
+         */
+        for (q = s; q < s+FNAMELEN; )
+            if (*q++ == '?')
+                return NULL;
 
         /*
          *  go down a level in the path...
