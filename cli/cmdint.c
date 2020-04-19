@@ -803,9 +803,9 @@ LONG bufsize, n, rc;
     rc = make_absolute(fullname,outname);   /* convert to absolute path */
     if (rc == 0L)
         rc = check_path_component(fullname);
-    if (rc == 0L)                           /* it's a directory */
+    if (rc == 0L)                           /* it's an existing directory */
         output_is_dir = 1;
-    else if (rc == NOT_DIRECTORY)           /* it's a file */
+    else if ((rc == NOT_DIRECTORY) || (rc == EFILNF))   /* it's a file or non-existent */
         rc = 0L;
 
     /*
@@ -1149,9 +1149,7 @@ LONG rc;
         *--p = '\0';
 
     rc = Fsfirst(component,0x17);
-    if (rc < 0L)
-        rc = EPTHNF;
-    else if ((rc == 0L) && ((dta->d_attrib&0x10) != 0x10))
+    if ((rc == 0L) && ((dta->d_attrib&0x10) != 0x10))
         rc = NOT_DIRECTORY;     /* a file, not a directory */
 
     if (fixup)
