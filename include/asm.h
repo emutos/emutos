@@ -333,7 +333,7 @@ __extension__                                      \
      "jpl    0b"                            \
     : "=d"(_count)      /* outputs */       \
     : "0"(_count)       /* inputs  */       \
-    : "cc"              /* clobbered */     \
+    : "cc", "memory"    /* clobbered */     \
     );                                      \
   })
 
