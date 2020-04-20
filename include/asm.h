@@ -306,7 +306,7 @@ __extension__                                      \
                     "jsr (%0)\n\t"                 \
                     "movem.l (sp),d0-d7/a0-a6\n\t" \
                     "lea     60(sp),sp"            \
-                    : : "a"(addr));  \
+                    : : "a"(addr): "memory");      \
 })
 #else
 #define regsafe_call(addr)                         \
@@ -314,7 +314,7 @@ __extension__                                      \
 ({__asm__ volatile ("movem.l d0-d7/a0-a6,-(sp)\n\t"\
                     "jsr (%0)\n\t"                 \
                     "movem.l (sp)+,d0-d7/a0-a6"    \
-                    : : "a"(addr));  \
+                    : : "a"(addr): "memory");      \
 })
 #endif
 
