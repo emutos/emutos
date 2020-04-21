@@ -49,9 +49,7 @@ char prompt[MAXPATHLEN];
 
     save_history_num = history_num;     /* so that edit_line() can play with it */
 
-    prompt[0] = Dgetdrv() + 'A';
-    prompt[1] = ':';
-    get_path(prompt+2);
+    get_path(prompt,0);
     message(prompt);
     message(">");
     while(1) {

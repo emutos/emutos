@@ -73,7 +73,7 @@ LOCAL const char * const help_cat[] = { "<filespec> ...",
     N_("Copy <filespec> ... to standard output"), NULL };
 LOCAL const char * const help_cd[] = { "[<dir>]",
     N_("Change current directory to <dir>"),
-    N_("or display current directory"), NULL };
+    N_("or display current drive and directory"), NULL };
 LOCAL const char * const help_chmod[] = { "<mode> <filename>",
     N_("Change attributes for <filename>"),
     N_("<mode> specifies the new attribute(s):"),
@@ -231,7 +231,7 @@ char *p;
     }
 
     /* just output current path */
-    rc = get_path(path);
+    rc = get_path(path,0);
     outputnl(path);
 
     return rc;
@@ -491,9 +491,7 @@ PRIVATE LONG run_pwd(WORD argc,char **argv)
 char buf[MAXPATHLEN];
 LONG rc;
 
-    buf[0] = Dgetdrv() + 'A';
-    buf[1] = ':';
-    rc = get_path(buf+2);
+    rc = get_path(buf,0);
     outputnl(buf);
 
     return rc;
@@ -917,21 +915,26 @@ LONG bufsize, n, rc;
 }
 
 /*
- *  get current path into buffer (always nul-terminates buffer)
+ *  get specified drive's current path (including drive letter) into buffer
+ *
+ *  Note: drive is specified as for Dgetpath(): for current drive,
+ *  use 0, otherwise use the drive number + 1
  *
  *  returns error code from Dgetpath()
  */
-LONG get_path(char *buf)
+LONG get_path(char *buf,WORD drive)
 {
 LONG rc;
+char *p = buf;
 
-    buf[0] = '\0';
-    rc = Dgetpath(buf,0);
-    if (rc == 0L) {
-        if (!buf[0]) {
-            buf[0] = '\\';
-            buf[1] = '\0';
-        }
+    *p++ = 'A' + (drive ? drive-1 : Dgetdrv());
+    *p++ = ':';
+    *p = '\0';
+    
+    rc = Dgetpath(p,drive);
+    if (!*p) {          /* the root */
+        *p++ = '\\';
+        *p = '\0';
     }
 
     return rc;
