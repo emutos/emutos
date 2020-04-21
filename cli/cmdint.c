@@ -73,7 +73,7 @@ LOCAL const char * const help_cat[] = { "<filespec> ...",
     N_("Copy <filespec> ... to standard output"), NULL };
 LOCAL const char * const help_cd[] = { "[<dir>]",
     N_("Change current directory to <dir>"),
-    N_("or display current drive and directory"), NULL };
+    N_("or display current directory"), NULL };
 LOCAL const char * const help_chmod[] = { "<mode> <filename>",
     N_("Change attributes for <filename>"),
     N_("<mode> specifies the new attribute(s):"),
@@ -211,28 +211,45 @@ PRIVATE LONG run_cd(WORD argc,char **argv)
 char path[MAXPATHLEN];
 LONG rc;
 char *p;
+WORD current_drive, temp_drive;
 
-    p = argv[1];
-
-    if (argc != 1) {
-        /* if the path specifies a drive, we need to temporarily change to
-         * that drive. We do that unconditionnally to save a bit of memory,
-         * and also to validate that the drive is still valid */
-        if (strlen(p) >= 2 && p[1] == ':') {
-            WORD current_drive = Dgetdrv();
-            if ((rc = run_setdrv(1,&p)))
-                return rc;
-            rc = Dsetpath(p);
-            Dsetdrv(current_drive);
-            return rc;
-        }
-        else
-            return Dsetpath(p);
+    if (argc == 1) {                /* just output current path */
+        rc = get_path(path,0);
+        outputnl(path);
+        return rc;
     }
 
-    /* just output current path */
-    rc = get_path(path,0);
-    outputnl(path);
+    /*
+     * we may be running under a BDOS that mishandles path specifications
+     * containing a drive letter (e.g. when running as standalone EmuCON
+     * under TOS 1/2/3, or when referencing a 'GEMDOS emulation' drive
+     * under an emulator).  therefore we temporarily switch to the
+     * specified drive before calling Dsetpath().
+     */
+    current_drive = Dgetdrv();      /* remember current drive */
+
+    /*
+     * if path contains drive letter, validate it
+     *
+     * if the path is just the drive letter, display the current path
+     * for that drive; else attempt to change the path on that drive
+     */
+    p = argv[1];
+    if (*(p+1) == ':') {
+        if (!is_valid_drive(*p))
+            return EDRIVE;
+        temp_drive = (*p|0x20) - 'a';
+        if (*(p+2) == '\0') {       /* cd x: */
+            rc = get_path(path,temp_drive+1);
+            outputnl(path);
+            return rc;
+        }
+        Dsetdrv(temp_drive);
+        p += 2;                     /* point past drive letter */
+    }
+
+    rc = Dsetpath(p);
+    Dsetdrv(current_drive);
 
     return rc;
 }
