@@ -104,6 +104,9 @@
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
+# ifndef CONF_WITH_MAGNUM
+#  define CONF_WITH_MAGNUM 0
+# endif
 # ifndef CONF_WITH_NOVA
 #  define CONF_WITH_NOVA 0
 # endif
@@ -179,6 +182,9 @@
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
+# ifndef CONF_WITH_MAGNUM
+#  define CONF_WITH_MAGNUM 0
+# endif
 # ifndef CONF_WITH_NOVA
 #  define CONF_WITH_NOVA 0
 # endif
@@ -222,6 +228,9 @@
 # endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
+# endif
+# ifndef CONF_WITH_MAGNUM
+#  define CONF_WITH_MAGNUM 0
 # endif
 # ifndef CONF_WITH_NOVA
 #  define CONF_WITH_NOVA 0
@@ -425,6 +434,9 @@
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
+# ifndef CONF_WITH_MAGNUM
+#  define CONF_WITH_MAGNUM 0
+# endif
 # ifndef CONF_WITH_NOVA
 #  define CONF_WITH_NOVA 0
 # endif
@@ -615,6 +627,9 @@
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
+# ifndef CONF_WITH_MAGNUM
+#  define CONF_WITH_MAGNUM 0
+# endif
 # ifndef CONF_WITH_NOVA
 #  define CONF_WITH_NOVA 0
 # endif
@@ -728,6 +743,14 @@
  */
 #ifndef CONF_WITH_MONSTER
 # define CONF_WITH_MONSTER 1
+#endif
+
+/*
+ * Define CONF_WITH_MAGNUM to enable detection and usage of Magnum
+ * RAM expansion card
+ */
+#ifndef CONF_WITH_MAGNUM
+# define CONF_WITH_MAGNUM 1
 #endif
 
 /*
