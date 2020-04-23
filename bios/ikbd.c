@@ -285,15 +285,6 @@ static BOOL is_mouse_key(WORD key)
 }
 
 /*
- * initialise mouse packet
- */
-static void init_mouse_packet(UBYTE *packet)
-{
-    packet[0] = MOUSE_REL_POS_REPORT;
-    packet[1] = packet[2] = 0;
-}
-
-/*
  * check if we should switch into or out of mouse emulation mode
  * if so, send the relevant mouse packet
  *
@@ -302,15 +293,13 @@ static void init_mouse_packet(UBYTE *packet)
 static BOOL handle_mouse_mode(WORD newkey)
 {
     SBYTE distance;
+    BOOL button = FALSE;
 
     /*
-     * if we shouldn't be in emulation mode, but we are, send an
-     * appropriate mouse packet and exit
+     * if we shouldn't be in emulation mode, but we are, cleanup and exit
      */
     if (!(shifty&MODE_ALT) || !is_mouse_key(newkey & ~KEY_RELEASED)) {
         if (mouse_packet[0]) {  /* emulating, need to clean up */
-            init_mouse_packet(mouse_packet);
-            call_mousevec(mouse_packet);
             mouse_packet[0] = '\0';
             KDEBUG(("Exiting mouse emulation mode\n"));
         }
@@ -324,13 +313,6 @@ static BOOL handle_mouse_mode(WORD newkey)
         KDEBUG(("Entering mouse emulation mode\n"));
         mouse_packet[0] = MOUSE_REL_POS_REPORT;
     }
-
-    /*
-     * always reset the x,y distance variables for the next
-     * mouse packet.  this is important when the packet is
-     * an emulated mouse button click.
-     */
-    mouse_packet[1] = mouse_packet[2] = 0;
 
     /*
      * set movement distance according to the Shift and Control keys.
@@ -347,12 +329,14 @@ static BOOL handle_mouse_mode(WORD newkey)
     switch(newkey) {
     case KEY_EMULATE_LEFT_BUTTON:
         mouse_packet[0] |= LEFT_BUTTON_DOWN;
+        button = TRUE;
         break;
     case KEY_EMULATE_LEFT_BUTTON | KEY_RELEASED:
         mouse_packet[0] &= ~LEFT_BUTTON_DOWN;
         break;
     case KEY_EMULATE_RIGHT_BUTTON:
         mouse_packet[0] |= RIGHT_BUTTON_DOWN;
+        button = TRUE;
         break;
     case KEY_EMULATE_RIGHT_BUTTON | KEY_RELEASED:
         mouse_packet[0] &= ~RIGHT_BUTTON_DOWN;
@@ -372,6 +356,13 @@ static BOOL handle_mouse_mode(WORD newkey)
         mouse_packet[2] = 0;        /* Atari TOS only allows one direction at a time */
         break;
     }
+
+    /*
+     * if the packet is for an emulated mouse button press,
+     * reset the x,y distance variables
+     */
+    if (button)
+        mouse_packet[1] = mouse_packet[2] = 0;
 
     KDEBUG(("Sending mouse packet %02x%02x%02x\n",mouse_packet[0],mouse_packet[1],mouse_packet[2]));
     call_mousevec(mouse_packet);
@@ -417,10 +408,11 @@ static union {
     ULONG key;                  /* combined value */
     struct {
         UBYTE shifty;           /* state of 'shifty' */
-        UBYTE scancode;         /* actual scancode */
+        UBYTE scancode;         /* possibly-converted scancode */
         UWORD ascii;            /* derived ascii value */
     } k;
 } kb_last;
+static UBYTE kb_last_actual;    /* actual last scancode */
 static PFVOID kb_last_ikbdsys;  /* ikbdsys when kb_last was set */
 
 WORD kbrate(WORD initial, WORD repeat)
@@ -487,11 +479,9 @@ static void do_key_repeat(void)
      * they change, we must do the scancode conversion again
      */
     if (shifty != kb_last.k.shifty) {
-        UBYTE scancode;
-
-        /* use a copy of scancode because convert_scancode() can change it */
-        scancode = kb_last.k.scancode;
-        kb_last.k.ascii = convert_scancode(&scancode);
+        /* get actual last scancode because convert_scancode() can change it */
+        kb_last.k.scancode = kb_last_actual;
+        kb_last.k.ascii = convert_scancode(&kb_last.k.scancode);
         kb_last.k.shifty = shifty;
         kb_last_ikbdsys = kbdvecs.ikbdsys;
     }
@@ -752,6 +742,8 @@ void kbd_int(UBYTE scancode)
             break;
         case KEY_ALT:
             shifty &= ~MODE_ALT;        /* clear bit */
+            if (mouse_packet[0])
+                kb_ticks = 0;           /* stop key repeat */
             if (kb_altnum >= 0) {
                 ascii = LOBYTE(kb_altnum);
                 kb_altnum = -1;
@@ -776,7 +768,8 @@ void kbd_int(UBYTE scancode)
             kb_ticks = 0;               /* stop key repeat */
             break;
         default:                    /* non-modifier keys: */
-            kb_ticks = 0;               /*  stop key repeat */
+            if (scancode_only == kb_last_actual)    /* key-up matches last key-down: */
+                kb_ticks = 0;                       /*  stop key repeat */
         }
         handle_mouse_mode(scancode);    /* exit mouse mode if appropriate */
         return;
@@ -785,6 +778,8 @@ void kbd_int(UBYTE scancode)
     /*
      * a key has been pressed
      */
+    kb_last_actual = scancode;      /* save because 'scancode' may get changed */
+
     modifier = TRUE;
     switch (scancode) {
     case KEY_RSHIFT:
