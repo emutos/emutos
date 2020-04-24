@@ -794,12 +794,12 @@ msgid "Color:"
 msgstr "Väri:"
 
 #: desk/desk_rsc.c
-msgid "%ld bytes used in %d items."
-msgstr "%ld tavua käytetty %d tiedostoon."
+msgid " %ld bytes used in %d items."
+msgstr " %ld tavua käytetty %d tiedostoon."
 
 #: desk/desk_rsc.c
-msgid "%ld bytes used in %d selected items."
-msgstr "%ld tavua käytetty %d valintoihin."
+msgid " %ld bytes used in %d selected items."
+msgstr " %ld tavua käytetty %d valintoihin."
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"

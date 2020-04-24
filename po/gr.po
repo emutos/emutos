@@ -808,12 +808,12 @@ msgid "Color:"
 msgstr "•¨é£˜"
 
 #: desk/desk_rsc.c
-msgid "%ld bytes used in %d items."
-msgstr "%ld bytes ®¨ž© £¦§¦ ¦ç¤«˜  ©œ %d ˜¨®œå˜."
+msgid " %ld bytes used in %d items."
+msgstr " %ld bytes ®¨ž© £¦§¦ ¦ç¤«˜  ©œ %d ˜¨®œå˜."
 
 #: desk/desk_rsc.c
-msgid "%ld bytes used in %d selected items."
-msgstr "%ld bytes ®¨ž© £¦§¦ ¦ç¤«˜  ˜§æ %d œ§ ¢œš£â¤˜ ˜¤« ¡œå£œ¤˜."
+msgid " %ld bytes used in %d selected items."
+msgstr " %ld bytes ®¨ž© £¦§¦ ¦ç¤«˜  ˜§æ %d œ§ ¢œš£â¤˜ ˜¤« ¡œå£œ¤˜."
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"

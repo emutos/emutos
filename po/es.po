@@ -798,12 +798,12 @@ msgid "Color:"
 msgstr "Color:"
 
 #: desk/desk_rsc.c
-msgid "%ld bytes used in %d items."
-msgstr "%ld Bytes en %d elementos."
+msgid " %ld bytes used in %d items."
+msgstr " %ld Bytes en %d elementos."
 
 #: desk/desk_rsc.c
-msgid "%ld bytes used in %d selected items."
-msgstr "%ld bytes en %d elementos seleccionados."
+msgid " %ld bytes used in %d selected items."
+msgstr " %ld bytes en %d elementos seleccionados."
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"
