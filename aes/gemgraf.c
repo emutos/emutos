@@ -573,7 +573,7 @@ void gr_rect(UWORD icolor, UWORD ipattern, GRECT *pt)
  */
 WORD gr_just(WORD just, WORD font, char *ptext, WORD w, WORD h, GRECT *pt)
 {
-    WORD    numchs, diff;
+    WORD    numchs;
 
     /* figure out the width of the text string in pixels */
     gsx_tcalc(font, ptext, &pt->g_w, &pt->g_h, &numchs);
@@ -590,20 +590,6 @@ WORD gr_just(WORD just, WORD font, char *ptext, WORD w, WORD h, GRECT *pt)
             pt->g_x += (w + 1) / 2;
         else if (just == TE_RIGHT)
             pt->g_x += w;
-        /* try to byte align */
-        if ((font == IBM) && (w > 16) && ((diff = (pt->g_x & 0x0007)) != 0))
-        {
-            if (just == TE_LEFT)
-                pt->g_x += 8 - diff;
-            else if (just == TE_CNTR)
-            {
-                if (diff > 3)
-                    diff -= 8;
-                pt->g_x -= diff;
-            }
-            else if (just == TE_RIGHT)
-                pt->g_x -= diff;
-        }
     }
 
     return numchs;
