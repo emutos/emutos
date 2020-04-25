@@ -64,6 +64,10 @@ extern int has_monster_rtc;
   #define HAS_MONSTER_RTC 0
 #endif
 
+#if CONF_WITH_MAGNUM
+extern int has_magnum;
+#endif
+
 #if CONF_WITH_ICDRTC
 extern int has_icdrtc;    /* in clock.c */
   #define HAS_ICDRTC has_icdrtc

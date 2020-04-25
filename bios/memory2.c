@@ -157,6 +157,46 @@ void altram_init(void)
     }
 #endif
 
+#if CONF_WITH_MAGNUM
+    /* Size and add Magnum Alt-RAM. The Magnum is detected in machine.c. */
+    if (has_magnum)
+    {
+        unsigned short magnum_ram;
+        const unsigned short magnum_check1 = 0x55AA;
+        const unsigned short magnum_check2 = 0xAA55;
+
+        if (check_read_byte(0xC00000))
+        {
+            /* If a 16 MB SIMM is installed, only 10 MB can be used. */
+            magnum_ram = 10;
+        }
+        else if (check_read_byte(0x800000))
+        {
+            magnum_ram = 8;
+        }
+        else
+        {
+            /* detect_magnum() has already checked at address 0x400000. */
+            magnum_ram = 4;
+        }
+
+        /* Only enable 6 MB on a Mega STE due to address conflict with
+           VME bus. */
+        if ((cookie_mch == MCH_MSTE) && (magnum_ram > 6))
+            magnum_ram = 6;
+
+        /* Due to its HW design, when no SIMM is inserted at all, the
+           Magnum will report 8 MB of RAM. Thus, do a sanity check. */
+        *((volatile short *)0x400000L) = magnum_check1;
+        *((volatile short *)0x400002L) = magnum_check2;
+        if (*((volatile short *)0x400000L) != magnum_check1)
+            magnum_ram = 0;
+
+        KDEBUG(("xmaddalt()\n"));
+        xmaddalt((UBYTE *)0x400000L, magnum_ram*0x100000L);
+    }
+#endif  /* CONF_WITH_MAGNUM */
+
 #ifdef MACHINE_AMIGA
     KDEBUG(("amiga_add_alt_ram()\n"));
     amiga_add_alt_ram();

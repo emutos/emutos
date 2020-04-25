@@ -220,6 +220,58 @@ static void detect_monster(void)
 
 #endif /* CONF_WITH_MONSTER */
 
+#if CONF_WITH_MAGNUM
+
+int has_magnum;
+
+/*
+ * These are the magic addresses for the activation sequence used by the
+ * Magnum driver. Actually, the least significant 16 bits are 'don't care'
+ * due to the hardware design.
+ */
+#define MAGNUM_MAGIC1    (0x6C4710ul)
+#define MAGNUM_MAGIC2    (0x5D1234ul)
+#define MAGNUM_MAGIC3    (0x6D3148ul)
+
+#define MAGNUM_MEM_START (0x400000ul)
+
+static void detect_magnum(void)
+{
+    /* Assume no Magnum RAM expansion card. */
+    has_magnum = 0;
+
+    do
+    {
+        /* Aranym cannot have a Magnum. */
+        if (IS_ARANYM)
+            break;
+        /*
+         * Magnum will be initially disabled. Thus check that there *is*
+         * a bus error at 4 MB. Otherwise there already is RAM or another
+         * peripheral at that address and not a Magnum.
+         */
+        if (check_read_byte(MAGNUM_MEM_START))
+            break;
+        /*
+         * Magnum is enabled by a sequence of reads to magic addresses.
+         * These reads cause a bus-error on the Magnum. If they don't,
+         * it's not a Magnum card.
+         */
+        if (check_read_byte(MAGNUM_MAGIC1))
+            break;
+        if (check_read_byte(MAGNUM_MAGIC2))
+            break;
+        if (check_read_byte(MAGNUM_MAGIC3))
+            break;
+        /* If Magnum is present, an access to 4 MB must now work. */
+        has_magnum = check_read_byte(MAGNUM_MEM_START);
+    } while (0);
+
+    KDEBUG(("has_magnum = %d\n", has_magnum));
+}
+
+#endif /* CONF_WITH_MAGNUM */
+
 #if CONF_WITH_BLITTER
 
 /* blitter */
@@ -390,6 +442,10 @@ static void add_cookie_frb(void)
     need_frb |= has_monster;
 #endif
 
+#if CONF_WITH_MAGNUM
+    need_frb |= has_magnum;
+#endif
+
     if (need_frb)
     {
         UBYTE *cookie_frb = balloc_stram(FRB_SIZE, FALSE);
@@ -505,6 +561,9 @@ void machine_detect(void)
         detect_monster_rtc();
         KDEBUG(("has_monster_rtc = %d\n", has_monster_rtc));
     }
+#endif
+#if CONF_WITH_MAGNUM
+    detect_magnum();
 #endif
 #if CONF_WITH_NOVA
     if (!IS_ARANYM)
