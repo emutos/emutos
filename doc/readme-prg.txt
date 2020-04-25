@@ -33,6 +33,8 @@ Notes:
 - TT and Falcon 030 are supported
 - the language of the Norwegian/Swedish versions is English; however the
   keyboard layouts are Norwegian/Swedish
+- when using these versions with a Magnum ST/STE alt-RAM card, the Magnum
+  driver for TOS must not have been loaded before running emutos*.prg
 
 For multilanguage version, the default language is English.
 It can be changed by setting the NVRAM appropriately.
