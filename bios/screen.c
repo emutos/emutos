@@ -1029,6 +1029,10 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
     /* handle EmuCON extensions */
     if (((LONG)logLoc < 0) && ((LONG)physLoc < 0) && (rez & 0x8000)) {
+        /* Don't allow any changes when Line A variables were 'hacked'. */
+        if (rez_was_hacked) {
+            return;
+        }
         if (rez & 0x4000) {
             initialise_palette_registers(rez&0x0007, videlmode);
         } else {
@@ -1045,6 +1049,12 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
     if ((LONG)physLoc >= 0) {
         setphys(physLoc);
     }
+
+    /* Don't allow any mode changes when Line A variables were 'hacked'. */
+    if (rez_was_hacked) {
+        return;
+    }
+
     if (rez >= 0 && rez < 8) {
         /* Wait for the end of display to avoid the plane-shift bug on ST */
         vsync();
