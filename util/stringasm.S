@@ -17,7 +17,7 @@
 
 /*
  * WORD strlencpy(char *dest, const char *src)
- * as strcpy but returns the length ot the string instead.
+ * as strcpy but returns the length of the string instead.
  */
 
 _strlencpy:
