@@ -55,7 +55,7 @@ struct font_head {
     UWORD form_width;           /* width of raster in bytes */
     UWORD form_height;          /* height of raster in lines */
 
-    const Fonthead *next_font;  /* pointer to next font */
+    Fonthead *next_font;        /* pointer to next font */
 };
 
 #endif /* FONTHDR_H */

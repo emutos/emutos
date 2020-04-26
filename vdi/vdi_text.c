@@ -1303,7 +1303,7 @@ void vdi_vst_load_fonts(Vwk * vwk)
 #if CONF_WITH_GDOS
     WORD id, count, *control;
 
-    const Fonthead *first_font;
+    Fonthead *first_font;
 
     /* Init some common variables */
     control = CONTRL;
@@ -1324,7 +1324,7 @@ void vdi_vst_load_fonts(Vwk * vwk)
     vwk->scrpt2 = control[9];
     vwk->scrtchp = (WORD *) ULONG_AT(&control[7]);
 
-    first_font = (const Fonthead *) ULONG_AT(&control[10]);
+    first_font = (Fonthead *) ULONG_AT(&control[10]);
     vwk->loaded_fonts = first_font;
 
     /* Find out how many distinct font id numbers have just been linked in. */
@@ -1344,7 +1344,7 @@ void vdi_vst_load_fonts(Vwk * vwk)
             FWIDTH = first_font->form_width;
             DELY = first_font->form_height;
             trnsfont();
-            ((Fonthead *)first_font)->flags |= F_STDFORM;
+            first_font->flags |= F_STDFORM;
         }
         first_font = first_font->next_font;
     } while (first_font);
