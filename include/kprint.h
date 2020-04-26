@@ -16,13 +16,13 @@
 #define KPRINT_H
 
 /* console output */
-int cprintf(const char *fmt, ...) PRINTF_STYLE;
+int cprintf(const char *RESTRICT fmt, ...) PRINTF_STYLE;
 
 /* native debugging output */
-int kprintf(const char *fmt, ...) PRINTF_STYLE;
+int kprintf(const char *RESTRICT fmt, ...) PRINTF_STYLE;
 
 /* output done both through kprintf and cprintf */
-int kcprintf(const char *fmt, ...) PRINTF_STYLE;
+int kcprintf(const char *RESTRICT fmt, ...) PRINTF_STYLE;
 
 /* KINFO(()) outputs to the debugger, if kprintf() is available */
 #if HAS_KPRINTF

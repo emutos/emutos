@@ -66,7 +66,7 @@ static int vcprintf(const char *fmt, va_list ap)
     return doprintf(cprintf_outc, fmt, ap);
 }
 
-int cprintf(const char *fmt, ...)
+int cprintf(const char *RESTRICT fmt, ...)
 {
     int n;
     va_list ap;
@@ -236,7 +236,7 @@ static int vkprintf(const char *fmt, va_list ap)
 }
 
 
-int kprintf(const char *fmt, ...)
+int kprintf(const char *RESTRICT fmt, ...)
 {
     int n;
     va_list ap;
@@ -254,7 +254,7 @@ static int vkcprintf(const char *fmt, va_list ap)
   return vcprintf(fmt, ap);
 }
 
-int kcprintf(const char *fmt, ...)
+int kcprintf(const char *RESTRICT fmt, ...)
 {
     int n;
     va_list ap;
