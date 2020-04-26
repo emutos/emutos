@@ -646,7 +646,11 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
                 }
                 else
                 {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Wrestrict"
                     sprintf(locstr,"%c:\\%s",'A'+dos_gdrv(),mask);
+#pragma GCC diagnostic pop
                 }
                 select_drive(tree,get_drive(locstr),TRUE);
             }
@@ -755,7 +759,11 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
             obj = tree + touchob;
             if (obj->ob_state & DISABLED)           /* non-existent drive */
                 break;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpragmas"
+#pragma GCC diagnostic ignored "-Wrestrict"
             sprintf(locstr,"%c:\\%s",'A'+drive,mask);
+#pragma GCC diagnostic pop
             newdrive = TRUE;
             break;
         }
