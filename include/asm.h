@@ -70,7 +70,7 @@ WORD mul_div_round(WORD mult1, WORD mult2, WORD divisor);
 
 /*
  * WORD swpw(WORD val);
- *   swap endianess of val, 16 bits only.
+ *   swap endianness of val, 16 bits only.
  */
 
 #ifdef __mcoldfire__
@@ -109,7 +109,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 /*
  * WORD swpl(LONG val);
- *   swap endianess of val, 32 bits only.
+ *   swap endianness of val, 32 bits only.
  *   e.g. ABCD => DCBA
  */
 
