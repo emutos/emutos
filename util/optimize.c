@@ -40,9 +40,10 @@
  *      . 'TEST.A.B.C' is converted to 'TEST    A.B'
  *      . 'TESTTESTTEST' is converted to 'TESTTEST'
  */
-void fmt_str(char *instr, char *outstr)
+void fmt_str(const char *instr, char *outstr)
 {
-    char *p, *q;
+    const char *p;
+    char *q;
 
     /* copy up to 8 bytes before the (first) dot (we eat excess bytes) */
     for (p = instr, q = outstr; *p; p++)
@@ -73,9 +74,10 @@ void fmt_str(char *instr, char *outstr)
  *  Does the reverse of fmt_str() above.  For example,
  *      'SAMPLE  PRG' is converted to 'SAMPLE.PRG'.
  */
-void unfmt_str(char *instr, char *outstr)
+void unfmt_str(const char *instr, char *outstr)
 {
-    char *pstr, temp;
+    const char *pstr;
+    char temp;
 
     pstr = instr;
     while(*pstr && ((pstr - instr) < 8))
@@ -98,7 +100,7 @@ void unfmt_str(char *instr, char *outstr)
  *  Copies the specified string to the te_ptext field of the TEDINFO
  *  structure for (tree,object), truncating if necessary to fit
  */
-void inf_sset(OBJECT *tree, WORD obj, char *pstr)
+void inf_sset(OBJECT *tree, WORD obj, const char *pstr)
 {
     char    *text;
     TEDINFO *ted;
@@ -235,7 +237,7 @@ char *filename_start(char *path)
  *      pattern = "*.BAT"
  *      filename = "MYFILE.BAT"
  */
-WORD wildcmp(char *pattern,char *filename)
+WORD wildcmp(const char *pattern,const char *filename)
 {
 WORD i;
 
