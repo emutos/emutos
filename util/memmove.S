@@ -62,7 +62,7 @@
 // if the two regions overlap. returns dst as passed.
 
 //
-// void * memcpy(void * dst, void * src, size_t length);
+// void * memcpy(void * RESTRICT dst, void * RESTRICT src, size_t length);
 // moves length bytes from src to dst. returns dst as passed.
 // the behaviour is undefined if the two regions overlap.
 

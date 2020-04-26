@@ -18,13 +18,13 @@
 /* string routines */
 
 #if !(USE_STATIC_INLINES)
-char *strcpy(char *dest, const char *src);
+char *strcpy(char *RESTRICT dest, const char *RESTRICT src);
 #endif
 
-size_t strlcpy(char *dest,const char *src,size_t count);
+size_t strlcpy(char *RESTRICT dest,const char *RESTRICT src,size_t count);
 size_t strlen(const char *s);
-short strlencpy(char *dest, const char *src);
-char *strcat(char *dest, const char *src);
+short strlencpy(char *RESTRICT dest, const char *RESTRICT src);
+char *strcat(char *RESTRICT dest, const char *RESTRICT src);
 int strcmp(const char *a, const char *b);
 int strncmp(const char *a, const char *b, size_t n);
 int strncasecmp(const char *a, const char *b, size_t n);
@@ -35,7 +35,7 @@ int sprintf(char *RESTRICT str, const char *RESTRICT fmt, ...) SPRINTF_STYLE;
 
 /* Inline string routines: */
 #if USE_STATIC_INLINES
-static __inline__ char *strcpy(char *dest, const char *src)
+static __inline__ char *strcpy(char *RESTRICT dest, const char *RESTRICT src)
 {
     register char *tmp = dest;
 
@@ -52,7 +52,7 @@ int memcmp(const void * s1, const void * s2, size_t n);
 /* moves length bytes from src to dst. returns dst as passed.
  * the behaviour is undefined if the two regions overlap.
  */
-void * memcpy(void * dst, const void * src,
+void * memcpy(void * RESTRICT dst, const void * RESTRICT src,
               size_t length);
 
 /* moves length bytes from src to dst, performing correctly

@@ -63,7 +63,7 @@ char *strcpy(char *dest, const char *src)
  * truncation: if the return value is greater than or equal
  * to the specified length, then truncation has occurred.
  */
-size_t strlcpy(char *dest,const char *src,size_t count)
+size_t strlcpy(char *RESTRICT dest,const char *RESTRICT src,size_t count)
 {
 char *d = dest;
 const char *s = src;
@@ -89,7 +89,7 @@ size_t strlen(const char *s)
     return (n);
 }
 
-char *strcat(char *dest, const char *src)
+char *strcat(char *RESTRICT dest, const char *RESTRICT src)
 {
     char *tmp = dest;
     while( *tmp++ )

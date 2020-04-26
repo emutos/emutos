@@ -16,7 +16,7 @@
         .globl  _strchr
 
 /*
- * WORD strlencpy(char *dest, const char *src)
+ * WORD strlencpy(char *RESTRICT dest, const char *RESTRICT src)
  * as strcpy but returns the length of the string instead.
  */
 
