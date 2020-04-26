@@ -1307,7 +1307,7 @@ void vdi_vst_load_fonts(Vwk * vwk)
 
     /* Init some common variables */
     control = CONTRL;
-    *(control + 4) = 1;
+    control[4] = 1;
 
     /* You only get one chance to load fonts.  If fonts are linked in, exit  */
     if (vwk->loaded_fonts) {
@@ -1321,10 +1321,10 @@ void vdi_vst_load_fonts(Vwk * vwk)
     /* CONTRL[10-11] = Pointer to first font    */
 
     /* Init the global structures           */
-    vwk->scrpt2 = *(control + 9);
-    vwk->scrtchp = (WORD *) *((LONG *) (control + 7));
+    vwk->scrpt2 = control[9];
+    vwk->scrtchp = (WORD *) ULONG_AT(&control[7]);
 
-    first_font = (const Fonthead *) *((LONG *) (control + 10));
+    first_font = (const Fonthead *) ULONG_AT(&control[10]);
     vwk->loaded_fonts = first_font;
 
     /* Find out how many distinct font id numbers have just been linked in. */
