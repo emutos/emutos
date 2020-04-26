@@ -41,6 +41,12 @@
 #define PRINTF_STYLE
 #endif
 
+#ifdef __GNUC__
+#define SPRINTF_STYLE __attribute__ ((format (printf, 2, 3)))
+#else
+#define SPRINTF_STYLE
+#endif
+
 /* Convenience macros to test the versions of glibc and gcc.
    Use them like this:
    #if __GNUC_PREREQ (2,8)
