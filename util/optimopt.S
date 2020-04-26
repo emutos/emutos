@@ -38,7 +38,7 @@ scasb_end:
         rts
 
 /*
- *  WORD expand_string(WORD *dest,const UBYTE *src)
+ *  WORD expand_string(WORD *dest,const char *src)
  *
  *  expand an unsigned byte string to an array of words, returning the
  *  length of the source string.  note that this code is optimised for
