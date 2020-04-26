@@ -17,7 +17,7 @@
         .globl  _expand_string
 
 /*
- * char *scasb(char *str, char c)
+ * const char *scasb(const char *str, char c)
  * returns the pointer to the first occurrence of char c in string str,
  * or the pointer to the ending '\0' of this string.
  * (see also strchr, which returns NULL instead when the char is not found)
