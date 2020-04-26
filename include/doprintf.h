@@ -14,6 +14,6 @@
 #define DOPRINTF_H
 
 /* This is an OLD one, and does not support floating point. */
-extern int doprintf(void (*outc)(int), const char *fmt, va_list ap);
+extern int doprintf(void (*outc)(int), const char *RESTRICT fmt, va_list ap);
 
 #endif /* DOPRINTF_H */
