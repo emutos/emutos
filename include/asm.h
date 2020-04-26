@@ -69,7 +69,7 @@ WORD mul_div_round(WORD mult1, WORD mult2, WORD divisor);
 #endif
 
 /*
- * WORD swpw(WORD val);
+ * Pseudo-prototype for macro: WORD swpw(byref WORD val);
  *   swap endianness of val, 16 bits only.
  */
 
@@ -108,7 +108,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 }
 
 /*
- * WORD swpl(LONG val);
+ * Pseudo-prototype for macro: WORD swpl(byref LONG val);
  *   swap endianness of val, 32 bits only.
  *   e.g. ABCD => DCBA
  */
@@ -143,7 +143,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
- * WORD swpw2(ULONG val);
+ * Pseudo-prototype for macro: WORD swpw2(byref ULONG val);
  *   swap endianness of val, treated as two 16-bit words.
  *   e.g. ABCD => BADC
  */
@@ -179,7 +179,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
- * rolw1(WORD x);
+ * Pseudo-prototype for macro: rolw1(byref WORD x);
  *  rotates x leftwards by 1 bit
  */
 #ifdef __mcoldfire__
@@ -196,7 +196,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
- * rorw1(WORD x);
+ * Pseudo-prototype for macro: rorw1(byref WORD x);
  *  rotates x rightwards by 1 bit
  */
 #ifdef __mcoldfire__
@@ -213,7 +213,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
- * roll(ULONG x, WORD count);
+ * Pseudo-prototype for macro: roll(byref ULONG x, WORD count);
  *  rotates x leftwards by count bits
  */
 #ifdef __mcoldfire__
@@ -230,7 +230,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
- * rorl(ULONG x, WORD count);
+ * Pseudo-prototype for macro: rorl(byref ULONG x, WORD count);
  *  rotates x rightwards by count bits
  */
 #ifdef __mcoldfire__
