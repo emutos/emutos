@@ -69,7 +69,15 @@ WORD mul_div_round(WORD mult1, WORD mult2, WORD divisor);
 #endif
 
 /*
- * Pseudo-prototype for macro: WORD swpw(byref WORD val);
+ * Important note for the macros below:
+ * Source: https://gcc.gnu.org/onlinedocs/gcc/Extended-Asm.html#InputOperands
+ * Do not modify the contents of input-only operands (except for inputs tied to
+ * outputs). The compiler assumes that on exit from the asm statement these
+ * operands contain the same values as they had before executing the statement.
+ */
+
+/*
+ * Pseudo-prototype for macro: void swpw(byref WORD val);
  *   swap endianness of val, 16 bits only.
  */
 
@@ -108,7 +116,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 }
 
 /*
- * Pseudo-prototype for macro: WORD swpl(byref LONG val);
+ * Pseudo-prototype for macro: void swpl(byref LONG val);
  *   swap endianness of val, 32 bits only.
  *   e.g. ABCD => DCBA
  */
@@ -143,7 +151,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
- * Pseudo-prototype for macro: WORD swpw2(byref ULONG val);
+ * Pseudo-prototype for macro: void swpw2(byref ULONG val);
  *   swap endianness of val, treated as two 16-bit words.
  *   e.g. ABCD => BADC
  */
@@ -179,7 +187,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
- * Pseudo-prototype for macro: rolw1(byref WORD x);
+ * Pseudo-prototype for macro: void rolw1(byref WORD x);
  *  rotates x leftwards by 1 bit
  */
 #ifdef __mcoldfire__
@@ -196,7 +204,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
- * Pseudo-prototype for macro: rorw1(byref WORD x);
+ * Pseudo-prototype for macro: void rorw1(byref WORD x);
  *  rotates x rightwards by 1 bit
  */
 #ifdef __mcoldfire__
@@ -213,7 +221,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
- * Pseudo-prototype for macro: roll(byref ULONG x, WORD count);
+ * Pseudo-prototype for macro: void roll(byref ULONG x, WORD count);
  *  rotates x leftwards by count bits
  */
 #ifdef __mcoldfire__
@@ -230,7 +238,7 @@ static __inline__ void swpcopyw(const UWORD* src, UWORD* dest)
 
 
 /*
- * Pseudo-prototype for macro: rorl(byref ULONG x, WORD count);
+ * Pseudo-prototype for macro: void rorl(byref ULONG x, WORD count);
  *  rotates x rightwards by count bits
  */
 #ifdef __mcoldfire__
