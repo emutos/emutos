@@ -73,6 +73,16 @@
 #endif
 
 /*
+ * Restricted pointer parameters are advertised to never overlap.
+ * https://en.wikipedia.org/wiki/Restrict
+ */
+#if __GNUC_PREREQ(4, 5)
+#define RESTRICT __restrict__
+#else
+#define RESTRICT
+#endif
+
+/*
  *  Constants
  */
 

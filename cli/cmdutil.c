@@ -414,7 +414,7 @@ static void sprintf_outc(int c)     /* Output one character from doprintf */
     *sprintf_str++ = c;
 }
 
-int sprintf(char *str, const char *fmt, ...)
+int sprintf(char *RESTRICT str, const char *RESTRICT fmt, ...)
 {
     int n;
     va_list ap;
