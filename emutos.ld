@@ -122,7 +122,7 @@ SECTIONS
         *(.text)
         *(.rodata .rodata.*) /* Only present in ELF objects */
         __etext = .;
-    } >REGION_READ_ONLY
+    } >REGION_READ_ONLY =0x4afc
 
     /* FIXME: Our DATA segment is currently read-only.
      * It currently lives in the ROM, just after the TEXT segment.
