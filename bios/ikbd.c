@@ -296,22 +296,23 @@ static BOOL handle_mouse_mode(WORD newkey)
     BOOL button = FALSE;
 
     /*
-     * if we shouldn't be in emulation mode, but we are, cleanup and exit
+     * check if we should be in emulation mode or not
      */
-    if (!(shifty&MODE_ALT) || !is_mouse_key(newkey & ~KEY_RELEASED)) {
-        if (mouse_packet[0]) {  /* emulating, need to clean up */
-            mouse_packet[0] = '\0';
+    if ((shifty&MODE_ALT) && is_mouse_key(newkey & ~KEY_RELEASED))
+    {
+        /* we should be, so ensure that mouse_packet is valid */
+        if (!mouse_packet[0])
+        {
+            KDEBUG(("Entering mouse emulation mode\n"));
+            mouse_packet[0] = MOUSE_REL_POS_REPORT;
+        }
+    } else { 
+        if (mouse_packet[0])    /* emulating, need to clean up */
+        {
             KDEBUG(("Exiting mouse emulation mode\n"));
+            mouse_packet[0] = 0;
         }
         return FALSE;
-    }
-
-    /*
-     * we should be, so ensure that mouse_packet is valid
-     */
-    if (!mouse_packet[0]) {
-        KDEBUG(("Entering mouse emulation mode\n"));
-        mouse_packet[0] = MOUSE_REL_POS_REPORT;
     }
 
     /*
