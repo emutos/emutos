@@ -110,6 +110,12 @@ static WORD convert_scancode(UBYTE *scancodeptr);
  */
 SBYTE mouse_packet[3];                  /* passed to mousevec() */
 
+/*
+ * the following is a count of the number of arrow keys currently down;
+ * it is used in mouse emulation mode.
+ */
+static WORD kb_arrowkeys;
+
 /*=== Keymaps handling (xbios) =======================================*/
 
 static struct keytbl current_keytbl;
@@ -260,31 +266,6 @@ void push_ascii_ikbdiorec(UBYTE ascii)
  */
 
 /*
- * is the key related to mouse emulation?
- */
-static BOOL is_mouse_key(WORD key)
-{
-    switch(key) {
-    case KEY_EMULATE_LEFT_BUTTON:
-    case KEY_EMULATE_RIGHT_BUTTON:
-    case KEY_UPARROW:
-    case KEY_DNARROW:
-    case KEY_LTARROW:
-    case KEY_RTARROW:
-    /*
-     * in this context, shift & control keys are also related to mouse
-     * emulation, in that they don't switch into or out of emulation mode
-     */
-    case KEY_LSHIFT:
-    case KEY_RSHIFT:
-    case KEY_CTRL:
-        return TRUE;
-    }
-
-    return FALSE;
-}
-
-/*
  * check if we should switch into or out of mouse emulation mode
  * if so, send the relevant mouse packet
  *
@@ -298,7 +279,7 @@ static BOOL handle_mouse_mode(WORD newkey)
     /*
      * check if we should be in emulation mode or not
      */
-    if ((shifty&MODE_ALT) && is_mouse_key(newkey & ~KEY_RELEASED))
+    if ((shifty&MODE_ALT) && (kb_arrowkeys > 0))
     {
         /* we should be, so ensure that mouse_packet is valid */
         if (!mouse_packet[0])
@@ -718,7 +699,7 @@ void kbd_int(UBYTE scancode)
 {
     WORD ascii = 0;
     UBYTE scancode_only = scancode & ~KEY_RELEASED;  /* get rid of release bits */
-    BOOL modifier;
+    BOOL modifier, arrowkey = FALSE;
 
     KDEBUG(("================\n"));
     KDEBUG(("Key-scancode: 0x%02x, key-shift bits: 0x%02x\n", scancode, shifty));
@@ -751,6 +732,18 @@ void kbd_int(UBYTE scancode)
         return;
     }
 #endif
+
+    /*
+     * check for arrow key, in case we're doing mouse emulation
+     */
+    switch(scancode_only) {
+    case KEY_UPARROW:
+    case KEY_DNARROW:
+    case KEY_LTARROW:
+    case KEY_RTARROW:
+        arrowkey = TRUE;
+        break;
+    }
 
     if (scancode & KEY_RELEASED) {
         switch (scancode_only) {
@@ -794,6 +787,8 @@ void kbd_int(UBYTE scancode)
             if (scancode_only == kb_last_actual)    /* key-up matches last key-down: */
                 kb_ticks = 0;                       /*  stop key repeat */
         }
+        if (arrowkey && (kb_arrowkeys > 0))
+            kb_arrowkeys--;
         handle_mouse_mode(scancode);    /* exit mouse mode if appropriate */
         return;
     }
@@ -801,6 +796,8 @@ void kbd_int(UBYTE scancode)
     /*
      * a key has been pressed
      */
+    if (arrowkey)
+        kb_arrowkeys++;
     modifier = TRUE;
     switch (scancode) {
     case KEY_RSHIFT:
@@ -1070,6 +1067,7 @@ void kbd_init(void)
     kb_initial = KB_INITIAL;
     kb_repeat = KB_REPEAT;
 
+    kb_arrowkeys = 0;  /* no arrow keys pressed initially */
     kb_dead = -1;      /* not in a dead key sequence */
     kb_altnum = -1;    /* not in an alt-numeric sequence */
     kb_switched = 0;   /* not switched initially */
