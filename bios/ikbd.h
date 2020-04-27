@@ -125,7 +125,7 @@ void push_ascii_ikbdiorec(UBYTE ascii);
 #endif
 
 /* the following is in aciavecs.S */
-void call_mousevec(UBYTE *packet);
+void call_mousevec(SBYTE *packet);
 #ifdef MACHINE_AMIGA
 void call_joyvec(UBYTE *packet);
 #endif

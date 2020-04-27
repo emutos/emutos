@@ -108,7 +108,7 @@ static WORD convert_scancode(UBYTE *scancodeptr);
  * a non-zero value in mouse_packet[0] indicates we are currently
  * in mouse emulation mode.
  */
-UBYTE mouse_packet[3];                  /* passed to mousevec() */
+SBYTE mouse_packet[3];                  /* passed to mousevec() */
 
 /*=== Keymaps handling (xbios) =======================================*/
 
@@ -315,14 +315,9 @@ static BOOL handle_mouse_mode(WORD newkey)
     }
 
     /*
-     * set movement distance according to the Shift and Control keys.
-     * note that, for compatibility with Atari TOS, the mouse does
-     * not move while Control is pressed, although the keyboard remains
-     * in mouse emulation mode.
+     * set movement distance according to the Shift key
      */
-    if (shifty&MODE_CTRL)
-        distance = 0;
-    else if (shifty&MODE_SHIFT)
+    if (shifty&MODE_SHIFT)
         distance = 1;
     else distance = 8;
 
@@ -355,6 +350,15 @@ static BOOL handle_mouse_mode(WORD newkey)
         mouse_packet[1] = distance;
         mouse_packet[2] = 0;        /* Atari TOS only allows one direction at a time */
         break;
+    default:        /* user pressed a modifier: update distances */
+        if (mouse_packet[1] < 0)
+            mouse_packet[1] = -distance;
+        else if (mouse_packet[1])
+            mouse_packet[1] = distance;
+        if (mouse_packet[2] < 0)
+            mouse_packet[2] = -distance;
+        else if (mouse_packet[2])
+            mouse_packet[2] = distance;
     }
 
     /*
@@ -364,8 +368,16 @@ static BOOL handle_mouse_mode(WORD newkey)
     if (button)
         mouse_packet[1] = mouse_packet[2] = 0;
 
-    KDEBUG(("Sending mouse packet %02x%02x%02x\n",mouse_packet[0],mouse_packet[1],mouse_packet[2]));
-    call_mousevec(mouse_packet);
+    /*
+     * for compatibility with Atari TOS, the mouse does not move while Control
+     * is pressed, although the keyboard remains in mouse emulation mode
+     */
+    if (!(shifty&MODE_CTRL))
+    {
+        KDEBUG(("Sending mouse packet %02x%02x%02x\n",
+                (UBYTE)mouse_packet[0],(UBYTE)mouse_packet[1],(UBYTE)mouse_packet[2]));
+        call_mousevec(mouse_packet);
+    }
 
     return TRUE;
 }
@@ -486,10 +498,20 @@ static void do_key_repeat(void)
         kb_last_ikbdsys = kbdvecs.ikbdsys;
     }
 
-    /* Simulate a key press or a mouse action */
-    if (mouse_packet[0]) {
-        KDEBUG(("Repeating mouse packet %02x%02x%02x\n",mouse_packet[0],mouse_packet[1],mouse_packet[2]));
-        call_mousevec(mouse_packet);
+    /*
+     * Simulate a key press or a mouse action
+     *
+     * for compatibility with Atari TOS, the mouse does not move while Control
+     * is pressed, although the keyboard remains in mouse emulation mode
+     */
+    if (mouse_packet[0])
+    {
+        if (!(shifty&MODE_CTRL))
+        {
+            KDEBUG(("Repeating mouse packet %02x%02x%02x\n",
+                    (UBYTE)mouse_packet[0],(UBYTE)mouse_packet[1],(UBYTE)mouse_packet[2]));
+            call_mousevec(mouse_packet);
+        }
     } else push_ikbdiorec(kb_last.key);
 
     /* The key will repeat again until some key up */
@@ -778,8 +800,6 @@ void kbd_int(UBYTE scancode)
     /*
      * a key has been pressed
      */
-    kb_last_actual = scancode;      /* save because 'scancode' may get changed */
-
     modifier = TRUE;
     switch (scancode) {
     case KEY_RSHIFT:
@@ -825,6 +845,7 @@ void kbd_int(UBYTE scancode)
     /*
      * a non-modifier key has been pressed
      */
+    kb_last_actual = scancode;  /* save because 'scancode' may get changed */
     if (shifty & MODE_ALT) {    /* only if the Alt key is down ... */
         switch(scancode) {
         case KEY_HOME:
