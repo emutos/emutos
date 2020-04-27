@@ -101,7 +101,7 @@ SECTIONS
      * Variables requiring very low addresses, while being accessible
      * from user mode, can be put here.
      */
-    .low_stram :
+    .low_stram : SUBALIGN(2)
     {
         __low_stram_start = .;
         obj/lowstram.o(.bss COMMON)
@@ -115,7 +115,7 @@ SECTIONS
     /* The TEXT segment contains EmuTOS executable code and read-only data.
      * It is always read-only, so it can safely live in ROM.
      */
-    .text :
+    .text : SUBALIGN(2)
     {
         CREATE_OBJECT_SYMBOLS
         __text = .;
@@ -130,7 +130,7 @@ SECTIONS
      * Since a read-only DATA segment is useless, we try to keep it empty by
      * making all initialized variables const, so they go to the TEXT segment.
      */
-    .data :
+    .data : SUBALIGN(2)
     {
         __data = .;
         *(.data)
@@ -140,7 +140,7 @@ SECTIONS
     /* The BSS segment contains uninitialized global variables.
      * It will be cleared by the startup code.
      */
-    .bss :
+    .bss : SUBALIGN(2)
     {
         __bss = .;
         *(.bss COMMON)
