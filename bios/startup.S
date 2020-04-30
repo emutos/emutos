@@ -304,10 +304,11 @@ cache_done:
  */
 #ifndef __mcoldfire__
         move.l  #not_68030,0x2c    // PMOVE is lineF on non-68030 systems
-        PMOVE_TO_TTR0(zero)        // first we initialise the TTRs (ACRs on a 68ec030)
-        PMOVE_TO_TTR1(zero)
-        move.l  #mmu_done,0x2c     // since PMOVE_TO_TC doesn't exist on a 68ec030,
-        PMOVE_TO_TC(zero)          //  we're done if we get a lineF exception ...
+        lea     zero,a0
+        PMOVE_A0_TTR0              // first we initialise the TTRs (ACRs on a 68ec030)
+        PMOVE_A0_TTR1
+        move.l  #mmu_done,0x2c     // since PMOVE (A0),TC doesn't exist on a 68ec030,
+        PMOVE_A0_TC                //  we're done if we get a lineF exception ...
         jra     mmu_done
 not_68030:
         move.l  #mmu_done,0x10     // if a MOVEC causes an exception, we're done

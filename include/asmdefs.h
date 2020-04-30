@@ -51,6 +51,10 @@
 #define PMOVE_TO_TTR0(addr) .dc.l 0xf0390800,addr   /* 68030 */
 #define PMOVE_TO_TTR1(addr) .dc.l 0xf0390c00,addr   /* 68030 */
 
+#define PMOVE_A0_TC         .dc.l 0xf0104000        /* 68030 (except 68ec030) */
+#define PMOVE_A0_TTR0       .dc.l 0xf0100800        /* 68030 */
+#define PMOVE_A0_TTR1       .dc.l 0xf0100c00        /* 68030 */
+
 #define FNOP                .dc.l 0xf2800000        /* 6888X, 68040-68060 (except 68ec040/68ec060) */
 #define FSAVE_MINUS_SP      .dc.w 0xf327            /* 6888X, 68040-68060 (except 68ec040/68ec060) */
 #define FRESTORE_SP_PLUS    .dc.w 0xf35f            /* 6888X, 68040-68060 (except 68ec040/68ec060) */
