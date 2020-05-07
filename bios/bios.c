@@ -276,6 +276,8 @@ static void bios_init(void)
     cookie_init();      /* sets a cookie jar */
     KDEBUG(("fill_cookie_jar()\n"));
     fill_cookie_jar();  /* detect hardware features and fill the cookie jar */
+    KDEBUG(("font_init()\n"));
+    font_init();        /* initialize font ring (requires cookie_akp) */
 
 #if CONF_WITH_BLITTER
     /*
@@ -292,7 +294,6 @@ static void bios_init(void)
     /* Set up the BIOS console output */
     KDEBUG(("linea_init()\n"));
     linea_init();       /* initialize screen related line-a variables */
-    font_init();        /* initialize font ring (requires cookie_akp) */
     font_set_default(-1);/* set default font */
     vt52_init();        /* initialize the vt52 console */
 
