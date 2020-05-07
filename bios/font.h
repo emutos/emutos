@@ -20,6 +20,6 @@
 /* prototypes */
 
 void font_init(void);           /* initialize BIOS font ring */
-void font_set_default(WORD cellheight); /* choose the default font */
+void font_set_default(void);    /* choose the default font */
 
 #endif /* FONT_H */

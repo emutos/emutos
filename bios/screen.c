@@ -1023,7 +1023,6 @@ WORD getrez(void)
  * ignore these since it ignores negative values of 'rez'):
  *  . if the 0x4000 bit is set in rez, the palette registers are
  *    initialised according to 'rez' (bits 2-0) and 'videlmode'
- *  . otherwise, 'videlmode' selects the cellheight of the default font
  */
 void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
@@ -1035,9 +1034,6 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
         }
         if (rez & 0x4000) {
             initialise_palette_registers(rez&0x0007, videlmode);
-        } else {
-            font_set_default(videlmode);
-            vt52_init();
         }
         return;
     }
@@ -1067,7 +1063,7 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 
         /* Re-initialize line-a, VT52 etc: */
         linea_init();
-        font_set_default(-1);
+        font_set_default();
         vt52_init();
     }
 }
