@@ -1063,7 +1063,6 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 
         /* Re-initialize line-a, VT52 etc: */
         linea_init();
-        font_set_default();
         vt52_init();
     }
 }

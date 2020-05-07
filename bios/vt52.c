@@ -904,6 +904,9 @@ WORD cursconf(WORD function, WORD operand)
  */
 void vt52_init(void)
 {
+    /* set font-related lineA variables */
+    font_set_default();
+
     /* Initial cursor settings */
     v_cur_cx = 0;                       /* cursor to column 0, row 0 */
     v_cur_cy = 0;

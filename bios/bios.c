@@ -294,7 +294,6 @@ static void bios_init(void)
     /* Set up the BIOS console output */
     KDEBUG(("linea_init()\n"));
     linea_init();       /* initialize screen related line-a variables */
-    font_set_default(); /* set default font */
     vt52_init();        /* initialize the vt52 console */
 
     /* Now kcprintf() will also send debug info to the screen */
@@ -411,7 +410,6 @@ static void bios_init(void)
         KDEBUG(("init_nova()\n"));
         if (init_nova()) {
             set_rez_hacked();
-            font_set_default();     /* set default font */
             vt52_init();            /* initialize the vt52 console */
         }
     }
@@ -464,7 +462,6 @@ static void bios_init(void)
         {
             set_rez_hacked();
             set_screen_shift();     /* set shift amount for screen address calc */
-            font_set_default();     /* set default font */
             vt52_init();            /* initialize the vt52 console */
         }
     }
