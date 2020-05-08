@@ -1070,7 +1070,7 @@ static void save_shortcut(OBJECT *tree, WORD n)
     {
         key[0] = 0x00;
     }
-    
+
     menu_shortcuts[n] = key[0];
 }
 

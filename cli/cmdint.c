@@ -947,7 +947,7 @@ char *p = buf;
     *p++ = 'A' + (drive ? drive-1 : Dgetdrv());
     *p++ = ':';
     *p = '\0';
-    
+
     rc = Dgetpath(p,drive);
     if (!*p) {          /* the root */
         *p++ = '\\';

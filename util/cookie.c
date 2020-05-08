@@ -75,7 +75,7 @@ BOOL cookie_get(LONG tag, LONG *pvalue)
         }
     }
 
-    return FALSE;    
+    return FALSE;
 }
 
 /*

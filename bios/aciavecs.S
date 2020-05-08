@@ -496,7 +496,7 @@ kbd_clock:
 //
 // For TOS compatibility (true up to at least TOS 3.06), we support the
 // following undocumented feature: on entry to the 'joyvec' routine,
-// d0.b contains the last data byte received.  
+// d0.b contains the last data byte received.
 //
 
 kbd_joys:

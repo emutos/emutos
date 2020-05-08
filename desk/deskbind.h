@@ -40,7 +40,7 @@
  * used by pn_active() when building the list of FNODEs to display, and
  * by search_recursive() when searching for matching FNODEs.
  */
-#define DISPATTR    FA_SUBDIR    
+#define DISPATTR    FA_SUBDIR
 
 
 /*

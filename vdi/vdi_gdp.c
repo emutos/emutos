@@ -160,7 +160,7 @@ static void clc_pts(Point *point, WORD angle)
 
     if (negative & X_NEGATIVE)
         xdiff = -xdiff;
-        
+
     if (negative & Y_NEGATIVE)
         ydiff = -ydiff;
 

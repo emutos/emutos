@@ -287,7 +287,7 @@ static BOOL handle_mouse_mode(WORD newkey)
             KDEBUG(("Entering mouse emulation mode\n"));
             mouse_packet[0] = MOUSE_REL_POS_REPORT;
         }
-    } else { 
+    } else {
         if (mouse_packet[0])    /* emulating, need to clean up */
         {
             KDEBUG(("Exiting mouse emulation mode\n"));
