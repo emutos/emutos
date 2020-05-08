@@ -290,6 +290,12 @@ static BOOL handle_mouse_mode(WORD newkey)
     } else {
         if (mouse_packet[0])    /* emulating, need to clean up */
         {
+            /* we send a packet with all buttons up & no movement */
+            mouse_packet[0] = MOUSE_REL_POS_REPORT;
+            mouse_packet[1] = mouse_packet[2] = 0;
+            KDEBUG(("Sending mouse packet %02x%02x%02x\n",
+                    (UBYTE)mouse_packet[0],(UBYTE)mouse_packet[1],(UBYTE)mouse_packet[2]));
+            call_mousevec(mouse_packet);
             KDEBUG(("Exiting mouse emulation mode\n"));
             mouse_packet[0] = 0;
         }
@@ -734,13 +740,15 @@ void kbd_int(UBYTE scancode)
 #endif
 
     /*
-     * check for arrow key, in case we're doing mouse emulation
+     * check for possible mouse emulation key
      */
     switch(scancode_only) {
     case KEY_UPARROW:
     case KEY_DNARROW:
     case KEY_LTARROW:
     case KEY_RTARROW:
+    case KEY_EMULATE_LEFT_BUTTON:
+    case KEY_EMULATE_RIGHT_BUTTON:
         arrowkey = TRUE;
         break;
     }
