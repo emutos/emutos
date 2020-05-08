@@ -1124,12 +1124,12 @@ void do_fopen(WNODE *pw, WORD curr, char *pathname, WORD allow_new_win)
     if (allow_new_win)
     {
         graf_mkstate(&junk, &junk, &junk, &keystate);
-        if (keystate & MODE_ALT)
+        if ((keystate & MODE_SCA) == MODE_ALT)
             new_win = TRUE;
     }
 
     /*
-     * if we are opening a folder on the desktop, or holding down the Alt
+     * if we are opening a folder on the desktop, or holding down only the Alt
      * key when opening a folder in a window, we need to create a new window
      */
     if (new_win)

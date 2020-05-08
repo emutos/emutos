@@ -88,6 +88,7 @@ typedef struct _bpb BPB;
 #define MODE_LSHIFT 0x02        /* Left Shift key is down  */
 #define MODE_CTRL   0x04        /* Control is down         */
 #define MODE_ALT    0x08        /* Alternate is down       */
+#define MODE_SCA    (MODE_RSHIFT|MODE_LSHIFT|MODE_CTRL|MODE_ALT)
 #define MODE_CAPS   0x10        /* CapsLock is down        */
                         /* the following bits are ONLY set if the Alt key is already */
                         /* down.  however, they remain set until the corresponding   */
