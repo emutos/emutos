@@ -710,14 +710,20 @@ static ULONG shifter_vram_size(UWORD vmode)
 }
 #endif
 
-/* calculate initial VRAM size based on video hardware */
+/*
+ * calculate initial VRAM size based on video hardware
+ *
+ * note: all versions of Atari TOS overallocate memory; we do the same
+ * because some programs (e.g. NVDI) rely on this and write past what
+ * should be the end of screen memory.
+ */
 ULONG initial_vram_size(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();
 #else
     if (HAS_VIDEL)
-        return FALCON_VRAM_SIZE;
+        return FALCON_VRAM_SIZE + 256UL;
     else if (HAS_TT_SHIFTER)
         /* TT TOS allocates 256 bytes more than actually needed. */
         return shifter_vram_size(TT_HIGH) + 0x100ul;
