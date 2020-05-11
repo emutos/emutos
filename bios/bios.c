@@ -268,10 +268,6 @@ static void bios_init(void)
     }
 #endif /* CONF_WITH_68040_PMMU */
 
-    /* Initialize the screen */
-    KDEBUG(("screen_init()\n"));
-    screen_init();      /* detect monitor type, ... */
-
     KDEBUG(("cookie_init()\n"));
     cookie_init();      /* sets a cookie jar */
     KDEBUG(("fill_cookie_jar()\n"));
@@ -291,9 +287,24 @@ static void bios_init(void)
         has_blitter = 0;
 #endif
 
+    /*
+     * Initialize the screen mode
+     * Must be done before calling linea_init().
+     */
+    KDEBUG(("screen_init_mode()\n"));
+    screen_init_mode(); /* detect monitor type, ... */
+
     /* Set up the BIOS console output */
     KDEBUG(("linea_init()\n"));
     linea_init();       /* initialize screen related line-a variables */
+
+    /*
+     * Initialize the screen address
+     * Must be done after calling linea_init().
+     */
+    KDEBUG(("screen_init_address()\n"));
+    screen_init_address();
+
     vt52_init();        /* initialize the vt52 console */
 
     /* Now kcprintf() will also send debug info to the screen */

@@ -89,8 +89,9 @@ WORD esetsmear(WORD mode);
 /* misc routines */
 void initialise_palette_registers(WORD rez,WORD mode);
 
-/* determine monitor type, ... */
-void screen_init(void);
+/* determine screen address, monitor type, ... */
+void screen_init_address(void);
+void screen_init_mode(void);
 void set_rez_hacked(void);
 void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
 

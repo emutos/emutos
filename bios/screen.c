@@ -465,7 +465,7 @@ static BOOL get_default_palmode(void)
  */
 
 /* Initialize the video mode (address will be done later) */
-static void screen_init_mode(void)
+void screen_init_mode(void)
 {
 #if CONF_WITH_ATARI_VIDEO
 #if CONF_WITH_VIDEL
@@ -593,10 +593,12 @@ static void screen_init_mode(void)
 
 #endif /* CONF_WITH_ATARI_VIDEO */
     MAYBE_UNUSED(get_default_palmode);
+
+    rez_was_hacked = FALSE; /* initial assumption */
 }
 
 /* Initialize the video address (mode is already set) */
-static void screen_init_address(void)
+void screen_init_address(void)
 {
     ULONG vram_size;
     UBYTE *screen_start;
@@ -618,14 +620,6 @@ static void screen_init_address(void)
 #endif
     /* correct physical address */
     setphys(screen_start);
-}
-
-/* Initialize the video mode and screen address */
-void screen_init(void)
-{
-    screen_init_mode();
-    screen_init_address();
-    rez_was_hacked = FALSE; /* initial assumption */
 }
 
 /*
@@ -700,16 +694,6 @@ static const struct video_mode video_mode[] = {
 #endif
 };
 
-#ifndef MACHINE_AMIGA
-/* calculate the VRAM size required by a video mode */
-static ULONG shifter_vram_size(UWORD vmode)
-{
-    ULONG bytes_per_plane_line = video_mode[vmode].hz_rez / 8;
-    ULONG bytes_per_plane = bytes_per_plane_line * video_mode[vmode].vt_rez;
-    return bytes_per_plane * video_mode[vmode].planes;
-}
-#endif
-
 /*
  * calculate initial VRAM size based on video hardware
  *
@@ -722,19 +706,19 @@ ULONG initial_vram_size(void)
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();
 #else
+    ULONG vram_size;
+
     if (HAS_VIDEL)
         return FALCON_VRAM_SIZE + 256UL;
-    else if (HAS_TT_SHIFTER)
-        /* TT TOS allocates 256 bytes more than actually needed. */
-        return shifter_vram_size(TT_HIGH) + 0x100ul;
-    else
-    {
-        /*
-         * ST TOS allocates 768 bytes more than actually needed; this
-         * is equivalent to rounding up to the nearest kilobyte.
-         */
-        return shifter_vram_size(ST_LOW) + 768UL;
-    }
+
+    vram_size = (ULONG)BYTES_LIN * V_REZ_VT;
+
+    /* TT TOS allocates 256 bytes more than actually needed. */
+    if (HAS_TT_SHIFTER)
+        return vram_size + 256UL;
+
+    /* ST TOS allocates 768 bytes more than actually needed. */
+    return vram_size + 768UL;
 #endif
 }
 
