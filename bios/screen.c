@@ -729,9 +729,11 @@ ULONG initial_vram_size(void)
         return shifter_vram_size(TT_HIGH) + 0x100ul;
     else
     {
-        /* ST TOS rounds the VRAM size to upper kilobyte, so we do. */
-        ULONG vram_size = shifter_vram_size(ST_LOW);
-        return (vram_size + 1023) & -1024;
+        /*
+         * ST TOS allocates 768 bytes more than actually needed; this
+         * is equivalent to rounding up to the nearest kilobyte.
+         */
+        return shifter_vram_size(ST_LOW) + 768UL;
     }
 #endif
 }
