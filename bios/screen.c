@@ -717,8 +717,15 @@ ULONG initial_vram_size(void)
     if (HAS_TT_SHIFTER)
         return vram_size + 256UL;
 
-    /* ST TOS allocates 768 bytes more than actually needed. */
-    return vram_size + 768UL;
+    /*
+     * The most important issue for the ST is ensuring that screen memory
+     * starts on a 256-byte boundary for hardware reasons.  We assume
+     * that screen memory is allocated at the top of memory, and that
+     * memory ends on a 256-byte boundary.  So we must allocate a multiple
+     * of 256 bytes.  For compatibility with ST TOS, we also allocate
+     * (at least) 768 bytes more than actually needed.
+     */
+    return (vram_size + 768UL + 255UL) & ~255UL;
 #endif
 }
 
