@@ -681,7 +681,7 @@ struct video_mode {
     UWORD       vt_rez;         /* screen vertical resolution (v_vt_rez) */
 };
 
-static const struct video_mode video_mode[] = {
+static const struct video_mode vmode_table[] = {
     { 4,  320, 200},            /* rez=0: ST low */
     { 2,  640, 200},            /* rez=1: ST medium */
     { 1,  640, 400},            /* rez=2: ST high */
@@ -736,9 +736,9 @@ static void shifter_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *v
     vmode = (sshiftmod & 7);            /* Get video mode from copy of hardware */
     KDEBUG(("vmode: %d\n", vmode));
 
-    *planes = video_mode[vmode].planes;
-    *hz_rez = video_mode[vmode].hz_rez;
-    *vt_rez = video_mode[vmode].vt_rez;
+    *planes = vmode_table[vmode].planes;
+    *hz_rez = vmode_table[vmode].hz_rez;
+    *vt_rez = vmode_table[vmode].vt_rez;
 }
 
 static void atari_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
