@@ -676,7 +676,7 @@ WORD get_monitor_type(void)
 
 /* Settings for the different video modes */
 struct video_mode {
-    UBYTE       planes;         /* count of color planes (v_planes) */
+    UWORD       planes;         /* count of color planes (v_planes) */
     UWORD       hz_rez;         /* screen horizontal resolution (v_hz_rez) */
     UWORD       vt_rez;         /* screen vertical resolution (v_vt_rez) */
 };
