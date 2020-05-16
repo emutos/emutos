@@ -84,7 +84,7 @@
 #  define CONF_WITH_TT_SHIFTER 0
 # endif
 # ifndef CONF_WITH_SCC
-#  define CONF_WITH_SCC 0
+#  define CONF_WITH_SCC 1
 # endif
 # ifndef CONF_WITH_MEGARTC
 #  define CONF_WITH_MEGARTC 0
