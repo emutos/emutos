@@ -17,7 +17,6 @@
 #include "dmasound.h"
 #include "vectors.h"
 #include "gemerror.h"
-#include "delay.h"
 #include "asm.h"
 #include "machine.h"
 
@@ -73,7 +72,7 @@ struct dmasound
 #define DMASOUND ((volatile struct dmasound*)0xffff8900)
 
 /* Generic Microwire macros */
-#define MICROWIRE_MASK              0x07ff
+#define MICROWIRE_MASK              0x0ffe
 #define MICROWIRE_ADDRESS(x)        ((x) << 9)
 #define MICROWIRE_COMMAND(a,c)      (MICROWIRE_ADDRESS(a) | (c))
 
@@ -108,12 +107,6 @@ struct dmasound
 
 /* LMC1992 parameter for Fader functions */
 #define LMC1992_FADER(x)    (((x) + 40) / 2)    /* Range from -40 to 0 dB */
-
-/*
- * LMC1992 minimum delay before checking mask during write_microwire()
- */
-#define LMC1992_DELAY()     delay_loop(loopcount_mw)
-static ULONG loopcount_mw;
 
 static int sound_locked;
 
@@ -155,30 +148,23 @@ void detect_dmasound(void)
 
 static void write_microwire(UWORD data)
 {
-    LMC1992_DELAY();
+    /*
+     * Use LSB as 'stop' bit. It is not shifted out because of MICROWIRE_MASK.
+     */
+    DMASOUND->microwire_data = (data<<1) | 1;
 
-    /* Wait for previous data transfer to finish */
-    while (DMASOUND->microwire_mask != MICROWIRE_MASK)
-        ;
-
-    DMASOUND->microwire_data = data;
+    /*
+     * Wait for data transfer to finish: since the LSB is always 1, the data
+     * register can only become 0 after everything has been shifted out.
+     */
+    while (DMASOUND->microwire_data != 0)
+        /* wait */ ;
 }
 
 static void lmc1992_init(void)
 {
     if (!has_microwire)
         return;
-
-    /*
-     * According to Atari documentation, it takes approximately 16
-     * microseconds to send the data (16 bits including don't cares),
-     * so the time to shift the mask/data by 1 bit is approximately
-     * 1 microsecond.  Therefore we need to delay at least this much
-     * before checking to see if the shift is complete.
-     * Note that delay values at LMC1992 initialisation time are not yet
-     * calibrated.  So, for safety, we set the delay to 2 microseconds.
-     */
-    loopcount_mw = loopcount_1_msec * 2 / 1000; /* 2 microseconds */
 
     DMASOUND->microwire_mask = MICROWIRE_MASK;
 
