@@ -625,12 +625,15 @@ void screen_init_address(void)
 /*
  * Mark resolution as hacked
  *
- * called by bios_init() if a cartridge application has altered key
- * lineA variables
+ * called by bios_init() if a special video mode (Nova support, Hatari
+ * cartridge extended VDI) has altered key lineA variables
  */
 void set_rez_hacked(void)
 {
     rez_was_hacked = TRUE;
+
+    set_screen_shift();     /* set shift amount for screen address calc */
+    vt52_init();            /* initialize the vt52 console */
 }
 
 /*

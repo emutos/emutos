@@ -420,8 +420,7 @@ static void bios_init(void)
     if (has_nova && !(kbshift(-1) & MODE_CTRL)) {
         KDEBUG(("init_nova()\n"));
         if (init_nova()) {
-            set_rez_hacked();
-            vt52_init();            /* initialize the vt52 console */
+            set_rez_hacked();   /* also reinitializes the vt52 console */
         }
     }
 #endif
@@ -471,9 +470,7 @@ static void bios_init(void)
 
         if ((V_REZ_HZ != save_hz) || (V_REZ_VT != save_vt) || (v_planes != save_pl))
         {
-            set_rez_hacked();
-            set_screen_shift();     /* set shift amount for screen address calc */
-            vt52_init();            /* initialize the vt52 console */
+            set_rez_hacked();   /* also reinitializes the vt52 console */
         }
     }
 #endif

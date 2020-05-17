@@ -531,8 +531,6 @@ static void init_system_vars(void)
     /* Line A vars */
     /* Number of bitplanes */
     v_planes = 1;
-    /* precalculate shift value to optimize pixel address calculations */
-    v_planes_shift = 3;     /* see shift_offset[] in lineainit.c */
     /* Bytes per scan-line */
     BYTES_LIN = v_lin_wr = 80;
     /* Vertical resolution */
