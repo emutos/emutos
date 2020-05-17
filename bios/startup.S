@@ -115,14 +115,18 @@ _main:
 
 /*
  * Feature flags in extended OS header (see below)
+ *
+ *  Bit #       Usage
+ *    0         EmuTOS will pass the address of the lineA variables via NatFeats
+ *   1-31       Currently reserved
  */
 #if DETECT_NATIVE_FEATURES
-#define OSEX_LINEA      (1<<0)  // EmuTOS passes lineA address via NatFeats
+# define OSX_LINEA      (1UL<<0)
 #else
-#define OSEX_LINEA      0
+# define OSX_LINEA      0
 #endif
 
-#define OSEX_FEATURES   (OSEX_LINEA)
+#define OSX_FEATURES    (OSX_LINEA)
 
 /*
  * Extended OS header
@@ -143,7 +147,7 @@ osex:
     .dc.l   osexend-osex                // length
     .dc.b   MAJOR_VERSION,MINOR_VERSION,FIX_VERSION,UNOFFICIAL  // binary version
     .dc.l   _version-_os_header         // offset to version string
-    .dc.l   OSEX_FEATURES               // feature flags
+    .dc.l   OSX_FEATURES                // feature flags
 osexend:
 
 /*
