@@ -118,15 +118,172 @@ _main:
  *
  *  Bit #       Usage
  *    0         EmuTOS will pass the address of the lineA variables via NatFeats
- *   1-31       Currently reserved
+ *   1-31       (currently reserved)
  */
 #if DETECT_NATIVE_FEATURES
 # define OSX_LINEA      (1UL<<0)
 #else
 # define OSX_LINEA      0
 #endif
-
 #define OSX_FEATURES    (OSX_LINEA)
+
+/*
+ *  Machine flags in extended OS header
+ *
+ *  Bit #       Supported machines
+ *    0         ST / MegaST
+ *    1         STe / MegaSTe
+ *    2         TT
+ *    3         Falcon
+ *    4         FireBee
+ *    5         M548X evaluation boards
+ *    6         Amiga
+ *    7         (currently reserved)
+ *    8         ARAnyM
+ *   9-15       (currently reserved)
+ */
+#if defined(MACHINE_ARANYM)
+# define OSX_ST         0
+# define OSX_STE        0
+# define OSX_TT         0
+# define OSX_FALCON     0
+# define OSX_FIREBEE    0
+# define OSX_M548X      0
+# define OSX_AMIGA      0
+# define OSX_ARANYM     (1U<<8)
+#elif defined(MACHINE_AMIGA)
+# define OSX_ST         0
+# define OSX_STE        0
+# define OSX_TT         0
+# define OSX_FALCON     0
+# define OSX_FIREBEE    0
+# define OSX_M548X      0
+# define OSX_AMIGA      (1U<<6)
+# define OSX_ARANYM     0
+#elif defined(MACHINE_M548X)
+# define OSX_ST         0
+# define OSX_STE        0
+# define OSX_TT         0
+# define OSX_FALCON     0
+# define OSX_FIREBEE    0
+# define OSX_M548X      (1U<<5)
+# define OSX_AMIGA      0
+# define OSX_ARANYM     0
+#elif defined(MACHINE_FIREBEE)
+# define OSX_ST         0
+# define OSX_STE        0
+# define OSX_TT         0
+# define OSX_FALCON     0
+# define OSX_FIREBEE    (1U<<4)
+# define OSX_M548X      0
+# define OSX_AMIGA      0
+# define OSX_ARANYM     0
+#else
+# define OSX_FIREBEE    0
+# define OSX_M548X      0
+# define OSX_AMIGA      0
+# ifndef __mcoldfire__
+#  define OSX_ST        (1U<<0)
+# else
+#  define OSX_ST        0
+# endif
+# if CONF_WITH_STE_SHIFTER
+#  define OSX_STE       (1U<<1)
+# else
+#  define OSX_STE       0
+# endif
+# if CONF_WITH_TT_SHIFTER
+#  define OSX_TT        (1U<<2)
+# else
+#  define OSX_TT        0
+# endif
+# if CONF_WITH_VIDEL
+#  define OSX_FALCON    (1U<<3)
+# else
+#  define OSX_FALCON    0
+# endif
+# if CONF_WITH_ARANYM
+#  define OSX_ARANYM    (1U<<8)
+# else
+#  define OSX_ARANYM    0
+# endif
+#endif
+#define OSX_MACHINES    (OSX_ST+OSX_STE+OSX_TT+OSX_FALCON+OSX_FIREBEE+OSX_M548X+OSX_ARANYM+OSX_AMIGA)
+
+/*
+ *  Processor flags in extended OS header
+ *
+ *  Bit #       Supported processors
+ *    0         68000
+ *    1         68010
+ *    2         68020
+ *    3         68030
+ *    4         68040
+ *    5         68060
+ *    6         68080
+ *    7         (currrently reserved)
+ *    8         ColdFire 5474
+ *    9         ColdFire 5475
+ *  10-15       (currently reserved)
+ */
+#if defined(MACHINE_ARANYM)
+# define OSX_68000      0
+# define OSX_68010      0
+# define OSX_68020      0
+# define OSX_68030      0
+# define OSX_68040      (1U<<4)
+# define OSX_68060      0
+# define OSX_68080      0
+# define OSX_5474       0
+# define OSX_5475       0
+#elif defined(MACHINE_M548X)
+# define OSX_68000      0
+# define OSX_68010      0
+# define OSX_68020      0
+# define OSX_68030      0
+# define OSX_68040      0
+# define OSX_68060      0
+# define OSX_68080      0
+# define OSX_5474       0
+# define OSX_5475       (1U<<9)
+#elif defined(MACHINE_FIREBEE)
+# define OSX_68000      0
+# define OSX_68010      0
+# define OSX_68020      0
+# define OSX_68030      0
+# define OSX_68040      0
+# define OSX_68060      0
+# define OSX_68080      0
+# define OSX_5474       (1U<<8)
+# define OSX_5475       0
+#else
+# define OSX_5474       0
+# define OSX_5475       0
+# ifndef __mcoldfire__
+#  define OSX_68000     (1U<<0)
+# else
+#  define OSX_68000     0
+# endif
+# if CONF_WITH_ADVANCED_CPU
+#  define OSX_68010     (1U<<1)
+#  define OSX_68020     (1U<<2)
+#  define OSX_68030     (1U<<3)
+#  define OSX_68040     (1U<<4)
+#  define OSX_68060     (1U<<5)
+# else
+#  define OSX_68010     0
+#  define OSX_68020     0
+#  define OSX_68030     0
+#  define OSX_68040     0
+#  define OSX_68060     0
+# endif
+# if CONF_WITH_APOLLO_68080
+#  define OSX_68080     (1U<<6)
+# else
+#  define OSX_68080     0
+# endif
+#endif
+#define OSX_PROCESSORS  (OSX_68000+OSX_68010+OSX_68020+OSX_68030+OSX_68040+OSX_68060+OSX_68080+OSX_5474+OSX_5475)
 
 /*
  * Extended OS header
@@ -148,6 +305,8 @@ osex:
     .dc.b   MAJOR_VERSION,MINOR_VERSION,FIX_VERSION,UNOFFICIAL  // binary version
     .dc.l   _version-_os_header         // offset to version string
     .dc.l   OSX_FEATURES                // feature flags
+    .dc.w   OSX_MACHINES                // machine flags
+    .dc.w   OSX_PROCESSORS              // processor flags
 osexend:
 
 /*

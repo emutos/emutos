@@ -17,7 +17,7 @@ from the beginning of the ROM, and you may check for its presence by
 verifying that the first 4 bytes are ASCII 'OSEX'.
 
 Following 'OSEX' is a long containing the length of the entire structure
-(currently 20), and then 4 binary bytes containing the version, in the
+(currently 24), and then 4 binary bytes containing the version, in the
 following sequence:
     . major version
     . minor version
@@ -31,10 +31,34 @@ For example, for official release 1.0, the 4 bytes are 0x01000000; for
 a snapshot release based on official release 11.5, the 4 bytes would
 be 0x0b050001.
 
-Following this is a long containing the offset to the version string as
-displayed on the EmuTOS startup screen and the EmuDesk 'About' dialog box.
-NOTE: this offset is from the start of the ROM, *not* the start of the
-header extension!
-
-Finally (at the moment) there is a long containing various flags which
-are not related to the EmuTOS version.
+Following this are these informational fields:
+    . a long containing the offset to the version string, as displayed
+      on the EmuTOS startup screen and the EmuDesk 'About' dialog box.
+      NOTE: this offset is from the start of the ROM, *not* the start of
+      the header extension!
+    . a long containing various flags, mainly for the use of emulators
+    . a word containing a bit mask of the machines that this EmuTOS
+      image can run on; bit mapping is as follows:
+        0         ST / MegaST
+        1         STe / MegaSTe
+        2         TT
+        3         Falcon
+        4         FireBee
+        5         M548X evaluation boards
+        6         Amiga
+        7         (currently reserved)
+        8         ARAnyM
+       9-15       (currently reserved)
+    . a word containing a bit mask of the processors that this EmuTOS
+      image can run on; bit mapping is as follows:
+        0         68000
+        1         68010
+        2         68020
+        3         68030
+        4         68040
+        5         68060
+        6         68080
+        7         (currrently reserved)
+        8         ColdFire 5474
+        9         ColdFire 5475
+      10-15       (currently reserved)
