@@ -222,9 +222,8 @@ _main:
  *    5         68060
  *    6         68080
  *    7         (currently reserved)
- *    8         ColdFire 5474
- *    9         ColdFire 5475
- *  10-15       (currently reserved)
+ *    8         ColdFire V4e
+ *   9-15       (currently reserved)
  */
 #if defined(MACHINE_ARANYM)
 # define OSX_68000      0
@@ -234,8 +233,7 @@ _main:
 # define OSX_68040      (1U<<4)
 # define OSX_68060      0
 # define OSX_68080      0
-# define OSX_5474       0
-# define OSX_5475       0
+# define OSX_COLDFIRE   0
 #elif defined(MACHINE_M548X)
 # define OSX_68000      0
 # define OSX_68010      0
@@ -244,8 +242,7 @@ _main:
 # define OSX_68040      0
 # define OSX_68060      0
 # define OSX_68080      0
-# define OSX_5474       0
-# define OSX_5475       (1U<<9)
+# define OSX_COLDFIRE   (1U<<8)
 #elif defined(MACHINE_FIREBEE)
 # define OSX_68000      0
 # define OSX_68010      0
@@ -254,11 +251,9 @@ _main:
 # define OSX_68040      0
 # define OSX_68060      0
 # define OSX_68080      0
-# define OSX_5474       (1U<<8)
-# define OSX_5475       0
+# define OSX_COLDFIRE   (1U<<8)
 #else
-# define OSX_5474       0
-# define OSX_5475       0
+# define OSX_COLDFIRE   0
 # ifndef __mcoldfire__
 #  define OSX_68000     (1U<<0)
 # else
@@ -283,7 +278,7 @@ _main:
 #  define OSX_68080     0
 # endif
 #endif
-#define OSX_PROCESSORS  (OSX_68000+OSX_68010+OSX_68020+OSX_68030+OSX_68040+OSX_68060+OSX_68080+OSX_5474+OSX_5475)
+#define OSX_PROCESSORS  (OSX_68000+OSX_68010+OSX_68020+OSX_68030+OSX_68040+OSX_68060+OSX_68080+OSX_COLDFIRE)
 
 /*
  * Extended OS header
