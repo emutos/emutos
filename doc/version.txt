@@ -58,7 +58,7 @@ Following this are these informational fields:
         4         68040
         5         68060
         6         68080
-        7         (currrently reserved)
+        7         (currently reserved)
         8         ColdFire 5474
         9         ColdFire 5475
       10-15       (currently reserved)
