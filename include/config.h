@@ -352,6 +352,9 @@
  * are not known (and not likely) to be available for that hardware.
  */
 #ifdef TARGET_256
+# ifndef CONF_WITH_ARANYM
+#  define CONF_WITH_ARANYM 0
+# endif
 # ifndef CONF_WITH_APOLLO_68080
 #  define CONF_WITH_APOLLO_68080 0
 # endif
