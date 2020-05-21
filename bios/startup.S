@@ -121,7 +121,7 @@ _main:
  *   1-31       (currently reserved)
  */
 #if DETECT_NATIVE_FEATURES
-# define OSX_LINEA      (1UL<<0)
+# define OSX_LINEA      (1<<0)
 #else
 # define OSX_LINEA      0
 #endif
@@ -150,7 +150,7 @@ _main:
 # define OSX_FIREBEE    0
 # define OSX_M548X      0
 # define OSX_AMIGA      0
-# define OSX_ARANYM     (1U<<8)
+# define OSX_ARANYM     (1<<8)
 #elif defined(MACHINE_AMIGA)
 # define OSX_ST         0
 # define OSX_STE        0
@@ -158,7 +158,7 @@ _main:
 # define OSX_FALCON     0
 # define OSX_FIREBEE    0
 # define OSX_M548X      0
-# define OSX_AMIGA      (1U<<6)
+# define OSX_AMIGA      (1<<6)
 # define OSX_ARANYM     0
 #elif defined(MACHINE_M548X)
 # define OSX_ST         0
@@ -166,7 +166,7 @@ _main:
 # define OSX_TT         0
 # define OSX_FALCON     0
 # define OSX_FIREBEE    0
-# define OSX_M548X      (1U<<5)
+# define OSX_M548X      (1<<5)
 # define OSX_AMIGA      0
 # define OSX_ARANYM     0
 #elif defined(MACHINE_FIREBEE)
@@ -174,7 +174,7 @@ _main:
 # define OSX_STE        0
 # define OSX_TT         0
 # define OSX_FALCON     0
-# define OSX_FIREBEE    (1U<<4)
+# define OSX_FIREBEE    (1<<4)
 # define OSX_M548X      0
 # define OSX_AMIGA      0
 # define OSX_ARANYM     0
@@ -183,27 +183,27 @@ _main:
 # define OSX_M548X      0
 # define OSX_AMIGA      0
 # ifndef __mcoldfire__
-#  define OSX_ST        (1U<<0)
+#  define OSX_ST        (1<<0)
 # else
 #  define OSX_ST        0
 # endif
 # if CONF_WITH_STE_SHIFTER
-#  define OSX_STE       (1U<<1)
+#  define OSX_STE       (1<<1)
 # else
 #  define OSX_STE       0
 # endif
 # if CONF_WITH_TT_SHIFTER
-#  define OSX_TT        (1U<<2)
+#  define OSX_TT        (1<<2)
 # else
 #  define OSX_TT        0
 # endif
 # if CONF_WITH_VIDEL
-#  define OSX_FALCON    (1U<<3)
+#  define OSX_FALCON    (1<<3)
 # else
 #  define OSX_FALCON    0
 # endif
 # if CONF_WITH_ARANYM
-#  define OSX_ARANYM    (1U<<8)
+#  define OSX_ARANYM    (1<<8)
 # else
 #  define OSX_ARANYM    0
 # endif
@@ -230,7 +230,7 @@ _main:
 # define OSX_68010      0
 # define OSX_68020      0
 # define OSX_68030      0
-# define OSX_68040      (1U<<4)
+# define OSX_68040      (1<<4)
 # define OSX_68060      0
 # define OSX_68080      0
 # define OSX_COLDFIRE   0
@@ -242,7 +242,7 @@ _main:
 # define OSX_68040      0
 # define OSX_68060      0
 # define OSX_68080      0
-# define OSX_COLDFIRE   (1U<<8)
+# define OSX_COLDFIRE   (1<<8)
 #elif defined(MACHINE_FIREBEE)
 # define OSX_68000      0
 # define OSX_68010      0
@@ -251,20 +251,20 @@ _main:
 # define OSX_68040      0
 # define OSX_68060      0
 # define OSX_68080      0
-# define OSX_COLDFIRE   (1U<<8)
+# define OSX_COLDFIRE   (1<<8)
 #else
 # define OSX_COLDFIRE   0
 # ifndef __mcoldfire__
-#  define OSX_68000     (1U<<0)
+#  define OSX_68000     (1<<0)
 # else
 #  define OSX_68000     0
 # endif
 # if CONF_WITH_ADVANCED_CPU
-#  define OSX_68010     (1U<<1)
-#  define OSX_68020     (1U<<2)
-#  define OSX_68030     (1U<<3)
-#  define OSX_68040     (1U<<4)
-#  define OSX_68060     (1U<<5)
+#  define OSX_68010     (1<<1)
+#  define OSX_68020     (1<<2)
+#  define OSX_68030     (1<<3)
+#  define OSX_68040     (1<<4)
+#  define OSX_68060     (1<<5)
 # else
 #  define OSX_68010     0
 #  define OSX_68020     0
@@ -273,7 +273,7 @@ _main:
 #  define OSX_68060     0
 # endif
 # if CONF_WITH_APOLLO_68080
-#  define OSX_68080     (1U<<6)
+#  define OSX_68080     (1<<6)
 # else
 #  define OSX_68080     0
 # endif
