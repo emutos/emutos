@@ -103,7 +103,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         break;
     case APPL_READ:
     case APPL_WRITE:
-        ap_rdwr(opcode == APPL_READ ? MU_MESAG : MU_SDMSG,
+        ret = ap_rdwr(opcode == APPL_READ ? MU_MESAG : MU_SDMSG,
                 fpdnm(NULL, AP_RWID), AP_LENGTH, (WORD *)AP_PBUFF);
         break;
     case APPL_FIND:
