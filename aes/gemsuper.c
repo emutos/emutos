@@ -133,7 +133,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = ev_button(B_CLICKS, B_MASK, B_STATE, &EV_MX);
         break;
     case EVNT_MOUSE:
-        ret = ev_mouse((MOBLK *)&MO_FLAGS, &EV_MX);
+        ev_mouse((MOBLK *)&MO_FLAGS, &EV_MX);
         break;
     case EVNT_MESAG:
         aestrace("evnt_mesag()");

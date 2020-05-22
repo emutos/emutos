@@ -97,14 +97,10 @@ UWORD ev_button(WORD bflgclks, UWORD bmask, UWORD bstate, WORD rets[])
 /*
  *  Wait for the mouse to leave or enter a specified rectangle
  */
-UWORD ev_mouse(MOBLK *pmo, WORD rets[])
+void ev_mouse(MOBLK *pmo, WORD rets[])
 {
-    WORD    ret;
-
-    ret = ev_block(MU_M1, (LONG)pmo);
+    ev_block(MU_M1, (LONG)pmo);
     ev_rets(rets);
-
-    return ret;
 }
 
 
