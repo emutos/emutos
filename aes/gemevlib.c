@@ -95,6 +95,15 @@ UWORD ev_button(WORD bflgclks, UWORD bmask, UWORD bstate, WORD rets[])
 
 
 /*
+ *  Wait for message in application message pipe
+ */
+void ev_mesag(WORD *mebuff)
+{
+    ap_rdwr(MU_MESAG, rlr, 16, mebuff);
+}
+
+
+/*
  *  Wait for the mouse to leave or enter a specified rectangle
  */
 void ev_mouse(MOBLK *pmo, WORD rets[])
@@ -182,7 +191,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
     {
         if (rlr->p_qindex > 0)
         {
-            ap_rdwr(MU_MESAG, rlr, 16, mebuff);
+            ev_mesag(mebuff);
             what |= MU_MESAG;
         }
     }

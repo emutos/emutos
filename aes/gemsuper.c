@@ -138,7 +138,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
     case EVNT_MESAG:
         aestrace("evnt_mesag()");
         rlr->p_flags |= AP_MESAG;
-        ap_rdwr(MU_MESAG, rlr, 16, (WORD *)ME_PBUFF);
+        ev_mesag((WORD *)ME_PBUFF);
         if (*(WORD *)ME_PBUFF == AC_CLOSE)
             rlr->p_flags |= AP_ACCLOSE;
         break;
