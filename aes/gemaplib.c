@@ -78,7 +78,7 @@ WORD ap_rdwr(WORD code, AESPD *p, WORD length, WORD *pbuff)
     {
         memcpy(pbuff, p->p_qaddr, p->p_qindex);
         p->p_qindex = 0;
-        return 0;
+        return 1;       /* non-zero means it worked */
     }
 
     m.qpb_ppd = p;
