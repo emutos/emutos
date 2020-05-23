@@ -111,12 +111,12 @@ struct aespd                /* process descriptor */
 {
         AESPD   *p_link;        /*  0 */
         AESPD   *p_thread;      /*  4 */
-        UDA     *p_uda;         /*  8 */
+        UDA     *p_uda;         /*  8  UDA - assembler code expects this offset */
 
         char    p_name[AP_NAMELEN]; /*  C */
 
         CDA     *p_cda;         /* 14  cio data area        */
-        LONG    p_ldaddr;       /* 18  long addr. of load   */
+        LONG    p_ldaddr;       /* 18  load address - assembler code expects this offset */
         WORD    p_pid;          /* 1C */
         WORD    p_stat;         /* 1E */
 
