@@ -869,6 +869,7 @@ void gem_main(void)
             rlr->p_uda->u_spsuper = &rlr->p_uda->u_supstk;
         rlr->p_pid = i;
         rlr->p_stat = 0;
+        rlr->p_msg.action = -1;
     }
     curpid = 0;
     rlr->p_pid = curpid++;

@@ -128,9 +128,15 @@ struct aespd                /* process descriptor */
         EVB     *p_evlist;      /* 28 */
         EVB     *p_qdq;         /* 2C */
         EVB     *p_qnq;         /* 30 */
-        char    *p_qaddr;       /* 34 */
-        WORD    p_qindex;       /* 38 */
-        char    p_queue[QUEUE_SIZE];   /* 3A */
+
+        struct {            /* used by ctlmgr() to pass WM_ARROWED msg to event handlers */
+            WORD action;        /* action to perform (WA_UPLINE etc) [-ve means no msg] */
+            WORD wh;            /* window handle of applicable window */
+        }       p_msg;
+
+        char    *p_qaddr;       /* */
+        WORD    p_qindex;       /* */
+        char    p_queue[QUEUE_SIZE];    /* */
         char    p_appdir[LEN_ZPATH+2];  /* directory containing the executable */
                                         /* (includes trailing path separator)  */
 };

@@ -83,29 +83,59 @@ static void ct_msgup(WORD message, AESPD *owner, WORD wh, WORD m1, WORD m2, WORD
 
     ap_sendmsg(appl_msg, message, owner, wh, m1, m2, m3, m4);
 
-    /*
-     * if arrowed message, or close on a hotclose window, return immediately
-     */
-    switch(message) {
-    case WM_ARROWED:
-        return;
-        break;
-    case WM_CLOSED:
 #if CONF_WITH_PCGEM
-        if (D.w_win[wh].w_kind & HOTCLOSE)
-        {
-            button = 0;     /* we fake button up, otherwise a slow click will */
-            return;         /*  cause us to stay in ctlmgr(), eating keys     */
-        }
-#endif
-        break;
+    /*
+     * if close on a hotclose window, return immediately
+     */
+    if ((message == WM_CLOSED) && (D.w_win[wh].w_kind & HOTCLOSE))
+    {
+        button = 0;     /* we fake button up, otherwise a slow click will */
+        return;         /*  cause us to stay in ctlmgr(), eating keys     */
     }
+#endif
 
     /*
      * otherwise, wait for the button to come up
      */
     while(button & 0x0001)
         dsptch();
+}
+
+
+/*
+ * handle WM_ARROWED message
+ *
+ * this function sends WM_ARROWED messages continuously whilst the left
+ * button is held down.
+ */
+static void handle_arrow_msg(WORD w_handle, WORD gadget)
+{
+    WINDOW *pwin = &D.w_win[w_handle];
+    AESPD *p = pwin->w_owner;
+    WORD action;
+
+    wm_update(END_UPDATE);      /* give up the screen */
+
+    action = gl_wa[gadget - W_UPARROW];
+
+    do
+    {
+        if (p->p_stat & WAITIN) /* send message now if he's waiting */
+        {
+            ap_sendmsg(appl_msg, WM_ARROWED, p, w_handle, action, 0, 0, 0);
+        }
+        else                    /* else make it the next to be processed */
+        {
+            if (p->p_msg.action < 0)    /* (if no pending message) */
+            {
+                p->p_msg.action = action;
+                p->p_msg.wh = w_handle;
+            }
+        }
+        dsptch();
+    } while(button & 0x0001);
+
+    wm_update(BEG_UPDATE);      /* take back the screen */
 }
 
 
@@ -219,8 +249,8 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         case W_DNARROW:
         case W_LFARROW:
         case W_RTARROW:
-            message = WM_ARROWED;
-            x = gl_wa[cpt - W_UPARROW];
+            handle_arrow_msg(w_handle, cpt);
+            return;
             break;
         case W_HELEV:
         case W_VELEV:
@@ -326,7 +356,7 @@ void ctlmgr(void)
 {
     WORD    ev_which;
     WORD    rets[6];
-    WORD    i, wh;
+    WORD    wh;
 
     /*
      * set defaults for multi wait
@@ -340,25 +370,12 @@ void ctlmgr(void)
         /*
          * wait for something to happen, keys need to be eaten
          * including fake key sent by mn_bar() [the menu bar handler]
-         * ... or if button already down, let other guys run then do it
          */
-        if (button)
-        {
-            for (i = 0; i < (totpds*2); i++)
-                dsptch();
-
-            ev_which = MU_BUTTON;
-            rets[0] = xrat;
-            rets[1] = yrat;
-        }
-        else
-        {
-            ev_which = MU_KEYBD | MU_BUTTON;
-            if ( gl_mntree )            /* only wait on bar when there  */
-                ev_which |= MU_M1;      /* is a menu                    */
-            ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
+        ev_which = MU_KEYBD | MU_BUTTON;
+        if (gl_mntree)                  /* only wait on bar when there  */
+            ev_which |= MU_M1;          /* is a menu                    */
+        ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
                                 0x0L, 0x0001ff01L, NULL, rets);
-        }
 
         ct_mouse(TRUE);                 /* grab screen sink     */
         /*
