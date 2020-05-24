@@ -693,6 +693,9 @@ int main(int argc, char* argv[])
         fprintf(stderr, "\n");
         fprintf(stderr, "  # Amiga 1000 Kickstart disk\n");
         fprintf(stderr, "  %s amiga-kickdisk <sourcerom> <destination>\n", g_argv0);
+        fprintf(stderr, "\n");
+        fprintf(stderr, "  # Amiga boot floppy\n");
+        fprintf(stderr, "  %s amiga-floppy <bootfile> <sourcerom> <destination>\n", g_argv0);
         return 1;
     }
 
