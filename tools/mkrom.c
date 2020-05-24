@@ -32,6 +32,7 @@ typedef enum
 {
     CMD_NONE = 0,
     CMD_PAD,
+    CMD_PAK3,
     CMD_STC,
     CMD_AMIGA,
     CMD_AMIGA_KICKDISK,
@@ -288,6 +289,54 @@ static int cmd_pad(FILE* infile, const char* infilename,
 
     free_size = target_size - source_size;
     printf("# %s done (%lu bytes free)\n", outfilename, (unsigned long)free_size);
+
+    return 1;
+}
+
+/* PAK/3 512kB image */
+static int cmd_pak3(FILE* infile, const char* infilename,
+                   FILE* outfile, const char* outfilename)
+{
+    size_t source_size;
+    size_t max_size = 256 * 1024;       /* input must be a 256KB image */
+    size_t target_size = 512 * 1024;    /* which we pad to 512KB (and patch) */
+    long jmp_address = 0x40030L;
+    const unsigned char jmp_instr[] = { 0x4e, 0xf9, 0x00, 0xe0, 0x00, 0x00 };
+    int ret; /* boolean return value: 0 == error, 1 == OK */
+
+    printf("# Padding %s to %ld KB image into %s\n", infilename, ((long)target_size) / 1024, outfilename);
+
+    /* Get the input file size */
+    source_size = get_file_size(infile, infilename);
+    if (source_size == SIZE_ERROR)
+        return 0;
+
+    /* Check if the input file size is too big */
+    if (source_size > max_size)
+    {
+        fprintf(stderr, "%s: %s is too big: %lu extra bytes\n", g_argv0, infilename, (unsigned long)(source_size - max_size));
+        return 0;
+    }
+
+    ret = append_and_pad(infile, infilename, outfile, outfilename, target_size, &source_size);
+    if (!ret)
+        return ret;
+
+    /* Rewind to the patch address */
+    if (fseek(outfile, jmp_address, SEEK_SET) != 0)
+    {
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
+    }
+
+    /* Write the 'JMP' instruction */
+    if (fwrite(jmp_instr, 1, sizeof jmp_instr, outfile) != sizeof jmp_instr)
+    {
+        fprintf(stderr, "%s: %s: %s\n", g_argv0, outfilename, strerror(errno));
+        return 0;
+    }
+
+    printf("# %s done\n", outfilename);
 
     return 1;
 }
@@ -652,6 +701,12 @@ int main(int argc, char* argv[])
         infilename = argv[3];
         outfilename = argv[4];
     }
+    else if (argc == 4 && !strcmp(argv[1], "pak3"))
+    {
+        op = CMD_PAK3;
+        infilename = argv[2];
+        outfilename = argv[3];
+    }
     else if (argc == 4 && !strcmp(argv[1], "stc"))
     {
         op = CMD_STC;
@@ -696,6 +751,9 @@ int main(int argc, char* argv[])
         fprintf(stderr, "\n");
         fprintf(stderr, "  # Amiga boot floppy\n");
         fprintf(stderr, "  %s amiga-floppy <bootfile> <sourcerom> <destination>\n", g_argv0);
+        fprintf(stderr, "\n");
+        fprintf(stderr, "  # PAK/3 image\n");
+        fprintf(stderr, "  %s pak3 <sourcerom> <destination>\n", g_argv0);
         return 1;
     }
 
@@ -730,6 +788,10 @@ int main(int argc, char* argv[])
     {
         case CMD_PAD:
             ret = cmd_pad(infile, infilename, outfile, outfilename, target_size);
+        break;
+
+        case CMD_PAK3:
+            ret = cmd_pak3(infile, infilename, outfile, outfilename);
         break;
 
         case CMD_STC:

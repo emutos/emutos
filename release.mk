@@ -295,6 +295,27 @@ release-floppy:
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_FLOPPY).zip $(RELEASE_FLOPPY)
 	rm -r $(RELEASE_DIR)/$(RELEASE_FLOPPY)
 
+.PHONY: release-pak3
+NODEP += release-pak3
+RELEASE_PAK3 = emutos-pak3-$(VERSION)
+release-pak3:
+	$(MAKE) clean
+	$(MAKE) allpak3
+	mkdir $(RELEASE_DIR)/$(RELEASE_PAK3)
+	cp etospak3*.img $(RELEASE_DIR)/$(RELEASE_PAK3)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_PAK3)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_PAK3)/emuicon.rsc
+	cat doc/readme-pak3.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_PAK3)/readme.txt
+	mkdir $(RELEASE_DIR)/$(RELEASE_PAK3)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_PAK3)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_PAK3)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_PAK3)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_PAK3)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_PAK3)/extras/emucurs.rsc
+	find $(RELEASE_DIR)/$(RELEASE_PAK3) -name '*.txt' -exec unix2dos '{}' ';'
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_PAK3).zip $(RELEASE_PAK3)
+	rm -r $(RELEASE_DIR)/$(RELEASE_PAK3)
+
 .PHONY: release-emucon
 NODEP += release-emucon
 RELEASE_EMUCON = emucon
@@ -315,6 +336,6 @@ release: clean release-clean release-mkdir \
   release-src release-512k release-256k release-192k release-cartridge \
   release-aranym release-firebee release-amiga-rom release-amiga-floppy \
   release-m548x-dbug release-m548x-bas release-prg release-floppy \
-  release-emucon
+  release-pak3 release-emucon
 	$(MAKE) clean
 	@echo '# Packages successfully generated inside $(RELEASE_DIR)'

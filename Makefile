@@ -380,8 +380,10 @@ help:
 	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
 	@echo "prg     emutos.prg, a RAM tos"
 	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
+	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
 	@echo "all192  all 192 KB images"
 	@echo "all256  all 256 KB images"
+	@echo "allpak3 all PAK/3 images"
 	@echo "allprg  all emutos*.prg"
 	@echo "allflop all emutos*.st"
 	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
@@ -498,6 +500,26 @@ $(ROM_512): emutos.img mkrom
 
 .PHONY: falcon
 falcon: help
+
+#
+# 512kB PAK/3 Image (based on 256kB Image)
+#
+
+ROM_PAK3 = etospak3$(UNIQUE).img
+
+.PHONY: pak3
+NODEP += pak3
+pak3: UNIQUE = $(COUNTRY)
+pak3: OPTFLAGS = $(SMALL_OPTFLAGS)
+pak3: override DEF += -DTARGET_256
+pak3:
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_PAK3=$(ROM_PAK3) $(ROM_PAK3)
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
+	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS206))) bytes more than TOS 2.06)"
+
+$(ROM_PAK3): ROMSIZE = 256
+$(ROM_PAK3): emutos.img mkrom
+	./mkrom pak3 $< $(ROM_PAK3)
 
 #
 # ARAnyM Image
@@ -848,6 +870,17 @@ tos-lang-change: tools/tos-lang-change.c
 # The sleep command in targets below ensure that all the generated sources
 # will have a timestamp older than any object file.
 # This matters on filesystems having low timestamp resolution (ext2, ext3).
+
+.PHONY: allpak3
+NODEP += allpak3
+allpak3:
+	@for i in $(COUNTRIES); \
+	do \
+	  echo; \
+	  echo "sleep 1"; \
+	  sleep 1; \
+	  $(MAKE) pak3 UNIQUE=$$i || exit 1; \
+	done
 
 .PHONY: all256
 NODEP += all256
