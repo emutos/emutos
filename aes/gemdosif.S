@@ -259,7 +259,6 @@ trapaes:
         jsr     _super                  // jump to supervisor entry point
         addq.l  #6,sp                   // restore stack pointer
 
-supret:                                 // return from gementry
         jbsr    _disable_interrupts     // mask out interrupts
 
         movea.l _rlr,a0

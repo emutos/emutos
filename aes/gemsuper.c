@@ -460,8 +460,7 @@ static void xif(AESPB *pcrys_blk)
 
 
 /*
- *  Supervisor entry point.  Stack frame must be exactly like
- *  this if supret is to work.
+ *  Supervisor entry point, called from gemdosif.S
  */
 LONG super(WORD cx, AESPB *pcrys_blk)
 {
