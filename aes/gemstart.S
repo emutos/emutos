@@ -199,12 +199,16 @@ _dos_exec:
         //   - the trap #1 stack frame (0 byte, popped by trap #1 prologue)
         //   - the backup of registers in the trap #1 prologue (50 bytes)
         // Currently, this sums to 66 bytes. The stack has to be adjusted
-        // by this value, or more.
+        // by this value, or more (also see *NOTE* below).
         // You must keep an eye on the trap #1 prologue for GEMDOS,
         // when entering in supervisor mode and calling a function
         // other than 0x20. It is located in bdos/rwa.S, label "systk".
         // If some additional data is pushed on the stack before
         // the stack switch, you must add the equivalent room here.
+        //
+        // *NOTE* on an exception, ColdFire auto-aligns the stack pointer
+        // to a multiple of 4 bytes; so, for safety, you should increase
+        // the minimum adjustment by two bytes on ColdFire systems.
 
         jsr     _disable_interrupts
         movea.l _rlr,a0
