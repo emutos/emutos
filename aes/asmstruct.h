@@ -27,9 +27,8 @@
 #define PD_LDADDR       0x18        /* pointer to basepage */
 
 /* UDA struct */
-#define UDA_INSUPER                 /* offset 0: the 'in supervisor' flag */
-#define UDA_REGS        0x02        /* registers d0-a6 */
-#define UDA_REG_A6      0x3A        /* a6 */
-#define UDA_SPSUPER     0x3E        /* ssp */
-#define UDA_SPUSER      0x42        /* usp */
-#define UDA_OLDSPSUPER  0x46        /* ssp when AES trap is entered */
+#define UDA_REGS                    /* offset 0: registers d0-a6 */
+#define UDA_REG_A6      0x38        /* a6 */
+#define UDA_SPSUPER     0x3C        /* ssp */
+#define UDA_SPUSER      0x40        /* usp */
+#define UDA_OLDSPSUPER  0x44        /* ssp when AES trap is entered */

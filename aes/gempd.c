@@ -65,9 +65,6 @@ static AESPD *getpd(void)
     p = pd_index(curpid);
     p->p_pid = curpid++;
 
-    /* was: setdsss(p->p_uda); */
-    p->p_uda->u_insuper = 1;
-
     /* return the pd we got */
     return p;
 }

@@ -248,7 +248,6 @@ trapaes:
 
         movea.l _rlr,a6
         movea.l PD_UDA(a6),a6
-        move.w  #1,UDA_INSUPER(a6)
         move.l  a0,UDA_SPUSER(a6)
         move.l  sp,UDA_OLDSPSUPER(a6)
         movea.l UDA_SPSUPER(a6),sp
@@ -263,7 +262,6 @@ trapaes:
 
         movea.l _rlr,a0
         movea.l PD_UDA(a0),a0
-        clr.w   UDA_INSUPER(a0)
         move.l  sp,UDA_SPSUPER(a0)
         movea.l UDA_OLDSPSUPER(a0),sp
         movea.l UDA_SPUSER(a0),a0
