@@ -99,7 +99,7 @@ struct evb                  /* event block */
 /* p_name */
 #define AP_NAMELEN  8           /* architectural */
 /* p_stat */
-#define         WAITIN          0x0001
+#define WAITIN      0x0001      /* process is waiting for an event */
 /* p_flags */
 #define AP_OPEN     0x0001      /* application is between appl_init() & appl_exit() */
 #define AP_MESAG    0x0002      /* application has waited for a message */
