@@ -37,7 +37,7 @@
 #include "gemctrl.h"
 
 
-#define THEDESK 3
+#define THEDESK 3       /* MUST be the same value as DESKMENU in desk/desk_rsc.h */
 
 
 /*
