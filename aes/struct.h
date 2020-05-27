@@ -85,10 +85,10 @@ struct uda                  /* user stack data area */
 
 struct evb                  /* event block */
 {
-        EVB     *e_nextp;       /* link to next event on PD event list */
+        EVB     *e_nextp;       /* link to next event on AESPD event list */
         EVB     *e_link;        /* link to next block on event chain */
         EVB     *e_pred;        /* link to prev block on event chain */
-        AESPD   *e_pd;          /* owner PD (data for fork) */
+        AESPD   *e_pd;          /* owner AESPD (data for fork) */
         LONG    e_parm;         /* parm for request -> event comm */
         WORD    e_flag;
         EVSPEC  e_mask;         /* mask for event notification */

@@ -41,7 +41,7 @@ _psetup:
         move    sr,savesr2
         ori     #0x0700,sr
 #endif
-        movea.l 4(sp),a0        // PD *
+        movea.l 4(sp),a0        // AESPD *
         move.l  8(sp),d0        // New process entry point
         movea.l PD_UDA(a0),a0
         movea.l UDA_SPSUPER(a0),a1
@@ -137,7 +137,7 @@ savestate:
 #endif
 
         move.l  a6,-(sp)        // Temporary backup
-        movea.l _rlr,a6         // Get pointer to rlr PD structure
+        movea.l _rlr,a6         // Get pointer to rlr AESPD structure
         movea.l PD_UDA(a6),a6   // Get pointer to UDA structure
         move.l  (sp)+,UDA_REG_A6(a6)    // Save old a6 in UDA struct
         movem.l d0-a5,UDA_REGS(a6)      // Save registers d0-a5 in UDA struct
