@@ -22,6 +22,20 @@
         .extern _indisp
         .extern _disp
 
+/*
+ * The amount of space that gotopgm() reserves at the top of the stack
+ * (see the comments at gotopgm() for more details).  At the time of
+ * writing (may 2020), this is just the maximum size of the exception
+ * stack frame for a trap instruction (8 bytes).  However we need to add
+ * 2 bytes for ColdFire processors, to allow for possible auto-alignment
+ * of the stack to a 4-byte boundary.
+ */
+#ifdef __mcoldfire__
+#define STACKRESERVE    10
+#else
+#define STACKRESERVE    8
+#endif
+
         .text
 
 /*
@@ -84,16 +98,14 @@ _gotopgm:
         // We must fix rlr->p_uda->u_spsuper here to ensure this will
         // not happen. We have to estimate the amount of data stored
         // on this stack when the stack switch occurs in the trap.
-        // Currently, there is only the trap stack frame, which is CPU
-        // dependent and may be 6 or 8 bytes. Thus 8 bytes of additional
-        // room will be enough in all cases.
+        // This is the value STACKRESERVE defined above.
         // You must keep an eye on the trap #2 prologue for AES.
         // It is located in gemdosif.S, label "trapaes".
         // If some additional data is pushed on the stack before
-        // the stack switch, you must add the equivalent room here.
+        // the stack switch, you must increase STACKRESERVE.
 
         move.l  sp,d0   // Current stack
-        subq.l  #8,d0   // Room for the trap stack frame or more
+        subi.l  #STACKRESERVE,d0        // Room for the trap stack frame or more
         move.l  d0,UDA_SPSUPER(a2)      // Will be the stack on next trap
 
 #ifdef __mcoldfire__
