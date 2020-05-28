@@ -1305,7 +1305,7 @@ static ULONG uaelib_ExitEmu(void)
 static char uae_debug_string[UAE_MAX_DEBUG_LENGTH + 1];
 
 /* The only available output function is uaelib_DbgPuts(),
- * so we have to buffer the string until until \n */
+ * so we have to buffer the string until \n */
 void kprintf_outc_uae(int c)
 {
     if (c == '\n')
