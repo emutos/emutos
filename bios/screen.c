@@ -594,6 +594,10 @@ void screen_init_mode(void)
 #endif /* CONF_WITH_ATARI_VIDEO */
     MAYBE_UNUSED(get_default_palmode);
 
+#ifdef MACHINE_AMIGA
+    amiga_screen_init();
+#endif
+
     rez_was_hacked = FALSE; /* initial assumption */
 }
 
@@ -615,9 +619,6 @@ void screen_init_address(void)
     /* set new v_bas_ad */
     v_bas_ad = screen_start;
     KDEBUG(("v_bas_ad = %p, vram_size = %ld\n", v_bas_ad, vram_size));
-#ifdef MACHINE_AMIGA
-    amiga_screen_init();
-#endif
     /* correct physical address */
     setphys(screen_start);
 }
