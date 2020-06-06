@@ -123,6 +123,7 @@ EmuTOS also supports the following Atari-compatible hardware:
 - ICD AdSCSI Plus ST Real-Time Clock
 - MonSTer expansion card
 - Magnum ST/STE expansion cards
+- Storm ST expansion card (RAM and RTC)
 - Nova/ET4000 graphics card
 - Nova/Mach32 graphics card
 - Volksfarben/ET4000 graphics card
