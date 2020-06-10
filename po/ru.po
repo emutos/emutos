@@ -327,8 +327,12 @@ msgid "Copy's name: ________.___"
 msgstr "Имя копии: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Free memory: ___________________"
-msgstr "Свободная память: ___________________"
+msgid "Key: ^_"
+msgstr "Клавиша: ^_"
+
+#: desk/desk_rsc.c
+msgid "Free RAM: _____________________"
+msgstr "Свободно RAM: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -363,16 +367,28 @@ msgid "  Info/Rename..."
 msgstr "  Инфо/Переименовать..."
 
 #: desk/desk_rsc.c
-msgid "  New Folder..."
+msgid "  Search..."
+msgstr "   Поиск..."
+
+#: desk/desk_rsc.c
+msgid "  New folder..."
 msgstr "  Новая папка..."
 
 #: desk/desk_rsc.c
-msgid "  Close"
-msgstr "  На шаг вверх"
+msgid "  Close folder"
+msgstr "  Закрыть папку"
 
 #: desk/desk_rsc.c
-msgid "  Close window"
-msgstr "  Закрыть окно"
+msgid "  Close top window"
+msgstr "  Закрыть текущее окно"
+
+#: desk/desk_rsc.c
+msgid "  Cycle windows"
+msgstr "  Переключить окна"
+
+#: desk/desk_rsc.c
+msgid "  Select all items"
+msgstr "  Выбрать все"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
@@ -383,8 +399,8 @@ msgid "  Delete..."
 msgstr "  Удалить..."
 
 #: desk/desk_rsc.c
-msgid "  Format..."
-msgstr "  Форматировать..."
+msgid "  Format floppy..."
+msgstr "  Форматировать диск..."
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
@@ -421,6 +437,10 @@ msgstr "  Сортировать по дате"
 #: desk/desk_rsc.c
 msgid "  No sort"
 msgstr "  Не сортировать"
+
+#: desk/desk_rsc.c
+msgid "  Size to fit"
+msgstr "  Масштабировать"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
@@ -465,6 +485,10 @@ msgstr "  Сохранить настройки..."
 #: desk/desk_rsc.c
 msgid "  Blitter"
 msgstr "  Blitter"
+
+#: desk/desk_rsc.c
+msgid "  Cache"
+msgstr "  Кэш"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
@@ -603,6 +627,10 @@ msgid "NEW FOLDER"
 msgstr "НОВАЯ ПАПКА"
 
 #: desk/desk_rsc.c
+msgid "SEARCH FILE"
+msgstr "ПОИСК ФАЙЛА"
+
+#: desk/desk_rsc.c
 msgid "PRINT FILE"
 msgstr "ПЕЧАТЬ ФАЙЛА"
 
@@ -621,18 +649,6 @@ msgstr "Подтверждать копирование:"
 #: desk/desk_rsc.c
 msgid "Confirm overwrites:"
 msgstr "Подтверждать перезапись:"
-
-#: desk/desk_rsc.c
-msgid "Sound effects:"
-msgstr "Звуковые эффекты:"
-
-#: desk/desk_rsc.c
-msgid "On"
-msgstr "Вкл"
-
-#: desk/desk_rsc.c
-msgid "Off"
-msgstr "Выкл"
 
 #: desk/desk_rsc.c
 msgid "More preferences"
@@ -701,6 +717,14 @@ msgstr "  Параметры ввода:"
 #: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Функциональные клавиши:"
+
+#: desk/desk_rsc.c
+msgid "Menu shortcut keys:"
+msgstr "Горячие клавиши меню:"
+
+#: desk/desk_rsc.c
+msgid "Clear all"
+msgstr "Очистить все"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -1176,6 +1200,26 @@ msgid "[1]["
 "Illegal .INF file format.][  OK  ]"
 msgstr "[1]["
 "Неверный формат .INF-файла.][  ОК  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Continue to search?][  OK  |Cancel]"
+msgstr "[2]["
+"Продолжить поиск?][  ОК  |Отмена]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No more files.][  OK  ]"
+msgstr "[1]["
+"Больше файлов нет.][  ОК  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Last key is already assigned.|"
+"Do you want to reassign it?][  OK  |Cancel]"
+msgstr "[2]["
+"Эта клавиша уже назначена.|"
+"Хотите переназначить ее?][  ОК  |Отмена]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
