@@ -330,8 +330,12 @@ msgid "Copy's name: ________.___"
 msgstr "Nom de la copie: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Free memory: ___________________"
-msgstr "Mémoire libre : ___________________"
+msgid "Key: ^_"
+msgstr "Touche : ^_"
+
+#: desk/desk_rsc.c
+msgid "Free RAM: _____________________"
+msgstr "RAM libre : _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -366,16 +370,28 @@ msgid "  Info/Rename..."
 msgstr "  Info/Renommer..."
 
 #: desk/desk_rsc.c
+msgid "  Search..."
+msgstr "  Rechercher..."
+
+#: desk/desk_rsc.c
 msgid "  New folder..."
 msgstr "  Nouveau dossier..."
 
 #: desk/desk_rsc.c
-msgid "  Close"
-msgstr "  Fermer"
+msgid "  Close folder"
+msgstr "  Fermer le dossier"
 
 #: desk/desk_rsc.c
-msgid "  Close window"
+msgid "  Close top window"
 msgstr "  Fermer la fenêtre"
+
+#: desk/desk_rsc.c
+msgid "  Cycle windows"
+msgstr "  Cycler les fenêtres"
+
+#: desk/desk_rsc.c
+msgid "  Select all items"
+msgstr "  Sélectionner tout"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
@@ -386,8 +402,8 @@ msgid "  Delete..."
 msgstr "  Supprimer..."
 
 #: desk/desk_rsc.c
-msgid "  Format..."
-msgstr "  Formater..."
+msgid "  Format floppy..."
+msgstr "  Formater disquette..."
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
@@ -424,6 +440,10 @@ msgstr "  Trier par date"
 #: desk/desk_rsc.c
 msgid "  No sort"
 msgstr "  Ne pas trier"
+
+#: desk/desk_rsc.c
+msgid "  Size to fit"
+msgstr "  Fenêtre idéale"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
@@ -468,6 +488,10 @@ msgstr "  Sauver le bureau..."
 #: desk/desk_rsc.c
 msgid "  Blitter"
 msgstr "  Blitter"
+
+#: desk/desk_rsc.c
+msgid "  Cache"
+msgstr "  Cache"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
@@ -606,6 +630,10 @@ msgid "NEW FOLDER"
 msgstr "NOUVEAU DOSSIER"
 
 #: desk/desk_rsc.c
+msgid "SEARCH FILE"
+msgstr "RECHERCHER FICHIER"
+
+#: desk/desk_rsc.c
 msgid "PRINT FILE"
 msgstr "IMPRIMER FICHIER"
 
@@ -624,18 +652,6 @@ msgstr "Confirmer copie:"
 #: desk/desk_rsc.c
 msgid "Confirm overwrites:"
 msgstr "Confirmer écrasement:"
-
-#: desk/desk_rsc.c
-msgid "Sound effects:"
-msgstr "Effets sonores :"
-
-#: desk/desk_rsc.c
-msgid "On"
-msgstr "On"
-
-#: desk/desk_rsc.c
-msgid "Off"
-msgstr "Off"
 
 #: desk/desk_rsc.c
 msgid "More preferences"
@@ -704,6 +720,14 @@ msgstr "Paramètre :"
 #: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Touches de fonction :"
+
+#: desk/desk_rsc.c
+msgid "Menu shortcut keys:"
+msgstr "Raccourcis des menus :"
+
+#: desk/desk_rsc.c
+msgid "Clear all"
+msgstr "Effacer tout"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -1178,6 +1202,27 @@ msgid "[1]["
 "Illegal .INF file format.][  OK  ]"
 msgstr "[1]["
 "Format de fichier .INF illégal.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Continue to search?][  OK  |Cancel]"
+msgstr "[2]["
+"Continuer à chercher ?][  OK  |Annuler]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No more files.][  OK  ]"
+msgstr "[1]["
+"Pas d'autre fichier.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Last key is already assigned.|"
+"Do you want to reassign it?][  OK  |Cancel]"
+msgstr "[2]["
+"La dernière touche est déjà|"
+"utilisée.|"
+"Voulez-vous la réaffecter ?][  OK  |Annuler]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
