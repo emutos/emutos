@@ -331,8 +331,12 @@ msgid "Copy's name: ________.___"
 msgstr "Name der Kopie: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Free memory: ___________________"
-msgstr "Freier Speicher: ___________________"
+msgid "Key: ^_"
+msgstr "Taste: ^_"
+
+#: desk/desk_rsc.c
+msgid "Free RAM: _____________________"
+msgstr "Freies RAM: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -367,28 +371,40 @@ msgid "  Info/Rename..."
 msgstr "  Info/Ändern..."
 
 #: desk/desk_rsc.c
+msgid "  Search..."
+msgstr "  Suche..."
+
+#: desk/desk_rsc.c
 msgid "  New folder..."
 msgstr "  Neuer Ordner..."
 
 #: desk/desk_rsc.c
-msgid "  Close"
-msgstr "  Schließe"
+msgid "  Close folder"
+msgstr "  Schließe Ordner"
 
 #: desk/desk_rsc.c
-msgid "  Close window"
+msgid "  Close top window"
 msgstr "  Schließe Fenster"
 
 #: desk/desk_rsc.c
+msgid "  Cycle windows"
+msgstr "  Wechsle Fenster"
+
+#: desk/desk_rsc.c
+msgid "  Select all items"
+msgstr "  Alles auswählen"
+
+#: desk/desk_rsc.c
 msgid "  Set file mask..."
-msgstr "  Dateimaske..."
+msgstr "  Dateimaske setzen..."
 
 #: desk/desk_rsc.c
 msgid "  Delete..."
 msgstr "  Löschen..."
 
 #: desk/desk_rsc.c
-msgid "  Format..."
-msgstr "  Formatieren..."
+msgid "  Format floppy..."
+msgstr "  Formatiere Floppy..."
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
@@ -469,6 +485,10 @@ msgstr "  Desktop sichern..."
 #: desk/desk_rsc.c
 msgid "  Blitter"
 msgstr "  Blitter"
+
+#: desk/desk_rsc.c
+msgid "  Cache"
+msgstr "  Cache"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
@@ -607,6 +627,10 @@ msgid "NEW FOLDER"
 msgstr "NEUER ORDNER"
 
 #: desk/desk_rsc.c
+msgid "SEARCH FILE"
+msgstr "DATEI SUCHEN"
+
+#: desk/desk_rsc.c
 msgid "PRINT FILE"
 msgstr "DATEI DRUCKEN"
 
@@ -625,18 +649,6 @@ msgstr "Kopierbestätigung:"
 #: desk/desk_rsc.c
 msgid "Confirm overwrites:"
 msgstr "Überschreibbestätigung:"
-
-#: desk/desk_rsc.c
-msgid "Sound effects:"
-msgstr "Sound-Effekte:"
-
-#: desk/desk_rsc.c
-msgid "On"
-msgstr "An"
-
-#: desk/desk_rsc.c
-msgid "Off"
-msgstr "Aus"
 
 #: desk/desk_rsc.c
 msgid "More preferences"
@@ -705,6 +717,14 @@ msgstr "Eingabeparameter:"
 #: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Funktionstasten:"
+
+#: desk/desk_rsc.c
+msgid "Menu shortcut keys:"
+msgstr "Menü-Tastenkürzel:"
+
+#: desk/desk_rsc.c
+msgid "Clear all"
+msgstr "Alle löschen"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -1177,6 +1197,27 @@ msgid "[1]["
 msgstr "[1]["
 "Falsches Format der .INF-Datei.][  OK  ]"
 
+#: desk/desk_rsc.c
+msgid "[2]["
+"Continue to search?][  OK  |Cancel]"
+msgstr "[2]["
+"Suche fortsetzen?][  OK  |Abbruch]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No more files.][  OK  ]"
+msgstr "[1]["
+"Keine weiteren Dateien.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Last key is already assigned.|"
+"Do you want to reassign it?][  OK  |Cancel]"
+msgstr "[2]["
+"Die letzte Taste ist schon|"
+"vergeben.|"
+"Soll sie neu vergeben werden?][  OK  |Abbruch]"
+
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
 msgstr "Gib <filespec> ... auf der Standard-Ausgabe aus"
@@ -1528,4 +1569,3 @@ msgstr "Falsche Zahl von Parametern"
 #: cli/cmdutil.c
 msgid "error code %ld"
 msgstr "Fehlercode %ld"
-
