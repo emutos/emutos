@@ -380,7 +380,7 @@ msgstr "  Закрыть папку"
 
 #: desk/desk_rsc.c
 msgid "  Close top window"
-msgstr "  Закрыть текущее окно"
+msgstr "  Закрыть активное окно"
 
 #: desk/desk_rsc.c
 msgid "  Cycle windows"
@@ -440,7 +440,7 @@ msgstr "  Не сортировать"
 
 #: desk/desk_rsc.c
 msgid "  Size to fit"
-msgstr "  Масштабировать"
+msgstr "  Расставить"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
