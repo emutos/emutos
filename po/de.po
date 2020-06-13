@@ -424,23 +424,27 @@ msgstr "  Als Text"
 
 #: desk/desk_rsc.c
 msgid "  Sort by name"
-msgstr "  nach Namen"
+msgstr "  Nach Namen"
 
 #: desk/desk_rsc.c
 msgid "  Sort by type"
-msgstr "  nach Typ"
+msgstr "  Nach Typ"
 
 #: desk/desk_rsc.c
 msgid "  Sort by size"
-msgstr "  nach Größe"
+msgstr "  Nach Größe"
 
 #: desk/desk_rsc.c
 msgid "  Sort by date"
-msgstr "  nach Datum"
+msgstr "  Nach Datum"
 
 #: desk/desk_rsc.c
 msgid "  No sort"
 msgstr "  Unsortiert"
+
+#: desk/desk_rsc.c
+msgid "  Size to fit"
+msgstr "  Einpassen"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
