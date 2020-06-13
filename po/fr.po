@@ -519,7 +519,7 @@ msgstr "L'équipe de développement d'EmuTOS"
 
 #: desk/desk_rsc.c
 msgid "Based on 'GPLed' sources"
-msgstr "Basé sur des sources GPL-isées"
+msgstr "Basé sur des sources GPL-isés"
 
 #: desk/desk_rsc.c
 msgid "\275 1987 Digital Research, Inc."
