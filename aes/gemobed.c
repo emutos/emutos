@@ -39,7 +39,7 @@
  * note that most documentation on this is incorrect.  the following
  * strings agree with TOS 2/3/4 actual usage.
  */
-#define VALIDATE_N "0..9A..Z \x80\x8e\x8f\x90\x92\x99\x9a\x9e\xa5\xb5\xb6\xb7\xb8\xc2..$dc"
+#define VALIDATE_N "0..9A..Z \x80\x8e\x8f\x90\x92\x99\x9a\x9e\xa5\xb5\xb6\xb7\xb8\xc2..\xdc"
 #define VALIDATE_A (VALIDATE_N+4)               /* 0..9 are omitted */
 #define VALIDATE_n "0..9a..zA..Z \x80..\xff"
 #define VALIDATE_a (VALIDATE_n+4)               /* 0..9 are omitted */
