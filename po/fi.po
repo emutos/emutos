@@ -326,8 +326,12 @@ msgid "Copy's name: ________.___"
 msgstr "Kopion nimi: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Free memory: ___________________"
-msgstr "Vapaa muisti: ___________________"
+msgid "Key: ^_"
+msgstr "Näppäin: ^_"
+
+#: desk/desk_rsc.c
+msgid "Free RAM: _____________________"
+msgstr "Vapaa muisti: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -362,16 +366,28 @@ msgid "  Info/Rename..."
 msgstr "  Näytä tiedot..."
 
 #: desk/desk_rsc.c
+msgid "  Search..."
+msgstr "  Hae..."
+
+#: desk/desk_rsc.c
 msgid "  New folder..."
 msgstr "  Uusi kansio..."
 
 #: desk/desk_rsc.c
-msgid "  Close"
-msgstr "  Sulje"
+msgid "  Close folder"
+msgstr "  Sulje kansio"
 
 #: desk/desk_rsc.c
-msgid "  Close window"
-msgstr "  Sulje ikkuna"
+msgid "  Close top window"
+msgstr "  Sulje ylin ikkuna"
+
+#: desk/desk_rsc.c
+msgid "  Cycle windows"
+msgstr "  Vaihda ikkunaa"
+
+#: desk/desk_rsc.c
+msgid "  Select all items"
+msgstr "  Valitse kaikki"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
@@ -382,8 +398,8 @@ msgid "  Delete..."
 msgstr "  Poista..."
 
 #: desk/desk_rsc.c
-msgid "  Format..."
-msgstr "  Alusta..."
+msgid "  Format floppy..."
+msgstr "  Alusta levyke..."
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
@@ -420,6 +436,10 @@ msgstr "  Päiväys"
 #: desk/desk_rsc.c
 msgid "  No sort"
 msgstr "  Järjestämätön"
+
+#: desk/desk_rsc.c
+msgid "  Size to fit"
+msgstr "  Koko sopivaksi"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
@@ -464,6 +484,10 @@ msgstr "  Tallenna työpöytä..."
 #: desk/desk_rsc.c
 msgid "  Blitter"
 msgstr "  Blitteri"
+
+#: desk/desk_rsc.c
+msgid "  Cache"
+msgstr "  Välimuisti"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
@@ -602,6 +626,10 @@ msgid "NEW FOLDER"
 msgstr "UUSI KANSIO"
 
 #: desk/desk_rsc.c
+msgid "SEARCH FILE"
+msgstr "HAE TIEDOSTO"
+
+#: desk/desk_rsc.c
 msgid "PRINT FILE"
 msgstr "TULOSTA TIEDOSTO"
 
@@ -620,18 +648,6 @@ msgstr "Vahvista kopiointi:"
 #: desk/desk_rsc.c
 msgid "Confirm overwrites:"
 msgstr "Vahvista ylikirjoitus:"
-
-#: desk/desk_rsc.c
-msgid "Sound effects:"
-msgstr "Ääniefektit:"
-
-#: desk/desk_rsc.c
-msgid "On"
-msgstr "Päällä"
-
-#: desk/desk_rsc.c
-msgid "Off"
-msgstr "Pois"
 
 #: desk/desk_rsc.c
 msgid "More preferences"
@@ -700,6 +716,14 @@ msgstr "Syöte:"
 #: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Funktionäppäimet:"
+
+#: desk/desk_rsc.c
+msgid "Menu shortcut keys:"
+msgstr "Valikoiden pikanäppäimet:"
+
+#: desk/desk_rsc.c
+msgid "Clear all"
+msgstr "Poista kaikki"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -1164,6 +1188,26 @@ msgid "[1]["
 "Illegal .INF file format.][  OK  ]"
 msgstr "[1]["
 "Sopimaton .INF tiedostomuoto.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Continue to search?][  OK  |Cancel]"
+msgstr "[2]["
+"Jatka hakua?][  OK  |Kumoa]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No more files.][  OK  ]"
+msgstr "[1]["
+"Ei enempää tiedostoja.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Last key is already assigned.|"
+"Do you want to reassign it?][  OK  |Cancel]"
+msgstr "[2]["
+"Näppäin on jo käytössä.|"
+"Haluatko uudelleenkäyttää sen?][  OK  |Kumoa]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
