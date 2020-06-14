@@ -1050,6 +1050,7 @@ static void save_shortcut(OBJECT *tree, WORD n)
     WORD i;
 
     inf_sget(tree, DCMNUKEY, key);
+    key[0] = toupper(key[0]);
 
     if ((key[0] >= 'A') && (key[0] <= 'Z'))
     {
