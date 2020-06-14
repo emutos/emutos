@@ -1060,7 +1060,7 @@ static void save_shortcut(OBJECT *tree, WORD n)
                 continue;
             if (menu_shortcuts[i] == key[0])    /* duplicate shortcut */
             {
-                if (fun_alert(2, STDUPCUT) != 1)    /* user cancelled */
+                if (fun_alert(1, STDUPCUT) != 1)    /* user cancelled */
                     return;
                 menu_shortcuts[i] = 0x00;
                 break;
