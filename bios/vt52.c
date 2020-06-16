@@ -747,18 +747,17 @@ static void erase_from_bol_impl(void)
     s_cur_x = v_cur_cx;
     s_cur_y = v_cur_cy;
 
-    /* are we in column 0?*/
-    if ( s_cur_x == 0 )
-        ascii_out(' ');         /* output a space */
-    else {
-        /* test, if x is even or odd */
-        if ( !IS_ODD(v_cur_cx) ) {
-            ascii_out(' ');     /* first output a space */
-            blank_out (0, s_cur_y, s_cur_x - 1, s_cur_y);
-        }
-        else
-            blank_out (0, s_cur_y, s_cur_x, s_cur_y);
+    /*
+     * because blank_out() requires the ending x position to be
+     * odd, we need to handle the two possibilities separately
+     */
+    if ( !IS_ODD(s_cur_x) ) {
+        ascii_out(' ');     /* first output a space */
+        if (s_cur_x)
+            blank_out(0, s_cur_y, s_cur_x-1, s_cur_y);
     }
+    else
+        blank_out(0, s_cur_y, s_cur_x, s_cur_y);
 
     move_cursor(s_cur_x, s_cur_y); /* restore cursor position */
     cursor_on_cnt();            /* show cursor */
