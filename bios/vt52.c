@@ -748,16 +748,16 @@ static void erase_from_bol_impl(void)
     s_cur_y = v_cur_cy;
 
     /* are we in column 0?*/
-    if ( v_cur_cx == 0 )
+    if ( s_cur_x == 0 )
         ascii_out(' ');         /* output a space */
     else {
         /* test, if x is even or odd */
-        if ( IS_ODD(v_cur_cx) ) {
+        if ( !IS_ODD(v_cur_cx) ) {
             ascii_out(' ');     /* first output a space */
-            blank_out (0, v_cur_cy, v_cur_cx - 2, v_cur_cy);
+            blank_out (0, s_cur_y, s_cur_x - 1, s_cur_y);
         }
         else
-            blank_out (0, v_cur_cy, v_cur_cx, v_cur_cy);
+            blank_out (0, s_cur_y, s_cur_x, s_cur_y);
     }
 
     move_cursor(s_cur_x, s_cur_y); /* restore cursor position */
