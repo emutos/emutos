@@ -653,7 +653,7 @@ void win_dispfile(WNODE *pw, WORD file)
 #else
     col = pw->w_pncol;
 #endif
-    delcv = win_delta(pw, TRUE, file/col);
+    delcv = win_delta(pw, FALSE, file/col); /* FALSE => calculate vertical delta */
     pw->w_cvrow += delcv;
 
     /*
