@@ -671,6 +671,8 @@ static WORD do_filemenu(WORD item)
     case SRCHITEM:
         if (curr || pw)
             fun_search(curr, pw);
+        if (curr)
+            desk_clear(DESKWH);     /* deselect desktop icon(s) */
         break;
 #endif
 
