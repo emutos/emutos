@@ -87,6 +87,7 @@ WORD is_installed(ANODE *pa)
 BOOL is_viewer(ANODE *pa)
 {
     char *p;
+    WORD found, component;
 
     /*
      * must be a file with non-negative icon numbers
@@ -95,15 +96,18 @@ BOOL is_viewer(ANODE *pa)
         return FALSE;
 
     /*
-     * pdata must be an all-wildcard spec
-     *
-     * note that this test assumes that the spec is well-formed
+     * pdata must be an all-wildcard spec: we make sure both components
+     * of the filename are wildcard-only
      */
-    for (p = pa->a_pdata; *p; p++)
-        if ((*p != '*') && (*p != '?') && (*p != '.'))
-             return FALSE;
-
-    return TRUE;
+    for (found = 0, component = 1, p = pa->a_pdata; *p; p++)
+    {
+        if ((*p == '*') || (*p == '?'))
+            found |= component;
+        else if (*p == '.')
+            component <<= 1;
+    }
+ 
+    return (found==3) ? TRUE : FALSE;
 }
 #endif
 
@@ -451,15 +455,19 @@ WORD ins_app(WORD curr)
     OBJECT *tree;
     WORD change = 0;    /* -ve means cancel, 0 means no change, +ve means change */
     WORD isapp, field, exitobj, funkey;
-    BOOL installed;
+    BOOL installed, viewer;
     char *pfname, *p, *q;
     char name[LEN_ZFNAME];
     char pathname[MAXPATHLEN];
 
-    /* set handle -ve to include the default viewer in this lookup */
+    /*
+     * is this a valid anode (-ve handle => include check for default viewer) ?
+     * if so, see if this is the default viewer
+     */
     pa = i_find(-G.g_cwin, curr, &pf, &isapp);
     if (!pa)
         return 0;
+    viewer = (pa->a_flags & AF_VIEWER) ? TRUE : FALSE;
 
 #if CONF_WITH_DESKTOP_SHORTCUTS
     /*
@@ -492,7 +500,7 @@ WORD ins_app(WORD curr)
     }
 #endif
 
-    installed = is_installed(pa);
+    installed = is_installed(pa) || viewer; /* the viewer is always installed */
 
     /*
      * first, get full path & name of application
