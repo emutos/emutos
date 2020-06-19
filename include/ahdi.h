@@ -16,16 +16,18 @@
 #ifndef _AHDI_H
 #define _AHDI_H
 
+#define PUN_MAXUNITS    16      /* architectural */
+
 typedef struct
 {
-    UWORD puns;                 /* number of block devices (partitions) */
-    UBYTE pun[16];              /* bus/device for this partition */
-    ULONG partition_start[16];
+    UWORD puns;                 /* number of physical devices */
+    UBYTE pun[PUN_MAXUNITS];    /* bus/device for this partition (see below) */
+    ULONG partition_start[PUN_MAXUNITS];
     ULONG cookie;               /* 'AHDI' if following valid */
     ULONG *cookie_ptr;          /* points to 'cookie' */
     UWORD version_num;          /* AHDI version */
     UWORD max_sect_siz;         /* maximum logical sector size */
-    LONG reserved[16];
+    LONG reserved[PUN_MAXUNITS];
 } PUN_INFO;
 
 /* masks for pun[] array above: */
