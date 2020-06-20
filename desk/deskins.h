@@ -29,4 +29,8 @@ void snap_icon(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff);
 BOOL is_viewer(ANODE *pa);
 #endif
 
+#if CONF_WITH_DESKTOP_SHORTCUTS
+BOOL is_executable(const char *filename);
+#endif
+
 #endif  /* _DESKINS_H */

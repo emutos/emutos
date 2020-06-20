@@ -885,7 +885,7 @@ static const char exec_ext[][EXT_LENGTH+1] = { "TOS", "TTP", "PRG", "APP", "GTP"
 /*
  * test if file is executable, based on extension
  */
-static BOOL is_executable(const char *filename)
+BOOL is_executable(const char *filename)
 {
     WORD i, n;
 
