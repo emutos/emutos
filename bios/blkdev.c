@@ -112,36 +112,50 @@ void blkdev_init(void)
     blkdev_hdv_init();
 }
 
-/* currently the only valid information in the PUN_INFO is the max_sect_siz */
-/* which is exactly what FreeMiNT was missing and was complaining about... */
+/*
+ * set up an AHDI-compatible PUN_INFO structure
+ */
 static void pun_info_setup(void)
 {
-    int i;
-    BPB *bpb;
+    int i, physdev, old_physdev;
+    BLKDEV *dev;
     LONG max_size;
 
-    /* set PUN_INFO */
-    pun_info.puns = BLKDEVNUM;
+    /*
+     * initialize empty PUN_INFO
+     */
+    pun_info.puns = 0;
     pun_info.max_sect_siz = MAX_LOGSEC_SIZE;    /* temporarily, for blkdev_getbpb() */
+    for (i = 0; i < PUN_MAXUNITS; i++)
+    {
+        pun_info.pun[i] = 0xff;
+        pun_info.partition_start[i] = 0;
+        pun_info.reserved[i] = 0;
+    }
 
-    /* floppy A: */
-    pun_info.pun[0] = 0;    /* FIXME */
-    pun_info.partition_start[0] = 0;
-
-    /* floppy B: */
-    pun_info.pun[1] = 0;    /* FIXME */
-    pun_info.partition_start[1] = 0;
-
-    /* disks C: - P: */
-    for(i = 2, max_size = SECTOR_SIZE; i < 16; i++) {
-        pun_info.pun[i] = 0;    /* FIXME */
-        pun_info.partition_start[i] = 0;    /* FIXME */
-
-        bpb = (BPB *)blkdev_getbpb(i);
-        if (!bpb)
-            continue;
-        if (bpb->recsiz > max_size) {
-            max_size = bpb->recsiz;
+    /*
+     * fill in PUN_INFO, using data from blkdev[]
+     */
+    old_physdev = -1;
+    max_size = SECTOR_SIZE;     /* used for determining actual max logsec size */
+    for (dev = blkdev, i = NUMFLOPPIES; dev < blkdev+BLKDEVNUM; dev++)
+    {
+        physdev = dev->unit - NUMFLOPPIES;
+        if ((dev->flags & DEVICE_VALID) && (physdev >= 0))
+        {
+            if (physdev != old_physdev)
+            {
+                pun_info.puns++;        /* count physical devices */
+                old_physdev = physdev;
+            }
+            blkdev_getbpb(i);           /* force boot sector scan & BPB rebuild */
+            pun_info.pun[i] = physdev;
+            pun_info.partition_start[i] = dev->start;
+            if (dev->flags & GETBPB_ALLOWED)
+                if (dev->bpb.recsiz > max_size)
+                    max_size = dev->bpb.recsiz;
+            if (++i >= PUN_MAXUNITS)    /* cannot store info for devices > P: */
+                break;
         }
     }
 
