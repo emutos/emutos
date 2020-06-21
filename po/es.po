@@ -330,8 +330,12 @@ msgid "Copy's name: ________.___"
 msgstr "Nombre de la copia: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Free memory: ___________________"
-msgstr "Memoria libre: ___________________"
+msgid "Key: ^_"
+msgstr "Tecla: ^_"
+
+#: desk/desk_rsc.c
+msgid "Free RAM: _____________________"
+msgstr "RAM Libre: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -366,16 +370,28 @@ msgid "  Info/Rename..."
 msgstr "  Info/Renombrar..."
 
 #: desk/desk_rsc.c
+msgid "  Search..."
+msgstr "  Buscar..."
+
+#: desk/desk_rsc.c
 msgid "  New folder..."
 msgstr "  Nueva carpeta..."
 
 #: desk/desk_rsc.c
-msgid "  Close"
-msgstr "  Cerrar"
+msgid "  Close folder"
+msgstr "  Cerrar carpeta"
 
 #: desk/desk_rsc.c
-msgid "  Close window"
-msgstr "  Cerrar ventana"
+msgid "  Close top window"
+msgstr "  Cerrar ventana principal"
+
+#: desk/desk_rsc.c
+msgid "  Cycle windows"
+msgstr "  Circulación entre ventanas"
+
+#: desk/desk_rsc.c
+msgid "  Select all items"
+msgstr "  Seleccionar todo"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
@@ -386,8 +402,8 @@ msgid "  Delete..."
 msgstr "  Borrar..."
 
 #: desk/desk_rsc.c
-msgid "  Format..."
-msgstr "  Formatear..."
+msgid "  Format floppy..."
+msgstr "  Formatear disco..."
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
@@ -424,6 +440,10 @@ msgstr "  Ordenar por fecha"
 #: desk/desk_rsc.c
 msgid "  No sort"
 msgstr "  Sin orden"
+
+#: desk/desk_rsc.c
+msgid "  Size to fit"
+msgstr "  Ampliar al màximo"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
@@ -468,6 +488,10 @@ msgstr "  Grabar escritorio..."
 #: desk/desk_rsc.c
 msgid "  Blitter"
 msgstr "  Blitter"
+
+#: desk/desk_rsc.c
+msgid "  Cache"
+msgstr "  Caché"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
@@ -606,6 +630,10 @@ msgid "NEW FOLDER"
 msgstr "NUEVA CARPETA"
 
 #: desk/desk_rsc.c
+msgid "SEARCH FILE"
+msgstr "BUSCAR FICHERO"
+
+#: desk/desk_rsc.c
 msgid "PRINT FILE"
 msgstr "IMPRIMIR FICHERO"
 
@@ -624,18 +652,6 @@ msgstr "Confirmar copia:"
 #: desk/desk_rsc.c
 msgid "Confirm overwrites:"
 msgstr "Confirmar sobreescritura:"
-
-#: desk/desk_rsc.c
-msgid "Sound effects:"
-msgstr "Efecto sonoro:"
-
-#: desk/desk_rsc.c
-msgid "On"
-msgstr "On"
-
-#: desk/desk_rsc.c
-msgid "Off"
-msgstr "Off"
 
 #: desk/desk_rsc.c
 msgid "More preferences"
@@ -704,6 +720,14 @@ msgstr "Introducir parámetro:"
 #: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Teclas de función:"
+
+#: desk/desk_rsc.c
+msgid "Menu shortcut keys:"
+msgstr "Menú atajos de teclas:"
+
+#: desk/desk_rsc.c
+msgid "Clear all"
+msgstr "Borrar todo"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -1176,6 +1200,26 @@ msgid "[1]["
 msgstr "[1]["
 "Error al seleccionar|"
 "el directorio por defecto.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Continue to search?][  OK  |Cancel]"
+msgstr "[2]["
+"Continuar buscando?][  OK  |Cancelar]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No more files.][  OK  ]"
+msgstr "[1]["
+"No hay más ficheros.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Last key is already assigned.|"
+"Do you want to reassign it?][  OK  |Cancel]"
+msgstr "[2]["
+"Esa tecla ya está asignada.|"
+"Quieres volver a designarla?][  OK  |Cancelar]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
