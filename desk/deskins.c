@@ -550,7 +550,7 @@ WORD ins_app(WORD curr)
     inf_sset(tree, APARGS, installed ? pa->a_pargs : "");
     inf_sset(tree, APDOCTYP, installed ? pa->a_pdata+2 : "");
     if (pa->a_funkey)
-        sprintf(name, "%02d", pa->a_funkey);
+        sprintf(name, "%d ", pa->a_funkey); /* inf_sset() will truncate if necessary */
     else name[0] = '\0';
     inf_sset(tree, APFUNKEY, installed ? name : "");
 

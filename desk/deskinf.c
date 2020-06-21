@@ -1001,7 +1001,7 @@ static void init_conf_funkeys(OBJECT *tree, ANODE *pa)
     TEDINFO *ted;
     char fkey[5];
 
-    sprintf(fkey, "%2d", pa->a_funkey);
+    sprintf(fkey, "%d ", pa->a_funkey); /* inf_sset() will truncate if necessary */
     inf_sset(tree, DCFUNNUM, fkey);
 
     /* set up scrollable text */
