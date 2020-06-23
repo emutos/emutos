@@ -326,8 +326,12 @@ msgid "Copy's name: ________.___"
 msgstr "Jméno kopie: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Free memory: ___________________"
-msgstr "Volná pamì»: ___________________"
+msgid "Key: ^_"
+msgstr "Klávesa: ^_"
+
+#: desk/desk_rsc.c
+msgid "Free RAM: _____________________"
+msgstr "Volná RAM: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -362,16 +366,28 @@ msgid "  Info/Rename..."
 msgstr "  Info/Jméno..."
 
 #: desk/desk_rsc.c
+msgid "  Search..."
+msgstr "  Hledat..."
+
+#: desk/desk_rsc.c
 msgid "  New folder..."
 msgstr "  Nový adresáø..."
 
 #: desk/desk_rsc.c
-msgid "  Close"
-msgstr "  Zavøít"
+msgid "  Close folder"
+msgstr "  Zavøít adresáø"
 
 #: desk/desk_rsc.c
-msgid "  Close window"
-msgstr "  Zavøít okno"
+msgid "  Close top window"
+msgstr "  Zavøít horní okno"
+
+#: desk/desk_rsc.c
+msgid "  Cycle windows"
+msgstr "  Dal¹í okno"
+
+#: desk/desk_rsc.c
+msgid "  Select all items"
+msgstr "  Vybrat v¹e"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
@@ -382,8 +398,8 @@ msgid "  Delete..."
 msgstr "  Smazat..."
 
 #: desk/desk_rsc.c
-msgid "  Format..."
-msgstr "  Formátovat..."
+msgid "  Format floppy..."
+msgstr "  Formátovat disketu..."
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
@@ -420,6 +436,10 @@ msgstr "  Podle data"
 #: desk/desk_rsc.c
 msgid "  No sort"
 msgstr "  Netøídìnì"
+
+#: desk/desk_rsc.c
+msgid "  Size to fit"
+msgstr "  Zarovnat na rozmìr"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
@@ -464,6 +484,10 @@ msgstr "  Ulo¾it desktop..."
 #: desk/desk_rsc.c
 msgid "  Blitter"
 msgstr "  Blitter"
+
+#: desk/desk_rsc.c
+msgid "  Cache"
+msgstr "  Cache"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
@@ -602,6 +626,10 @@ msgid "NEW FOLDER"
 msgstr "NOVÝ ADRESÁØ"
 
 #: desk/desk_rsc.c
+msgid "SEARCH FILE"
+msgstr "HLEDAT SOUBOR"
+
+#: desk/desk_rsc.c
 msgid "PRINT FILE"
 msgstr "VYTISKNOUT SOUBOR"
 
@@ -620,18 +648,6 @@ msgstr "Potvrzovat kopírování:"
 #: desk/desk_rsc.c
 msgid "Confirm overwrites:"
 msgstr "Potvrzovat pøepsání:"
-
-#: desk/desk_rsc.c
-msgid "Sound effects:"
-msgstr "Zvukové efekty:"
-
-#: desk/desk_rsc.c
-msgid "On"
-msgstr "Ano"
-
-#: desk/desk_rsc.c
-msgid "Off"
-msgstr "Ne"
 
 #: desk/desk_rsc.c
 msgid "More preferences"
@@ -700,6 +716,14 @@ msgstr "Parametr:"
 #: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Funkèní klávesy:"
+
+#: desk/desk_rsc.c
+msgid "Menu shortcut keys:"
+msgstr "Klávesové zkratky:"
+
+#: desk/desk_rsc.c
+msgid "Clear all"
+msgstr "Vymazat v¹e"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -1165,6 +1189,26 @@ msgid "[1]["
 "Illegal .INF file format.][  OK  ]"
 msgstr "[1]["
 "Neplatný formát souboru .INF.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Continue to search?][  OK  |Cancel]"
+msgstr "[2]["
+"Pokraèovat ve hledání?][  OK  |Zru¹it]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No more files.][  OK  ]"
+msgstr "[1]["
+"®ádne dal¹í soubory.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Last key is already assigned.|"
+"Do you want to reassign it?][  OK  |Cancel]"
+msgstr "[2]["
+"Klávesa je ji¾ pou¾ita.|"
+"Chcete ji zmìnit?][  OK  |Zru¹it]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
