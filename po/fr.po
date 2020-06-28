@@ -70,7 +70,7 @@ msgid ""
 "*** Press any key to continue ***"
 msgstr ""
 "\n"
-"*** Appuyez sur une touche pour continuer ***"
+"*Appuyez sur une touche pour continuer*"
 
 #: bdos/osmem.c
 msgid ""
