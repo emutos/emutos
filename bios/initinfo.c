@@ -328,7 +328,6 @@ WORD initinfo(ULONG *pshiftbits)
     pair_end();
 
     pair_start(_("Machine")); cprintf(machine_name()); pair_end();
-/*  pair_start(_("MMU available")); cprintf(_("No")); pair_end(); */
     pair_start("ST-RAM"); cprintf_bytesize(stramsize); pair_end();
 
 #if CONF_WITH_ALT_RAM
