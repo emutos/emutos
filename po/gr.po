@@ -340,8 +340,12 @@ msgid "Copy's name: ________.___"
 msgstr "î¤¦£˜ ˜¤« š¨á­¦¬: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Free memory: ___________________"
-msgstr "„¢œçŸœ¨ £¤ã£: ___________________"
+msgid "Key: ^_"
+msgstr "‰¢œ ›å: ^_"
+
+#: desk/desk_rsc.c
+msgid "Free RAM: _____________________"
+msgstr "„¢œçŸœ¨ RAM _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -376,16 +380,28 @@ msgid "  Info/Rename..."
 msgstr "  ¢¨¦­¦¨åœª/‹œ«¦¤¦£˜©å˜..."
 
 #: desk/desk_rsc.c
-msgid "  New Folder..."
-msgstr "  Nâ¦ª ”á¡œ¢¦ª..."
+msgid "  Search..."
+msgstr "€¤˜ã«©..."
 
 #: desk/desk_rsc.c
-msgid "  Close"
-msgstr "  ‰¢œå© £¦"
+msgid "  New folder..."
+msgstr "  Œâ¦ª ­á¡œ¢¦ª..."
 
 #: desk/desk_rsc.c
-msgid "  Close window"
+msgid "  Close folder"
+msgstr "  ‰¢œå© £¦ ­˜¡â¢¦¬"
+
+#: desk/desk_rsc.c
+msgid "  Close top window"
 msgstr "  ‰¢œå© £¦ §˜¨˜Ÿç¨¦¬"
+
+#: desk/desk_rsc.c
+msgid "  Cycle windows"
+msgstr "  „§æ£œ¤¦ §˜¨áŸ¬¨¦"
+
+#: desk/desk_rsc.c
+msgid "  Select all items"
+msgstr "  „§ ¢¦šã æ¢à¤"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
@@ -396,8 +412,8 @@ msgid "  Delete..."
 msgstr "  ƒ ˜š¨˜­ã..."
 
 #: desk/desk_rsc.c
-msgid "  Format..."
-msgstr "  ƒ ˜£æ¨­à©..."
+msgid "  Format floppy..."
+msgstr "  ƒ ˜£æ¨­à© › ©¡â«˜ª.."
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
@@ -434,6 +450,10 @@ msgstr "  ’˜¥ ¤æ£© ¡˜«á £œ¨¦£¤å˜"
 #: desk/desk_rsc.c
 msgid "  No sort"
 msgstr "  •à¨åª «˜¥ ¤æ£©"
+
+#: desk/desk_rsc.c
+msgid "  Size to fit"
+msgstr "  €¬«æ£˜«¦ £âšœŸ¦ª"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
@@ -478,6 +498,10 @@ msgstr "  €§¦Ÿã¡œ¬© desktop..."
 #: desk/desk_rsc.c
 msgid "  Blitter"
 msgstr "  Blitter"
+
+#: desk/desk_rsc.c
+msgid "  Cache"
+msgstr "  ‹¤ã£ Cache"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
@@ -616,6 +640,10 @@ msgid "NEW FOLDER"
 msgstr "Œ„‘ ”€‰„Š‘"
 
 #: desk/desk_rsc.c
+msgid "SEARCH FILE"
+msgstr "€Œ€…†’†‘† €•„ˆ“"
+
+#: desk/desk_rsc.c
 msgid "PRINT FILE"
 msgstr "„‰’“—‘† €•„ˆ“"
 
@@ -634,18 +662,6 @@ msgstr "„§ ™œ™˜åà© ˜¤« š¨˜­é¤"
 #: desk/desk_rsc.c
 msgid "Confirm overwrites:"
 msgstr "„§ ™œ™˜åà© "
-
-#: desk/desk_rsc.c
-msgid "Sound effects:"
-msgstr "†®« ¡á œ­â:"
-
-#: desk/desk_rsc.c
-msgid "On"
-msgstr "Œ˜ "
-
-#: desk/desk_rsc.c
-msgid "Off"
-msgstr "î® "
 
 #: desk/desk_rsc.c
 msgid "More preferences"
@@ -714,6 +730,14 @@ msgstr "˜¨á£œ«¨¦  œ ©æ›¦¬"
 #: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "¦Ÿ« ¡á §¢ã¡«¨˜:"
+
+#: desk/desk_rsc.c
+msgid "Menu shortcut keys:"
+msgstr "‘¬¤«¦£œç©œ ª £œ¤¦ç"
+
+#: desk/desk_rsc.c
+msgid "Clear all"
+msgstr "„¡¡˜Ÿá¨ © æ¢à¤"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -1185,6 +1209,26 @@ msgid "[1]["
 "Illegal .INF file format.][  OK  ]"
 msgstr "[1]["
 "‹ âš¡¬¨¦ ˜¨®œå¦ .INF.][  ‰  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Continue to search?][  OK  |Cancel]"
+msgstr "[2]["
+"‘¬¤â®œ ˜ ˜¤˜ã«©ª][  OK  |ê¡¬¨¦]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No more files.][  OK  ]"
+msgstr "[1]["
+"ƒœ¤ ¬§á¨®¦¬¤ á¢¢˜ ˜¨®œå˜.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Last key is already assigned.|"
+"Do you want to reassign it?][  OK  |Cancel]"
+msgstr "[2]["
+"’¦ ¡¢œ ›å â®œ  ã› ˜¤˜«œŸœå.|"
+"‡â¢œ«œ ¤˜ ˜¤˜«œŸœå ¥˜¤á;][  OK  |ê¡¬¨¦]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
