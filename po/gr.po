@@ -1214,13 +1214,13 @@ msgstr "[1]["
 msgid "[2]["
 "Continue to search?][  OK  |Cancel]"
 msgstr "[2]["
-"‘¬¤â®œ ˜ ˜¤˜ã«©ª][  OK  |ê¡¬¨¦]"
+"‘¬¤â®œ ˜ ˜¤˜ã«©ª][  ‰  |ê¡¬¨¦]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "No more files.][  OK  ]"
 msgstr "[1]["
-"ƒœ¤ ¬§á¨®¦¬¤ á¢¢˜ ˜¨®œå˜.][  OK  ]"
+"ƒœ¤ ¬§á¨®¦¬¤ á¢¢˜ ˜¨®œå˜.][  ‰  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
@@ -1228,7 +1228,7 @@ msgid "[2]["
 "Do you want to reassign it?][  OK  |Cancel]"
 msgstr "[2]["
 "’¦ ¡¢œ ›å â®œ  ã› ˜¤˜«œŸœå.|"
-"‡â¢œ«œ ¤˜ ˜¤˜«œŸœå ¥˜¤á;][  OK  |ê¡¬¨¦]"
+"‡â¢œ«œ ¤˜ ˜¤˜«œŸœå ¥˜¤á;][  ‰  |ê¡¬¨¦]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
