@@ -192,7 +192,7 @@ static void normal_ascii(WORD ch)
         con_state = esc_ch1;    /* set constate to handle esc codes */
     }
 
-    /* Other control haracters */
+    /* Other control characters */
     else if ( ch >= 7 && ch <= 13 ) {
 #if CONF_SERIAL_CONSOLE_ANSI
         bconout(1, ch);

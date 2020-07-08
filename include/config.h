@@ -891,8 +891,8 @@
 #endif
 
 /*
- * Set CONF_WITH_SDMMC to 1 to activate SPI on the Vampire, required
- * for SD/MMC support on these boards
+ * Set CONF_WITH_VAMPIRE_SPI to 1 to activate SPI on the Vampire,
+ * required for SD/MMC support on these boards
  */
 #ifndef CONF_WITH_VAMPIRE_SPI
 # define CONF_WITH_VAMPIRE_SPI 0
@@ -1001,8 +1001,8 @@
 # define CONF_WITH_NOVA 1
 #endif
 
-/* Set this to 1 to enable support for the FlexCAN controller.
- * This allows to use an Eiffel keyboard adapter plugged on the CAN port
+/* Set CONF_WITH_FLEXCAN to 1 to enable support for the FlexCAN controller.
+ * This allows use of an Eiffel keyboard adapter plugged into the CAN port
  * of ColdFire evaluation boards.
  */
 #ifndef CONF_WITH_FLEXCAN
@@ -1359,8 +1359,8 @@
 #endif
 
 /*
- * Set CONF_WITH_BOTTOMTOTOP to 1 to include 'Bottom to top' in the
- * desktop menu
+ * Set CONF_WITH_BOTTOMTOTOP to 1 to include 'Cycle windows' in the
+ * desktop menu (this is the same as 'Bottom to top' in the Atari desktop)  
  */
 #ifndef CONF_WITH_BOTTOMTOTOP
 # define CONF_WITH_BOTTOMTOTOP 1
@@ -1395,6 +1395,7 @@
 
 /*
  * Set CONF_WITH_EASTER_EGG to 1 to include the EmuDesk Easter Egg
+ * (this plays a small tune and therefore requires YM2149 support)
  */
 #ifndef CONF_WITH_EASTER_EGG
 # define CONF_WITH_EASTER_EGG CONF_WITH_YM2149
@@ -1423,7 +1424,7 @@
 #endif
 
 /*
- * Set CONF_WITH_READ_INF to 1 to include the "Read .INF file" desktop menu item
+ * Set CONF_WITH_READ_INF to 1 to include 'Read .INF file' in the desktop menu
  */
 #ifndef CONF_WITH_READ_INF
 # define CONF_WITH_READ_INF 1
