@@ -1,7 +1,7 @@
 /*
  * startup.S - EmuTOS startup module
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2020 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -21,6 +21,7 @@
 #if CONF_WITH_CARTRIDGE
         .globl  _run_cartridge_applications
 #endif
+        .globl  _osexbootdelay
 
 // ==== References ===========================================================
 
@@ -281,6 +282,12 @@ _main:
 #define OSX_PROCESSORS  (OSX_68000+OSX_68010+OSX_68020+OSX_68030+OSX_68040+OSX_68060+OSX_68080+OSX_COLDFIRE)
 
 /*
+ * Default cold-boot delay. Can be modified by users to allow
+ * harddisks to become ready. 0 means no delay.
+ */
+#define OSX_BOOTDELAY   (0)
+
+/*
  * Extended OS header
  *
  * This is an EmuTOS extension, present from EmuTOS version 1.0 on.  You
@@ -302,7 +309,10 @@ osex:
     .dc.l   OSX_FEATURES                // feature flags
     .dc.w   OSX_MACHINES                // machine flags
     .dc.w   OSX_PROCESSORS              // processor flags
+_osexbootdelay:
+    .dc.b   OSX_BOOTDELAY               // cold-boot delay
 osexend:
+    .even                               // for alignment
 
 /*
  * Get in supervisor mode and reset all Hardware

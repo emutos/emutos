@@ -2,7 +2,7 @@
  *  bios.c - C portion of BIOS initialization and front end
  *
  * Copyright (C) 2001 Lineo, Inc.
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2020 The EmuTOS development team
  *
  * Authors:
  *  SCC     Steve C. Cavender
@@ -88,6 +88,8 @@ void run_cartridge_applications(WORD typebit);  /* defined in startup.S */
 #if CONF_WITH_68040_PMMU
 long setup_68040_pmmu(void);        /* defined in 68040_pmmu.S */
 #endif
+
+extern UBYTE osexbootdelay;         /* defined in OSEX header in startup.S */
 
 /*==== Declarations =======================================================*/
 
@@ -402,6 +404,19 @@ static void bios_init(void)
     KDEBUG(("calibrate_delay()\n"));
     calibrate_delay();  /* determine values for delay() function */
                         /*  - requires interrupts to be enabled  */
+
+    /* User configurable boot delay to allow harddisks etc. to get ready */
+    if (FIRST_BOOT && osexbootdelay)
+    {
+        long end = hz_200 + (long)osexbootdelay * 200UL;
+        while (hz_200 < end)
+        {
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+            stop_until_interrupt();
+#endif
+        }
+    }
+
     KDEBUG(("blkdev_init()\n"));
     blkdev_init();      /* floppy and harddisk initialisation */
     KDEBUG(("after blkdev_init()\n"));
