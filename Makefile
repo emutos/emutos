@@ -1031,7 +1031,7 @@ bios/ctables.h: country.mk tools/genctables.awk
 
 GEN_SRC += obj/header.h
 
-obj/header.h: tools/mkheader.awk obj/country
+obj/header.h: tools/mkheader.awk obj/country version.mk
 	awk -f tools/mkheader.awk $(COUNTRY) $(MAJOR_VERSION) $(MINOR_VERSION) $(FIX_VERSION) $(UNOFFICIAL) > $@
 
 #
