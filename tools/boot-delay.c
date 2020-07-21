@@ -12,12 +12,12 @@
 #include <string.h>
 
 #define ETOS_MAGIC_OFFS (0x2C)
-#define OSEX_MAGIC_OFFS (0x34)
-#define BOOTDELAY_OFFS  (OSEX_MAGIC_OFFS+0x18)
+#define OSXH_MAGIC_OFFS (0x34)
+#define BOOTDELAY_OFFS  (OSXH_MAGIC_OFFS+0x18)
 
 #define ETOS_MAGIC      "ETOS"
-#define OSEX_MAGIC      "OSEX"
-#define OSEX_MIN_VERS   (0x19)
+#define OSXH_MAGIC      "OSXH"
+#define OSXH_MIN_VERS   (0x19)
 
 #define BIGENDIAN_LONG(x) ((((unsigned long)x[0]) << 24ul) | (((unsigned long)x[1]) << 16ul) | \
                            (((unsigned long)x[2]) << 8ul)  | (((unsigned long)x[3])))
@@ -68,25 +68,25 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    if (fseek(fp, OSEX_MAGIC_OFFS, SEEK_SET) != 0) {
-        perror("Error seeking to OSEX magic");
+    if (fseek(fp, OSXH_MAGIC_OFFS, SEEK_SET) != 0) {
+        perror("Error seeking to OSXH magic");
         return -1;
     }
     if (fread(&magic, sizeof(magic), 1, fp) != 1) {
-        perror("Error reading OSEX magic");
+        perror("Error reading OSXH magic");
         return -1;
     }
-    if (memcmp(magic, OSEX_MAGIC, sizeof(magic)) != 0) {
+    if (memcmp(magic, OSXH_MAGIC, sizeof(magic)) != 0) {
         printf("This EmuTOS version does not support an optional boot delay.\r\n");
         return -1;
     }
 
-    /* OSEX header length also indicates its version. */
+    /* OSXH header length also indicates its version. */
     if (fread(&magic, sizeof(magic), 1, fp) != 1) {
-        perror("Error reading OSEX header length");
+        perror("Error reading OSXH header length");
         return -1;
     }
-    if (BIGENDIAN_LONG(magic) < OSEX_MIN_VERS) {
+    if (BIGENDIAN_LONG(magic) < OSXH_MIN_VERS) {
         printf("This EmuTOS version does not support an optional boot delay.\r\n");
         return -1;
     }
