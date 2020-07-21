@@ -89,7 +89,7 @@ void run_cartridge_applications(WORD typebit);  /* defined in startup.S */
 long setup_68040_pmmu(void);        /* defined in 68040_pmmu.S */
 #endif
 
-extern UBYTE osexbootdelay;         /* defined in OSEX header in startup.S */
+extern UBYTE osxhbootdelay;         /* defined in OSXH header in startup.S */
 
 /*==== Declarations =======================================================*/
 
@@ -406,9 +406,9 @@ static void bios_init(void)
                         /*  - requires interrupts to be enabled  */
 
     /* User configurable boot delay to allow harddisks etc. to get ready */
-    if (FIRST_BOOT && osexbootdelay)
+    if (FIRST_BOOT && osxhbootdelay)
     {
-        long end = hz_200 + (long)osexbootdelay * 200UL;
+        long end = hz_200 + (long)osxhbootdelay * 200UL;
         while (hz_200 < end)
         {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
