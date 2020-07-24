@@ -14,10 +14,10 @@ version of EmuTOS from the binary.
 As of 29/October/2019, EmuTOS version information is available via a new
 structure called the 'Extended OS header'.  It is located at offset 0x34
 from the beginning of the ROM, and you may check for its presence by
-verifying that the first 4 bytes are ASCII 'OSEX'.
+verifying that the first 4 bytes are ASCII 'OSXH'.
 
-Following 'OSEX' is a long containing the length of the entire structure
-(currently 24), and then 4 binary bytes containing the version, in the
+Following 'OSXH' is a long containing the length of the entire structure
+(currently 25), and then 4 binary bytes containing the version, in the
 following sequence:
     . major version
     . minor version
@@ -61,3 +61,7 @@ Following this are these informational fields:
         7         (currently reserved)
         8         ColdFire V4e
        9-15       (currently reserved)
+Following this is a user-patchable field:
+     . a byte containing the default cold boot delay, in seconds.  This
+       may be used to allow slow hard disks devices to come ready before
+       EmuTOS attempts to access them.  The current default value is 0.
