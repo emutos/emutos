@@ -23,15 +23,21 @@ directory of the boot device.
    is present, it is run.
 
 2. ST RAM is initialised, then the BIOS and the rest of the hardware
-   is initialised.  On ROMs other than 192K, the code checks for the
-   presence of a Nova/ET4000 video board.  If detected, the video
-   output is directed to it (this may be skipped by pressing the Ctrl
-   key during startup).
+   is initialised.
+   An optional cold boot delay (1-255 seconds) can be configured by the
+   user by changing a value in the extended OS header (OSXH) in the ROM
+   image. EmuTOS then waits the configured amount of time before
+   accessing any block devices (floppy disks, hard disks, etc.).
+   See doc/version.txt for details.
 
-3. If a cartridge is present, any type 3 cartridge applications are
+3. On ROMs other than 192K, the code checks for the presence of a
+   Nova/ET4000 video board.  If detected, the video output is directed
+   to it (this may be skipped by pressing the Ctrl key during startup).
+
+4. If a cartridge is present, any type 3 cartridge applications are
    run (under Hatari, this is where GEMDOS emulation is set up).
 
-4. On a cold boot only, the EmuTOS welcome screen is displayed.
+5. On a cold boot only, the EmuTOS welcome screen is displayed.
    While the screen is displayed, the keys Alt, Ctrl, and Esc may be
    pressed to alter subsequent processing (see below).
 
@@ -40,33 +46,33 @@ directory of the boot device.
    the first partition of the first device found.  Devices are scanned
    in the following sequence: IDE, SCSI, ACSI, SD/MMC.
 
-5. If the user pressed the Esc key in step 4 above, the Emucon2 console
+7. If the user pressed the Esc key in step 4 above, the Emucon2 console
    is displayed (on exit, the startup will continue as below).
 
-6. All PRG programs in the AUTO folder are run, in directory sequence.
+8. All PRG programs in the AUTO folder are run, in directory sequence.
    This is skipped if the Ctrl key was pressed in step 4 above.
 
-7. The AES is started.  If an EMUDESK.INF file is present, it is
+9. The AES is started.  If an EMUDESK.INF file is present, it is
    checked for a video setting (a #E line).  If a setting is specified,
    and it differs from the current setting, the current display mode
    is changed.
 
-8. The AES is initialised.  If an EMUCURS.RSC file is present, user-
+10. The AES is initialised.  If an EMUCURS.RSC file is present, user-
    defined mouse cursors are loaded from it.  This is skipped if the
    Ctrl key was pressed in step 4 above.
 
-9. Desk accessories are loaded, if present.  This is skipped if the
+11. Desk accessories are loaded, if present.  This is skipped if the
    Ctrl key was pressed in step 4 above.
 
-10. If an EMUDESK.INF file is present, it is checked for an autorun
+12. If an EMUDESK.INF file is present, it is checked for an autorun
    program setting (a #Z line).  If an autorun program exists, it is
    run.  This is skipped if the Ctrl key was pressed in step 4 above.
 
-11. The desktop is started.  If an EMUICON.RSC file is present, user
+13. The desktop is started.  If an EMUICON.RSC file is present, user
    desktop icons are loaded from it.  This is skipped if the Ctrl key
    was pressed in step 4 above.
 
-12. If an EMUDESK.INF file is present, it is used to set up the
+14. If an EMUDESK.INF file is present, it is used to set up the
    desktop display.  This is skipped if the Ctrl key was pressed in
    step 4 above, and a default display is set up instead.
 
