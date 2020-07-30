@@ -328,8 +328,12 @@ msgid "Copy's name: ________.___"
 msgstr "Copy naam: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Free memory: ___________________"
-msgstr "Vrij geheugen: ___________________"
+msgid "Key: ^_"
+msgstr "Key: ^_"
+
+#: desk/desk_rsc.c
+msgid "Free RAM: _____________________"
+msgstr "Vrij MEM: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -364,16 +368,28 @@ msgid "  Info/Rename..."
 msgstr "  Info/Hernoem..."
 
 #: desk/desk_rsc.c
+msgid "  Search..."
+msgstr "  Zoeken..."
+
+#: desk/desk_rsc.c
 msgid "  New folder..."
 msgstr "  Nieuwe map..."
 
 #: desk/desk_rsc.c
-msgid "  Close"
-msgstr "  Sluiten"
+msgid "  Close folder"
+msgstr "  Sluit map   "
+
+#: desk/desk_rsc.c       
+msgid "  Close top window"
+msgstr "  Sluit top venster"
 
 #: desk/desk_rsc.c
-msgid "  Close window"
-msgstr "  Sluit venster"
+msgid "  Cycle windows"
+msgstr "  Roteer vensters"
+
+#: desk/desk_rsc.c
+msgid "  Select all items"
+msgstr "  Selecteer alle items"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
@@ -384,8 +400,8 @@ msgid "  Delete..."
 msgstr "  Verwijderd..."
 
 #: desk/desk_rsc.c
-msgid "  Format..."
-msgstr "  Formateren..."
+msgid "  Format floppy..."
+msgstr "  Format floppy..."
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
@@ -422,6 +438,10 @@ msgstr "  Sorteren op datum"
 #: desk/desk_rsc.c
 msgid "  No sort"
 msgstr "  Niet sorteren"
+
+#: desk/desk_rsc.c
+msgid "  Size to fit"
+msgstr "  Maak passend"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
@@ -466,6 +486,10 @@ msgstr "  Sla desktop op..."
 #: desk/desk_rsc.c
 msgid "  Blitter"
 msgstr "  Blitter"
+
+#: desk/desk_rsc.c
+msgid "  Cache"
+msgstr "  Cache"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
@@ -604,6 +628,10 @@ msgid "NEW FOLDER"
 msgstr "NIEUWE MAP"
 
 #: desk/desk_rsc.c
+msgid "SEARCH FILE"
+msgstr "ZOEK BESTAND"
+
+#: desk/desk_rsc.c
 msgid "PRINT FILE"
 msgstr "PRINT BESTAND"
 
@@ -622,18 +650,6 @@ msgstr "Bevestig copies:"
 #: desk/desk_rsc.c
 msgid "Confirm overwrites:"
 msgstr "Bevestig overschrijven:"
-
-#: desk/desk_rsc.c
-msgid "Sound effects:"
-msgstr "Geluids effecten:"
-
-#: desk/desk_rsc.c
-msgid "On"
-msgstr "Aan"
-
-#: desk/desk_rsc.c
-msgid "Off"
-msgstr "Uit"
 
 #: desk/desk_rsc.c
 msgid "More preferences"
@@ -702,6 +718,14 @@ msgstr "Invoer parameter:"
 #: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Functie toetsen:"
+
+#: desk/desk_rsc.c
+msgid "Menu shortcut keys:"
+msgstr "Menu shortcut keys:"
+
+#: desk/desk_rsc.c
+msgid "Clear all"
+msgstr "Wis alles"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -1165,6 +1189,26 @@ msgid "[1]["
 "Illegal .INF file format.][  OK  ]"
 msgstr "[1]["
 "Ongeldige .INF bestands formaat.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Continue to search?][  OK  |Cancel]"
+msgstr "[2]["
+"Verder Zoeken?][  OK  |Afbreken]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No more files.][  OK  ]"
+msgstr "[1]["
+"Geen bestanden meer.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Last key is already assigned.|"
+"Do you want to reassign it?][  OK  |Cancel]"
+msgstr "[2]["
+"Laatste key is al toegewezen.|"
+"Wilt u het opnieuw toekennen?][  OK  |Afbreken]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
