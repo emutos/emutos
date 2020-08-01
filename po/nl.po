@@ -116,7 +116,7 @@ msgid "[2]["
 "Please check the disk drive,|"
 "or insert a disk.][Cancel|Retry]"
 msgstr "[2]["
-"Drive %c: reageerd niet.|"
+"Drive %c: reageert niet.|"
 "Controleer de diskdrive,|"
 "of voer een disk in.][Afbreken|Opnieuw]"
 
@@ -126,7 +126,7 @@ msgid "[1]["
 "may be damaged.][Cancel|Retry]"
 msgstr "[1]["
 "Data op de disk in drive %c:|"
-"kan beschadigt zijn.][Afbreken|Opnieuw]"
+"kan beschadigd zijn.][Afbreken|Opnieuw]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
@@ -163,7 +163,7 @@ msgid "[2]["
 msgstr "[2]["
 "Deze applicatie kan de map|"
 "of het bestand niet vinden|"
-"dat je geprobeert te openen.][  OK  ]"
+"dat je probeert te openen.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -187,9 +187,9 @@ msgid "[1]["
 "is set to Read Only status.][  OK  ]"
 msgstr "[1]["
 "Een item met deze naam|"
-"bestaat al in deze directory,|"
-"of dit item heeft de Aleen Lezen|"
-"status.][  OK  ]"
+"bestaat al in deze map,|"
+"of dit item heeft de|"
+"Alleen Lezen status.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -229,7 +229,7 @@ msgid "[1]["
 "this directory][  OK  ]"
 msgstr "[1]["
 "Onvoldoende geheugen voor|"
-"deze directory][  OK  ]"
+"deze map][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "ITEM SELECTOR"
@@ -281,11 +281,11 @@ msgstr "Tijd: __:__ __"
 
 #: desk/desk_rsc.c
 msgid "Drive identifier:     _"
-msgstr "Drive identifier:     _"
+msgstr "Drive letter:     _"
 
 #: desk/desk_rsc.c
 msgid "Disk label: ________.___"
-msgstr "Disk label: ________.___"
+msgstr "Disk naam: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Bytes used: __________"
@@ -297,11 +297,11 @@ msgstr "Bytes beschikbaar: __________"
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
-msgstr "Identifier: _:"
+msgstr "Letter: _:"
 
 #: desk/desk_rsc.c
 msgid "Label: ____________"
-msgstr "Label: ____________"
+msgstr "Naam: ____________"
 
 #: desk/desk_rsc.c
 msgid "Application name: ________.___"
@@ -329,7 +329,7 @@ msgstr "Copy naam: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Key: ^_"
-msgstr "Key: ^_"
+msgstr "Toets: ^_"
 
 #: desk/desk_rsc.c
 msgid "Free RAM: _____________________"
@@ -349,7 +349,7 @@ msgstr " Bestand "
 
 #: desk/desk_rsc.c
 msgid " View "
-msgstr " Kijken "
+msgstr " Weergave "
 
 #: desk/desk_rsc.c
 msgid " Options "
@@ -393,11 +393,11 @@ msgstr "  Selecteer alle items"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
-msgstr "  Set bestand filter..."
+msgstr "  Filter..."
 
 #: desk/desk_rsc.c
 msgid "  Delete..."
-msgstr "  Verwijderd..."
+msgstr "  Verwijderen..."
 
 #: desk/desk_rsc.c
 msgid "  Format floppy..."
@@ -413,11 +413,11 @@ msgstr "  Afsluiten"
 
 #: desk/desk_rsc.c
 msgid "  Show as icons"
-msgstr "  Weergeven als icon"
+msgstr "  Weergeven als icoon"
 
 #: desk/desk_rsc.c
 msgid "  Show as text"
-msgstr "  Weergeven als text"
+msgstr "  Weergeven als tekst"
 
 #: desk/desk_rsc.c
 msgid "  Sort by name"
@@ -429,7 +429,7 @@ msgstr "  Sorteren op type"
 
 #: desk/desk_rsc.c
 msgid "  Sort by size"
-msgstr "  Sort op grootte"
+msgstr "  Sorteren op grootte"
 
 #: desk/desk_rsc.c
 msgid "  Sort by date"
@@ -449,7 +449,7 @@ msgstr "  Stel achtergrond in..."
 
 #: desk/desk_rsc.c
 msgid "  Install icon..."
-msgstr "  Installeer icon..."
+msgstr "  Installeer icoon..."
 
 #: desk/desk_rsc.c
 msgid "  Install application..."
@@ -461,7 +461,7 @@ msgstr "  Installeer apparaten"
 
 #: desk/desk_rsc.c
 msgid "  Remove desktop icon"
-msgstr "  Verwijder desktop icon"
+msgstr "  Verwijder desktop icoon"
 
 #: desk/desk_rsc.c
 msgid "  Set preferences..."
@@ -513,11 +513,11 @@ msgstr "Copyright © 2001-"
 
 #: desk/desk_rsc.c
 msgid "The EmuTOS development team"
-msgstr "The EmuTOS development team"
+msgstr "Het EmuTOS team van ontwikkelaars"
 
 #: desk/desk_rsc.c
 msgid "Based on 'GPLed' sources"
-msgstr "Based on 'GPLed' sources"
+msgstr "Gebaseerd op 'GPLed' sources"
 
 #: desk/desk_rsc.c
 msgid "\275 1987 Digital Research, Inc."
@@ -533,11 +533,11 @@ msgstr "© 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c
 msgid "EmuTOS is distributed under the GPL"
-msgstr "EmuTOS is distributed under the GPL"
+msgstr "EmuTOS wordt verspreid onder de GPL"
 
 #: desk/desk_rsc.c
 msgid "See doc\\license.txt for details"
-msgstr "See doc\\license.txt for details"
+msgstr "Zie doc\license.txt voor details"
 
 #: desk/desk_rsc.c
 msgid "OPEN APPLICATION"
@@ -549,7 +549,7 @@ msgstr "Parameters:"
 
 #: desk/desk_rsc.c
 msgid "INSTALL DESKTOP ICON"
-msgstr "INSTALLEER DESKTOP ICON"
+msgstr "INSTALLEER DESKTOP ICOON"
 
 #: desk/desk_rsc.c
 msgid "Item type:"
@@ -569,7 +569,7 @@ msgstr "Printer"
 
 #: desk/desk_rsc.c
 msgid "Icon:"
-msgstr "Icon:"
+msgstr "Icoon:"
 
 #: desk/desk_rsc.c
 msgid "INSTALL APPLICATION"
@@ -637,7 +637,7 @@ msgstr "PRINT BESTAND"
 
 #: desk/desk_rsc.c
 msgid "SET PREFERENCES"
-msgstr "SET PREFERENCES"
+msgstr "VOORKEUREN INSTELLEN"
 
 #: desk/desk_rsc.c
 msgid "Confirm deletes:"
@@ -673,7 +673,7 @@ msgstr "Geen klik"
 
 #: desk/desk_rsc.c
 msgid "Time format:"
-msgstr "Time formaat:"
+msgstr "Tijd formaat:"
 
 #: desk/desk_rsc.c
 msgid "Default"
@@ -689,7 +689,7 @@ msgstr "24H"
 
 #: desk/desk_rsc.c
 msgid "Date format:"
-msgstr "Datum Formaat:"
+msgstr "Datum formaat:"
 
 #: desk/desk_rsc.c
 msgid "MDY"
@@ -701,7 +701,7 @@ msgstr "DMY"
 
 #: desk/desk_rsc.c
 msgid "SET FILE MASK"
-msgstr "ZET FILE FILTER"
+msgstr "BESTAND FILTER INSTELLEN"
 
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
@@ -721,7 +721,7 @@ msgstr "Functie toetsen:"
 
 #: desk/desk_rsc.c
 msgid "Menu shortcut keys:"
-msgstr "Menu shortcut keys:"
+msgstr "Menu sneltoetsen:"
 
 #: desk/desk_rsc.c
 msgid "Clear all"
@@ -729,7 +729,7 @@ msgstr "Wis alles"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
-msgstr "ZET SCHERM RESOLUTIE"
+msgstr "SCHERMRESOLUTIE INSTELLEN"
 
 #: desk/desk_rsc.c
 msgid "ST Low"
@@ -769,7 +769,7 @@ msgstr "ST Compatibel"
 
 #: desk/desk_rsc.c
 msgid "INSTALL WINDOW ICON"
-msgstr "INSTALLEER WINDOW ICON"
+msgstr "INSTALLEER VENSTER ICOON"
 
 #: desk/desk_rsc.c
 msgid "Folder"
@@ -785,7 +785,7 @@ msgstr "Monochrome"
 
 #: desk/desk_rsc.c
 msgid "FORMAT FLOPPY DISKETTE"
-msgstr "FORMATEER FLOPPY DISKETTE"
+msgstr "FORMATTEER FLOPPY DISKETTE"
 
 #: desk/desk_rsc.c
 msgid "Single sided"
@@ -797,11 +797,11 @@ msgstr "Dubbel zijdig"
 
 #: desk/desk_rsc.c
 msgid "High density"
-msgstr "Hoge density"
+msgstr "Hoge dichtheid"
 
 #: desk/desk_rsc.c
 msgid "SET BACKGROUND"
-msgstr "ZET ACHTERGROND"
+msgstr "ACHTERGROND INSTELLEN"
 
 #: desk/desk_rsc.c
 msgid "Select:"
@@ -883,13 +883,13 @@ msgstr "Selecteer een .INF bestand"
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
 msgstr "[2]["
-"Verander resolution?][ Ja | Nee ]"
+"Resolutie veranderen?][ Ja | Nee ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Show or print this document?][Show|Print|Cancel]"
 msgstr "[2]["
-"Kijk, of print dit document?][Kijk|Print|Afbreken]"
+"Toon, of print dit document?][Toon|Print|Afbreken]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -968,9 +968,8 @@ msgid "[1]["
 "enough room for this|"
 "operation.][  OK  ]"
 msgstr "[1]["
-"Drive %c: heeft geen|"
-"voldoende voor deze |"
-"opdracht.][  OK  ]"
+"Drive %c: heeft onvoldoende|"
+"ruimte voor deze opdracht.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
@@ -1031,8 +1030,8 @@ msgid "[2]["
 "Do you want to remove icons|"
 "or delete files?][Icons|Files|Cancel]"
 msgstr "[2]["
-"Wil je icons of bestanden|"
-"verwijderen?][Icons|Files|Afbreken]"
+"Wil je iconen of bestanden|"
+"verwijderen?][Iconen|Bestanden|Afbreken]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1086,8 +1085,8 @@ msgid "[3]["
 "disk may be write-protected|"
 "or unusable.][ Retry | Abort ]"
 msgstr "[3]["
-"Formaterings fout. de doel|"
-"disk kan scrhijf-beveiligd zijn|"
+"Formatteer fout. De doel|"
+"disk kan schrijf-beveiligd zijn|"
 "of onbruikbaar.][ Opnieuw | Afbreken ]"
 
 #: desk/desk_rsc.c
@@ -1096,7 +1095,7 @@ msgid "[1]["
 "available to the user.][ Continue | Quit ]"
 msgstr "[1]["
 "Deze disk heeft %ld bytes|"
-"beschikbaar voor de gebruiker.][ Continue | Quit ]"
+"beschikbaar voor de gebruiker.][ Doorgaan | Stoppen ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1108,7 +1107,7 @@ msgstr "[1]["
 msgid "[1]["
 "No drive identifier.][ Retry ]"
 msgstr "[1]["
-"geen drive identifier.][ Opnieuw ]"
+"Geen drive letter.][ Opnieuw ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1181,8 +1180,8 @@ msgid "[1]["
 "Failed to set default|"
 "directory.][  OK  ]"
 msgstr "[1]["
-"Zet als default directory|"
-"niet gelukt.][  OK  ]"
+"Instellen als standaard|"
+"directory niet gelukt.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
