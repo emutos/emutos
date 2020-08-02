@@ -91,7 +91,7 @@ static ULONG next_acsi_time;    /* earliest time we can start the next i/o */
 void acsi_init(void)
 {
     /* the following delay is used between toggling dma out.  in Atari
-     * TOSes, the delay is provided by an instruction sequence which
+     * TOS, the delay is provided by an instruction sequence which
      * takes about 15usec on an ST, 5usec on a TT or Falcon.  we always
      * use 15usec.
      */

@@ -877,7 +877,7 @@ WORD cursconf(WORD function, WORD operand)
 {
     switch (function) {
     case 0:
-        cursor_off();                   /* set cursor unvisible */
+        cursor_off();                   /* set cursor non-visible */
         break;
     case 1:
         cursor_on();                    /* set cursor visible */

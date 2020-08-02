@@ -1,5 +1,5 @@
 /*
- * keyb_sg.h - Swiss-german keyboard layout definition
+ * keyb_sg.h - Swiss-German keyboard layout definition
  *
  * Copyright (C) 2005-2015 The EmuTOS development team
  *

@@ -774,7 +774,7 @@ LONG blkdev_drvmap(void)
 
 
 /*
- * blkdev_avail - Read drive bitmapCheck drive availability
+ * blkdev_avail - Check drive availability
  *
  * Returns 0, if drive not available
  */

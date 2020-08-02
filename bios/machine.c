@@ -93,7 +93,7 @@ static void detect_modectl(void)
 #endif
 
 /*
- * Tests video capabilities (STEnhanced Shifter, TT Shifter and VIDEL)
+ * Tests video capabilities (STe Enhanced Shifter, TT Shifter and VIDEL)
  */
 static void detect_video(void)
 {
@@ -242,7 +242,7 @@ static void detect_magnum(void)
 
     do
     {
-        /* Aranym cannot have a Magnum. */
+        /* ARAnyM cannot have a Magnum. */
         if (IS_ARANYM)
             break;
         /*

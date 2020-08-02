@@ -2391,7 +2391,7 @@ typedef volatile unsigned long vuint32;
 #define MBOX_STD_ID            0x00 /* standard identifier */
 #define MBOX_EXT_ID            0x01 /* remote identifier */
 #define MBOX_TX                0x08 /* tx message box */
-#define MBOX_RX                0x00 /* rx messge box */
+#define MBOX_RX                0x00 /* rx message box */
 
 #define MBOX_CFG_IDE           0x08
 #define MBOX_CFG_RTR_EXT       0x01

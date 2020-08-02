@@ -1,5 +1,5 @@
 /*
- * EmuTOS bios
+ * xhdi.h - header file for XHDI defines
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

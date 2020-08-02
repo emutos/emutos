@@ -68,7 +68,7 @@ static const UBYTE keytbl_es_caps[] = {
        0,    0,    0,    0,    0,    0,    0,    0
 };
 
-/* Alt Tables iaw Keyboard.tbl format as defined in SpareMiNT Wiki */
+/* Alt Tables format as defined in SpareMiNT Wiki */
 
 static const UBYTE keytbl_es_altnorm[] = {
     0x1A, '[',

@@ -24,7 +24,7 @@
 
 /*
  * known differences with respect to the original TOS:
- * - printer configuration and hardcopy not done
+ * - printer hardcopy is not done
  * - no input
  */
 

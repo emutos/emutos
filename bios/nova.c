@@ -48,7 +48,7 @@ static int use_16bit_io;
 
 #define CRTC_I  0x3D4   /* CRT Controller index and data ports */
 #define CRTC_D  0x3D5
-#define GDC_SEG 0x3CD   /* GDC segement select, index and data ports */
+#define GDC_SEG 0x3CD   /* GDC segment select, index and data ports */
 #define GDC_I   0x3CE
 #define GDC_D   0x3CF
 #define TS_I    0x3C4   /* Timing Sequencer index and data ports */
@@ -197,7 +197,7 @@ void detect_nova(void)
     }
     else if (HAS_VME && check_read_byte(0x00DC0000UL+VIDSUB))
     {
-        /* Nova in Atari MegaSTE */
+        /* Nova in Atari MegaSTe */
         novaregbase = (UBYTE *)0x00DC0000UL;
         novamembase = (UBYTE *)0x00C00000UL;
         has_nova = 1;
