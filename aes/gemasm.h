@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemasm.h - header for EmuTOS AES assembler functions
  *
  * Copyright (C) 2002-2016 The EmuTOS development team
  *

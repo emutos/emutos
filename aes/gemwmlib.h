@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemwmlib.h - header for EmuTOS AES Window Library functions
  *
  * Copyright (C) 2002-2018 The EmuTOS development team
  *

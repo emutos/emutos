@@ -503,7 +503,7 @@ static WORD get_drive(char *path)
 
 /*
  *  File Selector input routine that takes control of the mouse
- *  and keyboard, searchs and sort the directory, draws the file
+ *  and keyboard, searches and sorts the directory, draws the file
  *  selector, interacts with the user to determine a selection
  *  or change of path, and returns to the application with
  *  the selected path, filename, and exit button.

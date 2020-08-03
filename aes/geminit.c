@@ -790,7 +790,7 @@ void gem_main(void)
             break;
 #endif
         }
-        gsx_wsclear();              /* avoid artefacts that may show briefly */
+        gsx_wsclear();              /* avoid artifacts that may show briefly */
         /*
          * resolution change always resets the default drive to the
          * boot device.  TOS3 issues a Dsetdrv() when this happens,

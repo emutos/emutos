@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemoblib.h - header for EmuTOS AES Object Library functions
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemqueue.h - header for EmuTOS AES queue management functions
  *
  * Copyright (C) 2002, 2010 The EmuTOS development team
  *

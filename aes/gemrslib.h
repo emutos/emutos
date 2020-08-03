@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemrslib.h - header for EmuTOS AES Resource Library functions
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

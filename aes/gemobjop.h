@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemobjop.h - header for EmuTOS AES miscellaneous object-related functions
  *
  * Copyright (C) 2002-2017 The EmuTOS development team
  *

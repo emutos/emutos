@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemdisp.h - header for EmuTOS AES dispatcher
  *
  * Copyright (C) 2002-2015 The EmuTOS development team
  *

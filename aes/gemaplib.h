@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemaplib.h - header for EmuTOS AES Application Services Library functions
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemfmlib.h - header for EmuTOS AES Form Library functions (excluding form_alert())
  *
  * Copyright (C) 2002-2017 The EmuTOS development team
  *

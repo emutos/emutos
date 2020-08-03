@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemfmalt.h - header for the EmuTOS AES Form Library's form_alert() function
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

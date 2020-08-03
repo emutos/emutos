@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemshlib.h - header for EmuTOS AES Shell Library functions
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

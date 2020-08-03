@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * geminit.h - header for EmuTOS AES initialisation functions
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

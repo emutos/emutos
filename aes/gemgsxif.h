@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemgsxif.h - header for EmuTOS AES's interface to the VDI
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

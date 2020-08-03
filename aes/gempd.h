@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gempd.h - header for EmuTOS AES process management functions
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

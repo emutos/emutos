@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemevlib.h - header for EmuTOS AES Event Library functions
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

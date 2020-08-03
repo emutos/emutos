@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemwrect.h - header for EmuTOS AES window rectangle functions
  *
  * Copyright (C) 2002-2017 The EmuTOS development team
  *

@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * geminput.h - header for EmuTOS AES mouse/keyboard input routines
  *
  * Copyright (C) 2002-2016 The EmuTOS development team
  *

@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemfslib.h - header for EmuTOS AES File Selector Library functions
  *
  * Copyright (C) 2002-2017 The EmuTOS development team
  *

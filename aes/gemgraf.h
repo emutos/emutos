@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemgraf.h - header for miscellaneous EmuTOS AES graphics-related functions
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

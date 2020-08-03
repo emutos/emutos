@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemsuper.h - header for EmuTOS AES function call handler
  *
  * Copyright (C) 2002-2014 The EmuTOS development team
  *

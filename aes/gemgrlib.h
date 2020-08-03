@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemgrlib.h - header for EmuTOS AES Graphics Library functions
  *
  * Copyright (C) 2002-2017 The EmuTOS development team
  *

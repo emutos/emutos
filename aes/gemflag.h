@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemflag.h - header for gemflag.c
  *
  * Copyright (C) 2002, 2010 The EmuTOS development team
  *

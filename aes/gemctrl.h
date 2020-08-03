@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemctrl.h - header for EmuTOS AES control manager
  *
  * Copyright (C) 2002-2015 The EmuTOS development team
  *

@@ -93,7 +93,7 @@ static WORD     gl_hsptschar;
 
 /*
  *  Routine to set the clip rectangle.  If the w,h of the clip is 0,
- *  then no clip should be set.  Ohterwise, set the appropriate clip.
+ *  then no clip should be set.  Otherwise, set the appropriate clip.
  */
 void gsx_sclip(const GRECT *pt)
 {

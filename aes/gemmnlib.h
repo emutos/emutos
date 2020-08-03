@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * gemmnlib.h - header for EmuTOS AES Menu Library functions
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *
