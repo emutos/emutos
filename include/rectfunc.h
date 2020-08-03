@@ -1,5 +1,5 @@
 /*
- * EmuTOS AES
+ * rectfunc.h - header for AES rc_xxx functions
  *
  * Copyright (C) 2002-2017 The EmuTOS development team
  *

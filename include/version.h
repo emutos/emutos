@@ -11,9 +11,10 @@
  */
 
 /*
- * this version string will be printed by initinfo and the about
- * dialog in the desktop (the actual string is generated from
- * the Makefile so it is guaranteed to be accurate).
+ * this version string will be printed by initinfo and the About
+ * dialog in the desktop.  it is also pointed to by EmuTOS's
+ * extended OS header.  The actual string is generated from
+ * the Makefile so it is guaranteed to be accurate.
  */
 
 extern const char version[];

@@ -1,5 +1,5 @@
 /*
- * string.h - EmuTOS own copy of an ANSI standard header
+ * string.h - EmuTOS's own version of the ANSI standard header
  *
  * Copyright (C) 2001-2019 The EmuTOS development team
  *

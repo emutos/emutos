@@ -1,5 +1,5 @@
 /*
- * setjmp.h - EmuTOS own copy of an ANSI standard header
+ * setjmp.h - EmuTOS's own version of the ANSI standard header
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

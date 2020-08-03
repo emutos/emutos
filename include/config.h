@@ -385,7 +385,7 @@
  * Defaults for the diagnostic cartridge target (maximum size 128K).
  * When this is selected, the Makefile excludes AES support in order
  * to reduce ROM size.  However this is still insufficient, so we
- * need to exclude some feature(s).  Since the cartridge is targetted
+ * need to exclude some feature(s).  Since the cartridge is targeted
  * for ST/STe, we exclude SCSI support and TT video support.
  */
 #ifdef TARGET_CART
@@ -649,7 +649,7 @@
 
 /*
  * use #ifndef ... #endif for definitions below, to allow them to
- * be overriden by the Makefile or by localconf.h
+ * be overridden by the Makefile or by localconf.h
  */
 
 
@@ -785,7 +785,7 @@
 #endif
 
 /*
- * Set CONF_COLDFIRE_TIMER_C to 1 to simulate the Timer C using the
+ * Set CONF_COLDFIRE_TIMER_C to 1 to simulate Timer C using the
  * internal ColdFire timers
  */
 #ifndef CONF_COLDFIRE_TIMER_C
@@ -1045,7 +1045,7 @@
 
 /*
  * Define the TOS version here. Valid values are 0x104 and 0x206 for example.
- * This is just a version number, EmuTOS functionalities are not affected.
+ * This is just a version number, EmuTOS functionality is not affected.
  */
 #ifndef TOS_VERSION
 /* By default, we pretend to be TOS 2.06, as it is available as an update for
@@ -1187,7 +1187,7 @@
  * stack, since Gemlib's v_gtext() implementation puts a 1024-word buffer
  * on the stack. In order to run such programs, we use a large stack.
  * Existing 68K-compatible TOS programs will have worked around this problem,
- * otherwise they would not run on standard Ataris TOSs. Thus this is
+ * otherwise they would not run on standard Atari TOS. Thus this is
  * principally a problem when recompiling for ColdFire systems, and so
  * we default to a larger value when building for them (see above).
  *
@@ -1616,7 +1616,7 @@
 
 /*
  * Set CONF_WITH_SHUTDOWN to 1 to enable the shutdown() function.
- * It tries to poweroff the machine, if possible.
+ * It tries to power off the machine, if possible.
  */
 #ifndef CONF_WITH_SHUTDOWN
 # if DETECT_NATIVE_FEATURES || defined(MACHINE_FIREBEE) || defined(MACHINE_AMIGA)
