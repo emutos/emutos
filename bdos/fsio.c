@@ -142,7 +142,7 @@ long ixlseek(OFD *p,long n)
 
     /*
      * note: if we're seeking to a position which is at a cluster boundary,
-     * we actually point to the cluster before that.  this unobvious action
+     * we actually point to the cluster before that.  this nonobvious action
      * is because, when the read point is at the start of a cluster, xrw()
      * starts its processing by handling whole clusters.  this occurs in
      * either the middle or tail section processing, but in both cases,
@@ -350,7 +350,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
 
         lenxfr = min(len,dm->m_recsiz-bytn);
         bufp = getrec(recn,p,wrtflg);   /* get desired record  */
-        addit(p,lenxfr,1);              /* update ofd          */
+        addit(p,lenxfr,1);              /* update OFD          */
         len -= lenxfr;                  /* nbr left to do      */
         recn++;                         /* starting w/ next    */
 

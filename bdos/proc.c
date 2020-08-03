@@ -585,7 +585,7 @@ void x0term(void)
 /*
  * xterm - (Pterm) terminate current process
  *
- * terminate the current process and transfer control to the colling
+ * terminate the current process and transfer control to the calling
  * process.  All files opened by the terminating process are closed.
  *
  * Function 0x4C        p_term

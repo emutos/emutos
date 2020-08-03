@@ -275,7 +275,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
     p->o_curcl = 0;                 /*  init file pointer info      */
     p->o_curbyt = 0;                /*  "                           */
     p->o_dnode = dn;                /*  link to directory           */
-    p->o_dirfil = dn->d_ofd;        /*  link to dir's ofd           */
+    p->o_dirfil = dn->d_ofd;        /*  link to dir's OFD           */
     p->o_dirbyt = dn->d_ofd->o_bytnum - 32; /*  offset of fcb in dir*/
 
     for (p2 = dn->d_files; p2; p2 = p2->o_link)
@@ -356,7 +356,7 @@ static FTAB *sftofdsrch(OFD *ofd)
 /*
 **  sftdel - delete an entry from the sft
 **      delete the entry from the sft.  If no other entries in the sft
-**      have the same ofd, free up the OFD, also.
+**      have the same OFD, free up the OFD, also.
 */
 static void sftdel(FTAB *sftp)
 {
@@ -371,7 +371,7 @@ static void sftdel(FTAB *sftp)
     s->f_own = 0;
     s->f_use = 0;
 
-    /*  if no other sft entries with same OFD, delete ofd  */
+    /*  if no other sft entries with same OFD, delete OFD  */
 
     if (sftofdsrch(ofd) == NULL)
         xmfreblk((int *)ofd);
