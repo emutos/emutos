@@ -128,7 +128,7 @@ void inf_sget(OBJECT *tree, WORD obj, char *pstr)
 
 /*
  *  Examines 'numobj' objects in 'tree', starting at 'baseobj', looking
- *  for a SELECTED onject.  Returns the relative number of the first
+ *  for a SELECTED object.  Returns the relative number of the first
  *  SELECTED object, or -1 if none of the objects is selected.
  */
 WORD inf_gindex(OBJECT *tree, WORD baseobj, WORD numobj)
@@ -147,7 +147,7 @@ WORD inf_gindex(OBJECT *tree, WORD baseobj, WORD numobj)
 
 
 /*
- *  Return 0 if cancel was selected, 1 if okay was selected, -1 if
+ *  Return 0 if cancel was selected, 1 if ok was selected, -1 if
  *  nothing was selected
  */
 WORD inf_what(OBJECT *tree, WORD ok, WORD cncl)
