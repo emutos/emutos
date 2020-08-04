@@ -1,4 +1,6 @@
 /*
+ * desksupp.h - the header for EmuDesk's desksupp.c
+ *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your

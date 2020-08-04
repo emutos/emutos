@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop
+ * deskins.h - header for EmuDesk's deskins.c
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

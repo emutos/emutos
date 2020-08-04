@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop
+ * deskmain.h - the header for EmuDesk's deskmain.c
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

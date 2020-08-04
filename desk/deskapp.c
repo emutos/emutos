@@ -1162,7 +1162,7 @@ void app_save(WORD todisk)
 #endif
 
 #if CONF_WITH_DESKTOP_CONFIG
-    /* save menu item sortcuts */
+    /* save menu item shortcuts */
     *pcurr++ = '#';
     *pcurr++ = 'K';
     for (i = 0; i < NUM_SHORTCUTS; i++)

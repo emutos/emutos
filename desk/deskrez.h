@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop
+ * deskrez.h - the header for EmuDesk's deskrez.c
  *
  * Copyright (C) 2012-2016 The EmuTOS development team
  *

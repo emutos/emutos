@@ -74,7 +74,7 @@ struct _windnode
 /*
  * the following array must be large enough to hold the sprintf-formatted
  * output of the longest translated version of the STINFOST/STINFST2 resource item.
- * as of december 2014, this is 51 bytes for the Greek-language version.
+ * as of august 2020, this is 68 bytes for the Greek-language version of STINFST2.
  */
         char            w_info[72];
 };

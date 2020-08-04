@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop - header for deskfun.c
+ * deskfun.h - header for EmuDesk's deskfun.c
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

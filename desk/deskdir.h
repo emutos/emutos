@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop - header for deskdir.c
+ * deskdir.h - header for EmuDesk's deskdir.c
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

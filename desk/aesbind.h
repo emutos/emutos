@@ -1,5 +1,7 @@
 /*
- * EmuTOS desktop
+ * aesbind.h - the header for the AES functions used by EmuDesk
+ *
+ * Note that the bindings for these functions are in gembind.c
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop
+ * deskrsrc.h - the header for EmuDesk's deskrsrc.c
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

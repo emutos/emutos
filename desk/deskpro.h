@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop
+ * deskpro.h - the header for EmuDesk's deskpro.c
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

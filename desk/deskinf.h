@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop: header for deskinf.c
+ * deskinf.h - header for EmuDesk's deskinf.c
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop
+ * deskact.h - the header for EmuDesk's deskact.c
  *
  * Copyright (C) 2002-2019 The EmuTOS development team
  *

@@ -1,5 +1,5 @@
 /*
- * EmuTOS desktop
+ * deskobj.h - the header for EmuDesk's deskobj.c
  *
  * Copyright (C) 2002-2017 The EmuTOS development team
  *
