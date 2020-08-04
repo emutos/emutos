@@ -24,7 +24,7 @@
 #endif
 
 /*
- * the following lineA variables contain the VDI color palette entries.
+ * the following line-A variables contain the VDI color palette entries.
  * REQ_COL contains the first 16 entries; req_col2 contains entries
  * 16-255 (only applicable for 8-plane resolutions).  Note that the
  * location of req_col2 is not documented by Atari, but is derived from

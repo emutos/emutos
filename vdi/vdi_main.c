@@ -147,13 +147,13 @@ void screen(void)
     }
 
     /*
-     * set some lineA variables from the vwk info (as long as
+     * set some line-A variables from the vwk info (as long as
      * the workstation is valid)
      */
     if (opcode != 2 && opcode != 101) {     /* if neither v_clswk() nor v_clsvwk() */
         /*
          * the following assignments are not required by EmuTOS, but
-         * ensure that the values in the lineA variables mirror those
+         * ensure that the values in the line-A variables mirror those
          * in the current virtual workstation, just like in Atari TOS.
          */
         CUR_FONT = vwk->cur_font;

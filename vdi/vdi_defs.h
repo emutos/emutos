@@ -92,7 +92,7 @@
 #define SUBROUTINE  5
 #define VDI_HANDLE  6
 
-/* text style bits: for vwk->style (and also lineA variable STYLE) */
+/* text style bits: for vwk->style (and also line-A variable STYLE) */
 #define F_THICKEN   1
 #define F_LIGHT     2
 #define F_SKEW      4

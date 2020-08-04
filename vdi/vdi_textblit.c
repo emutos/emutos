@@ -895,7 +895,7 @@ static void screen_blit(LOCALVARS *vars)
 
 
 /*
- * resize characters for lineA
+ * resize characters for line-A
  *
  * this is similar to act_siz(), but note that act_siz() always starts
  * with the same value in the accumulator, while here the initial value

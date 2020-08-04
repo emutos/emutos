@@ -702,7 +702,7 @@ void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
  */
 void Vwk2Attrib(const Vwk *vwk, VwkAttrib *attr, const UWORD color)
 {
-    /* in the same order as in Vwk, so that gcc
+    /* in the same order as in Vwk, so that GCC
      * can use longs for copying words
      */
     attr->clip = vwk->clip;

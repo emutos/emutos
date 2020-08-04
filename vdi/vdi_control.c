@@ -97,10 +97,10 @@ static const WORD INQ_TAB_rom[45] = {
     0,                  /* 37 -  */
     0,                  /* 38 -  */
     0,                  /* 39 -  */
-    0,                  /* 40 - not imprintable left border in pixels (printers/plotters) */
-    0,                  /* 41 - not imprintable upper border in pixels (printers/plotters) */
-    0,                  /* 42 - not imprintable right border in pixels (printers/plotters) */
-    0,                  /* 43 - not imprintable lower border in pixels (printers/plotters) */
+    0,                  /* 40 - unprintable left border in pixels (printers/plotters) */
+    0,                  /* 41 - unprintable upper border in pixels (printers/plotters) */
+    0,                  /* 42 - unprintable right border in pixels (printers/plotters) */
+    0,                  /* 43 - unprintable lower border in pixels (printers/plotters) */
     0                   /* 44 - page size (printers etc.) */
 };
 
@@ -147,7 +147,7 @@ static const WORD DEV_TAB_rom[45] = {
     1,                          /* 36   Text Rotation            */
     1,                          /* 37   Polygonfill              */
     0,                          /* 38   Cell Array               */
-    2,                          /* 39   Pallette size            */
+    2,                          /* 39   Palette size             */
     2,                          /* 40   # of locator devices 1 = mouse */
     1,                          /* 41   # of valuator devices    */
     1,                          /* 42   # of choice devices      */
@@ -370,10 +370,10 @@ void vdi_v_clsvwk(Vwk * vwk)
 
     /*
      * When we close a virtual workstation, Atari TOS and previous versions
-     * of EmuTOS update CUR_WORK (lineA's idea of the current workstation)
+     * of EmuTOS update CUR_WORK (line-A's idea of the current workstation)
      * to point to the precursor of the closed workstation.  This is a bit
      * arbitrary, especially as the workstation being closed isn't necessarily
-     * what lineA thinks is the current one.
+     * what line-A thinks is the current one.
      *
      * What we must do as a minimum is ensure that CUR_WORK points to a
      * valid open workstation.  The following does that by pointing it to
@@ -420,7 +420,7 @@ void vdi_v_opnwk(Vwk * vwk)
         INQ_TAB[i] = INQ_TAB_rom[i];
     }
 
-    /* Copy data from linea variables */
+    /* Copy data from line-A variables */
     xres = V_REZ_HZ - 1;        /* xres/yres are DEV_TAB[0]/[1] */
     yres = V_REZ_VT - 1;
     INQ_TAB[4] = v_planes;
@@ -461,7 +461,7 @@ void vdi_v_opnwk(Vwk * vwk)
     vdimouse_init();            /* initialize mouse */
     esc_init(vwk);              /* enter graphics mode */
 
-    /* Just like TOS 2.06, make the physical workstation the current workstation for LineA. */
+    /* Just like TOS 2.06, make the physical workstation the current workstation for Line-A. */
     CUR_WORK = vwk;
 }
 
