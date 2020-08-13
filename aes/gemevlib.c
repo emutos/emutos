@@ -132,7 +132,7 @@ void ev_mouse(MOBLK *pmo, WORD rets[])
  */
 void ev_timer(LONG count)
 {
-    ev_block(MU_TIMER, (ULONG)count/gl_ticktime);
+    ev_block(MU_TIMER, count/gl_ticktime);
 }
 
 
@@ -234,7 +234,7 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
         }
         /* wait for timer */
         if (flags & MU_TIMER)
-            iasync(MU_TIMER, (ULONG)tmcount/gl_ticktime);
+            iasync(MU_TIMER, tmcount/gl_ticktime);
         /* wait for events */
         which = mwait(flags);
 

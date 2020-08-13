@@ -352,7 +352,7 @@ static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
 
     if (size > gl_mlen) {       /* buffer too small */
         /* adjust height to fit buffer: this will leave droppings! */
-        sh = (ULONG)gl_mlen * sh / size;
+        sh = gl_mlen * sh / size;
 
         /* issue warning message for backup only, not for subsequent restore */
         if (pdst == &gl_tmp)
