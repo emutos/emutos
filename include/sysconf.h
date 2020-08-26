@@ -5,7 +5,7 @@
  * definitions, i.e. ones that cannot be overridden by localconf.h.
  * It is equivalent to EmuDesk's deskconf.h.
  *
- * Copyright (C) 2019 The EmuTOS development team
+ * Copyright (C) 2019-2020 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

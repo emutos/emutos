@@ -3,7 +3,7 @@
  *
  *
  * Copyright (C) 2004 by Authors (see below)
- * Copyright (C) 2016-2019 The EmuTOS development team
+ * Copyright (C) 2016-2020 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering

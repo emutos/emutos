@@ -7,7 +7,7 @@
  * this should be easier than doing the same with hard-coded offset
  * values.
  *
- * Copyright (C) 2012-2016 The EmuTOS development team
+ * Copyright (C) 2012-2020 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

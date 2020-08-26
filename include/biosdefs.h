@@ -1,7 +1,7 @@
 /*
  * biosdefs.h - Public BIOS defines and structures
  *
- * Copyright (C) 2016-2019 The EmuTOS development team
+ * Copyright (C) 2016-2020 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows

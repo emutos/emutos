@@ -2,7 +2,7 @@
  * vt52.c - vt52 like screen handling routines
  *
  *
- * Copyright (C) 2013-2019 The EmuTOS development team
+ * Copyright (C) 2013-2020 The EmuTOS development team
  * Copyright (C) 2004 Martin Doering
  *
  * Authors:

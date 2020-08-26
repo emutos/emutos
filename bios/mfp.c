@@ -2,7 +2,7 @@
  * mfp.c - handling of the Multi-Function Peripheral MFP 68901
  *
  * Copyright (C) 2001 Martin Doering
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2020 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

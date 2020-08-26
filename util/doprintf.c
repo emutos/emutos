@@ -1,7 +1,7 @@
 /*
  * doprintf.c - a simple printf() implementation
  *
- * Copyright (C) 2019 The EmuTOS development team
+ * Copyright (C) 2019-2020 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows

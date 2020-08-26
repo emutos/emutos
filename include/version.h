@@ -1,7 +1,7 @@
 /*
  * version.h - the EmuTOS version string
  *
- * Copyright (C) 2003-2015 The EmuTOS development team
+ * Copyright (C) 2003-2020 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

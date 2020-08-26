@@ -1,7 +1,7 @@
  /*
  * keyb_es.h - spanish keyboard layout definition
  *
- * Copyright (C) 2011-2019 The EmuTOS development team
+ * Copyright (C) 2011-2020 The EmuTOS development team
  *
  * Authors:
  *  L. Zanier

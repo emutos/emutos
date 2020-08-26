@@ -1,7 +1,7 @@
 /*
  * kprint.h - BIOS console routines & debug macros
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2020 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering

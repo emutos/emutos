@@ -1,7 +1,7 @@
 /*
  * blitter.h - header for blitter routines
  *
- * Copyright (C) 2017-2019 The EmuTOS development team
+ * Copyright (C) 2017-2020 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows
