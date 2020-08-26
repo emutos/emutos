@@ -33,15 +33,14 @@ struct param rel_pblock;        /* mouse parameter block */
 
 
 /*
- * mouse_init - mouse initialization
+ * mouse initialization
  *
  */
 
 void Initmous(WORD type, struct param *param, PFVOID newvec)
 {
     long retval = -1;           /* ok, if it stays so... */
-    struct param *p =
-        (struct param*)param;   /* pointer to parameter block */
+    struct param *p = param;   /* pointer to parameter block */
 
     switch (type) {
 

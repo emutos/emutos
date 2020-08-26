@@ -425,7 +425,6 @@ static void bios_init(void)
 
     KDEBUG(("parport_init()\n"));
     parport_init();     /* parallel port */
-    //mouse_init();     /* init mouse driver */
     KDEBUG(("clock_init()\n"));
     clock_init();       /* init clock */
     KDEBUG(("after clock_init()\n"));
