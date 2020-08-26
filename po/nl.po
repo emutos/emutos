@@ -537,7 +537,7 @@ msgstr "EmuTOS wordt verspreid onder de GPL"
 
 #: desk/desk_rsc.c
 msgid "See doc\\license.txt for details"
-msgstr "Zie doc\license.txt voor details"
+msgstr "Zie doc\\license.txt voor details"
 
 #: desk/desk_rsc.c
 msgid "OPEN APPLICATION"
