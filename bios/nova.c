@@ -272,7 +272,7 @@ static void init_mach32(void)
     VGAREG(MEM_BNDRY) = 0x00;
     VGAREG_W(MEM_CFG) = 0x0202;
     VGAREG_W(ROM_ADDR_1) = 0x0040;
-    // VGAREG_W(SCRATCH_PAD_1) = 0x0000;
+    /* VGAREG_W(SCRATCH_PAD_1) = 0x0000; */
     VGAREG(ADVFUNC_CNTL) = 0x03;    /* Go to 8514 mode */
     VGAREG_W(SUBSYS_CNTL) = 0x90;   /* 8514 reset */
     VGAREG_W(SUBSYS_CNTL) = 0x50;
@@ -285,7 +285,7 @@ static void init_mach32(void)
     VGAREG(MISC_CNTL+1) = (VGAREG(R_MISC_CNTL+1) & 0xF0) | 0x0C;
     VGAREG_W(EXT_GE_CONFIG) = 0x1A40; /* DAC 8 bit mode. */
     VGAREG_W(HORZ_OVERSCAN) = 0;
-    //VGAREG(ATI_DAC_R2) = 0xFF     /* DAC mask register. Set later. */
+    /* VGAREG(ATI_DAC_R2) = 0xFF; */   /* DAC mask register. Set later. */
 
     VGAREG_W(CLOCK_SEL) = 0x5002;   /* Back to ATI mode and clock select */
 

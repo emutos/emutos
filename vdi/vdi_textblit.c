@@ -408,8 +408,6 @@ static void pre_blit(LOCALVARS *vars)
         }
     }
 
-    // label no_clear:
-
     dst += size;                     /* start at the bottom */
     vars->WRT_MODE = 0;
     vars->forecol = 1;

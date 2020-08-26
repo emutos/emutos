@@ -2442,7 +2442,7 @@ static BOOL ReadExpansionRom(APTR board, struct ConfigDev *configDev)
         UBYTE subsizebits = configDev->cd_Rom.er_Flags & ERT_Z3_SSMASK;
         if (subsizebits < 2)
         {
-            // Nothing
+            /* Nothing */
             if (subsizebits == 1)
                 KDEBUG(("configDev=%p size=0x%08lx subsizebits=%u: Actual size will be probed later\n",
                     configDev, size, subsizebits));
