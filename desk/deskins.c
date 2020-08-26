@@ -106,7 +106,7 @@ BOOL is_viewer(ANODE *pa)
         else if (*p == '.')
             component <<= 1;
     }
- 
+
     return (found==3) ? TRUE : FALSE;
 }
 #endif

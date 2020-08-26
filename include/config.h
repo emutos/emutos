@@ -1360,7 +1360,7 @@
 
 /*
  * Set CONF_WITH_BOTTOMTOTOP to 1 to include 'Cycle windows' in the
- * desktop menu (this is the same as 'Bottom to top' in the Atari desktop)  
+ * desktop menu (this is the same as 'Bottom to top' in the Atari desktop)
  */
 #ifndef CONF_WITH_BOTTOMTOTOP
 # define CONF_WITH_BOTTOMTOTOP 1
