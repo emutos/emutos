@@ -379,7 +379,7 @@ msgstr "  Nieuwe map..."
 msgid "  Close folder"
 msgstr "  Sluit map   "
 
-#: desk/desk_rsc.c       
+#: desk/desk_rsc.c
 msgid "  Close top window"
 msgstr "  Sluit top venster"
 

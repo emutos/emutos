@@ -1566,3 +1566,4 @@ msgstr "z³a ilo¶æ argumentów"
 #: cli/cmdutil.c
 msgid "error code %ld"
 msgstr "kod b³êdu %ld"
+
