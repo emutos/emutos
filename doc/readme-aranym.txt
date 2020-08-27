@@ -26,6 +26,7 @@ gr - Greek
 it - Italian
 nl - Dutch
 no - Norwegian
+pl - Polish
 ru - Russian
 se - Swedish
 cd - Swiss German

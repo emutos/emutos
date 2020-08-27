@@ -33,6 +33,7 @@ The default language is English.  Other supported languages are:
 - Italian
 - Dutch
 - Norwegian
+- Polish
 - Russian
 - Swedish
 - Swiss German
