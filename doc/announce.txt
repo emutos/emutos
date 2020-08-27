@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 0.9.12 -- October 14, 2019
+EmuTOS 1.0 -- August 31, 2020
 
 
 
@@ -54,9 +54,10 @@ of the original Atari ST, with some extensions. For example, systems with
 VIDEL support 256 colours and 640x480 screen resolution. Some emulators
 can patch EmuTOS to work with much bigger screen resolutions.
 
-The desktop is now almost as nice as the one in TOS 2 or higher (although
-there is still work to be done). Of course you are always free to use a
-more advanced desktop replacement like TeraDesk.
+The desktop is now pretty much the same as the one in TOS 2 or higher
+(although it is not fully implemented in the 192K ROMs for space reasons).
+Of course you are always free to use a more advanced desktop replacement
+like TeraDesk.
 
 EmuCON2 is a basic but useful command-line interpreter, written from scratch
 by Roger Burrows in 2013 to replace the original CLI.
@@ -122,7 +123,7 @@ EmuTOS also supports the following Atari-compatible hardware:
 - CPU support for M68010, M68020, M68040, M68060, ColdFire V4e, and Apollo 68080
 - ICD AdSCSI Plus ST Real-Time Clock
 - MonSTer expansion card
-- Magnum ST/STE expansion cards
+- Magnum ST/STe expansion cards
 - Storm ST expansion card (RAM and RTC)
 - Nova/ET4000 graphics card
 - Nova/Mach32 graphics card

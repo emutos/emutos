@@ -1,5 +1,7 @@
-EmuTOS source code consists of several parts, and includes code taken from
-other projects - Many thanks to them and to their authors for releasing the
+Background
+==========
+The EmuTOS source code consists of several parts, and includes code taken from
+other projects. Many thanks to them and to their authors for releasing the
 code under GPL.
 
 The 'historical' authors - those who wrote the code before the start of the
@@ -22,6 +24,9 @@ Minor borrowed stuff:
 - some low-level hardware stuff comes from the Linux kernel;
 - parts of Amiga floppy driver and AUTOCONFIG are inspired from AROS;
 
+
+EmuTOS project development
+==========================
 The following is a list of 'recent' contributors - individuals involved in the
 EmuTOS project. In this project virtually everybody modifies every file;
 nevertheless here is an attempt at identifying who's guilty of what:
@@ -39,7 +44,7 @@ Roger Burrows (RFB) <rfburrows at ymail.com>
 - Desktop and file selector improvements
 - EmuCON2
 - Tools: erd (EmuTOS Resource Decompiler) & draft (deletes items from desktop resource)
-- Various bugfixes and cleanups
+- Various bug fixes and cleanups
 
 Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Many improvements to the build and configuration process
@@ -63,6 +68,7 @@ Thomas Huth (THH) <huth at tuxfamily.org>
 
 Christian Zietz <czietz at gmx.net>
 - ROM tests on real ST/STe hardware
+- Invaluable low-level investigation of real hardware
 - Fix floppy/ACSI bug
 - Fix memory detection to support STs as well as STes
 - Support for extended MBR partitions
@@ -117,6 +123,9 @@ EmuTOS multi-lingual:
 
 - Italian translation
     Lodovico Zanier <lvc958 at libero.it>
+
+- Polish translation
+    Wojtek Humanski <avstraliya61 at gmail.com>
 
 - Spanish translation
     Gabriel Huertas
@@ -256,3 +265,4 @@ Christian Quante
 
 Keli Hlodversson
 - Replaced form_alert() icons with more TOS-like ones
+- Created new image for EmuDesk "About" dialog
