@@ -481,14 +481,6 @@ void blank_out(int topx, int topy, int botx, int boty)
      */
     rows = (boty - topy + 1) * v_cel_ht;
 
-    /*
-     * if the screen height is not an exact multiple of the font height,
-     * there are remaining screen lines below the last text line, which
-     * should be cleared too.
-     */
-    if (boty == v_cel_my)
-        rows = V_REZ_VT - topy * v_cel_ht;
-
     if (v_planes > 1) {
         /* Color modes are optimized for handling 2 planes at once */
         ULONG pair_planes[4];        /* bits on screen for 8 planes max */
