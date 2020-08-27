@@ -1,3 +1,42 @@
+CHANGES BETWEEN RELEASE 0.9.12 AND RELEASE 1.0
+
+Major changes:
+- BIOS: Add keyboard mapping for Spanish keyboard
+- BIOS: Change Spanish character set to Atari ASCII, like Atari TOS
+- BIOS: Improve joystick compatibility with Atari TOS
+- EmuDesk: Implement "Search"/"Cycle windows"/"Select all items" in File menu
+- EmuDesk: Implement "Size to Fit" in View menu
+- EmuDesk: Implement "Cache" in Options menu
+- EmuDesk: Add user-modifiable shortcuts for desktop menu items
+- VDI: Add support for Atari GDOS 
+- VDI: Fix spacing and positioning of outlined text
+- VDI: Improve text output quality for special effects
+- VDI: Underline text within character cell if possible, like Atari TOS
+- General: Add Polish language support
+- General: Generate language-specific ROMs for PAK 68/3 hardware 
+
+Other changes:
+- AES: Fix file selector behaviour to make it more like Atari TOS
+- AES: Improve handling of FTEXT validation characters
+- AES: Fix handling of window arrow gadgets 
+- BIOS: Add Magnum ST/STe alt-RAM support 
+- BIOS: Add monitor change detection 
+- BIOS: Add optional cold-boot delay prior to hard disk access
+- BIOS: Fix an NVDI crash due to accessing memory beyond the screen
+- BIOS: Fix bug in sound mixer initialization for TT/STE
+- BIOS: Fix key repeat handling
+- EmuCON: Fix EmuCON copy/move command for individual files
+- EmuDesk: Add support for default file viewer 
+- EmuDesk: Change default menu item shortcuts 
+- EmuDesk: Replace image in EmuDesk "About" dialog 
+- EmuDesk: Speed up EmuDesk text window display 
+- VDI: Improve accuracy of arcs drawn via v_arc(), v_ellarc()
+- VDI: Improve drawing speed for some functions
+- General: Support PAK 68/3, 68/2
+- Many minor and/or obscure bugs have been fixed
+- Significant parts of the VDI have been rewritten in C for greater maintainability
+
+
 CHANGES BETWEEN RELEASE 0.9.11 AND RELEASE 0.9.12
 
 Major changes:
