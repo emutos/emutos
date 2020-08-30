@@ -2,8 +2,8 @@ Detecting the EmuTOS version
 ============================
 
 It has always been possible to detect the presence of EmuTOS (rather
-than TOS), by looking at the last 4 bytes of the osheader structure
-(which is located at the start of the ROM).  This contains the ASCII
+than TOS), by looking at offset 0x2c in the OSHEADER structure
+(which is located at the start of the ROM (*)).  This contains the ASCII
 bytes 'ETOS' if EmuTOS is the OS.  However, the various version numbers
 that are available from fixed locations or via system calls are not
 directly related to the EmuTOS version; rather they contain the version
@@ -65,3 +65,16 @@ Following this is a user-patchable field:
      . a byte containing the default cold boot delay, in seconds.  This
        may be used to allow slow hard disks devices to come ready before
        EmuTOS attempts to access them.  The current default value is 0.
+
+(*) How to find the OSHEADER structure:
+- At runtime: OSHEADER address can be found in the sysbase system
+  variable, located at 0x4f2.
+- In ROM for Atari hardware: OSHEADER is always located at the beginning
+  of the ROM, at offset 0.
+- In ROM for non-Atari hardware, or special Atari variants such as PRG
+  or cartridge, OSHEADER is not located at the very beginning. Actual
+  offset may vary. You need to search for 'ETOS' in the first kilobyte,
+  for example. Then subtract 0x2c to find the actual start of OSHEADER.
+  You may look for the extended OS header afterwards (see OSXH above),
+  but remember that all offsets are actually relative to the start of
+  OSHEADER.
