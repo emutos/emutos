@@ -1804,7 +1804,7 @@ static UWORD get_crc_ccitt(const void *buffer, UWORD length)
  * Basically, first bit is a useless filler, second bit is the data bit.
  *
  * Documentation:
- * http://jlgconsult.pagesperso-orange.fr/Atari/diskette/diskette_en.htm#MFM_Address_Marks
+ * https://jlgconsult.pagesperso-orange.fr/Atari/diskette/diskette_en.htm#MFM_Address_Marks
  * https://en.wikipedia.org/wiki/Modified_Frequency_Modulation
  */
 static UBYTE decode_mfm(const UWORD **ppmfm)
