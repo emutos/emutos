@@ -341,7 +341,7 @@ static int OK_id(const char *s)
 {
     /* for description of the following partition types see
      * the XHDI specification ver 1.30
-     * http://toshyp.atari.org/en/010008.html#Recommended_20partition_20types
+     * https://freemint.github.io/tos.hyp/en/xhdi_partition_types.html
      */
     static const char supported_partition_types[][3] = {
         "GEM", /* GEMDOS partition < 16 MB */
