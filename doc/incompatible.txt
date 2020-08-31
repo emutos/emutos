@@ -344,3 +344,24 @@ the VDI. The internal data structures of EmuTOS VDI differ from
 Atari's VDI implementation in TOS.
 Note: Turbo ST is known to cause drawing errors and to crash under
 Atari TOS, too.
+
+Workaround:
+Use NVDI.
+
+
+Program: Warp9 v3.80 (and probably all other versions)
+------------------------------------------------------
+Errors: Crash during EmuDesk startup (512K versions of EmuTOS)
+        EmuDesk screen drawing errors (other versions)
+
+Bug analysis:
+The crash is caused because Warp9 implicitly assumes that VDI's physical
+workstation structure is in the first 32K of memory.  This is not true
+for the 512K versions of EmuTOS.  The screen drawing errors are under
+investigation, but may be caused by assumptions about the contents of
+internal VDI structures.
+NOTE: under EmuTOS releases prior to 1.0, Warp9 fails to install and
+therefore no errors are seen.
+
+Workaround:
+Use NVDI.
