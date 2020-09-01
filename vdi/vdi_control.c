@@ -328,6 +328,12 @@ void vdi_v_opnvwk(Vwk * vwk)
     WORD handle;
     Vwk **p;
 
+    /*
+     * ensure that CUR_WORK always points to a valid workstation
+     * even if v_opnvwk() exits early.
+     */
+    CUR_WORK = &phys_work;
+
     /* First find a free handle */
     for (handle = VDI_PHYS_HANDLE+1, p = vwk_ptr+handle; handle <= LAST_VDI_HANDLE; handle++, p++) {
         if (!*p) {

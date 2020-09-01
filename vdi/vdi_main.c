@@ -147,6 +147,17 @@ void screen(void)
     }
 
     /*
+     * at this point, for v_opnwk() and v_opnvwk(), vwk is NULL.  we
+     * must fix this before we use it to set the lineA variables below.
+     * fortunately, v_opnwk() and v_opnvwk() have set CUR_WORK to a
+     * valid value (see vdi_control.c).  so we use this to set vwk.
+     */
+    if ((opcode == 1) || (opcode == 100))
+    {
+        vwk = CUR_WORK;
+    }
+
+    /*
      * set some line-A variables from the vwk info (as long as
      * the workstation is valid)
      */
