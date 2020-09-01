@@ -17,6 +17,7 @@ Atari TOS 2/3/4 desktop, including:
     . desktop configuration
     . read .inf file
     . blitter
+    . cache
 Due to space limitations, the implementation of the above is somewhat
 restricted in the 192K ROMs (see the detailed descriptions below).  If
 you make any changes to the desktop using the above features, you must
@@ -305,6 +306,15 @@ Blitter
 =======
 This item allows you to enable or disable the use of the blitter by the
 desktop.  The item is greyed-out if the system does not have a blitter.
+
+
+Cache
+=====
+192K ROMs:
+This is not available.
+
+This item allows you to enable or disable the CPU hardware cache.  The
+item is greyed-out if the CPU does not have a cache.
 
 
 User-assignable icons

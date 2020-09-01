@@ -47,9 +47,8 @@ A complete list of targets
 
 EmuTOS binaries
 ---------------
-
-192         etos192k.img, EmuTOS ROM padded to size 192 KB (starting at 0x00fc0000)
-256         etos256k.img, EmuTOS ROM padded to size 256 KB (starting at 0x00e00000)
+192         etos192us.img, EmuTOS ROM padded to size 192 KB (starting at 0x00fc0000)
+256         etos256us.img, EmuTOS ROM padded to size 256 KB (starting at 0x00e00000)
 512         etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0x00e00000)
 aranym      emutos-aranym.img, suitable for ARAnyM
 firebee     emutosfb.s19, to be flashed on the FireBee
@@ -65,11 +64,11 @@ m548x-bas   emutos-m548x-bas.s19, EmuTOS-RAM for BaS_gcc on ColdFire Evaluation 
 m548x-prg   emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc
 prg         emutos.prg, a RAM tos
 flop        emutos.st, a bootable floppy with RAM tos
+pak3        etospak3us.img, EmuTOS ROM suitable for PAK/3 systems
 cart        etoscart.img, EmuTOS as a diagnostic cartridge
 
 Binary targets modifiers
 ------------------------
-
 nothing     same as COUNTRY=us
 COUNTRY=xx  all countries in the binary, country xx being the default
 UNIQUE=xx   a smaller binary with only support for country xx
@@ -79,18 +78,15 @@ DEF='-DSOMEDEFINE=value'
 
 Utility targets
 ---------------
-
 bugready    for translations: sets up files in preparation for 'bug update'
 
 Debug targets
 -------------
-
 dsm         dsm.txt, an edited disassembly of emutos.img
 *.dsm       disassembly of any .c or almost any .img file
 
 Git-related targets
 -------------------
-
 clean       cleans all generated files
 charset     check the charset of all the source files
 crlf        convert all end-of-lines to LF
@@ -101,9 +97,9 @@ indent      indent all files - never done yet :-(
 
 Release-related targets
 -------------------
-
 all192      all 192 KB images
 all256      all 256 KB images
+allpak3     all etospak3*.img
 allprg      all emutos*.prg
 allflop     all emutos*.st
 release     build the release archives into release-archives
