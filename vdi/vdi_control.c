@@ -337,7 +337,6 @@ void vdi_v_opnvwk(Vwk * vwk)
     /* First find a free handle */
     for (handle = VDI_PHYS_HANDLE+1, p = vwk_ptr+handle; handle <= LAST_VDI_HANDLE; handle++, p++) {
         if (!*p) {
-            *p = vwk;
             break;
         }
     }
