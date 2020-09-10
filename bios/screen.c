@@ -93,8 +93,8 @@ static WORD shifter_check_moderez(WORD moderez)
         if (return_rez == TT_HIGH)
             return_rez = TT_MEDIUM;
     } else {
-        if (return_rez > ST_MEDIUM)
-            return_rez = ST_MEDIUM;
+        if (return_rez == ST_HIGH)
+            return_rez = ST_LOW;
     }
 
     return (return_rez==getrez())?0:(0xff00|return_rez);
