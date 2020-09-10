@@ -64,7 +64,14 @@ union acsidma {
  */
 #define MAXSECS_PER_ACSI_IO     255
 #define SMALL_TIMEOUT (CLOCKS_PER_SEC/10)   /* 100ms between cmd bytes */
-#define LARGE_TIMEOUT (CLOCKS_PER_SEC)      /* 1000ms for the data xfer itself */
+
+/*
+ * although the following large timeout should not be required for 'real'
+ * ACSI devices, it's used by Atari's hard disk routines.  also, at least
+ * one third-party add-on (Satandisk, which converts from ACSI to SD/MMC)
+ * can take more than a second to complete a write command.
+ */
+#define LARGE_TIMEOUT (3*CLOCKS_PER_SEC)    /* 3 seconds for the data xfer itself */
 
 /*
  * there should be a minimum of 5msec between ACSI I/Os.  because
