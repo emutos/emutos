@@ -18,6 +18,15 @@
 #define HAVE_BEZIER 0           /* switch on bezier capability */
 
 /*
+ * some VDI opcodes
+ */
+#define V_OPNWK_OP      1
+#define V_CLSWK_OP      2
+#define V_OPNVWK_OP     100
+#define V_CLSVWK_OP     101
+
+
+/*
  * some minima and maxima
  */
 #define MIN_LINE_STYLE  1       /* for vsl_type() */

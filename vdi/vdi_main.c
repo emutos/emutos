@@ -128,7 +128,7 @@ void screen(void)
     opcode = CONTRL[0];
 
     /* is it open work or vwork? */
-    if (opcode != 1 && opcode != 100) {
+    if ((opcode != V_OPNWK_OP) && (opcode != V_OPNVWK_OP)) {
         /* Find the vwk which matches the handle, if there */
         vwk = get_vwk_by_handle(handle);
         if (!vwk)
@@ -139,11 +139,11 @@ void screen(void)
             vwk->multifill = 0;
     }
 
-    if (opcode >= 1 && opcode < 1+JMPTB1_ENTRIES) {
-        (*jmptb1[opcode - 1]) (vwk);
+    if ((opcode >= V_OPNWK_OP) && (opcode < V_OPNWK_OP+JMPTB1_ENTRIES)) {
+        (*jmptb1[opcode - V_OPNWK_OP]) (vwk);
     }
-    else if (opcode >= 100 && opcode < 100+JMPTB2_ENTRIES) {
-        (*jmptb2[opcode - 100]) (vwk);
+    else if ((opcode >= V_OPNVWK_OP) && (opcode < V_OPNVWK_OP+JMPTB2_ENTRIES)) {
+        (*jmptb2[opcode - V_OPNVWK_OP]) (vwk);
     }
 
     /*
@@ -152,7 +152,7 @@ void screen(void)
      * fortunately, v_opnwk() and v_opnvwk() have set CUR_WORK to a
      * valid value (see vdi_control.c).  so we use this to set vwk.
      */
-    if ((opcode == 1) || (opcode == 100))
+    if ((opcode == V_OPNWK_OP) || (opcode == V_OPNVWK_OP))
     {
         vwk = CUR_WORK;
     }
@@ -161,7 +161,7 @@ void screen(void)
      * set some line-A variables from the vwk info (as long as
      * the workstation is valid)
      */
-    if (opcode != 2 && opcode != 101) {     /* if neither v_clswk() nor v_clsvwk() */
+    if ((opcode != V_CLSWK_OP) && (opcode != V_CLSVWK_OP)) {
         /*
          * the following assignments are not required by EmuTOS, but
          * ensure that the values in the line-A variables mirror those
