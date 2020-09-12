@@ -489,6 +489,7 @@ ROM_512 = etos512k.img
 SYMFILE = $(addsuffix .sym,$(basename $(ROM_512)))
 
 .PHONY: 512
+512: OPTFLAGS = $(SMALL_OPTFLAGS)
 512: override DEF += -DTARGET_512
 512: $(ROM_512) $(SYMFILE)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
