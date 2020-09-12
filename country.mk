@@ -90,7 +90,12 @@ i18n_pl_keyb = PL
 i18n_pl_cset = L2
 i18n_pl_idt  = IDT_24H | IDT_DDMMYY | '/'
 
-COUNTRIES = us de fr cz gr es fi sg ru it uk no se nl pl
+i18n_hu_lang = hu
+i18n_hu_keyb = HU
+i18n_hu_cset = L2
+i18n_hu_idt  = IDT_24H | IDT_YYMMDD | '/'
+
+COUNTRIES = us de fr cz gr es fi sg ru it uk no se nl pl hu
 ifeq (,$(findstring $(COUNTRY),$(COUNTRIES)))
 $(error Unknown COUNTRY=$(COUNTRY))
 endif
