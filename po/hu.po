@@ -1,10 +1,10 @@
 # -*-C-*- I hate emacs po mode.
 #
-# pl.po: the polish translations.
+# pl.hu: the Hungarian translations.
 #
 msgid ""
 msgstr ""
-"Last-Translator: Robert T <tercsirobi@gmail.com>\n"
+"Last-Translator: Róbert Tercsi <tercsirobi@gmail.com>\n"
 "Language-Team: Hungarian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=ISO-8859-2\n"
@@ -14,60 +14,63 @@ msgstr ""
 msgid ""
 "System halted!\n"
 msgstr ""
+"A rendszer leállt!\n"
 
 #: bios/initinfo.c
 msgid "GEMDOS drives"
-msgstr ""
+msgstr "GEMDOS meghajtók"
 
 #: bios/initinfo.c
 msgid "MB"
-msgstr ""
+msgstr "MB"
 
 #: bios/initinfo.c desk/deskinf.c
 msgid "KB"
-msgstr ""
+msgstr "KB"
 
 #: bios/initinfo.c
 msgid "EmuTOS Version"
-msgstr ""
+msgstr "EmuTOS verzió"
 
 #: bios/initinfo.c
 msgid "CPU type"
-msgstr ""
+msgstr "CPU"
 
 #: bios/initinfo.c
 msgid "Machine"
-msgstr ""
+msgstr "Géptípus"
 
 #: bios/initinfo.c
 msgid "Boot time"
-msgstr ""
+msgstr "Rendszeridõ"
 
 #: bios/initinfo.c
 msgid "Hold <Control> to skip AUTO/ACC"
-msgstr ""
+msgstr "AUTO/ACC átlépése: <Control> lenyomva"
 
 #: bios/initinfo.c
 msgid "Hold <Alternate> to skip HDD boot"
-msgstr ""
+msgstr "HDD átlépése: <Alternate> lenyomva"
 
 #: bios/initinfo.c
 msgid "Press key 'X' to boot from X:"
-msgstr ""
+msgstr "X: meghajtóról indítás: <X>" 
 
 #: bios/initinfo.c
 msgid "Press <Esc> to run an early console"
-msgstr ""
+msgstr "Parancssor indítása: <Esc>"
 
 #: bios/initinfo.c
 msgid "Hold <Shift> to pause this screen"
-msgstr ""
+msgstr "Képernyõ kimerevítése: <Shift>"
 
 #: bios/kprint.c
 msgid ""
 "\n"
 "*** Press any key to continue ***"
 msgstr ""
+"\n"
+"*** Folytatás bármely billentyûre ***"
 
 #: bdos/osmem.c
 msgid ""
@@ -75,71 +78,90 @@ msgid ""
 "Use FOLDR100.PRG to get more.\n"
 "System halted!\n"
 msgstr ""
+"\033ENincs elég memória.\n"
+"Használja a FOLDR100.PRG -t.\n"
+"A rendszer leállt!\n"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "Drive:"
-msgstr ""
+msgstr "Meghajtó:"
 
 #: aes/gem_rsc.c
 msgid "Selection: ________.___"
-msgstr ""
+msgstr "Fájl: ________.___"
 
 #: aes/gem_rsc.c
 msgid "Directory:"
-msgstr ""
+msgstr "Mappa:"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "OK"
-msgstr ""
+msgstr "OK"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "Cancel"
-msgstr ""
+msgstr "Mégse"
 
 #: aes/gem_rsc.c
 msgid "[1]["
 "The disk in drive %c: is|"
 "physically write-protected.][Cancel|Retry]"
-msgstr ""
+msgstr "[1]["
+"A %c: meghajtóban lévõ lemez|"
+"írásvédett.][Mégse|Ismét]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
 "Drive %c: is not responding.|"
 "Please check the disk drive,|"
 "or insert a disk.][Cancel|Retry]"
-msgstr ""
+msgstr "[2]["
+"A %c: meghajtó nem válaszol.|"
+"Ellenõrizze a meghajtót vagy|"
+"helyezzen be egy lemezt.][Mégse|Ismét]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
 "Data on the disk in drive %c:|"
 "may be damaged.][Cancel|Retry]"
-msgstr ""
+msgstr "[1]["
+"A %c: meghajtó |"
+"adata megsérülhetett.][Mégse|Ismét]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
 "This application cannot read|"
 "data on the disk in drive %c:.][Cancel|Retry]"
-msgstr ""
+msgstr "[2]["
+"A program nem tud a %c:|"
+"meghajtóról olvasni.][Mégse|Ismét]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
 "Your output device is not|"
 "receiving data.][Cancel|Retry]"
-msgstr ""
+msgstr "[1]["
+"A kimeneti eszközre|"
+"nem érkezik adat.][Mégse|Ismét]"
 
 #: aes/gem_rsc.c
 msgid "[3]["
 "An error has occurred in GEM.|"
 "Please contact the EmuTOS|"
 "Development Team.][Cancel]"
-msgstr ""
+msgstr "[3]["
+"Hiba lépett fel a GEM-ben.|"
+"Lépjen kapcsolatba az|"
+"EmuTOS fejlesztõivel.][Mégse]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
 "This application cannot|"
 "find the folder or file|"
 "you just tried to access.][  OK  ]"
-msgstr ""
+msgstr "[2]["
+"A megadott fájl vagy mappa|"
+"nem található.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -148,7 +170,10 @@ msgid "[1]["
 "document.  To make room,|"
 "close any document that|"
 "you do not need.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"A program nem tud másik fájlt|"
+"megnyitni. A felszabadításhoz|"
+"zárjon be fájlokat.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -156,13 +181,16 @@ msgid "[1]["
 "already exists in the|"
 "directory, or this item|"
 "is set to Read Only status.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Ilyen nevû fájl már létezik,|"
+"vagy írásvédett.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
 "The drive you specified|"
 "does not exist.][Cancel]"
-msgstr ""
+msgstr "[1]["
+"A meghajtó nem létezik.][Mégse]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -170,642 +198,704 @@ msgid "[1]["
 "in your computer for the|"
 "application you just tried|"
 "to run.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nincs elég memória|"
+"a program futtatásához.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[3]["
 "TOS error #%u.][Cancel]"
-msgstr ""
+msgstr "[3]["
+"TOS hiba #%u.][Mégse]"
 
 #: aes/gem_rsc.c
 msgid "[3]["
 "Unsupported AES function #%d.][Cancel]"
-msgstr ""
+msgstr "[3]["
+"Nem támogatott AES funkció #%d.][Mégse]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
 "Not enough memory for|"
 "this directory][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nincs elég memória|"
+"a mappának.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "ITEM SELECTOR"
-msgstr ""
+msgstr "ELEM KIJELÖLÉSE"
 
 #: desk/desk_rsc.c
 msgid "Number of folders: _____"
-msgstr ""
+msgstr "Mappák: _____           "
 
 #: desk/desk_rsc.c
 msgid "Number of files: _____"
-msgstr ""
+msgstr "Fájlok: _____           "
 
 #: desk/desk_rsc.c
 msgid "Skip"
-msgstr ""
+msgstr "Kihagy"
 
 #: desk/desk_rsc.c
 msgid "Install"
-msgstr ""
+msgstr "Telepítés"
 
 #: desk/desk_rsc.c
 msgid "Remove"
-msgstr ""
+msgstr "Eltávolítás"
 
 #: desk/desk_rsc.c
 msgid "Yes"
-msgstr ""
+msgstr "Igen"
 
 #: desk/desk_rsc.c
 msgid "No"
-msgstr ""
+msgstr "Nem"
 
 #: desk/desk_rsc.c
 msgid "Name: ________.___"
-msgstr ""
+msgstr "Név: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size: __________"
-msgstr ""
+msgstr "Méret: __________"
 
 #: desk/desk_rsc.c
 msgid "Date: __________"
-msgstr ""
+msgstr "Dátum: __________"
 
 #: desk/desk_rsc.c
 msgid "Time: __:__ __"
-msgstr ""
+msgstr "Idõ: __:__ __"
 
 #: desk/desk_rsc.c
 msgid "Drive identifier:     _"
-msgstr ""
+msgstr "Meghajtó jele: _          "
 
 #: desk/desk_rsc.c
 msgid "Disk label: ________.___"
-msgstr ""
+msgstr "Címke: ________.___      "
 
 #: desk/desk_rsc.c
 msgid "Bytes used: __________"
-msgstr ""
+msgstr "Használt bájtok: __________"
 
 #: desk/desk_rsc.c
 msgid "Bytes available: __________"
-msgstr ""
+msgstr "Szabad bájtok: __________"
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
-msgstr ""
+msgstr "Azonosító: _:"
 
 #: desk/desk_rsc.c
 msgid "Label: ____________"
-msgstr ""
+msgstr "Címke: ____________"
 
 #: desk/desk_rsc.c
 msgid "Application name: ________.___"
-msgstr ""
+msgstr "Programnév: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Arguments: ___________"
-msgstr ""
+msgstr "Paraméterek: ___________"
 
 #: desk/desk_rsc.c
 msgid "Document type: ___"
-msgstr ""
+msgstr "Dokumentum típusa: ___"
 
 #: desk/desk_rsc.c
 msgid "Install as: F__"
-msgstr ""
+msgstr "Telepítés, mint: F__"
 
 #: desk/desk_rsc.c
 msgid "Current name: ________.___"
-msgstr ""
+msgstr "Jelenlegi név: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Copy's name: ________.___"
-msgstr ""
+msgstr "Másolat neve: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Key: ^_"
-msgstr ""
+msgstr "Bill.: ^_"
 
 #: desk/desk_rsc.c
 msgid "Free RAM: _____________________"
-msgstr ""
+msgstr "Szabad RAM: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
-msgstr ""
+msgstr "Címke: ________.___"
 
 #: desk/desk_rsc.c
 msgid " Desk "
-msgstr ""
+msgstr " Asztal "
 
 #: desk/desk_rsc.c
 msgid " File "
-msgstr ""
+msgstr " Fájl "
 
 #: desk/desk_rsc.c
 msgid " View "
-msgstr ""
+msgstr " Nézet"
 
 #: desk/desk_rsc.c
 msgid " Options "
-msgstr ""
+msgstr " Beállítások"
 
 #: desk/desk_rsc.c
 msgid "  Desktop info..."
-msgstr ""
+msgstr "  Névjegy..."
 
 #: desk/desk_rsc.c
 msgid "  Open"
-msgstr ""
+msgstr "  Megnyitás"
 
 #: desk/desk_rsc.c
 msgid "  Info/Rename..."
-msgstr ""
+msgstr "  Infó/Átnevezés..."
 
 #: desk/desk_rsc.c
 msgid "  Search..."
-msgstr ""
+msgstr "  Keresés..."
 
 #: desk/desk_rsc.c
 msgid "  New folder..."
-msgstr ""
+msgstr "  Új mappa..."
 
 #: desk/desk_rsc.c
 msgid "  Close folder"
-msgstr ""
+msgstr "  Mappa bezárása"
 
 #: desk/desk_rsc.c
 msgid "  Close top window"
-msgstr ""
+msgstr "  Ablak bezárása"
 
 #: desk/desk_rsc.c
 msgid "  Cycle windows"
-msgstr ""
+msgstr "  Ablakváltás"
 
 #: desk/desk_rsc.c
 msgid "  Select all items"
-msgstr ""
+msgstr "  Összes kijelölése"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
-msgstr ""
+msgstr "  Fájl maszk beállítás"
 
 #: desk/desk_rsc.c
 msgid "  Delete..."
-msgstr ""
+msgstr "  Törlés..."
 
 #: desk/desk_rsc.c
 msgid "  Format floppy..."
-msgstr ""
+msgstr "  Lemez formázása..."
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
-msgstr ""
+msgstr "  EmuCON futtatása"
 
 #: desk/desk_rsc.c
 msgid "  Shutdown"
-msgstr ""
+msgstr "  Leállítás"
 
 #: desk/desk_rsc.c
 msgid "  Show as icons"
-msgstr ""
+msgstr "  Ikonként mutat"
 
 #: desk/desk_rsc.c
 msgid "  Show as text"
-msgstr ""
+msgstr "  Szövegként mutat"
 
 #: desk/desk_rsc.c
 msgid "  Sort by name"
-msgstr ""
+msgstr "  Rendezés: Név"
 
 #: desk/desk_rsc.c
 msgid "  Sort by type"
-msgstr ""
+msgstr "  Rendezés: Típus"
 
 #: desk/desk_rsc.c
 msgid "  Sort by size"
-msgstr ""
+msgstr "  Rendezés: Méret"
 
 #: desk/desk_rsc.c
 msgid "  Sort by date"
-msgstr ""
+msgstr "  Rendezés: Dátum"
 
 #: desk/desk_rsc.c
 msgid "  No sort"
-msgstr ""
+msgstr "  Nincs rendezés"
 
 #: desk/desk_rsc.c
 msgid "  Size to fit"
-msgstr ""
+msgstr "  Átméretezés"
 
 #: desk/desk_rsc.c
 msgid "  Set background..."
-msgstr ""
+msgstr "  Háttér beállítása..."
 
 #: desk/desk_rsc.c
 msgid "  Install icon..."
-msgstr ""
+msgstr "  Ikon telepítése..."
 
 #: desk/desk_rsc.c
 msgid "  Install application..."
-msgstr ""
+msgstr "  Program telepítése..."
 
 #: desk/desk_rsc.c
 msgid "  Install devices"
-msgstr ""
+msgstr "  Eszköz telepítése.."
 
 #: desk/desk_rsc.c
 msgid "  Remove desktop icon"
-msgstr ""
+msgstr "  Ikon eltávolítása..."
 
 #: desk/desk_rsc.c
 msgid "  Set preferences..."
-msgstr ""
+msgstr "  Beállítások..."
 
 #: desk/desk_rsc.c
 msgid "  Desktop configuration..."
-msgstr ""
+msgstr "  Asztal beállítása..."
 
 #: desk/desk_rsc.c
 msgid "  Change resolution..."
-msgstr ""
+msgstr "  Képernyõ beállítása..."
 
 #: desk/desk_rsc.c
 msgid "  Read .INF file..."
-msgstr ""
+msgstr "  .INF fájl olvasása..."
 
 #: desk/desk_rsc.c
 msgid "  Save desktop..."
-msgstr ""
+msgstr "  Asztal mentése..."
 
 #: desk/desk_rsc.c
 msgid "  Blitter"
-msgstr ""
+msgstr "  Blitter"
 
 #: desk/desk_rsc.c
 msgid "  Cache"
-msgstr ""
+msgstr "  Gyorsítótár"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
-msgstr ""
+msgstr "Olvasás/Írás"
 
 #: desk/desk_rsc.c
 msgid "Read-Only"
-msgstr ""
+msgstr "Csak olvasás"
 
 #: desk/desk_rsc.c
 msgid "DISK INFORMATION"
-msgstr ""
+msgstr "LEMEZ TULAJDONSÁGAI"
 
 #: desk/desk_rsc.c
 msgid "Version"
-msgstr ""
+msgstr "Verzió"
 
 #: desk/desk_rsc.c
 msgid "Copyright \275 2001-"
-msgstr ""
+msgstr "Copyright (C) 2001-"
 
 #: desk/desk_rsc.c
 msgid "The EmuTOS development team"
-msgstr ""
+msgstr "EmuTOS csapata"
 
 #: desk/desk_rsc.c
 msgid "Based on 'GPLed' sources"
-msgstr ""
+msgstr "'GPled' források alapján"
 
 #: desk/desk_rsc.c
 msgid "\275 1987 Digital Research, Inc."
-msgstr ""
+msgstr "(C) 1987 Digital Research, Inc."
 
 #: desk/desk_rsc.c
 msgid "\275 1999 Caldera Thin Clients, Inc."
-msgstr ""
+msgstr "(C) 1999 Caldera Thin Clients, Inc."
 
 #: desk/desk_rsc.c
 msgid "\275 2001 Lineo, Inc."
-msgstr ""
+msgstr "(C) 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c
 msgid "EmuTOS is distributed under the GPL"
-msgstr ""
+msgstr "Az EmuTOS GNU/GPL alatt terjesztve"
 
 #: desk/desk_rsc.c
 msgid "See doc\\license.txt for details"
-msgstr ""
+msgstr "részletek a doc\\license.txt fájlban"
 
 #: desk/desk_rsc.c
 msgid "OPEN APPLICATION"
-msgstr ""
+msgstr "PROGRAM MEGNYITÁSA"
 
 #: desk/desk_rsc.c
 msgid "Parameters:"
-msgstr ""
+msgstr "Paraméterek:"
 
 #: desk/desk_rsc.c
 msgid "INSTALL DESKTOP ICON"
-msgstr ""
+msgstr "ASZTAL IKON TELEPÍTÉSE"
 
 #: desk/desk_rsc.c
 msgid "Item type:"
-msgstr ""
+msgstr "Név:"
 
 #: desk/desk_rsc.c
 msgid "Drive"
-msgstr ""
+msgstr "Meghajtó"
 
 #: desk/desk_rsc.c
 msgid "Trash can"
-msgstr ""
+msgstr "Lomtár"
 
 #: desk/desk_rsc.c
 msgid "Printer"
-msgstr ""
+msgstr "Nyomtató"
 
 #: desk/desk_rsc.c
 msgid "Icon:"
-msgstr ""
+msgstr "Ikon:"
 
 #: desk/desk_rsc.c
 msgid "INSTALL APPLICATION"
-msgstr ""
+msgstr "PROGRAM TELEPÍTÉSE"
 
 #: desk/desk_rsc.c
 msgid "Boot status:"
-msgstr ""
+msgstr "Indítás:"
 
 #: desk/desk_rsc.c
 msgid "Auto"
-msgstr ""
+msgstr "Auto"
 
 #: desk/desk_rsc.c
 msgid "Normal"
-msgstr ""
+msgstr "Normál"
 
 #: desk/desk_rsc.c
 msgid "Application type:"
-msgstr ""
+msgstr "Programtípus:"
 
 #: desk/desk_rsc.c
 msgid "Default dir:"
-msgstr ""
+msgstr "Alapért. mappa:"
 
 #: desk/desk_rsc.c
 msgid "Application"
-msgstr ""
+msgstr "Program"
 
 #: desk/desk_rsc.c
 msgid "Window"
-msgstr ""
+msgstr "Ablak"
 
 #: desk/desk_rsc.c
 msgid "Parameter:"
-msgstr ""
+msgstr "Paraméter"
 
 #: desk/desk_rsc.c
 msgid "Full path"
-msgstr ""
+msgstr "Útvonal"
 
 #: desk/desk_rsc.c
 msgid "File name"
-msgstr ""
+msgstr "Fájlnév"
 
 #: desk/desk_rsc.c
 msgid "NAME CONFLICT DURING COPY"
-msgstr ""
+msgstr "FÁJLNÉV ÜTKÖZÉS!"
 
 #: desk/desk_rsc.c
 msgid "Stop"
-msgstr ""
+msgstr "Kilépés"
 
 #: desk/desk_rsc.c
 msgid "NEW FOLDER"
-msgstr ""
+msgstr "ÚJ MAPPA"
 
 #: desk/desk_rsc.c
 msgid "SEARCH FILE"
-msgstr ""
+msgstr "FÁJL KERESÉSE"
 
 #: desk/desk_rsc.c
 msgid "PRINT FILE"
-msgstr ""
+msgstr "FÁJL NYOMTATÁSA"
 
 #: desk/desk_rsc.c
 msgid "SET PREFERENCES"
-msgstr ""
+msgstr "BEÁLLITÁSOK"
 
 #: desk/desk_rsc.c
 msgid "Confirm deletes:"
-msgstr ""
+msgstr "Törlés megerõsítése:"
 
 #: desk/desk_rsc.c
 msgid "Confirm copies:"
-msgstr ""
+msgstr "Másolás megerõsítése:"
 
 #: desk/desk_rsc.c
 msgid "Confirm overwrites:"
-msgstr ""
+msgstr "Felülírás megerõsítése:"
 
 #: desk/desk_rsc.c
 msgid "More preferences"
-msgstr ""
+msgstr "További beállítások"
 
 #: desk/desk_rsc.c
 msgid "Double-click speed:"
-msgstr ""
+msgstr "Dupla katt. sebessége:"
 
 #: desk/desk_rsc.c
 msgid "To drop down menus:"
-msgstr ""
+msgstr "Kattintás a menükön:"
 
 #: desk/desk_rsc.c
 msgid "Click"
-msgstr ""
+msgstr "Igen"
 
 #: desk/desk_rsc.c
 msgid "No click"
-msgstr ""
+msgstr "Nem"
 
 #: desk/desk_rsc.c
 msgid "Time format:"
-msgstr ""
+msgstr "Idõformátum:"
 
 #: desk/desk_rsc.c
 msgid "Default"
-msgstr ""
+msgstr "Alapértelmezett"
 
 #: desk/desk_rsc.c
 msgid "12H"
-msgstr ""
+msgstr "12 óra"
 
 #: desk/desk_rsc.c
 msgid "24H"
-msgstr ""
+msgstr "24 óra"
 
 #: desk/desk_rsc.c
 msgid "Date format:"
-msgstr ""
+msgstr "Dátum formátuma:"
 
 #: desk/desk_rsc.c
 msgid "MDY"
-msgstr ""
+msgstr "HNÉ"
 
 #: desk/desk_rsc.c
 msgid "DMY"
-msgstr ""
+msgstr "ÉHN"
 
 #: desk/desk_rsc.c
 msgid "SET FILE MASK"
-msgstr ""
+msgstr "FÁJL MASZK BEÁLLíTÁSA"
 
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
-msgstr ""
+msgstr "ASZTAL BEÁLLíTÁSAI"
 
 #: desk/desk_rsc.c
 msgid "Default directory:"
-msgstr ""
+msgstr "Alapért. mappa:"
 
 #: desk/desk_rsc.c
 msgid "Input parameter:"
-msgstr ""
+msgstr "Paraméter:"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"
-msgstr ""
+msgstr "Gyorsbillentyû:"
 
 #: desk/desk_rsc.c
 msgid "Menu shortcut keys:"
-msgstr ""
+msgstr "Menü gyorselérés:"
 
 #: desk/desk_rsc.c
 msgid "Clear all"
-msgstr ""
+msgstr "Összes törlése"
+
+#: desk/desk_rsc.c
+msgid "SET SCREEN RESOLUTION"
+msgstr "KÉPERNYÕ BEÁLLÍTÁSA"
+
+#: desk/desk_rsc.c
+msgid "ST Low"
+msgstr "ST kicsi"
+
+#: desk/desk_rsc.c
+msgid "ST Medium"
+msgstr "ST közép"
+
+#: desk/desk_rsc.c
+msgid "ST High"
+msgstr "ST nagy"
+
+#: desk/desk_rsc.c
+msgid "TT Low"
+msgstr "TT kicsi"
+
+#: desk/desk_rsc.c
+msgid "TT Medium"
+msgstr "TT közép"
+
+#: desk/desk_rsc.c
+msgid "High"
+msgstr "Nagy"
+
+#: desk/desk_rsc.c
+msgid "Medium"
+msgstr "Közép"
+
+#: desk/desk_rsc.c
+msgid "Low"
+msgstr "Kicsi"
+
+#: desk/desk_rsc.c
+msgid "ST Compatible"
+msgstr "ST komp."
 
 #: desk/desk_rsc.c
 msgid "INSTALL WINDOW ICON"
-msgstr ""
+msgstr "ABLAK IKON TELEPÍTÉSE"
 
 #: desk/desk_rsc.c
 msgid "Folder"
-msgstr ""
+msgstr "Mappa"
 
 #: desk/desk_rsc.c
 msgid "File"
-msgstr ""
+msgstr "Fájl"
+
+#: desk/desk_rsc.c
+msgid "Monochrome only"
+msgstr "Monokróm"
 
 #: desk/desk_rsc.c
 msgid "FORMAT FLOPPY DISKETTE"
-msgstr ""
+msgstr "LEMEZ FORMÁZÁSA"
 
 #: desk/desk_rsc.c
 msgid "Single sided"
-msgstr ""
+msgstr "Egy oldalas (SS)"
 
 #: desk/desk_rsc.c
 msgid "Double sided"
-msgstr ""
+msgstr "Két oldalas (DS)"
 
 #: desk/desk_rsc.c
 msgid "High density"
-msgstr ""
+msgstr "Nagy sûrûségû (HD)"
 
 #: desk/desk_rsc.c
 msgid "SET BACKGROUND"
-msgstr ""
+msgstr "HÁTTÉR BEÁLLÍTÁSA"
 
 #: desk/desk_rsc.c
 msgid "Select:"
-msgstr ""
+msgstr "Kiválasztva:"
 
 #: desk/desk_rsc.c
 msgid "Desktop"
-msgstr ""
+msgstr "Asztal"
 
 #: desk/desk_rsc.c
 msgid "Style:"
-msgstr ""
+msgstr "Stílus:"
 
 #: desk/desk_rsc.c
 msgid "Color:"
-msgstr ""
+msgstr "Szín:"
 
 #: desk/desk_rsc.c
 msgid " %ld bytes used in %d items."
-msgstr ""
+msgstr " %ld bájt, %d fájlban."
 
 #: desk/desk_rsc.c
 msgid " %ld bytes used in %d selected items."
-msgstr ""
+msgstr " %ld bájt, %d kijelölt fájlban."
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"
-msgstr ""
+msgstr "FÁJL TULAJDONSÁGAI"
 
 #: desk/desk_rsc.c
 msgid "FOLDER INFORMATION"
-msgstr ""
+msgstr "MAPPA TULAJDONSÁGAI"
 
 #: desk/desk_rsc.c
 msgid "COPY FILE(S)"
-msgstr ""
+msgstr "FÁJL(OK) MÁSOLÁSA"
 
 #: desk/desk_rsc.c
 msgid "MOVE FILE(S)"
-msgstr ""
+msgstr "FÁJL(OK) MOZGATÁSA"
 
 #: desk/desk_rsc.c
 msgid "DELETE FILE(S)"
-msgstr ""
+msgstr "FÁJL(OK) TÖRLÉSE"
 
 #: desk/desk_rsc.c
 msgid "DISK"
-msgstr ""
+msgstr "MEGHAJTÓ"
 
 #: desk/desk_rsc.c
 msgid "TRASH"
-msgstr ""
+msgstr "LOMTÁR"
 
 #: desk/desk_rsc.c
 msgid "PRINTER"
-msgstr ""
+msgstr "NYOMTATÓ"
 
 #: desk/desk_rsc.c
 msgid "-More-"
-msgstr ""
+msgstr "-Tovább-"
 
 #: desk/desk_rsc.c
 msgid "-End of file-"
-msgstr ""
+msgstr "-Fájl vége-"
 
 #: desk/desk_rsc.c
 msgid "-File read error-"
-msgstr ""
+msgstr "-Fájl olvasási hiba-"
 
 #: desk/desk_rsc.c
 msgid "Locate item"
-msgstr ""
+msgstr "Fájl felderítése"
 
 #: desk/desk_rsc.c
 msgid "Select .INF file"
-msgstr ""
+msgstr ".INF fájl kijelölése"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Switch resolution?][ Yes | No ]"
-msgstr ""
+msgstr "[2]["
+"Felbontás váltása?][ OK | Mégse ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Show or print this document?][Show|Print|Cancel]"
-msgstr ""
+msgstr "[2]["
+"Fájl megtekintése vagy|"
+"nyomtatása?][Megtekint|Nyomtat|Mégse]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Print error!][ Retry | Cancel ]"
-msgstr ""
+msgstr "[1]["
+"Nyomtatás hiba!][Ismét|Mégse]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"This document type has no|"
+"associated application.][  OK  ]"
+msgstr "[1]["
+"Nincs a fájlhoz|"
+"hozzárendelt program.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -813,56 +903,74 @@ msgid "[1]["
 "windows.  Please close a|"
 "window that you are not|"
 "using.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nem tud több ablakot|"
+"megjeleníteni. Zárja be a nem|"
+"használt ablakokat.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Illegal directory operation!][ Skip | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Szabálytalan mappamûvelet!][Kihagy|Kilépés]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Illegal operation!][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Szabálytalan mûvelet!][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Abort this operation?][ Yes | No ]"
-msgstr ""
+msgstr "[2]["
+"Mûvelet megszakítása?][ OK| Mégse ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Do you want to delete all|"
 "the files on drive %c: ?][Yes| No ]"
-msgstr ""
+msgstr "[2]["
+"Törli a %c: meghajtó|"
+"összes fájlját?][ OK| Mégse ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Sorry, the desktop cannot|"
 "install any more icons|"
 "or applications.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Az asztalra több ikon vagy|"
+"program már nem telepíthetõ.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "You cannot create a folder|"
 "with that name. Please retry|"
 "with a new name, or cancel.][Cancel|Retry]"
-msgstr ""
+msgstr "[2]["
+"Ilyen névvel nem tud mappát|"
+"létrehozni. Adjon meg másik|"
+"nevet.][Mégse|Ismét]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Drive %c: does not have|"
 "enough room for this|"
 "operation.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"A %c: meghajtón nincs elég hely|"
+"ehhez a mûvelethez.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
 "You cannot create or|"
 "access a folder this far|"
 "down the directory path.][  OK  ]"
-msgstr ""
+msgstr "[3]["
+"A mappastruktúrában ilyen|"
+"mélyen nem tud fájlt|"
+"létrehozni vagy elérni.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
@@ -870,517 +978,579 @@ msgid "[3]["
 "a file or folder with that|"
 "name, because the pathname|"
 "is too long.][  OK  ]"
-msgstr ""
+msgstr "[3]["
+"A fájl nem elérhetõ vagy|"
+"létrehozható, az|"
+"útvonal túl hosszú.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "%s is used to|"
 "permanently delete files|"
 "or folders.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"A %s fájlok|"
+"és mappák végleges |"
+"törlésére szolgál.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "%s|"
 "is a printer.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"A(z) %s|"
+"egy nyomtató.][  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"You cannot drag applications,|"
+"files or folders onto the|"
+"Desktop.][  OK  ]"
+msgstr "[1]["
+"Nem tud programot, fájlt vagy|"
+"mappát az asztalra húzni.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Save Desktop?][  OK  |Cancel]"
-msgstr ""
+msgstr "[2]["
+"Asztal mentése?][  OK  |Mégse]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Do you want to remove icons|"
 "or delete files?][Icons|Files|Cancel]"
-msgstr ""
+msgstr "[2]["
+"Eltávolítja az ikonokat|"
+"vagy fájlokat?][Ikon|Fájl|Mégse]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Invalid function key value.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nem létezõ gyorsbillentyû.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Function key already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
-msgstr ""
+msgstr "[2]["
+"Gyorsbillentyû már haszálatban.|"
+"Válasszon másikat!][  OK  |Mégse]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
 "Not enough memory to|"
 "initialise EmuDesk.|"
 "You must reboot.][  OK  ]"
-msgstr ""
+msgstr "[3]["
+"Nincs elég memória|"
+"az EmuDesk betöltéséhez.|"
+"Indítsa újra a számítógépet.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "%s not found.|"
 "Do you want to remove the|"
 "icon or locate the item?][Remove|Locate|Cancel]"
-msgstr ""
+msgstr "[2]["
+"%s nem talalható.|"
+"Eltávolítja az ikont vagy|"
+"megkeresi a fájlt?][Eltávolít|Megkeres|Mégse]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Please select icon type.][Desktop|Window|Cancel]"
-msgstr ""
+msgstr "[1]["
+"Válasszon ikon típust.][Asztal| Ablak |Mégse]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "No matching file type.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nincs ilyen fájltípus.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
 "Formatting error. The target|"
 "disk may be write-protected|"
 "or unusable.][ Retry | Abort ]"
-msgstr ""
+msgstr "[3]["
+"Formázási hiba. A lemez|"
+" vagy sérült.][ Ismét | Kilépés ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "This disk has %ld bytes|"
 "available to the user.][ Continue | Quit ]"
-msgstr ""
+msgstr "[1]["
+"A lemezen %ld bájt elérhetõ.][ Tovább | Kilépés ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Drive %s: does not exist.][ Cancel ]"
-msgstr ""
+msgstr "[1]["
+"A %s: meghajtó nem létezik.][Mégse]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "No drive identifier.][ Retry ]"
-msgstr ""
+msgstr "[1]["
+"Nincs ilyen meghajtó.][ Ismét ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot delete file|"
 "%s][ Skip | Retry | Abort ]"
-msgstr ""
+msgstr "[1]["
+"A %s |"
+"fájl nem törölhetõ.][ Kihagy | Ismét | Kilépés ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot delete directory|"
 "%s][ Skip | Retry | Abort ]"
-msgstr ""
+msgstr "[1]["
+"A %s |"
+"mappa nem törölhetõ.][ Kihagy| Ismét | Kilépés ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Not enough memory.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nincs elég memória.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "%s not found.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"%s nem található.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot open file|"
 "%s][ Skip | Retry | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Fájl megnyitási hiba:|"
+"%s][ Kihagy| Ismét | Kilépés ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot create file|"
 "%s][ Skip | Retry | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Fájl létrehozási hiba:|"
+"%s][ Kihagy | Ismét | Kilépés ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot read file|"
 "%s][ Skip | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Fájl olvasási hiba:|"
+"%s][ Kihagy | Kilépés]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot write file|"
 "%s][ Skip | Abort ]"
-msgstr ""
+msgstr "[1]["
+"Fájl írási hiba:|"
+"%s][ Kihagy |Kilépés ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Rename error!][ Retry | Cancel ]"
-msgstr ""
+msgstr "[1]["
+"Átnevezési hiba!][ Ismét | Mégse ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Failed to set default|"
 "directory.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Alapértelmezett mappa|"
+"beállítási hiba.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Illegal .INF file format.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Érvénytelen .INF fájl formátum][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Continue to search?][  OK  |Cancel]"
-msgstr ""
+msgstr "[2]["
+"Keresés folytatása?][  OK  | Mégse ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "No more files.][  OK  ]"
-msgstr ""
+msgstr "[1]["
+"Nincs több fájl.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2]["
 "Last key is already assigned.|"
 "Do you want to reassign it?][  OK  |Cancel]"
-msgstr ""
+msgstr "[2]["
+"Az utolsó billentyû foglalt.|"
+"Beállít másikat?][  OK  |Mégse]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
-msgstr ""
+msgstr "Másolás <fájltípus> ... szabványos kimenetre"
 
 #: cli/cmdint.c
 msgid "Change current directory to <dir>"
-msgstr ""
+msgstr "Aktuális mappa váltása <mappa>"
 
 #: cli/cmdint.c
 msgid "or display current directory"
-msgstr ""
+msgstr "vagy aktuális mappa megjelenítése"
 
 #: cli/cmdint.c
 msgid "Change attributes for <filename>"
-msgstr ""
+msgstr "<fájlnév> attribútum változtatása"
 
 #: cli/cmdint.c
 msgid "<mode> specifies the new attribute(s):"
-msgstr ""
+msgstr "<móddal> új attribútum(ok) beállítása"
 
 #: cli/cmdint.c
 msgid "r=read-only  h=hidden  s=system  -=none"
-msgstr ""
+msgstr "r=csak olvasható h=rejtett s=rendszer -=nem beállított"
 
 #: cli/cmdint.c
 msgid "Clear screen"
-msgstr ""
+msgstr "Képernyõ törlése"
 
 #: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dest>"
-msgstr ""
+msgstr "<fájltípusnak> megfelelõ fájlok másolása <célra>"
 
 #: cli/cmdint.c
 msgid "If <filespec> matches multiple files,"
-msgstr ""
+msgstr "Ha <fájltípus> több fájlal is megõ,"
 
 #: cli/cmdint.c
 msgid "<dest> must be a directory"
-msgstr ""
+msgstr "<cél> mappa kell legyen"
 
 #: cli/cmdint.c
 msgid "Copy <string> ... to standard output"
-msgstr ""
+msgstr "<szöveg> másolása ... szabványos kimenetre"
 
 #: cli/cmdint.c
 msgid "Strings may be surrounded by \"\""
-msgstr ""
+msgstr "Szöveg körül elõfordulhat \"\""
 
 #: cli/cmdint.c
 msgid "Exit EmuCON2"
-msgstr ""
+msgstr "Bezárás - EmuCON2"
 
 #: cli/cmdint.c
 msgid "Get help about <cmd> or list available commands"
-msgstr ""
+msgstr "<parancs> segítsége vagy parancsok listázása"
 
 #: cli/cmdint.c
 msgid "Use HELP ALL for help on all commands"
-msgstr ""
+msgstr "Az összes parancs megjelenítéséhez írja be: HELP ALL."
 
 #: cli/cmdint.c
 msgid "Use HELP EDIT for help on line editing"
-msgstr ""
+msgstr "A szerkesztés segítségéhez írja be: HELP EDIT."
 
 #: cli/cmdint.c
 msgid "List files (default terse, horizontal)"
-msgstr ""
+msgstr "Fájlok listázása (egyszerû, vízszintes)"
 
 #: cli/cmdint.c
 msgid "Specify -l for detailed list"
-msgstr ""
+msgstr "Részletes lista: -l"
 
 #: cli/cmdint.c
 msgid "Create directory <dir>"
-msgstr ""
+msgstr "Mappa létrehozása <mappa>"
 
 #: cli/cmdint.c
 msgid "Set or display console settings:"
-msgstr ""
+msgstr "Parancssor beállításai:"
 
 #: cli/cmdint.c
 msgid "res for screen resolution (0,1)[ST] (0,1,2,4,7)[TT];"
-msgstr ""
+msgstr "res a felbontáshoz (0,1)[ST] (0,1,2,4,7)[TT];"
 
 #: cli/cmdint.c
 msgid "delay/rate for the keyboard"
-msgstr ""
+msgstr "billentyûzet késleltetés/ismétlés"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> to standard output,"
-msgstr ""
+msgstr "<fájltípus> másolása szabványos kimenetre,"
 
 #: cli/cmdint.c
 msgid "pausing every screenful"
-msgstr ""
+msgstr "képernyõnkénti megjelenítés"
 
 #: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dir>,"
-msgstr ""
+msgstr "<fájltípusnak> megfelelõ fájok másolása ide <mappa>,"
 
 #: cli/cmdint.c
 msgid "then delete input files"
-msgstr ""
+msgstr "ezután a bemeneti fájlok törlése"
 
 #: cli/cmdint.c
 msgid "Set search path for external programs"
-msgstr ""
+msgstr "Külsõ programok keresési útvonalának beállítása"
 
 #: cli/cmdint.c
 msgid "or display current search path"
-msgstr ""
+msgstr "vagy aktuális keresési útvonal megjelenítése"
 
 #: cli/cmdint.c
 msgid "Display current drive and directory"
-msgstr ""
+msgstr "Aktuális meghajtó és mappa megjelenítése"
 
 #: cli/cmdint.c
 msgid "Rename <oldname> to <newname>"
-msgstr ""
+msgstr "Átnevezés <régi név> <új névre>"
 
 #: cli/cmdint.c
 msgid "Delete files matching <filespec>"
-msgstr ""
+msgstr "<fájltípusnak> megfelelõ fájlok törlése"
 
 #: cli/cmdint.c
 msgid "Specify -q to be prompted each time"
-msgstr ""
+msgstr "Haszálja a -q kapcsolót az egyenkénti megerõsítéshez"
 
 #: cli/cmdint.c
 msgid "Delete directory <dir>"
-msgstr ""
+msgstr "Mappa törlése <mappa>"
 
 #: cli/cmdint.c
 msgid "Show info for <drive> or current drive"
-msgstr ""
+msgstr "<meghajtó> vagy aktuális meghajtó információjának megjelenítése"
 
 #: cli/cmdint.c
 msgid "Display GEMDOS version"
-msgstr ""
+msgstr "GEMDOS verzió megjelenítése"
 
+# question
 #: cli/cmdint.c
 msgid "Set line wrap or show current status"
-msgstr ""
+msgstr "Sortörés vagy aktuális állapot mutatása."
 
 #: cli/cmdint.c
 msgid "up/down arrow = previous/next line in history"
-msgstr ""
+msgstr "fel/le nyíl = elõzmények elõzõ/következõ sor"
 
 #: cli/cmdint.c
 msgid "left/right arrow = previous/next character"
-msgstr ""
+msgstr "bal/jobb nyíl = elõzõ/következõ karakter"
 
 #: cli/cmdint.c
 msgid "control-left/right arrow = previous/next word"
-msgstr ""
+msgstr "Control+bal/jobb nyíl = elõzõ/következõ szó"
 
 #: cli/cmdint.c
 msgid "invalid mode argument"
-msgstr ""
+msgstr "érvénytelen mód paraméter"
 
 #: cli/cmdint.c
 msgid "Builtin commands:"
-msgstr ""
+msgstr "Belsõ parancsok:"
 
 #: cli/cmdint.c
 msgid "Listing of "
-msgstr ""
+msgstr "Lista "
 
 #: cli/cmdint.c
 msgid "Status for CON:"
-msgstr ""
+msgstr "Státusz CON:"
 
 #: cli/cmdint.c
 msgid "  Resolution:     "
-msgstr ""
+msgstr "  Felbontás:     "
 
 #: cli/cmdint.c
 msgid "  Keyboard delay: "
-msgstr ""
+msgstr "  Billentyû késleltetés: "
 
 #: cli/cmdint.c
 msgid "  Keyboard rate:  "
-msgstr ""
+msgstr "  Karakterismétlés:  "
 
 #: cli/cmdint.c
 msgid "(empty)"
-msgstr ""
+msgstr "(üres)"
 
 #: cli/cmdint.c
 msgid "Delete ALL matching files"
-msgstr ""
+msgstr "ÖSSZES egyezõ fájl törlése"
 
 #: cli/cmdint.c
 msgid "Delete file "
-msgstr ""
+msgstr "Fájl törlése"
 
 #: cli/cmdint.c
 msgid "Allocation info for drive "
-msgstr ""
+msgstr "Meghajtó információ"
 
 #: cli/cmdint.c
 msgid "  Size (bytes):   "
-msgstr ""
+msgstr "  Méret (bájt):   "
 
 #: cli/cmdint.c
 msgid "  Bytes used:     "
-msgstr ""
+msgstr "  Használt bájtok:     "
 
 #: cli/cmdint.c
 msgid "  Bytes free:     "
-msgstr ""
+msgstr "  Szabad bájtok:     "
 
 #: cli/cmdint.c
 msgid "  Total clusters: "
-msgstr ""
+msgstr "  összes klaszter"
 
 #: cli/cmdint.c
 msgid "  Free clusters:  "
-msgstr ""
+msgstr "  Szabad klaszter:  "
 
 #: cli/cmdint.c
 msgid "  Sectors/cluster:"
-msgstr ""
+msgstr "  Szektor/Klaszter:"
 
 #: cli/cmdint.c
 msgid "  Bytes/sector:   "
-msgstr ""
+msgstr "  Bájt/szektor:   "
 
 #: cli/cmdint.c
 msgid " is not a directory"
-msgstr ""
+msgstr " nem mappa"
 
 #: cli/cmdint.c
 msgid " and "
-msgstr ""
+msgstr " és "
 
 #: cli/cmdint.c
 msgid "Copying "
-msgstr ""
+msgstr "Másolás "
 
 #: cli/cmdint.c
 msgid " to "
-msgstr ""
+msgstr " cél: "
 
 #: cli/cmdint.c
 msgid " ... deleting "
-msgstr ""
+msgstr " ... törlése "
 
 #: cli/cmdint.c
 msgid " ... done"
-msgstr ""
+msgstr " ... kész"
 
 #: cli/cmdint.c
 msgid " or "
-msgstr ""
+msgstr " vagy "
 
 #: cli/cmdint.c
 msgid "CR to continue ..."
-msgstr ""
+msgstr "CR, a folytatáshoz ..."
 
 #: cli/cmdint.c
 msgid "--More--"
-msgstr ""
+msgstr "--Tovább--"
 
 #: cli/cmdmain.c
 msgid "Welcome to EmuCON2 version "
-msgstr ""
+msgstr "Üdvözli az EmuCON2 "
 
 #: cli/cmdmain.c
 msgid "Type HELP for builtin commands"
-msgstr ""
+msgstr "A parancsok listájához írja be: HELP"
 
 #: cli/cmdmain.c
 msgid "warning: no history buffers"
-msgstr ""
+msgstr "figyelem: nincs elõzmény-buffer"
 
+# 
 #: cli/cmdparse.c
 msgid "more than one redirection"
-msgstr ""
+msgstr "többszörös átirányítás"
 
+# question
 #: cli/cmdparse.c
 msgid "no filename for redirection"
-msgstr ""
+msgstr "nincs fájlnév az átirányításhoz"
 
 #: cli/cmdparse.c
 msgid "error in quoted field"
-msgstr ""
+msgstr "hiba a mezõben"
 
+# question
 #: cli/cmdparse.c
 msgid "error parsing line"
-msgstr ""
+msgstr "sor értelmezési hiba"
 
 #: cli/cmdutil.c
 msgid "file not found"
-msgstr ""
+msgstr "fájl nem található"
 
 #: cli/cmdutil.c
 msgid "path not found"
-msgstr ""
+msgstr "útvonal nem található"
 
+# question
 #: cli/cmdutil.c
 msgid "no more file handles"
-msgstr ""
+msgstr "nem nyitható meg több fájl"
 
 #: cli/cmdutil.c
 msgid "can't create file"
-msgstr ""
+msgstr "fájl nem létrehozható"
 
 #: cli/cmdutil.c
 msgid "not enough memory"
-msgstr ""
+msgstr "nincs elég memória"
 
 #: cli/cmdutil.c
 msgid "invalid drive"
-msgstr ""
+msgstr "érvénytelen meghajtó"
 
 #: cli/cmdutil.c
 msgid "interrupted"
-msgstr ""
+msgstr "megszakítva"
 
 #: cli/cmdutil.c
 msgid "invalid path"
-msgstr ""
+msgstr "érvénytelen útvonal"
 
 #: cli/cmdutil.c
 msgid "can't write to disk (full?)"
-msgstr ""
+msgstr "lemezírási hiba (nincs szabad hely?)"
 
 #: cli/cmdutil.c
 msgid "cmdline too long"
-msgstr ""
+msgstr "túl hosszú parancssor"
 
 #: cli/cmdutil.c
 msgid "directory not empty"
-msgstr ""
+msgstr "a mappa nem üres"
 
 #: cli/cmdutil.c
 msgid "can't delete file (read-only?)"
-msgstr ""
+msgstr "fájl nem törölhetõ (írásvédett?)"
 
 #: cli/cmdutil.c
 msgid "invalid parameter"
-msgstr ""
+msgstr "érvénytelen paraméter"
 
 #: cli/cmdutil.c
 msgid "wrong number of arguments"
-msgstr ""
+msgstr "paraméterek száma nem megfelelõ"
 
 #: cli/cmdutil.c
 msgid "error code %ld"
-msgstr ""
-
+msgstr "%ld hibakód"
