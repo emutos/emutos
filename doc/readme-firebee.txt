@@ -20,6 +20,7 @@ Other supported languages are:
 - Finnish
 - French
 - Greek
+- Hungarian
 - Italian
 - Dutch
 - Norwegian

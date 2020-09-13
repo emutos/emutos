@@ -23,6 +23,7 @@ es - Spanish
 fi - Finnish
 fr - French
 gr - Greek
+hu - Hungarian
 it - Italian
 nl - Dutch
 no - Norwegian
