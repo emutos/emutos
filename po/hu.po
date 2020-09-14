@@ -1,6 +1,6 @@
 # -*-C-*- I hate emacs po mode.
 #
-# pl.hu: the Hungarian translations.
+# hu.po: the Hungarian translations.
 #
 msgid ""
 msgstr ""
