@@ -47,7 +47,7 @@ static const UBYTE keytbl_hu_shft[] = {
 
 static const UBYTE keytbl_hu_caps[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
-     '7',  '8',  '9',  '0', 0x9e, 0xfc, 0x08, 0x09,
+     '7',  '8',  '9',  '0', 0xd6, 0xfc, 0x08, 0x09,
      'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',
      'O',  'P', 0xd5, 0xda, 0x0d,    0,  'A',  'S',
      'D',  'F',  'G',  'H',  'J',  'K',  'L', 0xc9,
