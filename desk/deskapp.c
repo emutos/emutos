@@ -418,12 +418,9 @@ static char *app_parse(char *pcurr, ANODE *pa)
 
 void app_tran(WORD bi_num)
 {
-    BITBLK *pbi;
     BITBLK lb;
 
-    rsrc_gaddr_rom(R_BITBLK, bi_num, (void **)&pbi);
-
-    lb = *pbi;
+    lb = desk_rs_bitblk[bi_num];
 
     gsx_trans(lb.bi_pdata, lb.bi_wb, lb.bi_pdata, lb.bi_wb, lb.bi_hl);
 }

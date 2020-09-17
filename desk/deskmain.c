@@ -1847,28 +1847,6 @@ static WORD desk_xlate_fix(void)
     return 0;
 }
 
-/* Fake a rsrc_gaddr for the ROM desktop: */
-WORD rsrc_gaddr_rom(WORD rstype, WORD rsid, void **paddr)
-{
-    switch(rstype)
-    {
-    case R_TREE:
-        *paddr = desk_rs_trees[rsid];
-        break;
-    case R_BITBLK:
-        *paddr = (void **)&desk_rs_bitblk[rsid];
-        break;
-    case R_STRING:
-        *paddr = (void **)gettext( desk_rs_fstr[rsid] );
-        break;
-    default:
-        KDEBUG(("rsrc_gaddr_rom(): unsupported resource type!\n"));
-        return FALSE;
-    }
-
-    return TRUE;
-}
-
 
 #if CONF_WITH_READ_INF
 /*

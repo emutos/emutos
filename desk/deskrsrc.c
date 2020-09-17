@@ -22,8 +22,9 @@
 #include "emutos.h"
 
 #include "aesbind.h"
-#include "aesdefs.h"
 #include "deskrsrc.h"
+#include "desk_rsc.h"
+#include "nls.h"
 
 
 /*
@@ -31,8 +32,5 @@
  */
 char *desktop_str_addr(WORD stnum)
 {
-    char *str;
-
-    rsrc_gaddr_rom(R_STRING, stnum, (void **)&str);
-    return str;
+    return (char *)gettext(desk_rs_fstr[stnum]);
 }
