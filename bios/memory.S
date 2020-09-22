@@ -501,7 +501,7 @@ mem_sanity_loop:
         move.l  d0,(a0)                 // Write to memory
         cmp.l   (a0),d0                 // Was memory really writable?
         jeq     mem_sanity_done
-        lsr.l   #1,d5                   // Decrease memory size
+        sub.l   #512*1024,d5            // Decrease memory size
         jra     mem_sanity_loop
 mem_sanity_done:
         jra     memconf_done
