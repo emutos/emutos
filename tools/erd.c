@@ -2581,6 +2581,18 @@ char *base = (char *)rschdr;
         break;
     case G_TEXT:
     case G_BOXTEXT:
+#ifdef DESK_RSC
+        /*
+         * te_ptext will be written as NULL later, so we cannot use
+         * those object types.
+         * There are only two exceptions: the DTNAME and FTITLE
+         * objects in the AES resource.
+         */
+        error("TEXT and BOXTEXT objects must not be used in EmuTOS",inrsc);
+#endif
+        fprintf(fp,"&%srs_tedinfo[%ld],\n",prefix,
+            (get_offset(&obj->ob_spec)-rsh.tedinfo)/sizeof(TEDINFO));
+        break;
     case G_FTEXT:
     case G_FBOXTEXT:
         fprintf(fp,"&%srs_tedinfo[%ld],\n",prefix,
