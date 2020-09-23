@@ -2596,12 +2596,12 @@ char *base = (char *)rschdr;
     case G_BOXTEXT:
 #ifdef DESK_RSC
         /*
-         * te_ptext will be written as NULL later, so we cannot use
-         * those object types.
+         * te_ptext will be pointed to a zeroed BSS location later, so
+         * we cannot use these object types.
          * There are only two exceptions: the DTNAME and FTITLE
          * objects in the AES resource.
          */
-        error("TEXT and BOXTEXT objects must not be used in EmuTOS",inrsc);
+        error("TEXT/BOXTEXT objects not allowed in EmuDesk resource",inrsc);
 #endif
         fprintf(fp,"&%srs_tedinfo[%ld],\n",prefix,
             (get_offset(&obj->ob_spec)-rsh.tedinfo)/sizeof(TEDINFO));
