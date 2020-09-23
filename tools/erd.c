@@ -643,6 +643,8 @@ DEF_ENTRY *def = NULL;                  /* table of #defines from HRD/DEF/RSD/DF
 LOCAL int num_defs = 0;                 /* entries in def */
 LOCAL int first_freestr = -1;           /* # of entry in def[] corresponding to first free string */
 
+LOCAL unsigned long te_ptext_len;       /* size of all te_ptext antries */
+
 /*
  *  arrays used to figure out conditional wrapping stuff
  *
@@ -752,6 +754,7 @@ PRIVATE int getlen(int *length,char *s);
 PRIVATE short get_short(SHORT *p);
 PRIVATE unsigned short get_ushort(USHORT *p);
 PRIVATE unsigned long get_offset(OFFSET *p);
+PRIVATE void set_offset(OFFSET *p, unsigned long offset);
 PRIVATE int init_all_status(MY_RSHDR *hdr);
 PRIVATE void init_notrans(int n);
 PRIVATE int init_status(char **array,int entries);
@@ -1698,9 +1701,13 @@ int i, nted;
 TEDINFO *ted;
 char temp[MAX_STRLEN], temp2[MAX_STRLEN];
 char *base = (char *)rschdr, *p;
+unsigned long offset;
 
     if (rsh.nted == 0)      /* don't generate TEDINFO stuff if not needed */
         return 0;
+
+    if (te_ptext_len != 0)
+        fprintf(fp,"static char %srs_te_text[%lu];\n\n",prefix,te_ptext_len);
 
     fprintf(fp,"TEDINFO %srs_tedinfo[RS_NTED];\n\n",prefix);
 
@@ -1709,7 +1716,11 @@ char *base = (char *)rschdr, *p;
     for (i = 0, ted = (TEDINFO *)(base+rsh.tedinfo); i < nted; i++, ted++) {
         if (i == conditional_tedinfo_start)
             fprintf(fp,"%s\n",other_cond.string);
-        fprintf(fp,"    {0L,\n");
+        offset = get_offset(&ted->te_ptext);
+        if (offset == 0xffffffffUL)
+            fprintf(fp,"    {0L,\n");
+        else
+            fprintf(fp,"    {&%srs_te_text[%lu],\n",prefix,offset);
         p = base + get_offset(&ted->te_ptmplt);
         if (isshared(p)) {
             fixshared(temp,p);
@@ -2191,6 +2202,10 @@ PRIVATE int write_c_epilogue(FILE *fp)
     fprintf(fp,"    /* set up the tree pointers */\n");
     fprintf(fp,"    for (i = 0; i < RS_NTREE; i++)\n");
     fprintf(fp,"        desk_rs_trees[i] = &desk_rs_obj[treestart[i]];\n\n");
+    if (te_ptext_len != 0) {
+        fprintf(fp,"    /* zero TEDINFO te_ptext strings */\n");
+        fprintf(fp,"    bzero(%srs_te_text, sizeof(%srs_te_text));\n",prefix,prefix);
+    }
     fprintf(fp,"    return 0;\n");
     fprintf(fp,"}\n\n");
 #endif
@@ -2206,12 +2221,10 @@ PRIVATE int write_c_epilogue(FILE *fp)
     fprintf(fp,"    memcpy(%srs_tedinfo, %srs_tedinfo_rom, RS_NTED*sizeof(TEDINFO));\n\n",prefix,prefix);
     fprintf(fp,"    /* translate strings in objects */\n");
     fprintf(fp,"    xlate_obj_array(%srs_obj, RS_NOBS);\n\n",prefix);
-    fprintf(fp,"    /* create TEDINFO te_ptext strings */\n");
-    fprintf(fp,"    create_te_ptext(%srs_tedinfo, RS_NTED);\n\n",prefix);
-    fprintf(fp,"    /* The first three TEDINFOs don't use a '@' as first character: */\n");
-    fprintf(fp,"    *rs_tedinfo[0].te_ptext = '_';\n");
-    fprintf(fp,"    *rs_tedinfo[1].te_ptext = '_';\n");
-    fprintf(fp,"    *rs_tedinfo[2].te_ptext = 0;\n");
+    if (te_ptext_len != 0) {
+        fprintf(fp,"    /* zero TEDINFO te_ptext strings */\n");
+        fprintf(fp,"    bzero(%srs_te_text, sizeof(%srs_te_text));\n",prefix,prefix);
+    }
     fprintf(fp,"}\n\n\n");
 
     fprintf(fp,"void gem_rsc_fixit(void)\n");
@@ -2871,6 +2884,21 @@ SHARED_ENTRY *e;
 
 /*****  miscellaneous support routines  *****/
 
+/*  Counts the occurrences of c in str */
+static int count_chars(const char *str, char c)
+{
+    int count;
+
+    count = 0;
+    while(*str)
+    {
+        if (*str++ == c)
+            count++;
+    }
+
+    return count;
+}
+
 /*
  *  mark objects as conditional if appropriate:
  *   1. determine which shared objects are conditional
@@ -2886,6 +2914,7 @@ SHARED_ENTRY *e;
 char temp[MAX_STRLEN];
 char *base = (char *)rschdr;
 char *obj_base, *p;
+int type;
 
     /*
      *  examine all the objects from the start of the table to
@@ -2901,7 +2930,8 @@ char *obj_base, *p;
      */
     obj_base = base + rsh.object;
     for (obj = (OBJECT *)obj_base, n = 0; obj < (OBJECT *)obj_base+conditional_object_start; obj++, n++) {
-        switch(get_ushort(&obj->ob_type)&0xff) {
+        type = get_ushort(&obj->ob_type)&0xff;
+        switch(type) {
         case G_STRING:
         case G_BUTTON:
         case G_TITLE:
@@ -2926,6 +2956,17 @@ char *obj_base, *p;
             if ((e=isshared(temp))) {
                 if (n < e->objnum)
                     e->objnum = n;
+            }
+            if (type == G_FTEXT || type == G_FBOXTEXT) {
+                int len;
+                p = base + get_offset(&ted->te_ptmplt);
+                len = count_chars(p, '_');
+                if (len + 1 != get_short(&ted->te_txtlen))
+                    fprintf(stderr, "warning: te_txtlen %d does not match number of '_' in object #%d\n", get_short(&ted->te_txtlen), n);
+                set_offset(&ted->te_ptext, te_ptext_len);
+                te_ptext_len += get_short(&ted->te_txtlen);
+            } else {
+                set_offset(&ted->te_ptext, 0xffffffffUL);
             }
             break;
         }
@@ -3076,7 +3117,21 @@ PRIVATE unsigned short get_ushort(USHORT *p)
  */
 PRIVATE unsigned long get_offset(OFFSET *p)
 {
-    return (p->b1<<24) | (p->b2<<16) | (p->b3<<8) | p->b4;
+    return ((unsigned long)p->b1<<24) | (p->b2<<16) | (p->b3<<8) | p->b4;
+}
+
+/*
+ *  convert unsigned long to big-endian offset
+ */
+PRIVATE void set_offset(OFFSET *p, unsigned long offset)
+{
+    p->b4 = offset;
+    offset >>= 8;
+    p->b3 = offset;
+    offset >>= 8;
+    p->b2 = offset;
+    offset >>= 8;
+    p->b1 = offset;
 }
 
 /*

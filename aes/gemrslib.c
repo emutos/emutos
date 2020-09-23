@@ -403,24 +403,9 @@ char *rs_str(UWORD stnum)
 }
 
 /*
- *  The xlate_obj_array() & create_te_ptext() functions below are used by
+ *  The xlate_obj_array() function below is used by
  *  the generated GEM rsc code in aes/gem_rsc.c, and by the desktop
  */
-
-/*  Counts the occurrences of c in str */
-static int count_chars(char *str, char c)
-{
-    int count;
-
-    count = 0;
-    while(*str)
-    {
-        if (*str++ == c)
-            count++;
-    }
-
-    return count;
-}
 
 /* Translates the strings in an OBJECT array */
 void xlate_obj_array(OBJECT *obj_array, int nobj)
@@ -457,53 +442,4 @@ void xlate_obj_array(OBJECT *obj_array, int nobj)
             break;
         }
     }
-}
-
-/*
- * Create the TEDINFO te_ptext strings for a ROM resource
- *
- * In order to save space in the ROMs, the te_ptext ptr is set to NULL,
- * where possible.  The te_ptext strings are created here from te_ptmplt.
- *
- * returns address of allocated memory (NULL if insufficient memory)
- */
-char *create_te_ptext(TEDINFO *tedinfo, int nted)
-{
-    int i = 0;
-    long len;
-    int j;
-    char *ptextptr, *p;
-
-    /* Fix TEDINFO strings: */
-    len = 0;
-    for (i = 0; i < nted; i++)
-    {
-        if (tedinfo[i].te_ptext == NULL)
-        {
-            /* Count number of '_' in strings
-             * ( +2 for @ at the beginning, and \0 at the end )
-             */
-            len += count_chars(tedinfo[i].te_ptmplt, '_') + 2;
-        }
-    }
-    ptextptr = dos_alloc_anyram(len);   /* Get memory */
-    if (!ptextptr)
-        return NULL;
-
-    for (i = 0, p = ptextptr; i < nted; i++)
-    {
-        if (tedinfo[i].te_ptext == NULL)
-        {
-            tedinfo[i].te_ptext = p;
-            *p++ = '@';         /* First character of uninitialized string */
-            len = count_chars(tedinfo[i].te_ptmplt, '_');
-            for (j = 0; j < len; j++)
-            {
-                *p++ = '_';     /* Set other characters to '_' */
-            }
-            *p++ = '\0';        /* Final nul */
-        }
-    }
-
-    return ptextptr;
 }

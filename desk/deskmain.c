@@ -346,7 +346,6 @@ static int blitter_is_present;
 #if CONF_WITH_CACHE_CONTROL
 static int cache_is_present;
 #endif
-static char *desk_rs_ptext;     /* see desk_xlate_fix() */
 static char *desk_rs_strings;   /* see copy_menu_items() */
 
 #if CONF_WITH_READ_INF
@@ -1833,11 +1832,6 @@ static WORD desk_xlate_fix(void)
         rsrc_obfix(desk_rs_obj, i);
     }
 
-    /* Create te_ptext strings */
-    desk_rs_ptext = create_te_ptext(desk_rs_tedinfo, RS_NTED);
-    if (!desk_rs_ptext)
-        return -1;
-
     /*
      * perform special object alignment - this must be done after
      * translation and coordinate fixing
@@ -2077,7 +2071,6 @@ BOOL deskmain(void)
         dos_free(G.g_alist);        /* the anodes */
         dos_free(G.g_atext);        /* the anode text buffer */
         dos_free(G.g_cnxsave);      /* the context save area */
-        dos_free(desk_rs_ptext);    /* the te_ptext fields for the EmuDesk resource */
         dos_free(desk_rs_obj);      /* the RAM copies of the Emudesk resource objects */
         dos_free(desk_rs_strings);  /* the RAM copies of the EmuDesk menu item strings */
         desk_busy_off();
