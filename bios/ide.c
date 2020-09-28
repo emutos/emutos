@@ -343,6 +343,25 @@ static int check_interface_magic(volatile struct IDE *interface, WORD ifnum)
     return 0;
 }
 
+/*
+ * check if an interface is a ghost by checking if it has
+ * overwritten the magic number of a previous interface
+*/
+static int ide_interface_is_ghost(WORD ifnum)
+{
+    int i, bitmask;
+
+    for (i = 0, bitmask = 1; i < ifnum; i++, bitmask <<= 1) {
+        if (has_ide&bitmask) {
+            /* check a previous interface against the magic of the current interface */
+            volatile struct IDE *interface = ifinfo[i].base_address;
+            if (check_interface_magic(interface, ifnum))
+                return 1;
+        }
+    }
+    return 0;
+}
+
 /* Enum to capture interface status during ide_interface_exists(). */
 enum ide_if_status
 {
@@ -360,11 +379,11 @@ enum ide_if_status
  * as soon as the BSY bit on an interface is low:
  *    write a magic number (dependent on the interface number) to
  *    the sector number/count registers and check...
- *    a. if the magic number is read back correctly and the
- *       interface 0 magic number is unchanged
+ *    a. if the magic number is read back correctly and it hasn't
+ *       written its magic number on a previous interface
  *       => device found
- *    b. if the magic number is read back correctly but the
- *       interface 0 magic number is changed
+ *    b. if the magic number is read back correctly but it has
+ *       written its own magic number on a previous interface
  *       => ghost interface
  *    c. if the magic number is not read back correctly
  *       => no device present
@@ -377,7 +396,6 @@ static int ide_interface_exists(WORD ifnum)
 {
     volatile struct IDE *regular_iface = ifinfo[ifnum].base_address;
     volatile struct IDE *twisted_iface = (volatile struct IDE *)(((ULONG)ifinfo[ifnum].base_address)-1);
-    volatile struct IDE *first_iface   = ifinfo[0].base_address;
     enum ide_if_status  regular_iface_status = IDE_IF_NOTCHECKED;
     enum ide_if_status  twisted_iface_status = IDE_IF_NOTCHECKED;
 
@@ -401,7 +419,7 @@ static int ide_interface_exists(WORD ifnum)
                 ifinfo[ifnum].twisted_cable = FALSE;
                 regular_iface_status = IDE_IF_PRESENT;
                 /* Check that it is not a ghost interface. */
-                if ((ifnum > 0) && (!check_interface_magic(first_iface, 0))) {
+                if ((ifnum > 0) && ide_interface_is_ghost(ifnum)) {
                     regular_iface_status = IDE_IF_ISGHOST;
                 }
                 break;
@@ -420,7 +438,7 @@ static int ide_interface_exists(WORD ifnum)
                 ifinfo[ifnum].twisted_cable = TRUE;
                 twisted_iface_status = IDE_IF_PRESENT;
                 /* Check that it is not a ghost interface. */
-                if ((ifnum > 0) && (!check_interface_magic(first_iface, 0))) {
+                if ((ifnum > 0) && ide_interface_is_ghost(ifnum)) {
                     twisted_iface_status = IDE_IF_ISGHOST;
                 }
                 break;
