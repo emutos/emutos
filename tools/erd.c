@@ -2063,7 +2063,10 @@ int butoff = 0;
                     }
                 }
                 fprintf(fp,"#define TR%d %d\n",tree,i);
-                fprintf(fp,"/* TREE %d */\n\n",tree);
+                fprintf(fp,"/* TREE %d */",tree);
+                if (d)
+                    fprintf(fp,"  /* %s */",d->name);
+                fprintf(fp,"\n\n");
 #ifdef GEM_RSC
                 if (in_dialert && (!found_msgoff || !found_butoff)) {
                     error("MSGOFF or BUTOFF not found", inrsc);
