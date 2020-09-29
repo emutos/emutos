@@ -565,6 +565,10 @@ LOCAL NOTRANS_ENTRY notrans[] = {
     { 0, 0, "xF" },
 };
 LOCAL int num_notrans = ARRAY_SIZE(notrans);
+
+/* Constants for alerts */
+#define MAX_LINENUM 5
+#define MAX_BUTNUM  3
 #endif
 
 
@@ -1570,9 +1574,9 @@ short old_tree = -1;
     fprintf(fp,"/*\n");
     fprintf(fp," * parameters for form_alert()\n");
     fprintf(fp," */\n");
-    fprintf(fp,"#define MAX_LINENUM     5\n");
+    fprintf(fp,"#define MAX_LINENUM     %d\n", MAX_LINENUM);
     fprintf(fp,"#define MAX_LINELEN     40\n");
-    fprintf(fp,"#define MAX_BUTNUM      3\n");
+    fprintf(fp,"#define MAX_BUTNUM      %d\n", MAX_BUTNUM);
     fprintf(fp,"#define MAX_BUTLEN      20\n\n\n");
 #endif
 
@@ -2017,6 +2021,14 @@ DEF_ENTRY *d;
 char temp[MAX_STRLEN];
 const char *p;
 char *base = (char *)rschdr;
+#ifdef GEM_RSC
+int in_dialert = 0;
+int found_dialert = 0;
+int found_msgoff = 0;
+int found_butoff = 0;
+int msgoff = 0;
+int butoff = 0;
+#endif
 
     if (!generate_objects)
         return 0;
@@ -2025,6 +2037,12 @@ char *base = (char *)rschdr;
     fprintf(fp,"OBJECT * %srs_obj;\n\n",prefix);
 #else
     fprintf(fp,"OBJECT %srs_obj[RS_NOBS];\n\n",prefix);
+#endif
+
+#ifdef GEM_RSC
+    fprintf(fp,"/* Strings for the alert box */\n");
+    fprintf(fp,"static char msg_str[MAX_LINENUM][MAX_LINELEN+1];\n");
+    fprintf(fp,"static char msg_but[MAX_BUTNUM][MAX_BUTLEN+1];\n\n");
 #endif
 
     fprintf(fp,"static const OBJECT %srs_obj_rom[] = {\n",prefix);
@@ -2046,6 +2064,13 @@ char *base = (char *)rschdr;
                 }
                 fprintf(fp,"#define TR%d %d\n",tree,i);
                 fprintf(fp,"/* TREE %d */\n\n",tree);
+#ifdef GEM_RSC
+                if (in_dialert && (!found_msgoff || !found_butoff)) {
+                    error("MSGOFF or BUTOFF not found", inrsc);
+                }
+                in_dialert = d && strcmp(d->name, "DIALERT") == 0;
+                found_dialert |= in_dialert;
+#endif
                 tree++;
                 j = 0;                              /* relative object number */
             }
@@ -2065,6 +2090,24 @@ char *base = (char *)rschdr;
         fprintf(fp,"\n");
         fprintf(fp,"     %s,\n",decode_flags(get_ushort(&obj->ob_flags)));
         fprintf(fp,"     %s,\n",decode_state(get_ushort(&obj->ob_state)));
+#ifdef GEM_RSC
+        if (in_dialert && d && strcmp(d->name, "MSGOFF") == 0) {
+            msgoff = MAX_LINENUM;
+            found_msgoff = 1;
+        }
+        if (in_dialert && d && strcmp(d->name, "BUTOFF") == 0) {
+            butoff = MAX_BUTNUM;
+            found_butoff = 1;
+        }
+        if (msgoff) {
+            fprintf(fp,"     (LONG) &msg_str[%d],\n",MAX_LINENUM-msgoff);
+            msgoff--;
+        } else if (butoff)
+        {
+            fprintf(fp,"     (LONG) &msg_but[%d],\n",MAX_BUTNUM-butoff);
+            butoff--;
+        } else
+#endif
         write_obspec(fp,obj);
         fprintf(fp,"     %d, %d, %d, %d},\n\n",
                 get_short(&obj->ob_x),get_short(&obj->ob_y),
@@ -2075,6 +2118,10 @@ char *base = (char *)rschdr;
 
     fprintf(fp,"};\n\n\n");
 
+#ifdef GEM_RSC
+    if (!found_dialert)
+        error("DIALERT not found", inrsc);
+#endif
     return ferror(fp) ? -1 : 0;
 }
 
@@ -2210,10 +2257,6 @@ PRIVATE int write_c_epilogue(FILE *fp)
     fprintf(fp,"}\n\n");
 #endif
 #ifdef GEM_RSC
-    fprintf(fp,"/* Strings for the alert box */\n");
-    fprintf(fp,"static char msg_str[MAX_LINENUM][MAX_LINELEN+1];\n");
-    fprintf(fp,"static char msg_but[MAX_BUTNUM][MAX_BUTLEN+1];\n\n");
-
     fprintf(fp,"void gem_rsc_init(void)\n");
     fprintf(fp,"{\n");
     fprintf(fp,"    /* Copy data from ROM to RAM: */\n");
@@ -2230,18 +2273,8 @@ PRIVATE int write_c_epilogue(FILE *fp)
     fprintf(fp,"void gem_rsc_fixit(void)\n");
     fprintf(fp,"{\n");
     fprintf(fp,"    int i;\n");
-    fprintf(fp,"    OBJECT *tree, *p;\n\n");
     fprintf(fp,"    for(i = 0; i < RS_NOBS; i++)\n");
-    fprintf(fp,"        rs_obfix(%srs_obj, i);\n\n",prefix);
-    fprintf(fp,"    /*\n");
-    fprintf(fp,"     * Set up message & button buffers for form_alert().\n");
-    fprintf(fp,"     * We must do this *after* the object fixup has been done!\n");
-    fprintf(fp,"     */\n");
-    fprintf(fp,"    tree = %srs_trees[DIALERT];\n",prefix);
-    fprintf(fp,"    for (i = 0, p = tree+MSGOFF; i < MAX_LINENUM; i++, p++)\n");
-    fprintf(fp,"        p->ob_spec = (LONG)&msg_str[i];\n");
-    fprintf(fp,"    for (i = 0, p = tree+BUTOFF; i < MAX_BUTNUM; i++, p++)\n");
-    fprintf(fp,"        p->ob_spec = (LONG)&msg_but[i];\n");
+    fprintf(fp,"        rs_obfix(%srs_obj, i);\n",prefix);
     fprintf(fp,"}\n");
 #endif
 
