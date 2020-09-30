@@ -165,9 +165,13 @@ void altram_init(void)
         const unsigned short magnum_check1 = 0x55AA;
         const unsigned short magnum_check2 = 0xAA55;
 
-        if (check_read_byte(0xC00000))
+        if (!HAS_NOVA && check_read_byte(0xC00000))
         {
-            /* If a 16 MB SIMM is installed, only 10 MB can be used. */
+            /*
+             * If a 16 MB SIMM is installed, only 10 MB can be used.
+             * If Nova/Vofa is installed that also uses address 0xC00000
+             * in the ST/STE, at most 8 MB of Magnum Alt-RAM can be used.
+             */
             magnum_ram = 10;
         }
         else if (check_read_byte(0x800000))
