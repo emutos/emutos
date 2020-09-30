@@ -265,6 +265,9 @@
 # ifndef CONF_WITH_XBIOS_SOUND
 #  define CONF_WITH_XBIOS_SOUND 0
 # endif
+# ifndef CONF_WITH_DSP
+#  define CONF_WITH_DSP 0
+# endif
 # ifndef CONF_WITH_VME
 #  define CONF_WITH_VME 0
 # endif
@@ -379,6 +382,9 @@
 # ifndef CONF_WITH_VIDEL
 #  define CONF_WITH_VIDEL 0
 # endif
+# ifndef CONF_WITH_DSP
+#  define CONF_WITH_DSP 0
+# endif
 #endif
 
 /*
@@ -424,6 +430,9 @@
 # endif
 # ifndef CONF_WITH_XBIOS_SOUND
 #  define CONF_WITH_XBIOS_SOUND 0
+# endif
+# ifndef CONF_WITH_DSP
+#  define CONF_WITH_DSP 0
 # endif
 # ifndef CONF_WITH_XHDI
 #  define CONF_WITH_XHDI 0
@@ -602,6 +611,9 @@
 # endif
 # ifndef CONF_WITH_XBIOS_SOUND
 #  define CONF_WITH_XBIOS_SOUND 0
+# endif
+# ifndef CONF_WITH_DSP
+#  define CONF_WITH_DSP 0
 # endif
 # ifndef CONF_WITH_VME
 #  define CONF_WITH_VME 0
@@ -956,6 +968,13 @@
  */
 #ifndef CONF_WITH_DMASOUND
 # define CONF_WITH_DMASOUND 1
+#endif
+
+/*
+ * Set CONF_WITH_DSP to 1 to enable support for Falcon DSP
+ */
+#ifndef CONF_WITH_DSP
+# define CONF_WITH_DSP 0
 #endif
 
 /*

@@ -27,6 +27,7 @@
 #include "xhdi.h"
 #include "string.h"
 #include "dmasound.h"
+#include "dsp.h"
 #include "scsi.h"
 #include "ide.h"
 #include "asm.h"
@@ -403,6 +404,11 @@ static void setvalue_snd(void)
         cookie_snd |= SND_16BIT | SND_MATRIX;
     }
 
+    if (HAS_DSP)
+    {
+        cookie_snd |= SND_DSP;
+    }
+
 #if CONF_WITH_DIP_SWITCHES
     if (has_dip_switches)
     {
@@ -541,6 +547,9 @@ void machine_detect(void)
 #endif
 #if CONF_WITH_DMASOUND
     detect_dmasound();
+#endif
+#if CONF_WITH_DSP
+    detect_dsp();
 #endif
 #if CONF_WITH_DIP_SWITCHES
     detect_dip_switches();

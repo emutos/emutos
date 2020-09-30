@@ -113,6 +113,13 @@ extern int has_falcon_dmasound; /* in dmasound.c */
   #define HAS_FALCON_DMASOUND 0
 #endif
 
+#if CONF_WITH_DSP
+extern int has_dsp;     /* in dsp.c */
+  #define HAS_DSP has_dsp
+#else
+  #define HAS_DSP 0
+#endif
+
 #if CONF_WITH_DIP_SWITCHES
 extern int has_dip_switches;
   #define HAS_DIP_SWITCHES has_dip_switches
