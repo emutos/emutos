@@ -38,6 +38,13 @@ extern int has_videl;
   #define HAS_VIDEL 0
 #endif
 
+#if CONF_WITH_NOVA
+extern int has_nova;    /* in nova.c */
+  #define HAS_NOVA has_nova
+#else
+  #define HAS_NOVA 0
+#endif
+
 #if CONF_WITH_TT_MFP
 extern int has_tt_mfp;
   #define HAS_TT_MFP has_tt_mfp

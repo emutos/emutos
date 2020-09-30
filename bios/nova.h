@@ -14,7 +14,6 @@
 #define NOVA_H
 
 #if CONF_WITH_NOVA
-extern int has_nova;
 void detect_nova(void);
 int init_nova(void);
 #endif

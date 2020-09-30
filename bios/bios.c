@@ -431,7 +431,7 @@ static void bios_init(void)
 
 #if CONF_WITH_NOVA
     /* Detect and initialize a Nova card, skip if Ctrl is pressed */
-    if (has_nova && !(kbshift(-1) & MODE_CTRL)) {
+    if (HAS_NOVA && !(kbshift(-1) & MODE_CTRL)) {
         KDEBUG(("init_nova()\n"));
         if (init_nova()) {
             set_rez_hacked();   /* also reinitializes the vt52 console */
