@@ -1082,6 +1082,16 @@ LONG supexec(PFLONG);       /* defined in vectors.S */
 #define VEC(wrapper, direct) (PFLONG) direct
 #endif
 
+#if CONF_WITH_DMASOUND
+# define LAST_ENTRY 0x8d
+#elif CONF_WITH_VIDEL
+# define LAST_ENTRY 0x5e
+#elif CONF_WITH_TT_SHIFTER
+# define LAST_ENTRY 0x57
+#else
+# define LAST_ENTRY 0x40
+#endif
+
 const PFLONG xbios_vecs[] = {
     VEC(xbios_0, Initmous),
     xbios_unimpl,   /*  1 ssbrk */
@@ -1169,8 +1179,8 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 3e */
     xbios_unimpl,   /* 3f */
     VEC(xbios_40, blitmode),  /* 40 */
-#if CONF_WITH_TT_SHIFTER || CONF_WITH_VIDEL || CONF_WITH_DMASOUND
-    /* These fillers are required if any of the features below are enabled */
+
+#if LAST_ENTRY > 0x40       /* must insert fillers */
     xbios_unimpl,   /* 41 */
     xbios_unimpl,   /* 42 */
     xbios_unimpl,   /* 43 */
@@ -1187,6 +1197,7 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 4e */
     xbios_unimpl,   /* 4f */
 #endif
+
 #if CONF_WITH_TT_SHIFTER
     VEC(xbios_50, esetshift),   /* 50 */
     VEC(xbios_51, egetshift),   /* 51 */
@@ -1196,8 +1207,7 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_55, egetpalette), /* 55 */
     VEC(xbios_56, esetgray),    /* 56 */
     VEC(xbios_57, esetsmear),   /* 57 */
-#elif CONF_WITH_VIDEL || CONF_WITH_DMASOUND
-    /* These fillers are required if any of the features below are enabled */
+#elif LAST_ENTRY > 0x57     /* must insert fillers for TT shifter opcodes */
     xbios_unimpl,   /* 50 */
     xbios_unimpl,   /* 51 */
     xbios_unimpl,   /* 52 */
@@ -1206,7 +1216,8 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 55 */
     xbios_unimpl,   /* 56 */
     xbios_unimpl,   /* 57 */
-#endif
+#endif  /* CONF_WITH_TT_SHIFTER */
+
 #if CONF_WITH_VIDEL
     VEC(xbios_58, vsetmode),   /* 58 */
     VEC(xbios_59, vmontype),   /* 59 */
@@ -1215,8 +1226,7 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 5c */
     VEC(xbios_5d, vsetrgb),   /* 5d */
     VEC(xbios_5e, vgetrgb),   /* 5e */
-#elif CONF_WITH_DMASOUND
-    /* These fillers are required if any of the features below are enabled */
+#elif LAST_ENTRY > 0x5e     /* must insert fillers for videl opcodes */
     xbios_unimpl,   /* 58 */
     xbios_unimpl,   /* 59 */
     xbios_unimpl,   /* 5a */
@@ -1224,8 +1234,9 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 5c */
     xbios_unimpl,   /* 5d */
     xbios_unimpl,   /* 5e */
-#endif
-#if CONF_WITH_DMASOUND
+#endif  /* CONF_WITH_VIDEL */
+
+#if LAST_ENTRY > 0x5e       /* must insert fillers */
     xbios_unimpl,   /* 5f */
     xbios_unimpl,   /* 60 */
     xbios_unimpl,   /* 61 */
@@ -1259,6 +1270,9 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 7d */
     xbios_unimpl,   /* 7e */
     xbios_unimpl,   /* 7f */
+#endif
+
+#if CONF_WITH_DMASOUND
     VEC(xbios_80, locksnd),     /* 80 */
     VEC(xbios_81, unlocksnd),   /* 81 */
     VEC(xbios_82, soundcmd),    /* 82 */
