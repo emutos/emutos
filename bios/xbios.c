@@ -1084,6 +1084,8 @@ LONG supexec(PFLONG);       /* defined in vectors.S */
 
 #if CONF_WITH_DMASOUND
 # define LAST_ENTRY 0x8d
+#elif CONF_WITH_DSP
+# define LAST_ENTRY 0x7f
 #elif CONF_WITH_VIDEL
 # define LAST_ENTRY 0x5e
 #elif CONF_WITH_TT_SHIFTER
@@ -1238,6 +1240,42 @@ const PFLONG xbios_vecs[] = {
 
 #if LAST_ENTRY > 0x5e       /* must insert fillers */
     xbios_unimpl,   /* 5f */
+#endif
+
+#if CONF_WITH_DSP
+    xbios_unimpl,   /* 60 */
+    xbios_unimpl,   /* 61 */
+    xbios_unimpl,   /* 62 */
+    xbios_unimpl,   /* 63 */
+    xbios_unimpl,   /* 64 */
+    xbios_unimpl,   /* 65 */
+    xbios_unimpl,   /* 66 */
+    xbios_unimpl,   /* 67 */
+    xbios_unimpl,   /* 68 */
+    xbios_unimpl,   /* 69 */
+    xbios_unimpl,   /* 6a */
+    xbios_unimpl,   /* 6b */
+    xbios_unimpl,   /* 6c */
+    xbios_unimpl,   /* 6d */
+    xbios_unimpl,   /* 6e */
+    xbios_unimpl,   /* 6f */
+    xbios_unimpl,   /* 70 */
+    xbios_unimpl,   /* 71 */
+    xbios_unimpl,   /* 72 */
+    xbios_unimpl,   /* 73 */
+    xbios_unimpl,   /* 74 */
+    xbios_unimpl,   /* 75 */
+    xbios_unimpl,   /* 76 */
+    xbios_unimpl,   /* 77 */
+    xbios_unimpl,   /* 78 */
+    xbios_unimpl,   /* 79 */
+    xbios_unimpl,   /* 7a */
+    xbios_unimpl,   /* 7b */
+    xbios_unimpl,   /* 7c */
+    xbios_unimpl,   /* 7d */
+    xbios_unimpl,   /* 7e */
+    xbios_unimpl,   /* 7f */
+#elif LAST_ENTRY > 0x7f     /* must insert fillers for DSP opcodes */
     xbios_unimpl,   /* 60 */
     xbios_unimpl,   /* 61 */
     xbios_unimpl,   /* 62 */
