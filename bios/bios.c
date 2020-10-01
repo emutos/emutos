@@ -43,6 +43,7 @@
 #include "floppy.h"
 #include "sound.h"
 #include "dmasound.h"
+#include "dsp.h"
 #include "screen.h"
 #include "clock.h"
 #include "vectors.h"
@@ -365,6 +366,12 @@ static void bios_init(void)
 #if CONF_WITH_SCC
     if (has_scc)
         boot_status |= SCC_AVAILABLE;   /* track progress */
+#endif
+
+    /* Initialize the DSP */
+#if CONF_WITH_DSP
+    KDEBUG(("dsp_init()\n"));
+    dsp_init();
 #endif
 
     /* The sound init must be done before allowing MFC interrupts,

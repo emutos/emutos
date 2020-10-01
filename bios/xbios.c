@@ -29,6 +29,7 @@
 #include "videl.h"
 #include "sound.h"
 #include "dmasound.h"
+#include "dsp.h"
 #include "floppy.h"
 #include "disk.h"
 #include "clock.h"
@@ -977,6 +978,30 @@ static void xbios_5e(WORD index,WORD count,ULONG *rgb)
 }
 #endif
 
+/*
+ * DSP
+ */
+#if DBG_XBIOS & CONF_WITH_DSP
+static WORD xbios_67(void)
+{
+    kprintf("XBIOS: Dsp_GetWordSize\n");
+    return dsp_getwordsize();
+}
+static WORD xbios_68(void)
+{
+    kprintf("XBIOS: Dsp_Lock\n");
+    return dsp_lock();
+}
+static void xbios_69(void)
+{
+    kprintf("XBIOS: Dsp_Unlock\n");
+    dsp_unlock();
+}
+#endif
+
+/*
+ * DMA sound
+ */
 #if DBG_XBIOS & CONF_WITH_DMASOUND
 static LONG xbios_80(void)
 {
@@ -1250,9 +1275,9 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 64 */
     xbios_unimpl,   /* 65 */
     xbios_unimpl,   /* 66 */
-    xbios_unimpl,   /* 67 */
-    xbios_unimpl,   /* 68 */
-    xbios_unimpl,   /* 69 */
+    VEC(xbios_67, dsp_getwordsize),
+    VEC(xbios_68, dsp_lock),
+    VEC(xbios_69, dsp_unlock),
     xbios_unimpl,   /* 6a */
     xbios_unimpl,   /* 6b */
     xbios_unimpl,   /* 6c */

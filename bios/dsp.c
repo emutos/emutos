@@ -18,6 +18,8 @@
 
 #if CONF_WITH_DSP
 
+#define DSP_WORD_SIZE   3       /* architectural */
+
 struct dsp {
     UBYTE interrupt_control;    /* interrupt control register (r/w) */
     UBYTE command_vector;       /* command vector register (r/w) */
@@ -33,9 +35,47 @@ struct dsp {
 
 int has_dsp;
 
+static BOOL dsp_is_locked;
+
+/*
+ * Initialisation Routines
+ */
 void detect_dsp(void)
 {
     has_dsp = check_read_byte((long)&DSPBASE->interrupt_control);
     KDEBUG(("has_dsp = %d\n", has_dsp));
+}
+
+void dsp_init(void)
+{
+    /* if we don't have a DSP, we pretend it's always locked */
+    dsp_is_locked = has_dsp ? FALSE : TRUE;
+}
+
+/*
+ * Data Transfer Routines
+ */
+WORD dsp_getwordsize(void)
+{
+    /* if we don't have a DSP, return a bogus size */
+    return has_dsp ? DSP_WORD_SIZE : 2*DSP_WORD_SIZE;
+}
+
+/*
+ * Program Control Routines
+ */
+WORD dsp_lock(void)
+{
+    if (dsp_is_locked)
+        return -1;
+
+    dsp_is_locked = TRUE;
+    return 0;
+}
+
+void dsp_unlock(void)
+{
+    if (has_dsp)
+        dsp_is_locked = FALSE;
 }
 #endif /* CONF_WITH_DSP */
