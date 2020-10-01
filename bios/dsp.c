@@ -48,8 +48,7 @@ void detect_dsp(void)
 
 void dsp_init(void)
 {
-    /* if we don't have a DSP, we pretend it's always locked */
-    dsp_is_locked = has_dsp ? FALSE : TRUE;
+    dsp_is_locked = FALSE;
 }
 
 /*
@@ -57,8 +56,10 @@ void dsp_init(void)
  */
 WORD dsp_getwordsize(void)
 {
-    /* if we don't have a DSP, return a bogus size */
-    return has_dsp ? DSP_WORD_SIZE : 2*DSP_WORD_SIZE;
+    if (!has_dsp)
+        return 0x67;    /* unimplemented xbios call: return function # */
+
+    return DSP_WORD_SIZE;
 }
 
 /*
@@ -66,6 +67,9 @@ WORD dsp_getwordsize(void)
  */
 WORD dsp_lock(void)
 {
+    if (!has_dsp)
+        return 0x68;    /* unimplemented xbios call: return function # */
+
     if (dsp_is_locked)
         return -1;
 
@@ -75,7 +79,6 @@ WORD dsp_lock(void)
 
 void dsp_unlock(void)
 {
-    if (has_dsp)
-        dsp_is_locked = FALSE;
+    dsp_is_locked = FALSE;
 }
 #endif /* CONF_WITH_DSP */
