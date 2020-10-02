@@ -997,6 +997,31 @@ static void xbios_69(void)
     kprintf("XBIOS: Dsp_Unlock\n");
     dsp_unlock();
 }
+static WORD xbios_77(WORD flag)
+{
+    kprintf("XBIOS: Dsp_Hf0\n");
+    return dsp_hf0(flag);
+}
+static WORD xbios_78(WORD flag)
+{
+    kprintf("XBIOS: Dsp_Hf1\n");
+    return dsp_hf1(flag);
+}
+static WORD xbios_79(void)
+{
+    kprintf("XBIOS: Dsp_Hf2\n");
+    return dsp_hf2();
+}
+static WORD xbios_7a(void)
+{
+    kprintf("XBIOS: Dsp_Hf3\n");
+    return dsp_hf3();
+}
+static UBYTE xbios_7d(void)
+{
+    kprintf("XBIOS: Dsp_HStat\n");
+    return dsp_hstat();
+}
 #endif
 
 /*
@@ -1291,13 +1316,13 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 74 */
     xbios_unimpl,   /* 75 */
     xbios_unimpl,   /* 76 */
-    xbios_unimpl,   /* 77 */
-    xbios_unimpl,   /* 78 */
-    xbios_unimpl,   /* 79 */
-    xbios_unimpl,   /* 7a */
+    VEC(xbios_77, dsp_hf0),
+    VEC(xbios_78, dsp_hf1),
+    VEC(xbios_79, dsp_hf2),
+    VEC(xbios_7a, dsp_hf3),
     xbios_unimpl,   /* 7b */
     xbios_unimpl,   /* 7c */
-    xbios_unimpl,   /* 7d */
+    VEC(xbios_7d, dsp_hstat),
     xbios_unimpl,   /* 7e */
     xbios_unimpl,   /* 7f */
 #elif LAST_ENTRY > 0x7f     /* must insert fillers for DSP opcodes */
