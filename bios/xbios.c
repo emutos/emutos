@@ -982,6 +982,21 @@ static void xbios_5e(WORD index,WORD count,ULONG *rgb)
  * DSP
  */
 #if DBG_XBIOS & CONF_WITH_DSP
+static void xbios_60(char *send, LONG sendlen, char *rcv, LONG rcvlen)
+{
+    kprintf("XBIOS: Dsp_DoBlock\n");
+    dsp_doblock(send, sendlen, rcv, rcvlen);
+}
+static void xbios_61(char *send, LONG sendlen, char *rcv, LONG rcvlen)
+{
+    kprintf("XBIOS: Dsp_BlkHandshake\n");
+    dsp_blkhandshake(send, sendlen, rcv, rcvlen);
+}
+static void xbios_62(LONG *send, LONG sendlen, LONG *rcv, LONG rcvlen)
+{
+    kprintf("XBIOS: Dsp_BlkUnpacked\n");
+    dsp_blkunpacked(send, sendlen, rcv, rcvlen);
+}
 static WORD xbios_67(void)
 {
     kprintf("XBIOS: Dsp_GetWordSize\n");
@@ -1017,10 +1032,25 @@ static WORD xbios_7a(void)
     kprintf("XBIOS: Dsp_Hf3\n");
     return dsp_hf3();
 }
+static void xbios_7b(WORD *send, LONG sendlen, WORD *rcv, LONG rcvlen)
+{
+    kprintf("XBIOS: Dsp_BlkWords\n");
+    dsp_blkwords(send, sendlen, rcv, rcvlen);
+}
+static void xbios_7c(UBYTE *send, LONG sendlen, UBYTE *rcv, LONG rcvlen)
+{
+    kprintf("XBIOS: Dsp_BlkBytes\n");
+    dsp_blkbytes(send, sendlen, rcv, rcvlen);
+}
 static UBYTE xbios_7d(void)
 {
     kprintf("XBIOS: Dsp_HStat\n");
     return dsp_hstat();
+}
+static void xbios_7f(LONG sendnum, LONG rcvnum, DSPBLOCK *sendinfo, DSPBLOCK *rcvinfo)
+{
+    kprintf("XBIOS: Dsp_MultBlocks\n");
+    dsp_multblocks(sendnum, rcvnum, sendinfo, rcvinfo);
 }
 #endif
 
@@ -1293,9 +1323,9 @@ const PFLONG xbios_vecs[] = {
 #endif
 
 #if CONF_WITH_DSP
-    xbios_unimpl,   /* 60 */
-    xbios_unimpl,   /* 61 */
-    xbios_unimpl,   /* 62 */
+    VEC(xbios_60, dsp_doblock),
+    VEC(xbios_61, dsp_blkhandshake),
+    VEC(xbios_62, dsp_blkunpacked),
     xbios_unimpl,   /* 63 */
     xbios_unimpl,   /* 64 */
     xbios_unimpl,   /* 65 */
@@ -1320,11 +1350,11 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_78, dsp_hf1),
     VEC(xbios_79, dsp_hf2),
     VEC(xbios_7a, dsp_hf3),
-    xbios_unimpl,   /* 7b */
-    xbios_unimpl,   /* 7c */
+    VEC(xbios_7b, dsp_blkwords),
+    VEC(xbios_7c, dsp_blkbytes),
     VEC(xbios_7d, dsp_hstat),
     xbios_unimpl,   /* 7e */
-    xbios_unimpl,   /* 7f */
+    VEC(xbios_7f, dsp_multblocks),
 #elif LAST_ENTRY > 0x7f     /* must insert fillers for DSP opcodes */
     xbios_unimpl,   /* 60 */
     xbios_unimpl,   /* 61 */
