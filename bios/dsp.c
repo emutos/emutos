@@ -89,9 +89,11 @@ static struct {
 static void (*user_rcv)(LONG data);     /* called to pass data from DSP to user */
 static LONG (*user_send)(void);         /* called to get data to pass to DSP */
 
-/*
- * Initialisation Routines
- */
+/****************************************************
+ *                                                  *
+ *  I N I T I A L I S A T I O N   R O U T I N E S   *
+ *                                                  *
+ ****************************************************/
 void detect_dsp(void)
 {
     has_dsp = check_read_byte((long)&DSPBASE->interrupt_control);
@@ -103,9 +105,11 @@ void dsp_init(void)
     dsp_is_locked = FALSE;
 }
 
-/*
- ***** Data Transfer Routines *****
- */
+/****************************************************
+ *                                                  *
+ *  D A T A   T R A N S F E R   R O U T I N E S     *
+ *                                                  *
+ ****************************************************/
 
 /*
  * Dsp_DoBlock(): send and/or receive DSP words
@@ -469,8 +473,14 @@ void dsp_blkbytes(UBYTE *send, LONG sendlen, UBYTE *rcv, LONG rcvlen)
     }
 }
 
+/********************************************************
+ *                                                      *
+ *  P R O G R A M   C O N T R O L   R O U T I N E S     *
+ *                                                      *
+ ********************************************************/
+
 /*
- * Program Control Routines
+ * Dsp_Lock() / Dsp_Unlock(): software lock/unlock for DSP
  */
 WORD dsp_lock(void)
 {
@@ -490,7 +500,7 @@ void dsp_unlock(void)
 }
 
 /*
- * read/write host flags 0 or 1
+ * Dsp_Hf0() / Dsp_Hf1(): read/write host flags 0 or 1
  *
  * note: if you do not pass the 'read' flag value (-1), Atari TOS returns
  * d0 unmodified, i.e. the return value will be the function number.
@@ -543,7 +553,7 @@ WORD dsp_hf1(WORD flag)
 }
 
 /*
- * read host flags 2 & 3
+ * Dsp_Hf2() / Dsp_Hf3(): read host flags 2 & 3
  */
 WORD dsp_hf2(void)
 {
@@ -566,7 +576,7 @@ WORD dsp_hf3(void)
 }
 
 /*
- * read the interrupt status register
+ * Dsp_Hstat(): read the interrupt status register
  *
  * note: as an undocumented feature, Atari TOS 4.04 returns the contents
  * of the command vector register in d1.  we currently do not emulate this.
