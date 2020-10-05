@@ -27,14 +27,21 @@ typedef struct {
 #define BT_WORD 1
 #define BT_BYTE 2
 
-/* function prototypes */
+/* miscellaneous function prototypes */
 void detect_dsp(void);
 void dsp_init(void);
+void dsp_inout_handler(void);   /* interrupt handler for Dsp_InStream() & Dsp_OutStream() */
+void dsp_io_handler(void);      /* interrupt handler for Dsp_IOStream() */
+void dsp_sv_handler(void);      /* interrupt handler for Dsp_SetVectors() */
 
 /* XBIOS DSP functions */
 void dsp_doblock(char *send, LONG sendlen, char *rcv, LONG rcvlen);
 void dsp_blkhandshake(char *send, LONG sendlen, char *rcv, LONG rcvlen);
 void dsp_blkunpacked(LONG *send, LONG sendlen, LONG *rcv, LONG rcvlen);
+void dsp_instream(char *data, LONG datalen, LONG numblocks, LONG *blocksdone);
+void dsp_outstream(char *data, LONG datalen, LONG numblocks, LONG *blocksdone);
+void dsp_iostream(char *send, char *rcv, LONG sendlen, LONG rcvlen, LONG numblocks, LONG *blocksdone);
+void dsp_removeinterrupts(WORD mask);
 WORD dsp_getwordsize(void);
 WORD dsp_lock(void);
 void dsp_unlock(void);
@@ -45,7 +52,13 @@ WORD dsp_hf3(void);
 void dsp_blkwords(WORD *send, LONG sendlen, WORD *rcv, LONG rcvlen);
 void dsp_blkbytes(UBYTE *send, LONG sendlen, UBYTE *rcv, LONG rcvlen);
 UBYTE dsp_hstat(void);
+void dsp_setvectors(void (*receiver)(LONG data), LONG (*transmitter)(void));
 void dsp_multblocks(LONG sendnum, LONG rcvnum, DSPBLOCK *sendinfo, DSPBLOCK *rcvinfo);
+
+/* functions in dsp2.S */
+void dsp_inout_asm(void);       /* wrapper for dsp_inout_handler() */
+void dsp_io_asm(void);          /* wrapper for dsp_io_handler() */
+void dsp_sv_asm(void);          /* wrapper for dsp_sv_handler() */
 
 #endif /* CONF_WITH_DSP */
 

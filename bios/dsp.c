@@ -41,6 +41,8 @@ struct dsp {
 #define DSPBASE ((volatile struct dsp *)0xffffa200)
 
 /* interrupt control register bit usage */
+#define ICR_RREQ    0x01        /* enable receive interrupt (DSP is ready to send) */
+#define ICR_TREQ    0x02        /* enable transmit interrupt (DSP is ready to receive) */
 #define ICR_HF0     0x08        /* host flags */
 #define ICR_HF1     0x10
 
@@ -57,10 +59,35 @@ struct dsp {
 #define DSP_WAIT_RCV()  { while(!DSP_RCV_READY) ; }
 #define DSP_WAIT_SEND() { while(!DSP_SEND_READY) ; }
 
+/* DSP interrupt vector - use the same one as TOS4.04 */
+#define DSP_INTNUM  0xff
+#define VEC_DSP     (*(volatile PFVOID*)(DSP_INTNUM*sizeof(LONG)))
 
+
+/*
+ * some global/local variables
+ */
 int has_dsp;
 
 static BOOL dsp_is_locked;
+
+/* the following private structure is used by interrupt handling */
+static struct {
+                    /* send info */
+    char *send;         /* buffer ptr */
+    LONG sendlen;       /* length */
+    LONG sendblocks;    /* blocks to send */
+    LONG *senddone;     /* ptr to 'blocks sent' */
+                    /* receive info */
+    char *rcv;          /* buffer ptr */
+    LONG rcvlen;        /* length */
+    LONG rcvblocks;     /* blocks to receive */
+    LONG *rcvdone;      /* ptr to 'blocks received' */
+} ih_args;
+
+/* function pointers used by Dsp_SetVectors() */
+static void (*user_rcv)(LONG data);     /* called to pass data from DSP to user */
+static LONG (*user_send)(void);         /* called to get data to pass to DSP */
 
 /*
  * Initialisation Routines
@@ -185,6 +212,174 @@ void dsp_blkunpacked(LONG *send, LONG sendlen, LONG *rcv, LONG rcvlen)
             *rcv++ = DSPBASE->data.full;
         } while(--rcvlen);
     }
+}
+
+/*
+ * Dsp_InStream(): send DSP words (no handshaking) via an interrupt handler
+ */
+void dsp_instream(char *data, LONG datalen, LONG numblocks, LONG *blocksdone)
+{
+    /* save args for use by interrupt handler */
+    ih_args.send = data;
+    ih_args.sendlen = datalen;
+    ih_args.sendblocks = numblocks;
+    ih_args.senddone = blocksdone;
+
+    *blocksdone = 0L;
+    if (datalen && numblocks)
+    {
+        /* set up interrupt handler */
+        VEC_DSP = dsp_inout_asm;
+        DSPBASE->interrupt_vector = DSP_INTNUM;
+        DSPBASE->interrupt_control |= ICR_TREQ;
+    }
+}
+
+/*
+ * Dsp_OutStream(): receive DSP words (no handshaking) via an interrupt handler
+ */
+void dsp_outstream(char *data, LONG datalen, LONG numblocks, LONG *blocksdone)
+{
+    /* save args for use by interrupt handler */
+    ih_args.rcv = data;
+    ih_args.rcvlen = datalen;
+    ih_args.rcvblocks = numblocks;
+    ih_args.rcvdone = blocksdone;
+
+    *blocksdone = 0L;
+    if (datalen && numblocks)
+    {
+        /* set up interrupt handler */
+        VEC_DSP = dsp_inout_asm;
+        DSPBASE->interrupt_vector = DSP_INTNUM;
+        DSPBASE->interrupt_control |= ICR_RREQ;
+    }
+}
+
+/*
+ * dsp_inout_handler(): C portion of interrupt handler for Dsp_InStream()/Dsp_OutStream()
+ */
+void dsp_inout_handler(void)
+{
+    char *data;
+    LONG datalen;
+
+    /*
+     * handle receive data (if any)
+     */
+    if (DSP_RCV_READY)
+    {
+        data = ih_args.rcv;
+        datalen = ih_args.rcvlen;
+        do
+        {
+            *data++ = DSPBASE->data.d.high;
+            *data++ = DSPBASE->data.d.mid;
+            *data++ = DSPBASE->data.d.low;
+        } while(--datalen);
+        ih_args.rcv = data;         /* update buffer pointer */
+        (*ih_args.rcvdone)++;       /*  & 'blocks received' count */
+        if (*ih_args.rcvdone == ih_args.rcvblocks)      /* if done, */
+            DSPBASE->interrupt_control &= ~ICR_RREQ;    /* disable rcv data interrupt */
+    }
+
+    /*
+     * handle send data (if any)
+     */
+    if (DSP_SEND_READY)
+    {
+        data = ih_args.send;
+        datalen = ih_args.sendlen;
+        do
+        {
+            DSPBASE->data.d.high = *data++;
+            DSPBASE->data.d.mid = *data++;
+            DSPBASE->data.d.low = *data++;
+        } while(--datalen);
+        ih_args.send = data;        /* update buffer pointer */
+        (*ih_args.senddone)++;      /*  & 'blocks sent' count */
+        if (*ih_args.senddone == ih_args.sendblocks)    /* if done, */
+            DSPBASE->interrupt_control &= ~ICR_TREQ;    /* disable send data interrupt */
+    }
+}
+
+/*
+ * Dsp_IOStream(): send/receive DSP words (no handshaking) via an interrupt handler
+ *
+ * we send the first block, then install an interrupt handler to service
+ * 'output is ready' from the DSP.  on each interrupt, we receive a block
+ * and send the next one.
+ */
+void dsp_iostream(char *send, char *rcv, LONG sendlen, LONG rcvlen, LONG numblocks, LONG *blocksdone)
+{
+    /* save args for use by interrupt handler */
+    ih_args.send = send;
+    ih_args.rcv = rcv;
+    ih_args.sendlen = sendlen;
+    ih_args.rcvlen = rcvlen;
+    ih_args.rcvblocks = numblocks;
+    ih_args.rcvdone = blocksdone;
+
+    *blocksdone = 0L;
+
+    do
+    {
+        DSPBASE->data.d.high = *send++;
+        DSPBASE->data.d.mid = *send++;
+        DSPBASE->data.d.low = *send++;        
+    } while(--sendlen);
+    ih_args.send = send;        /* update buffer pointer */
+
+    /* set up interrupt handler */
+    VEC_DSP = dsp_io_asm;
+    DSPBASE->interrupt_vector = DSP_INTNUM;
+    DSPBASE->interrupt_control |= ICR_RREQ;
+}
+
+/*
+ * dsp_io_handler(): C portion of interrupt handler for Dsp_IOStream()
+ */
+void dsp_io_handler(void)
+{
+    char *data;
+    LONG datalen;
+
+    /* receive the data that's ready */
+    data = ih_args.rcv;
+    datalen = ih_args.rcvlen;
+    do
+    {
+        *data++ = DSPBASE->data.d.high;
+        *data++ = DSPBASE->data.d.mid;
+        *data++ = DSPBASE->data.d.low;
+    } while(--datalen);
+    ih_args.rcv = data;         /* update buffer ptr */
+    (*ih_args.rcvdone)++;       /*  & 'blocks received' count */
+    if (*ih_args.rcvdone == ih_args.rcvblocks)      /* if done, */
+    {
+        DSPBASE->interrupt_control &= ~ICR_RREQ;    /* disable rcv data interrupt */
+        return;                                     /*  and exit */
+    }
+
+    /* not done, so send the next block */
+    data = ih_args.send;
+    datalen = ih_args.sendlen;
+    do
+    {
+        DSPBASE->data.d.high = *data++;
+        DSPBASE->data.d.mid = *data++;
+        DSPBASE->data.d.low = *data++;
+    } while(--datalen);
+    ih_args.send = data;        /* update buffer ptr */
+}
+
+/*
+ * Dsp_RemoveInterrupts(): disable send and/or receive interrupts from DSP
+ */
+void dsp_removeinterrupts(WORD mask)
+{
+    mask &= 0x03;               /* only bits 0 & 1 are valid */
+    DSPBASE->interrupt_control &= ~mask;
 }
 
 /*
@@ -384,6 +579,52 @@ UBYTE dsp_hstat(void)
         ret = DSPBASE->interrupt_status;
 
     return ret;
+}
+
+/*
+ * Dsp_SetVectors(): install user interrupt handler
+ */
+void dsp_setvectors(void (*receiver)(LONG data), LONG (*transmitter)(void))
+{
+    user_rcv = NULL;        /* initialise ptrs */
+    user_send = NULL;
+
+    if (receiver)
+    {
+        user_rcv = receiver;
+        VEC_DSP = dsp_sv_asm;
+        DSPBASE->interrupt_vector = DSP_INTNUM;
+        DSPBASE->interrupt_control |= ICR_RREQ;
+    }
+
+    if (transmitter)
+    {
+        user_send = transmitter;
+        VEC_DSP = dsp_sv_asm;
+        DSPBASE->interrupt_vector = DSP_INTNUM;
+        DSPBASE->interrupt_control |= ICR_TREQ;
+    }
+}
+
+/*
+ * dsp_sv_handler(): C portion of interrupt handler for Dsp_SetVectors()
+ */
+void dsp_sv_handler(void)
+{
+    LONG data;
+
+    if (DSP_RCV_READY && user_rcv)
+    {
+        data = DSPBASE->data.full;
+        user_rcv(data);
+    }
+
+    if (DSP_SEND_READY && user_send)
+    {
+        data = user_send();
+        if (data)       /* user has something to send? */
+            DSPBASE->data.full = data;
+    }
 }
 
 /*

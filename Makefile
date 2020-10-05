@@ -201,7 +201,8 @@ bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              parport.c screen.c serport.c sound.c videl.c vt52.c xhdi.c \
              pmmu030.c 68040_pmmu.S \
              amiga.c amiga2.S spi_vamp.c \
-             delay.c delayasm.S sd.c memory2.c bootparams.c scsi.c nova.c dsp.c
+             delay.c delayasm.S sd.c memory2.c bootparams.c scsi.c nova.c \
+             dsp.c dsp2.S
 
 ifeq (1,$(COLDFIRE))
   bios_src += coldfire.c coldfire2.S spi_cf.c
