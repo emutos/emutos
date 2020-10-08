@@ -45,6 +45,7 @@ void dsp_removeinterrupts(WORD mask);
 WORD dsp_getwordsize(void);
 WORD dsp_lock(void);
 void dsp_unlock(void);
+LONG dsp_lodtobinary(char *filename, char *outbuf);
 WORD dsp_hf0(WORD flag);
 WORD dsp_hf1(WORD flag);
 WORD dsp_hf2(void);

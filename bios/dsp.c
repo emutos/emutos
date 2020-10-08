@@ -15,6 +15,9 @@
 #include "emutos.h"
 #include "dsp.h"
 #include "vectors.h"
+#include "gemdos.h"
+#include "bdosdefs.h"
+#include "string.h"
 
 #if CONF_WITH_DSP
 
@@ -497,6 +500,211 @@ WORD dsp_lock(void)
 void dsp_unlock(void)
 {
     dsp_is_locked = FALSE;
+}
+
+/*
+ * helper routines for Dsp_LodToBinary()
+ */
+
+/* convert two hex digits to unsigned byte */
+static UBYTE hex(char *p)
+{
+    WORD i;
+    UBYTE n;
+
+    for (i = 0, n = 0; i < 2; i++, p++)
+    {
+        n <<= 4;
+        if ((*p >= '0') && (*p <= '9'))
+            n += *p - '0';
+        else if ((*p >= 'A') && (*p <= 'F'))
+            n += *p - 'A' + 10;
+        else if ((*p >= 'a') && (*p <= 'f'))
+            n += *p - 'a' + 10;
+    }
+
+    return n;
+}
+
+/* convert 6 hex digits to 3 unsigned bytes in an array */
+static char *inword(char *value, char *p)
+{
+    WORD i;
+
+    for (i = 0; i < DSP_WORD_SIZE; i++, p += 2, value++)
+        *value = hex(p);
+
+    return p;
+}
+
+/* convert LONG value to 3 unsigned bytes in an array */
+static void outword(char *q, LONG value)
+{
+    WORD i;
+
+    for (i = 0, q += DSP_WORD_SIZE-1; i < DSP_WORD_SIZE; i++, q--, value >>= 8)
+        *q = value;
+}
+
+/* test for end-of-line character */
+static BOOL iseol(char *p)
+{
+    if ((*p == '\r') || (*p == '\n'))
+        return TRUE;
+
+    return FALSE;
+}
+
+/* skip up to last eol character (skips empty lines too) */
+static char *skiptoeol(char *p)
+{
+    while (!iseol(p))
+        p++;
+
+    while(iseol(p))
+        p++;
+
+    return p-1;
+}
+
+/* skip spaces */
+static char *skipspaces(char *p)
+{
+    while(*p == ' ')
+        p++;
+
+    return p;
+}
+
+/* convert _DATA section of .LOD file to binary */
+static WORD handle_DATA(char **pptr, char **qptr)
+{
+    char *p = *pptr + 6;                /* point after "_DATA " */
+    char *q = *qptr;
+    char *qstart;
+    LONG type, addr, dsp_words;
+
+    switch(*p) {
+    case 'P':
+        type = 0;
+        break;
+    case 'X':
+        type = 1;
+        break;
+    case 'Y':
+        type = 2;
+        break;
+    default:
+        return -1;
+    }
+
+    p = skipspaces(p+1);
+    addr = (hex(p) << 8) + hex(p+2);
+    p = skiptoeol(p);
+
+    /* initialise 'header' */
+    outword(q, type);       /* first DSP word is type */
+    q += DSP_WORD_SIZE;
+    outword(q, addr);       /* second word is start address */
+    q += 2*DSP_WORD_SIZE;   /* third word will be filled in later */
+    qstart = q;             /* start of DSP code */
+                
+    /* convert rest of _DATA section to binary */
+    for ( ; *p && (*p != '_'); p++)
+    {
+        if (iseol(p))       /* ignore empty lines */
+        {
+            p = skiptoeol(p);
+            continue;
+        }
+        while(!iseol(p))
+        {
+            p = inword(q, p);   /* convert a DSP word */
+            q += DSP_WORD_SIZE;
+            p = skipspaces(p);  /* skip trailing spaces */
+        }
+    }
+    dsp_words = (q - qstart) / DSP_WORD_SIZE;
+
+    /* complete binary data 'header' with DSP word count */
+    outword(qstart-DSP_WORD_SIZE, dsp_words);
+
+    /* back up to end of section if necessary */
+    if (*p == '_')
+        --p;
+
+    /* update input ptrs */
+    *pptr = p;
+    *qptr = q;
+
+    return dsp_words + 3;
+}
+
+/* convert in-memory LOD file to binary */
+static LONG convert_lod(char *outbuf, char *inbuf)
+{
+    char *p, *q;
+
+    /*
+     * scan buffer, looking for _DATA sections
+     */
+    for (p = inbuf, q = outbuf; *p; p++)
+    {
+        if (strncasecmp(p, "_END", 4) == 0)     /* done if _END is found */
+            break;
+        if (strncasecmp(p, "_DATA ", 6) == 0)   /* got _DATA */
+        {
+            if (handle_DATA(&p, &q) < 0)
+                return -1L;
+            continue;
+        }
+        p = skiptoeol(p);
+    }
+
+    return (q - outbuf) / DSP_WORD_SIZE;
+}
+
+/* return filesize of specified file */
+static LONG filesize(char *filename)
+{
+    DTA dta, *dtasave;
+    LONG size = -1L;
+
+    dtasave = dos_gdta();
+    dos_sdta(&dta);
+
+    if (dos_sfirst(filename, 0) == 0)
+        size = dta.d_length;
+
+    dos_sdta(dtasave);
+
+    return size;
+}
+
+/*
+ * Dsp_LodToBinary(): convert .LOD file to binary
+ */
+LONG dsp_lodtobinary(char *filename, char *outbuf)
+{
+    LONG fsize, numwords = 0L;
+    char *inbuf;
+
+    fsize = filesize(filename);
+    if (fsize <= 0L)
+        return -1L;
+
+    inbuf = dos_alloc_stram(fsize);
+    if (!inbuf)
+        return -1L;
+
+    if (dos_load_file(filename, fsize, inbuf) < 0L)
+        return -1L;
+
+    numwords = convert_lod(outbuf, inbuf);
+
+    dos_free(inbuf);
+
+    return numwords;
 }
 
 /*
