@@ -105,6 +105,9 @@ void detect_dsp(void)
 
 void dsp_init(void)
 {
+    if (!has_dsp)
+        return;
+
     dsp_is_locked = FALSE;
 }
 
@@ -226,6 +229,9 @@ void dsp_blkunpacked(LONG *send, LONG sendlen, LONG *rcv, LONG rcvlen)
  */
 void dsp_instream(char *data, LONG datalen, LONG numblocks, LONG *blocksdone)
 {
+    if (!has_dsp)
+        return;
+
     /* save args for use by interrupt handler */
     ih_args.send = data;
     ih_args.sendlen = datalen;
@@ -247,6 +253,9 @@ void dsp_instream(char *data, LONG datalen, LONG numblocks, LONG *blocksdone)
  */
 void dsp_outstream(char *data, LONG datalen, LONG numblocks, LONG *blocksdone)
 {
+    if (!has_dsp)
+        return;
+
     /* save args for use by interrupt handler */
     ih_args.rcv = data;
     ih_args.rcvlen = datalen;
@@ -319,6 +328,9 @@ void dsp_inout_handler(void)
  */
 void dsp_iostream(char *send, char *rcv, LONG sendlen, LONG rcvlen, LONG numblocks, LONG *blocksdone)
 {
+    if (!has_dsp)
+        return;
+
     /* save args for use by interrupt handler */
     ih_args.send = send;
     ih_args.rcv = rcv;
@@ -385,6 +397,9 @@ void dsp_io_handler(void)
  */
 void dsp_removeinterrupts(WORD mask)
 {
+    if (!has_dsp)
+        return;
+
     mask &= 0x03;               /* only bits 0 & 1 are valid */
     DSPBASE->interrupt_control &= ~mask;
 }
@@ -689,6 +704,9 @@ LONG dsp_lodtobinary(char *filename, char *outbuf)
     LONG fsize, numwords = 0L;
     char *inbuf;
 
+    if (!has_dsp)
+        return 0x6f;    /* unimplemented xbios call: return function # */
+
     fsize = filesize(filename);
     if (fsize <= 0L)
         return -1L;
@@ -804,6 +822,9 @@ UBYTE dsp_hstat(void)
  */
 void dsp_setvectors(void (*receiver)(LONG data), LONG (*transmitter)(void))
 {
+    if (!has_dsp)
+        return;
+
     user_rcv = NULL;        /* initialise ptrs */
     user_send = NULL;
 
