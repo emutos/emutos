@@ -1032,6 +1032,11 @@ static void xbios_69(void)
     kprintf("XBIOS: Dsp_Unlock\n");
     dsp_unlock();
 }
+static void xbios_6e(char *codeptr, LONG codesize, WORD ability)
+{
+    kprintf("XBIOS: Dsp_ExecBoot\n");
+    dsp_execboot(codeptr, codesize, ability);
+}
 static LONG xbios_6f(char *filename, char *outbuf)
 {
     kprintf("XBIOS: Dsp_LodToBinary\n");
@@ -1367,7 +1372,7 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 6b */
     xbios_unimpl,   /* 6c */
     xbios_unimpl,   /* 6d */
-    xbios_unimpl,   /* 6e */
+    VEC(xbios_6e, dsp_execboot),
     VEC(xbios_6f, dsp_lodtobinary),
     xbios_unimpl,   /* 70 */
     xbios_unimpl,   /* 71 */

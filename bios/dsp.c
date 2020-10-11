@@ -13,7 +13,10 @@
 /* #define ENABLE_KDEBUG */
 
 #include "emutos.h"
+#include "asm.h"
 #include "dsp.h"
+#include "psg.h"
+#include "tosvars.h"
 #include "vectors.h"
 #include "gemdos.h"
 #include "bdosdefs.h"
@@ -65,6 +68,12 @@ struct dsp {
 /* DSP interrupt vector - use the same one as TOS4.04 */
 #define DSP_INTNUM  0xff
 #define VEC_DSP     (*(volatile PFVOID*)(DSP_INTNUM*sizeof(LONG)))
+
+/* time (in ticks) to assert DSP RESET signal */
+#define DSP_RESET_TIME  2
+
+/* maximum DSP bootstrap size (in DSP words) */
+#define DSP_BOOTSTRAP_SIZE  512
 
 
 /*
@@ -516,6 +525,59 @@ void dsp_unlock(void)
 {
     dsp_is_locked = FALSE;
 }
+
+/*
+ * Dsp_ExecBoot(): load bootstrap program
+ *
+ * we reset the DSP via a bit on PSG port A.  this triggers DSP bootstrap
+ * firmware to load 512 DSP words and run them.
+ */
+void dsp_execboot(char *codeptr, long codesize, WORD ability)
+{
+    ULONG end;
+    WORD old_sr, n;
+    UBYTE value;
+
+    if (!has_dsp)
+        return;
+
+    /* assert RESET */
+    old_sr = set_sr(0x2700);
+    PSG->control = PSG_PORT_A;
+    value = PSG->control;
+    PSG->data = value & ~0x10;      /* clear DSP reset bit */
+    PSG->data = value | 0x10;       /* assert bit to start DSP reset */
+    set_sr(old_sr);
+
+    /* delay to allow the DSP to reset */
+    end = hz_200 + DSP_RESET_TIME;  /* like TOS4, but this seems excessive */
+    while(hz_200 < end)
+        ;
+
+    /* unassert RESET to start the firmware bootstrap */
+    old_sr = set_sr(0x2700);
+    PSG->control = PSG_PORT_A;
+    value = PSG->control;
+    PSG->data = value & ~0x10;      /* unassert reset bit */
+    set_sr(old_sr);
+
+    /* load up to 512 DSP words (zero-fill if necessary) */
+    if (codesize > DSP_BOOTSTRAP_SIZE)
+        codesize = DSP_BOOTSTRAP_SIZE;
+    for (n = 0; n < codesize; n++)
+    {
+        DSPBASE->data.d.high = *codeptr++;
+        DSPBASE->data.d.mid = *codeptr++;
+        DSPBASE->data.d.low = *codeptr++;
+    }
+    for ( ; n < DSP_BOOTSTRAP_SIZE; n++)
+    {
+        DSPBASE->data.d.high = 0;
+        DSPBASE->data.d.mid = 0;
+        DSPBASE->data.d.low = 0;
+    }
+}
+
 
 /*
  * helper routines for Dsp_LodToBinary()
