@@ -982,12 +982,12 @@ static void xbios_5e(WORD index,WORD count,ULONG *rgb)
  * DSP
  */
 #if DBG_XBIOS & CONF_WITH_DSP
-static void xbios_60(char *send, LONG sendlen, char *rcv, LONG rcvlen)
+static void xbios_60(const UBYTE *send, LONG sendlen, char *rcv, LONG rcvlen)
 {
     kprintf("XBIOS: Dsp_DoBlock\n");
     dsp_doblock(send, sendlen, rcv, rcvlen);
 }
-static void xbios_61(char *send, LONG sendlen, char *rcv, LONG rcvlen)
+static void xbios_61(const UBYTE *send, LONG sendlen, char *rcv, LONG rcvlen)
 {
     kprintf("XBIOS: Dsp_BlkHandshake\n");
     dsp_blkhandshake(send, sendlen, rcv, rcvlen);
@@ -1032,7 +1032,17 @@ static void xbios_69(void)
     kprintf("XBIOS: Dsp_Unlock\n");
     dsp_unlock();
 }
-static void xbios_6e(char *codeptr, LONG codesize, WORD ability)
+static WORD xbios_6c(char *filename, WORD ability, UBYTE *buffer)
+{
+    kprintf("XBIOS: Dsp_LoadProg\n");
+    return dsp_loadprog(filename, ability, buffer);
+}
+static void xbios_6d(const UBYTE *codeptr, LONG codesize, WORD ability)
+{
+    kprintf("XBIOS: Dsp_ExecProg\n");
+    dsp_execprog(codeptr, codesize, ability);
+}
+static void xbios_6e(const UBYTE *codeptr, LONG codesize, WORD ability)
 {
     kprintf("XBIOS: Dsp_ExecBoot\n");
     dsp_execboot(codeptr, codesize, ability);
@@ -1041,6 +1051,11 @@ static LONG xbios_6f(char *filename, char *outbuf)
 {
     kprintf("XBIOS: Dsp_LodToBinary\n");
     return dsp_lodtobinary(filename, outbuf);
+}
+static void xbios_70(WORD vector)
+{
+    kprintf("XBIOS: Dsp_TriggerHC\n");
+    dsp_triggerhc(vector);
 }
 static WORD xbios_77(WORD flag)
 {
@@ -1370,11 +1385,11 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_69, dsp_unlock),
     xbios_unimpl,   /* 6a */
     xbios_unimpl,   /* 6b */
-    xbios_unimpl,   /* 6c */
-    xbios_unimpl,   /* 6d */
+    VEC(xbios_6c, dsp_loadprog),
+    VEC(xbios_6d, dsp_execprog),
     VEC(xbios_6e, dsp_execboot),
     VEC(xbios_6f, dsp_lodtobinary),
-    xbios_unimpl,   /* 70 */
+    VEC(xbios_70, dsp_triggerhc),
     xbios_unimpl,   /* 71 */
     xbios_unimpl,   /* 72 */
     xbios_unimpl,   /* 73 */

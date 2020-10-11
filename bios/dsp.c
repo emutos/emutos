@@ -75,6 +75,14 @@ struct dsp {
 /* maximum DSP bootstrap size (in DSP words) */
 #define DSP_BOOTSTRAP_SIZE  512
 
+/* number of user DSP subroutines supported */
+#define NUM_DSP_SUBROUTINES 8
+
+/* callable DSP vector info */
+#define LOADSUB_VECTOR      0x15        /* used by system */
+#define FIRST_SUBRTN_VECTOR 0x17
+#define NUM_DSP_VECTORS     (FIRST_SUBRTN_VECTOR+NUM_DSP_SUBROUTINES-LOADSUB_VECTOR)
+
 /*
  * DSP code
  */
@@ -88,6 +96,21 @@ static const UBYTE dspprog[] = {    /* loaded into DSP high memory by dspboot */
 };
 #define DSPPROG_SIZE    (sizeof(dspprog) / DSP_WORD_SIZE)
 
+static const UBYTE dspstart[] = {   /* start/restart DSPPROG */
+#include "dspstart.c"
+};
+#define DSPSTART_SIZE   (sizeof(dspstart) / DSP_WORD_SIZE)
+
+static const UBYTE dspvect[] = {    /* vectors to be loaded using DSPPROG */
+                                        /* header expected by DSPPROG */
+    0x00, 0x00, 0x00,                       /* memory type = P */
+    0x00, 0x00, (LOADSUB_VECTOR*2),         /* memory address */
+    0x00, 0x00, (NUM_DSP_VECTORS*2),        /* size in DSP words */
+#include "dspvect.c"                    /* skeleton vector data for vectors $15->$1e */
+    0x00, 0x00, 0x03                    /* end of transmission indicator */
+};
+#define DSPVECT_SIZE    (sizeof(dspvect) / DSP_WORD_SIZE)
+
 
 /*
  * some global/local variables
@@ -95,6 +118,9 @@ static const UBYTE dspprog[] = {    /* loaded into DSP high memory by dspboot */
 int has_dsp;
 
 static BOOL dsp_is_locked;
+static WORD program_ability;
+
+static UBYTE dspvect_ram[DSPVECT_SIZE*DSP_WORD_SIZE];
 
 /* the following private structure is used by interrupt handling */
 static struct {
@@ -131,6 +157,8 @@ void dsp_init(void)
         return;
 
     dsp_is_locked = FALSE;
+    memcpy(dspvect_ram, dspvect, sizeof(dspvect));  /* initialise RAM copy of vector data */
+    program_ability = 0;
 
     /* load the program loader into DSP memory */
     dsp_execboot(dspboot, DSPBOOT_SIZE, 0);
@@ -186,7 +214,7 @@ void dsp_doblock(const UBYTE *send, LONG sendlen, char *rcv, LONG rcvlen)
  * (optionally) send a block of DSP words with handshaking, then
  * (optionally) receive a block of DSP words with handshaking
  */
-void dsp_blkhandshake(char *send, LONG sendlen, char *rcv, LONG rcvlen)
+void dsp_blkhandshake(const UBYTE *send, LONG sendlen, char *rcv, LONG rcvlen)
 {
     if (!has_dsp)
         return;
@@ -544,6 +572,46 @@ void dsp_unlock(void)
 }
 
 /*
+ * Dsp_LoadProg(): load & run .LOD file from disk
+ */
+WORD dsp_loadprog(char *filename, WORD ability, void *buffer)
+{
+    LONG size;
+
+    if (!has_dsp)
+        return 0x6c;    /* unimplemented xbios call: return function # */
+
+    /* read .LOD file & convert to binary in 'buffer' */
+    size = dsp_lodtobinary(filename, buffer);
+    if (size < 0L)
+        return -1;
+
+    dsp_execprog(buffer, size, ability);
+
+    return 0;
+}
+
+/*
+ * Dsp_ExecProg(): load & run binary DSP program
+ */
+void dsp_execprog(const UBYTE *codeptr, LONG codesize, WORD ability)
+{
+    if (!has_dsp)
+        return;
+
+    /* start up our program loader */
+    dsp_execboot(dspstart, DSPSTART_SIZE, ability);
+
+    /* send the program */
+    dsp_blkhandshake(codeptr, codesize, NULL, 0);
+
+    /* send the standard set of vectors & the transmission terminator */
+    dsp_blkhandshake(dspvect_ram, DSPVECT_SIZE, NULL, 0);
+
+    program_ability = ability;  /* remember this */
+}
+
+/*
  * Dsp_ExecBoot(): load bootstrap program
  *
  * we reset the DSP via a bit on PSG port A.  this triggers DSP bootstrap
@@ -802,6 +870,20 @@ LONG dsp_lodtobinary(char *filename, char *outbuf)
     dos_free(inbuf);
 
     return numwords;
+}
+
+/*
+ * Dsp_TriggerHC(): trigger user host command vector
+ *
+ * users are only supposed to use vectors $13 and $14, but TOS does not
+ * enforce this, so (for now at least) we don't either.
+ */
+void dsp_triggerhc(WORD vector)
+{
+    if (!has_dsp)
+        return;
+
+    DSPBASE->command_vector = 0x80 | vector;
 }
 
 /*
