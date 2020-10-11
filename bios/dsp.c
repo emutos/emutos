@@ -75,6 +75,19 @@ struct dsp {
 /* maximum DSP bootstrap size (in DSP words) */
 #define DSP_BOOTSTRAP_SIZE  512
 
+/*
+ * DSP code
+ */
+static const UBYTE dspboot[] = {    /* loaded into DSP low memory by firmware bootstrap */
+#include "dspboot.c"
+};
+#define DSPBOOT_SIZE    (sizeof(dspboot) / DSP_WORD_SIZE)
+
+static const UBYTE dspprog[] = {    /* loaded into DSP high memory by dspboot */
+#include "dspprog.c"
+};
+#define DSPPROG_SIZE    (sizeof(dspprog) / DSP_WORD_SIZE)
+
 
 /*
  * some global/local variables
@@ -118,6 +131,10 @@ void dsp_init(void)
         return;
 
     dsp_is_locked = FALSE;
+
+    /* load the program loader into DSP memory */
+    dsp_execboot(dspboot, DSPBOOT_SIZE, 0);
+    dsp_doblock(dspprog, DSPPROG_SIZE, NULL, 0);
 }
 
 /****************************************************
@@ -132,7 +149,7 @@ void dsp_init(void)
  * (optionally) send a block of DSP words with no handshaking, then
  * (optionally) receive a block of DSP words with no handshaking
  */
-void dsp_doblock(char *send, LONG sendlen, char *rcv, LONG rcvlen)
+void dsp_doblock(const UBYTE *send, LONG sendlen, char *rcv, LONG rcvlen)
 {
     if (!has_dsp)
         return;
@@ -532,7 +549,7 @@ void dsp_unlock(void)
  * we reset the DSP via a bit on PSG port A.  this triggers DSP bootstrap
  * firmware to load 512 DSP words and run them.
  */
-void dsp_execboot(char *codeptr, long codesize, WORD ability)
+void dsp_execboot(const UBYTE *codeptr, LONG codesize, WORD ability)
 {
     ULONG end;
     WORD old_sr, n;

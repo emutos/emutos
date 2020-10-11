@@ -35,7 +35,7 @@ void dsp_io_handler(void);      /* interrupt handler for Dsp_IOStream() */
 void dsp_sv_handler(void);      /* interrupt handler for Dsp_SetVectors() */
 
 /* XBIOS DSP functions */
-void dsp_doblock(char *send, LONG sendlen, char *rcv, LONG rcvlen);
+void dsp_doblock(const UBYTE *send, LONG sendlen, char *rcv, LONG rcvlen);
 void dsp_blkhandshake(char *send, LONG sendlen, char *rcv, LONG rcvlen);
 void dsp_blkunpacked(LONG *send, LONG sendlen, LONG *rcv, LONG rcvlen);
 void dsp_instream(char *data, LONG datalen, LONG numblocks, LONG *blocksdone);
@@ -45,7 +45,7 @@ void dsp_removeinterrupts(WORD mask);
 WORD dsp_getwordsize(void);
 WORD dsp_lock(void);
 void dsp_unlock(void);
-void dsp_execboot(char *codeptr, LONG codesize, WORD ability);
+void dsp_execboot(const UBYTE *codeptr, LONG codesize, WORD ability);
 LONG dsp_lodtobinary(char *filename, char *outbuf);
 WORD dsp_hf0(WORD flag);
 WORD dsp_hf1(WORD flag);
