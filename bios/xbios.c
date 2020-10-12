@@ -1057,6 +1057,16 @@ static void xbios_70(WORD vector)
     kprintf("XBIOS: Dsp_TriggerHC\n");
     dsp_triggerhc(vector);
 }
+static WORD xbios_71(void)
+{
+    kprintf("XBIOS: Dsp_RequestUniqueAbility\n");
+    return dsp_requestuniqueability(void);
+}
+static WORD xbios_72(void)
+{
+    kprintf("XBIOS: Dsp_GetProgAbility\n");
+    return dsp_getprogability(void);
+}
 static WORD xbios_77(WORD flag)
 {
     kprintf("XBIOS: Dsp_Hf0\n");
@@ -1390,8 +1400,8 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_6e, dsp_execboot),
     VEC(xbios_6f, dsp_lodtobinary),
     VEC(xbios_70, dsp_triggerhc),
-    xbios_unimpl,   /* 71 */
-    xbios_unimpl,   /* 72 */
+    VEC(xbios_71, dsp_requestuniqueability),
+    VEC(xbios_72, dsp_getprogability),
     xbios_unimpl,   /* 73 */
     xbios_unimpl,   /* 74 */
     xbios_unimpl,   /* 75 */

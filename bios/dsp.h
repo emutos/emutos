@@ -50,6 +50,8 @@ void dsp_execprog(const UBYTE *codeptr, LONG codesize, WORD ability);
 void dsp_execboot(const UBYTE *codeptr, LONG codesize, WORD ability);
 LONG dsp_lodtobinary(char *filename, char *outbuf);
 void dsp_triggerhc(WORD vector);
+WORD dsp_requestuniqueability(void);
+WORD dsp_getprogability(void);
 WORD dsp_hf0(WORD flag);
 WORD dsp_hf1(WORD flag);
 WORD dsp_hf2(void);

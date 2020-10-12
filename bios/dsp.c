@@ -119,6 +119,7 @@ int has_dsp;
 
 static BOOL dsp_is_locked;
 static WORD program_ability;
+static WORD unique_ability;
 
 static UBYTE dspvect_ram[DSPVECT_SIZE*DSP_WORD_SIZE];
 
@@ -159,6 +160,7 @@ void dsp_init(void)
     dsp_is_locked = FALSE;
     memcpy(dspvect_ram, dspvect, sizeof(dspvect));  /* initialise RAM copy of vector data */
     program_ability = 0;
+    unique_ability = -32768;    /* just like TOS */
 
     /* load the program loader into DSP memory */
     dsp_execboot(dspboot, DSPBOOT_SIZE, 0);
@@ -884,6 +886,28 @@ void dsp_triggerhc(WORD vector)
         return;
 
     DSPBASE->command_vector = 0x80 | vector;
+}
+
+/*
+ * Dsp_RequestUniqueAbility(): return unique ability identifier
+ */
+WORD dsp_requestuniqueability(void)
+{
+    if (!has_dsp)
+        return 0x71;    /* unimplemented xbios call: return function # */
+
+    return ++unique_ability;
+}
+
+/*
+ * Dsp_GetProgAbility(): return ability identifier of current program
+ */
+WORD dsp_getprogability(void)
+{
+    if (!has_dsp)
+        return 0x72;    /* unimplemented xbios call: return function # */
+
+    return program_ability;
 }
 
 /*
