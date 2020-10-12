@@ -408,7 +408,7 @@ static void bios_init(void)
 
     /* Initialize the DSP.  Since we currently use the system timer
      * in dsp_execboot(), which is called from dsp_init(), the latter
-     * must be called after interrupots are enabled.
+     * must be called *after* interrupts are enabled.
      */
 #if CONF_WITH_DSP
     KDEBUG(("dsp_init()\n"));
