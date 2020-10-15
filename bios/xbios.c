@@ -1060,12 +1060,12 @@ static void xbios_70(WORD vector)
 static WORD xbios_71(void)
 {
     kprintf("XBIOS: Dsp_RequestUniqueAbility\n");
-    return dsp_requestuniqueability(void);
+    return dsp_requestuniqueability();
 }
 static WORD xbios_72(void)
 {
     kprintf("XBIOS: Dsp_GetProgAbility\n");
-    return dsp_getprogability(void);
+    return dsp_getprogability();
 }
 static WORD xbios_77(WORD flag)
 {
