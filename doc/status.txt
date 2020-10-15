@@ -248,7 +248,41 @@ TOS v4.00:
 
  - 0x96 VsetMask        (for Falcon Videl only)
 
-2nd bit in _SND is set:
+0x08 bit set in _SND:
+ t 0x60 Dsp_DoBlock
+ t 0x61 Dsp_BlkHandshake
+ T 0x62 Dsp_BlkUnpacked
+ X 0x63 Dsp_InStream
+ X 0x64 Dsp_OutStream
+ X 0x65 Dsp_IOStream
+ X 0x66 Dsp_RemoveInterrupts
+ T 0x67 Dsp_GetWordSize
+ T 0x68 Dsp_Lock
+ T 0x69 Dsp_Unlock
+ T 0x6a Dsp_Available
+ T 0x6b Dsp_Reserve
+ X 0x6c Dsp_LoadProg
+ T 0x6d Dsp_ExecProg
+ T 0x6e Dsp_ExecBoot
+ T 0x6f Dsp_LodToBinary
+ X 0x70 Dsp_TriggerHC
+ T 0x71 Dsp_RequestUniqueAbility
+ X 0x72 Dsp_GetProgAbility
+ T 0x73 Dsp_FlushSubroutines
+ T 0x74 Dsp_LoadSubroutine
+ T 0x75 Dsp_InqSubrAbility
+ T 0x76 Dsp_RunSubroutine
+ T 0x77 Dsp_Hf0
+ T 0x78 Dsp_Hf1
+ T 0x79 Dsp_Hf2
+ T 0x7a Dsp_Hf3
+ T 0x7b Dsp_BlkWords
+ T 0x7c Dsp_BlkBytes
+ T 0x7d Dsp_Hstat
+ X 0x7e Dsp_SetVectors
+ X 0x7f Dsp_MultBlocks
+
+0x04 bit set in _SND:
  t 0x80 LockSnd
  t 0x81 UnlockSnd
  t 0x82 Soundcmd
@@ -257,19 +291,12 @@ TOS v4.00:
  t 0x85 Settracks
  t 0x86 Setmontracks
  t 0x87 Setinterrupt
- t 0x8c Sndstatus
-
-3rd bit in _SND is set:
  t 0x88 Buffoper
+ t 0x89 Dsptristate
  t 0x8a Gpio
  t 0x8b Devconnect
+ t 0x8c Sndstatus
  t 0x8d Buffptr
-
-3&4 bits in _SND are set:
- t 0x89 Dsptristate
-
-5th bit in _SND is set:
- - 0x60-0x7F, 32 Dsp_* functions
 
 TOS v4 extended XBIOS functionality:
  - 16-bit Videl resolution setting
