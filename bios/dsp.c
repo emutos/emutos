@@ -25,6 +25,7 @@
 #if CONF_WITH_DSP
 
 #define DSP_WORD_SIZE   3       /* architectural */
+#define DSP_VECTOR_SIZE 2
 
 struct dsp {
     UBYTE interrupt_control;    /* interrupt control register (r/w) */
@@ -72,16 +73,28 @@ struct dsp {
 /* time (in ticks) to assert DSP RESET signal */
 #define DSP_RESET_TIME  2
 
-/* maximum DSP bootstrap size (in DSP words) */
-#define DSP_BOOTSTRAP_SIZE  512
+/* maximum sizes (in DSP words) */
+#define DSP_BOOTSTRAP_SIZE  512     /* for Dsp_ExecBoot() */
+#define DSP_SUBROUTINE_SIZE 1024    /* for Dsp_LoadSubroutine() */
 
-/* number of user DSP subroutines supported */
-#define NUM_DSP_SUBROUTINES 8
+/* number of DSP subroutines supported */
+#define NUM_SYSTEM_SUBROUTINES  2
+#define NUM_USER_SUBROUTINES    8
 
 /* callable DSP vector info */
 #define LOADSUB_VECTOR      0x15        /* used by system */
-#define FIRST_SUBRTN_VECTOR 0x17
-#define NUM_DSP_VECTORS     (FIRST_SUBRTN_VECTOR+NUM_DSP_SUBROUTINES-LOADSUB_VECTOR)
+#define BLOCKMOVE_VECTOR    0x16
+#define FIRST_SUBRTN_VECTOR 0x17        /* for users */
+#define NUM_DSP_VECTORS     (NUM_SYSTEM_SUBROUTINES+NUM_USER_SUBROUTINES)
+#define SIZE_DSP_VECTORS    (NUM_DSP_VECTORS*DSP_VECTOR_SIZE)
+#define LOADSUB_ADDR        (LOADSUB_VECTOR*DSP_VECTOR_SIZE)
+#define FIRST_SUBRTN_ADDR   (FIRST_SUBRTN_VECTOR*DSP_VECTOR_SIZE)
+
+/* DSP memory sizes */
+#define YSIZE       0x4000      /* 16K, overlapping the bottom of P memory */
+#define PSIZE       0x7ea9      /* must agree with the value hardcoded in   */
+                                /* dspboot.c/dspprog.c/dspstart.c, which is */
+                                /* the value PROGLOAD in tools/dsp/dsp.inc  */
 
 /*
  * DSP code
@@ -104,12 +117,23 @@ static const UBYTE dspstart[] = {   /* start/restart DSPPROG */
 static const UBYTE dspvect[] = {    /* vectors to be loaded using DSPPROG */
                                         /* header expected by DSPPROG */
     0x00, 0x00, 0x00,                       /* memory type = P */
-    0x00, 0x00, (LOADSUB_VECTOR*2),         /* memory address */
-    0x00, 0x00, (NUM_DSP_VECTORS*2),        /* size in DSP words */
+    0x00, 0x00, LOADSUB_ADDR,               /* memory address */
+    0x00, 0x00, SIZE_DSP_VECTORS,           /* size in DSP words */
 #include "dspvect.c"                    /* skeleton vector data for vectors $15->$1e */
     0x00, 0x00, 0x03                    /* end of transmission indicator */
 };
 #define DSPVECT_SIZE    (sizeof(dspvect) / DSP_WORD_SIZE)
+/* offset to user subroutine vector data, in DSP words */
+#define DSPVECT_USERVEC_OFFSET  (3+NUM_SYSTEM_SUBROUTINES*DSP_VECTOR_SIZE)
+
+/*
+ * subroutine information structure
+ */
+typedef struct {
+    UWORD start;        /* start address */
+    UWORD size;         /* length */
+    WORD ability;       /* associated 'ability' */
+} SUBINFO;
 
 
 /*
@@ -120,8 +144,22 @@ int has_dsp;
 static BOOL dsp_is_locked;
 static WORD program_ability;
 static WORD unique_ability;
+static LONG program_top;        /* end address of program + 1 */
+static LONG subroutine_bottom;  /* start address of lowest subroutine */
+static WORD oldest_sub;         /* index of next subroutine to replace */
 
 static UBYTE dspvect_ram[DSPVECT_SIZE*DSP_WORD_SIZE];
+
+/*
+ * subroutine information table
+ *
+ * this is a circular queue, whose oldest member (the next one to be
+ * replaced) always references the topmost subroutine in memory.
+ * note:
+ * . the handle for a subroutine is the same as its associated vector
+ * . the vector for a subroutine in entry i is (i+FIRST_SUBRTN_VECTOR)
+ */
+static SUBINFO subroutine[NUM_USER_SUBROUTINES];
 
 /* the following private structure is used by interrupt handling */
 static struct {
@@ -159,6 +197,8 @@ void dsp_init(void)
 
     dsp_is_locked = FALSE;
     memcpy(dspvect_ram, dspvect, sizeof(dspvect));  /* initialise RAM copy of vector data */
+    dsp_flushsubroutines();     /* reset subroutine info table & memory info */
+    program_top = 0;
     program_ability = 0;
     unique_ability = -32768;    /* just like TOS */
 
@@ -574,6 +614,37 @@ void dsp_unlock(void)
 }
 
 /*
+ * Dsp_Available(): return memory availability
+ */
+void dsp_available(LONG *xavailable, LONG *yavailable)
+{
+    *xavailable = subroutine_bottom - YSIZE;
+    *yavailable = YSIZE;    /* TOS returns 1 less, probably a bug */
+}
+
+/*
+ * Dsp_Reserve(): reserve program memory
+ */
+WORD dsp_reserve(LONG xreserve, LONG yreserve)
+{
+    LONG requested;
+
+    if (!has_dsp)
+        return 0x6b;    /* unimplemented xbios call: return function # */
+
+    if (yreserve > YSIZE)
+        return -1;
+
+    requested = xreserve + YSIZE;
+    if (requested > subroutine_bottom)
+        return -1;
+
+    program_top = requested;
+
+    return 0;
+}
+
+/*
  * Dsp_LoadProg(): load & run .LOD file from disk
  */
 WORD dsp_loadprog(char *filename, WORD ability, void *buffer)
@@ -908,6 +979,213 @@ WORD dsp_getprogability(void)
         return 0x72;    /* unimplemented xbios call: return function # */
 
     return program_ability;
+}
+
+/*
+ * Dsp_FlushSubroutines(): remove all subroutines from memory
+ */
+void dsp_flushsubroutines(void)
+{
+    if (!has_dsp)
+        return;
+
+    bzero(subroutine, sizeof(subroutine));  /* clear out info table */
+    oldest_sub = 0;                         /* reset circular pointer */
+    subroutine_bottom = PSIZE;              /* reset start of subroutine area */
+}
+
+/*
+ * helper functions for Dsp_Load_Subroutine()
+ */
+
+/* invoke the LOADSUB function of our program loader */
+static void load_sub(const UBYTE *codeptr, WORD dest, WORD len)
+{
+    DSPBASE->command_vector = 0x80 | LOADSUB_VECTOR;
+    while(DSPBASE->command_vector & 0x80)   /* wait for DSP response */
+        ;
+
+    DSPBASE->data.d.high = 0;           /* send destination address */
+    DSPBASE->data.d.mid = HIBYTE(dest);
+    DSPBASE->data.d.low = LOBYTE(dest);
+
+    DSPBASE->data.d.high = 0;           /* send length */
+    DSPBASE->data.d.mid = HIBYTE(len);
+    DSPBASE->data.d.low = LOBYTE(len);
+
+    dsp_doblock(codeptr, len, NULL, 0); /* send actual subroutine */
+}
+
+/* invoke the BLOCKMOVE function of our program loader */
+static void move_block(UWORD dest, UWORD src, UWORD len)
+{
+    DSPBASE->command_vector = 0x80 | BLOCKMOVE_VECTOR;
+    while(DSPBASE->command_vector & 0x80)   /* wait for DSP response */
+        ;
+
+    DSPBASE->data.d.high = 0;           /* send source address */
+    DSPBASE->data.d.mid = HIBYTE(src);
+    DSPBASE->data.d.low = LOBYTE(src);
+
+    DSPBASE->data.d.high = 0;           /* send destination address */
+    DSPBASE->data.d.mid = HIBYTE(dest);
+    DSPBASE->data.d.low = LOBYTE(dest);
+
+    DSPBASE->data.d.high = 0;           /* send length */
+    DSPBASE->data.d.mid = HIBYTE(len);
+    DSPBASE->data.d.low = LOBYTE(len);
+}
+
+/* update the start address of a user subroutine in our copy of the vector table */
+static void update_dspvect(WORD uservec, WORD start)
+{
+    UBYTE *p;
+
+    /* the start address is contained in the word after the JSR opcode */
+    p = dspvect_ram + (DSPVECT_USERVEC_OFFSET+DSP_VECTOR_SIZE*uservec+1) * DSP_WORD_SIZE;
+
+    *p++ = 0;
+    *p++ = HIBYTE(start);
+    *p = LOBYTE(start);
+}
+
+/* send the user subroutine vector table to the DSP */
+static void send_uservect(void)
+{
+    UBYTE *p;
+    WORD len = NUM_USER_SUBROUTINES * DSP_VECTOR_SIZE;
+
+    DSPBASE->command_vector = 0x80 | LOADSUB_VECTOR;
+    while(DSPBASE->command_vector & 0x80)   /* wait for DSP response */
+        ;
+
+    DSPBASE->data.d.high = 0;           /* send destination address */
+    DSPBASE->data.d.mid = 0;
+    DSPBASE->data.d.low = FIRST_SUBRTN_ADDR;
+
+    DSPBASE->data.d.high = 0;           /* send length */
+    DSPBASE->data.d.mid = 0;
+    DSPBASE->data.d.low = len;
+
+    /* send the user vectors */
+    p = dspvect_ram + DSPVECT_USERVEC_OFFSET*DSP_WORD_SIZE;
+    do
+    {
+        DSPBASE->data.d.high = *p++;
+        DSPBASE->data.d.mid = *p++;
+        DSPBASE->data.d.low = *p++;
+    } while(--len);
+}
+
+/*
+ * Dsp_LoadSubroutine(): install subroutine into DSP memory
+ */
+WORD dsp_loadsubroutine(const UBYTE *codeptr, LONG size, WORD ability)
+{
+    SUBINFO *p, *oldest;
+    WORD i, adjust, handle;
+
+    if (!has_dsp)
+        return 0x74;    /* unimplemented xbios call: return function # */
+
+    if (size > DSP_SUBROUTINE_SIZE)
+        return 0;
+
+    if (program_top + size > subroutine_bottom)
+        return 0;
+
+    /*
+     * initially, 'oldest_sub' points to the first of 8 empty slots, so we
+     * will fill them in order.  as a consequence, they will be sequenced
+     * in decreasing order of start address, with the first one at the top
+     * of available memory.  when we wrap around and come to the first one
+     * again, we will move the remaining subroutines up in DSP memory and
+     * then increment 'oldest_sub'; thus 'oldest_sub' will always point to
+     * the subroutine at the top of available memory.
+     */
+    oldest = &subroutine[oldest_sub];
+    if (oldest->size)   /* all slots are in use, must kick this subroutine out */
+    {
+        adjust = oldest->size;
+        /*
+         * move subroutines upwards in DSP memory: note that the addresses
+         * for BLOCKMOVE are the *last bytes* of the regions concerned
+         */
+        move_block(oldest->start+adjust-1, oldest->start-1, oldest->start-subroutine_bottom);
+        /*
+         * fix up start addresses in subroutine info and vector table
+         */
+        for (i = 0, p = subroutine; i < NUM_USER_SUBROUTINES; i++, p++)
+        {
+            p->start += adjust;         /* adjust start of all subroutines */
+            update_dspvect(i, p->start);/* in vector table too */
+        }
+        subroutine_bottom += adjust;    /* fix up start of subroutine area */
+    }
+
+    subroutine_bottom -= size;          /* adjust pointer to start of subroutines */
+    oldest->start = subroutine_bottom;  /* & update table with subroutine info */
+    oldest->size = size;
+    oldest->ability = ability;
+    update_dspvect(oldest_sub, oldest->start);  /* in vector table too */
+    handle = FIRST_SUBRTN_VECTOR + oldest_sub;  /* remember for return code */
+
+    send_uservect();                            /* send user subroutine vector table */
+
+    load_sub(codeptr, subroutine_bottom, size); /* actually load the subroutine */
+
+    if (++oldest_sub >= NUM_USER_SUBROUTINES)    /* update queue ptr */
+        oldest_sub = 0;
+
+    return handle;
+}
+
+/*
+ * Dsp_InqSubrAbility(): get handle for installed subroutine
+ */
+WORD dsp_inqsubrability(WORD ability)
+{
+    WORD i;
+    SUBINFO *p;
+
+    if (!has_dsp)
+        return 0x75;    /* unimplemented xbios call: return function # */
+
+    for (i = 0, p = subroutine; i < NUM_USER_SUBROUTINES; i++, p++)
+    {
+        if (p->ability == ability)
+            return i + FIRST_SUBRTN_VECTOR;
+    }
+
+    return 0;
+}
+
+/*
+ * Dsp_RunSubroutine(): execute DSP-resident subroutine
+ */
+WORD dsp_runsubroutine(WORD handle)
+{
+    WORD n, addr;
+
+    if (!has_dsp)
+        return 0x75;    /* unimplemented xbios call: return function # */
+
+    n = handle - FIRST_SUBRTN_VECTOR;
+    if ((n < 0) || (n >= NUM_USER_SUBROUTINES))
+        return -1;
+
+    /*
+     * set up the start address of the DSP routine in the host port
+     * so that the DSP code can read it when it starts
+     */
+    addr = subroutine[n].start;
+    DSPBASE->data.d.high = 0;
+    DSPBASE->data.d.mid = HIBYTE(addr);
+    DSPBASE->data.d.low = LOBYTE(addr);
+
+    DSPBASE->command_vector = 0x80 | handle;    /* wake up subroutine */
+
+    return 0;
 }
 
 /*

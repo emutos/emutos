@@ -1032,6 +1032,16 @@ static void xbios_69(void)
     kprintf("XBIOS: Dsp_Unlock\n");
     dsp_unlock();
 }
+static void xbios_6a(LONG *xavailable, LONG *yavailable)
+{
+    kprintf("XBIOS: Dsp_Available\n");
+    dsp_available(xavailable, yavailable);
+}
+static WORD xbios_6b(LONG xreserve, LONG yreserve)
+{
+    kprintf("XBIOS: Dsp_Reserve\n");
+    return dsp_reserve(xreserve, yreserve);
+}
 static WORD xbios_6c(char *filename, WORD ability, UBYTE *buffer)
 {
     kprintf("XBIOS: Dsp_LoadProg\n");
@@ -1066,6 +1076,26 @@ static WORD xbios_72(void)
 {
     kprintf("XBIOS: Dsp_GetProgAbility\n");
     return dsp_getprogability();
+}
+static void xbios_73(void)
+{
+    kprintf("XBIOS: Dsp_FlushSubroutines\n");
+    dsp_flushsubroutines();
+}
+static WORD xbios_74(const UBYTE *codeptr, LONG size, WORD ability)
+{
+    kprintf("XBIOS: Dsp_LoadSubroutine\n");
+    return dsp_loadsubroutine(codeptr, size, ability);
+}
+static WORD xbios_75(WORD ability)
+{
+    kprintf("XBIOS: Dsp_InqSubrAbility\n");
+    return dsp_inqsubrability(ability);
+}
+static WORD xbios_76(WORD handle)
+{
+    kprintf("XBIOS: Dsp_RunSubroutine\n");
+    return dsp_runsubroutine(handle);
 }
 static WORD xbios_77(WORD flag)
 {
@@ -1393,8 +1423,8 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_67, dsp_getwordsize),
     VEC(xbios_68, dsp_lock),
     VEC(xbios_69, dsp_unlock),
-    xbios_unimpl,   /* 6a */
-    xbios_unimpl,   /* 6b */
+    VEC(xbios_6a, dsp_available),
+    VEC(xbios_6b, dsp_reserve),
     VEC(xbios_6c, dsp_loadprog),
     VEC(xbios_6d, dsp_execprog),
     VEC(xbios_6e, dsp_execboot),
@@ -1402,10 +1432,10 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_70, dsp_triggerhc),
     VEC(xbios_71, dsp_requestuniqueability),
     VEC(xbios_72, dsp_getprogability),
-    xbios_unimpl,   /* 73 */
-    xbios_unimpl,   /* 74 */
-    xbios_unimpl,   /* 75 */
-    xbios_unimpl,   /* 76 */
+    VEC(xbios_73, dsp_flushsubroutines),
+    VEC(xbios_74, dsp_loadsubroutine),
+    VEC(xbios_75, dsp_inqsubrability),
+    VEC(xbios_76, dsp_runsubroutine),
     VEC(xbios_77, dsp_hf0),
     VEC(xbios_78, dsp_hf1),
     VEC(xbios_79, dsp_hf2),
