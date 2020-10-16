@@ -78,8 +78,6 @@ static void get_column(WORD);
 
 void blink(void);
 
-void (*con_state)(WORD);        /* state of conout state machine */
-
 
 /* jumptable for ESC + uppercase character */
 static void (* const am_tab[])(void) = {
