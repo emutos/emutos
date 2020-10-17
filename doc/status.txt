@@ -39,7 +39,7 @@ a ROM version of EmuTOS.
   Amiga 600 + Vampire |  yes  | (4) |    Mar 2017 |
   Amiga 1000          |  yes  | (2) |    Jul 2012 |
   FireBee             |  yes  | RFB | 26 Aug 2020 | also tested with PRG
-  M5484LITE           |  yes  | (3) | 30 Aig 2020 |
+  M5484LITE           |  yes  | (3) | 30 Aug 2020 |
   Vampire V4          |  yes  | CZ  | 24 Aug 2020 |
 
 Abbreviations for testers:
