@@ -559,6 +559,14 @@ void screen_init_mode(void)
 
         rez = monitor_type?ST_LOW:ST_HIGH;
         *(volatile UBYTE *) ST_SHIFTER = rez;
+
+#if CONF_WITH_STE_SHIFTER
+        /* On the STe, reset the additional video registers to default values. */
+        if (has_ste_shifter) {
+            *(volatile UBYTE *)STE_LINE_OFFSET = 0;
+            *(volatile UBYTE *)STE_HORZ_SCROLL = 0;
+        }
+#endif
     }
 
 #if CONF_WITH_VIDEL

@@ -32,6 +32,9 @@
 
 #define TT_SHIFTER_BITMASK  0x970f      /* valid bits in TT_SHIFTER */
 
+#define STE_LINE_OFFSET     0xffff820fL /* additional registers in STe */
+#define STE_HORZ_SCROLL     0xffff8265L
+
 #define ST_PALETTE_REGS     0xffff8240L
 #define FALCON_PALETTE_REGS 0xffff9800L
 
