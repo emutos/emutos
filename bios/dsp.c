@@ -441,7 +441,7 @@ void dsp_iostream(char *send, char *rcv, LONG sendlen, LONG rcvlen, LONG numbloc
     {
         DSPBASE->data.d.high = *send++;
         DSPBASE->data.d.mid = *send++;
-        DSPBASE->data.d.low = *send++;        
+        DSPBASE->data.d.low = *send++;
     } while(--sendlen);
     ih_args.send = send;        /* update buffer pointer */
 
@@ -843,7 +843,7 @@ static WORD handle_DATA(char **pptr, char **qptr)
     outword(q, addr);       /* second word is start address */
     q += 2*DSP_WORD_SIZE;   /* third word will be filled in later */
     qstart = q;             /* start of DSP code */
-                
+
     /* convert rest of _DATA section to binary */
     for ( ; *p && (*p != '_'); p++)
     {
