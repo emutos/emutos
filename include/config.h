@@ -137,6 +137,9 @@
 # ifndef CONF_WITH_TT_SHIFTER
 #  define CONF_WITH_TT_SHIFTER 0
 # endif
+# ifndef CONF_WITH_DSP
+#  define CONF_WITH_DSP 0
+# endif
 # ifndef CONF_WITH_SCC
 #  define CONF_WITH_SCC 0
 # endif
@@ -974,7 +977,7 @@
  * Set CONF_WITH_DSP to 1 to enable support for Falcon DSP
  */
 #ifndef CONF_WITH_DSP
-# define CONF_WITH_DSP 0
+# define CONF_WITH_DSP 1
 #endif
 
 /*
