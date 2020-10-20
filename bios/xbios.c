@@ -989,7 +989,7 @@ static void xbios_60(const UBYTE *send, LONG sendlen, char *rcv, LONG rcvlen)
 }
 static void xbios_61(const UBYTE *send, LONG sendlen, char *rcv, LONG rcvlen)
 {
-    kprintf("XBIOS: Dsp_BlkHandshake\n");
+    kprintf("XBIOS: Dsp_BlkHandShake\n");
     dsp_blkhandshake(send, sendlen, rcv, rcvlen);
 }
 static void xbios_62(LONG *send, LONG sendlen, LONG *rcv, LONG rcvlen)

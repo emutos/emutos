@@ -251,7 +251,7 @@ void dsp_doblock(const UBYTE *send, LONG sendlen, char *rcv, LONG rcvlen)
 }
 
 /*
- * Dsp_BlkHandshake(): send and/or receive DSP words with handshaking
+ * Dsp_BlkHandShake(): send and/or receive DSP words with handshaking
  *
  * (optionally) send a block of DSP words with handshaking, then
  * (optionally) receive a block of DSP words with handshaking

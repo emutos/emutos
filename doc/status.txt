@@ -250,7 +250,7 @@ TOS v4.00:
 
 0x08 bit set in _SND:
  T 0x60 Dsp_DoBlock
- T 0x61 Dsp_BlkHandshake
+ T 0x61 Dsp_BlkHandShake
  T 0x62 Dsp_BlkUnpacked
  T 0x63 Dsp_InStream
  T 0x64 Dsp_OutStream
