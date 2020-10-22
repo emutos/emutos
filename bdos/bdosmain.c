@@ -76,6 +76,7 @@ static long xgetver(void);
  * since it was never freed
  */
 static PD initial_basepage;
+static const char double_nul[2] = { 0, 0 }; /* initial environment */
 
 
 /*
@@ -329,6 +330,7 @@ void osinit_after_xmaddalt(void)
     /* Set up initial process. Required by Malloc() */
     run = &initial_basepage;
     run->p_flags = PF_STANDARD;
+    run->p_env = CONST_CAST(char *,double_nul);
 
     time_init();
 
@@ -337,28 +339,6 @@ void osinit_after_xmaddalt(void)
     stdhdl_init();  /* set up system initial standard handles */
 
     KDEBUG(("BDOS: cinit - osinit successful ...\n"));
-}
-
-#define ENV_SIZE    11          /* sufficient for standard PATH=^X:\^^ (^=nul byte) */
-#define DEF_PATH    "A:\\"      /* default value for path */
-
-static char default_env[ENV_SIZE];  /* default environment area */
-
-/* BIOS will call this after bootdev has been initialized */
-
-void osinit_environment(void)
-{
-    char *p;
-
-    /* Build default environment, just a PATH= string */
-    strcpy(default_env,PATH_ENV);
-    p = default_env + sizeof(PATH_ENV); /* point to first byte of path string */
-    strcpy(p,DEF_PATH);
-    *p += bootdev;                      /* fix up drive letter */
-    p += sizeof(DEF_PATH);
-    *p = '\0';                          /* terminate with double nul */
-
-    initial_basepage.p_env = default_env;
 }
 
 

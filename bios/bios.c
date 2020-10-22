@@ -76,6 +76,11 @@
 #define DBGBIOS 0               /* If you want to enable debug wrappers */
 #define ENABLE_RESET_RESIDENT 0 /* enable to run "reset-resident" code (see below) */
 
+#define ENV_SIZE    12          /* sufficient for standard PATH=^X:\^^ (^=nul byte) */
+#define DEF_PATH    "A:\\"      /* default value for path */
+
+static char default_env[ENV_SIZE];  /* default environment area */
+
 /*==== External declarations ==============================================*/
 
 #if STONX_NATIVE_PRINT
@@ -516,7 +521,7 @@ static void bootstrap(void)
     nf_getbootstrap_args(args, sizeof(args));
 
     /* allocate space */
-    pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, NULL);
+    pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, default_env);
 
     /* get the TOS executable from the emulator */
     length = nf_bootstrap(pd->p_lowtpa + sizeof(PD), pd->p_hitpa - pd->p_lowtpa);
@@ -526,7 +531,7 @@ static void bootstrap(void)
         goto err;
 
     /* relocate the loaded executable */
-    r = Pexec(PE_RELOCATE, (char *)length, (char *)pd, NULL);
+    r = Pexec(PE_RELOCATE, (char *)length, (char *)pd, default_env);
     if (r != (LONG)pd)
         goto err;
 
@@ -534,7 +539,7 @@ static void bootstrap(void)
     bootdev = nf_getbootdrive();
 
     /* execute the relocated process */
-    Pexec(PE_GO, "", (char *)pd, NULL);
+    Pexec(PE_GO, "", (char *)pd, default_env);
 
 err:
     Mfree(pd->p_env); /* Mfree() the environment */
@@ -542,6 +547,21 @@ err:
 }
 
 #endif /* DETECT_NATIVE_FEATURES */
+
+/*
+ * Build the default environment string: "PATH=^X:\^^" [where ^=nul]
+ */
+static void init_default_environment(void)
+{
+    char *p;
+
+    strcpy(default_env,PATH_ENV);
+    p = default_env + sizeof(PATH_ENV); /* point to first byte of path string */
+    strcpy(p,DEF_PATH);
+    *p += bootdev;                      /* fix up drive letter */
+    p += sizeof(DEF_PATH);
+    *p = '\0';                          /* terminate with double nul */
+}
 
 #if ENABLE_RESET_RESIDENT
 /*
@@ -729,18 +749,21 @@ void biosmain(void)
     blkdev_boot();
 
     Dsetdrv(bootdev);           /* Set boot drive */
-    osinit_environment();       /* Build default environment variables */
+    init_default_environment(); /* Build default environment string */
 
 #if ENABLE_RESET_RESIDENT
     run_reset_resident();       /* see comments above */
 #endif
 
 #if WITH_CLI
-    if (bootflags & BOOTFLAG_EARLY_CLI) {   /* run an early console */
-        PD *pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", NULL);
+    if (bootflags & BOOTFLAG_EARLY_CLI) {
+        /*
+         * run an early console, passing the default environment
+         */
+        PD *pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char *)PF_STANDARD, "", default_env);
         pd->p_tbase = (UBYTE *) coma_start;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        Pexec(PE_GOTHENFREE, "", (char *)pd, NULL);
+        Pexec(PE_GOTHENFREE, "", (char *)pd, default_env);
     }
 #endif
 
@@ -749,15 +772,21 @@ void biosmain(void)
     /* clear commandline */
 
     if(cmdload != 0) {
-        /* Pexec a program called COMMAND.PRG */
+        /*
+         * Pexec a program called COMMAND.PRG
+         * like Atari TOS, it inherits an empty environment
+         */
         Pexec(PE_LOADGO, "COMMAND.PRG", "", NULL);
     } else if (exec_os) {
-        /* start the default (ROM) shell */
+        /* 
+         * start the default (ROM) shell
+         * like Atari TOS, we pass the default environment
+         */
         PD *pd;
-        pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, "", NULL);
+        pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char *)PF_STANDARD, "", default_env);
         pd->p_tbase = (UBYTE *) exec_os;
         pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        Pexec(PE_GO, "", (char*)pd, NULL);
+        Pexec(PE_GO, "", (char *)pd, default_env);
     }
 
 #if CONF_WITH_SHUTDOWN

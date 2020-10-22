@@ -16,7 +16,6 @@
  * This is done in 2 parts: before and after Alt-RAM is available */
 void osinit_before_xmaddalt(void);
 void osinit_after_xmaddalt(void);
-void osinit_environment(void);
 
 #if CONF_WITH_ALT_RAM
 /* Register an Alt-RAM region to BDOS */
