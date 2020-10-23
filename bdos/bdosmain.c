@@ -76,7 +76,9 @@ static long xgetver(void);
  * since it was never freed
  */
 static PD initial_basepage;
-static const char double_nul[2] = { 0, 0 }; /* initial environment */
+
+/* initial environment string */
+static const char double_nul[2] __attribute__ ((aligned (2))) = { 0, 0 };
 
 
 /*
