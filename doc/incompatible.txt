@@ -252,16 +252,18 @@ undocumented things with the bytes of the actual routine:
     https://sourceforge.net/p/emutos/mailman/message/30605378/
 
 
-Program: Reservoir Gods game (Bugger, Bunion, SkyFall, Sworm)
--------------------------------------------------------------
-Error: panic
+Program: Reservoir Gods programs on the Falcon
+----------------------------------------------
+This applies to (at least): Bugger, Bunion, Fractal Playground, SkyFall, Sworm
+
+Error: panic 
 
 Bug analysis:
-Games use an undocumented TOS4 vector for keyboard input instead of
-accessing kbdvec correctly.  This causes EmuTOS to panic.
+Programs use an undocumented TOS4 vector for keyboard input instead of
+accessing kbdvec and/or 'shifty' correctly.  This causes EmuTOS to panic.
 
 Workaround:
-This can be worked around with the following hack.prg:
+In some cases this can be worked around with the following hack.prg:
     https://sourceforge.net/p/emutos/mailman/message/26841274/
 
 
