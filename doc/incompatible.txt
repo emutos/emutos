@@ -263,8 +263,10 @@ Programs use an undocumented TOS4 vector for keyboard input instead of
 accessing kbdvec and/or 'shifty' correctly.  This causes EmuTOS to panic.
 
 Workaround:
-In some cases this can be worked around with the following hack.prg:
+In the programs listed above, this can be worked around with the following
+hack.prg:
     https://sourceforge.net/p/emutos/mailman/message/26841274/
+This may also work with other Reservoir Gods programs.
 
 
 Program: Spectrum 512
