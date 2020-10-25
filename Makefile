@@ -79,8 +79,10 @@ endif
 
 ifneq (,$(wildcard localconf.h))
 LOCALCONF = -DLOCALCONF
+LOCALCONFINFO = \n\#\#\# NOTE: Configuration settings from localconf.h were used.\n
 else
 LOCALCONF =
+LOCALCONFINFO =
 endif
 
 #
@@ -457,6 +459,7 @@ NODEP += 192
 	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' WITH_CLI=$(WITH_CLI) UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS104))) bytes more than TOS 1.04)"
+	@printf "$(LOCALCONFINFO)"
 
 $(ROM_192): ROMSIZE = 192
 $(ROM_192): emutos.img mkrom
@@ -477,6 +480,7 @@ NODEP += 256
 	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS206))) bytes more than TOS 2.06)"
+	@printf "$(LOCALCONFINFO)"
 
 $(ROM_256): ROMSIZE = 256
 $(ROM_256): emutos.img mkrom
@@ -495,6 +499,7 @@ SYMFILE = $(addsuffix .sym,$(basename $(ROM_512)))
 512: $(ROM_512) $(SYMFILE)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
+	@printf "$(LOCALCONFINFO)"
 
 $(ROM_512): ROMSIZE = 512
 $(ROM_512): emutos.img mkrom
@@ -518,6 +523,7 @@ pak3:
 	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_PAK3=$(ROM_PAK3) $(ROM_PAK3)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS206))) bytes more than TOS 2.06)"
+	@printf "$(LOCALCONFINFO)"
 
 $(ROM_PAK3): ROMSIZE = 256
 $(ROM_PAK3): emutos.img mkrom
@@ -538,6 +544,7 @@ aranym:
 	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
+	@printf "$(LOCALCONFINFO)"
 
 #
 # Diagnostic Cartridge Image
@@ -557,6 +564,7 @@ cart:
 	./mkrom stc emutos.img emutos.stc
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS104))) bytes more than TOS 1.04)"
+	@printf "$(LOCALCONFINFO)"
 
 #
 # Amiga Image
@@ -577,6 +585,7 @@ amiga:
 	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_AMIGA=$(ROM_AMIGA) $(ROM_AMIGA)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS206))) bytes more than TOS 2.06)"
+	@printf "$(LOCALCONFINFO)"
 
 $(ROM_AMIGA): emutos.img mkrom
 	./mkrom amiga $< $(ROM_AMIGA)
@@ -642,6 +651,7 @@ firebee:
 	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
+	@printf "$(LOCALCONFINFO)"
 
 .PHONY: firebee-prg
 NODEP += firebee-prg
@@ -674,6 +684,7 @@ m548x-dbug:
 	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0x00e00000 SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
+	@printf "$(LOCALCONFINFO)"
 
 SREC_M548X_BAS = emutos-m548x-bas.s19
 .PHONY: m548x-bas
@@ -686,6 +697,7 @@ m548x-bas:
 	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0xe0100000 SRECFILE=$(SREC_M548X_BAS) $(SREC_M548X_BAS)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
+	@printf "$(LOCALCONFINFO)"
 
 #
 # Special variants of EmuTOS running in RAM instead of ROM.
@@ -711,6 +723,7 @@ TOCLEAN += emutos*.prg
 prg: $(EMUTOS_PRG)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
+	@printf "$(LOCALCONFINFO)"
 
 obj/boot.o: obj/ramtos.h
 # incbin dependencies are not automatically detected
@@ -735,6 +748,7 @@ flop:
 	$(MAKE) UNIQUE=$(UNIQUE) $(EMUTOS_ST)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
+	@printf "$(LOCALCONFINFO)"
 
 $(EMUTOS_ST): override DEF += -DTARGET_FLOPPY
 $(EMUTOS_ST): OPTFLAGS = $(SMALL_OPTFLAGS)
@@ -765,6 +779,7 @@ amigaflop:
 	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) EMUTOS_ADF=$(EMUTOS_ADF) $(EMUTOS_ADF)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
+	@printf "$(LOCALCONFINFO)"
 
 EMUTOS_VAMPIRE_ADF = emutos-vampire.adf
 
