@@ -379,8 +379,6 @@ static void gdp_curve(Vwk *vwk)
     } else {                /* v_ellipse(), v_ellarc(), v_ellpie() */
         xrad = PTSIN[2];
         yrad = PTSIN[3];
-        if (vwk->xfm_mode < 2)  /* NDC coordinates ... not tested AFAIK */
-            yrad = yres - yrad;
     }
 
     /*
