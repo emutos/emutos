@@ -382,6 +382,15 @@ static void gdp_curve(Vwk *vwk)
     }
 
     /*
+     * Atari TOS handles negative radii more-or-less the same as
+     * positive ones; we explicitly treat them the same.
+     */
+    if (xrad < 0)
+        xrad = -xrad;
+    if (yrad < 0)
+        yrad = -yrad;
+
+    /*
      * we can quit now if clipping excludes the entire curve
      */
     if (vwk->clip) {
