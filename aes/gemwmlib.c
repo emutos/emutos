@@ -328,13 +328,13 @@ static void w_barcalc(WORD isvert, WORD space, WORD sl_value, WORD sl_size,
 }
 
 
-static void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WORD sl_value,
-                     WORD sl_size, WORD x, WORD y, WORD w, WORD h)
+static void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WINDOW *pw,
+                     WORD x, WORD y, WORD w, WORD h)
 {
     WORD    isvert, obj;
     UWORD   upcmp, dncmp, slcmp;
-    WORD    w_up;
-    WORD    w_dn, w_slide, space, min_sld;
+    WORD    w_up, w_dn, w_slide;
+    WORD    sl_value, sl_size, min_sld, space;
 
     isvert = (w_bar == W_VBAR);
     if (isvert)
@@ -345,6 +345,8 @@ static void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WORD sl_value,
         w_up = W_UPARROW;
         w_dn = W_DNARROW;
         w_slide = W_VSLIDE;
+        sl_value = pw->w_vslide;
+        sl_size = pw->w_vslsiz;
         min_sld = gl_hbox;
     }
     else
@@ -355,6 +357,8 @@ static void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WORD sl_value,
         w_up = W_LFARROW;
         w_dn = W_RTARROW;
         w_slide = W_HSLIDE;
+        sl_value = pw->w_hslide;
+        sl_size = pw->w_hslsiz;
         min_sld = gl_wbox;
     }
 
@@ -509,16 +513,14 @@ void w_bldactive(WORD w_handle)
     if (havevbar)
     {
         t.g_x += t.g_w;
-        w_bldbar(kind, istop, W_VBAR, pw->w_vslide, pw->w_vslsiz,
-                    t.g_x, 0, t.g_w+2, t.g_h+2);
+        w_bldbar(kind, istop, W_VBAR, pw, t.g_x, 0, t.g_w+2, t.g_h+2);
     }
 
     /* do horizontal bar area */
     if (havehbar)
     {
         t.g_y += t.g_h;
-        w_bldbar(kind, istop, W_HBAR, pw->w_hslide, pw->w_hslsiz,
-                    0, t.g_y, t.g_w+2, t.g_h+2);
+        w_bldbar(kind, istop, W_HBAR, pw, 0, t.g_y, t.g_w+2, t.g_h+2);
     }
 
     /* do sizer area */
