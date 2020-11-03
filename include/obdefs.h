@@ -38,14 +38,6 @@
 #define IP_6PATT    6
 #define IP_SOLID    7
 
-#define SYS_FG      0x1100      /* system foreground and background rules */
-                                /*   but transparent                      */
-
-#define WTS_FG      0x11a1      /* window title selected using pattern 2 */
-                                /*  & replace mode text                  */
-
-#define WTN_FG      0x1100      /* window title normal */
-
 #define MD_REPLACE  1           /* gsx modes */
 #define MD_TRANS    2
 #define MD_XOR      3

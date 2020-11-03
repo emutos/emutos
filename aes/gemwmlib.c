@@ -113,9 +113,18 @@ static const LONG gl_waspec[NUM_ELEM] =
 static TEDINFO gl_aname;
 static TEDINFO gl_ainfo;
 
+/*
+ * te_color defines for topped/untopped window names
+ *
+ * for both, border colour = 1, text colour = 1
+ */ 
+#define TOPPED_COLOR    0x11a1      /* opaque, fill pattern 2, fill colour 1 */
+#define UNTOPPED_COLOR  0x1100      /* transparent, hollow, fill colour 0 */
+
+/* initialisation values for gl_aname, gl_ainfo */
 static const TEDINFO gl_asamp =
 {
-    0x0L, 0x0L, 0x0L, IBM, MD_REPLACE, TE_LEFT, SYS_FG, 0x0, 1, 80, 80
+    NULL, NULL, NULL, IBM, 0, TE_LEFT, UNTOPPED_COLOR, 0, 1, 80, 80
 };
 
 static WORD wind_msg[8];
@@ -476,9 +485,7 @@ void w_bldactive(WORD w_handle)
         {
             w_adjust(W_TITLE, W_NAME, t.g_x, t.g_y, tempw, gl_hbox);
             W_ACTIVE[W_NAME].ob_state = istop ? NORMAL : DISABLED;
-
-            /* comment out following line to enable pattern in window title */
-            gl_aname.te_color = istop ? WTS_FG : WTN_FG;
+            gl_aname.te_color = istop ? TOPPED_COLOR : UNTOPPED_COLOR;
         }
         t.g_x = 0;
         t.g_y += (gl_hbox - 1);
