@@ -123,7 +123,7 @@ static const struct pmmutable mmutable_rom =
      * note that this table maps both 0x00000000-0x00ffffff and 0xff000000-0xffffffff
      * to the same physical address range (0x00000000-0x00ffffff)
      */
-    { PMMU_SF_PAGE(0x00000000),     /* map 0x??000000-0x??efffff (// = 00 or ff) to */
+    { PMMU_SF_PAGE(0x00000000),     /* map 0x??000000-0x??efffff (?? = 00 or ff) to */
       PMMU_SF_PAGE(0x00100000),     /*   0x00000000-0x00efffff, allow caching       */
       PMMU_SF_PAGE(0x00200000),
       PMMU_SF_PAGE(0x00300000),
