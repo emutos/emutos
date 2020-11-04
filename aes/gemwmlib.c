@@ -252,7 +252,7 @@ static void w_adjust( WORD parent, WORD obj, WORD x, WORD y,  WORD w, WORD h)
 }
 
 
-static void w_hvassign(WORD isvert, WORD parent, WORD obj, WORD vx, WORD vy,
+static void w_hvassign(BOOL isvert, WORD parent, WORD obj, WORD vx, WORD vy,
                        WORD hx, WORD hy, WORD w, WORD h)
 {
     if (isvert)
@@ -356,7 +356,7 @@ static void w_setcolor(WINDOW *pw, WORD gadget, BOOL istop)
 }
 
 
-static void w_barcalc(WORD isvert, WORD space, WORD sl_value, WORD sl_size,
+static void w_barcalc(BOOL isvert, WORD space, WORD sl_value, WORD sl_size,
                       WORD min_sld, GRECT *ptv, GRECT *pth)
 {
     if (sl_size == -1)
@@ -373,10 +373,11 @@ static void w_barcalc(WORD isvert, WORD space, WORD sl_value, WORD sl_size,
 }
 
 
-static void w_bldbar(UWORD kind, WORD istop, WORD w_bar, WINDOW *pw,
+static void w_bldbar(UWORD kind, BOOL istop, WORD w_bar, WINDOW *pw,
                      WORD x, WORD y, WORD w, WORD h)
 {
-    WORD    isvert, obj;
+    BOOL    isvert;
+    WORD    obj;
     UWORD   upcmp, dncmp, slcmp;
     WORD    w_up, w_dn, w_slide, w_elev;
     WORD    sl_value, sl_size, min_sld, space;
@@ -481,7 +482,7 @@ void w_setactive(void)
 
 void w_bldactive(WORD w_handle)
 {
-    WORD    istop;
+    BOOL    istop;
     WORD    kind;
     WORD    havevbar;
     WORD    havehbar;
@@ -666,7 +667,7 @@ static void w_redraw(WORD w_handle, GRECT *pt)
  *  blit.  If the source is at -1, then the source and destination left
  *  fringes need to be realigned.
  */
-static WORD w_mvfix(GRECT *ps, GRECT *pd)
+static BOOL w_mvfix(GRECT *ps, GRECT *pd)
 {
     WORD tmpsx;
 
@@ -689,12 +690,12 @@ static WORD w_mvfix(GRECT *ps, GRECT *pd)
  *  the whole desktop is just updated.  All uncovered portions of the
  *  desktop are redrawn by later calling w_update.
  */
-static WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
+static BOOL w_move(WORD w_handle, WORD *pstop, GRECT *prc)
 {
     GRECT   s;      /* source */
     GRECT   d;      /* destination */
     GRECT   *pc;
-    WORD    sminus1, dminus1;
+    BOOL    sminus1, dminus1;
 
     w_getsize(WS_PREV, w_handle, &s);
     s.g_w += DROP_SHADOW_SIZE;
@@ -758,7 +759,7 @@ static WORD w_move(WORD w_handle, WORD *pstop, GRECT *prc)
 void w_update(WORD bottom, GRECT *pt, WORD top, BOOL moved)
 {
     WORD   i, ni;
-    WORD   done;
+    BOOL   done;
 
     /* limit to screen */
     rc_intersect(&gl_rfull, pt);
@@ -1107,7 +1108,7 @@ WORD wm_create(WORD kind, GRECT *pt)
 /*
  *  Opens or closes a window
  */
-static void wm_opcl(WORD wh, GRECT *pt, WORD isadd)
+static void wm_opcl(WORD wh, GRECT *pt, BOOL isadd)
 {
     GRECT   t;
 
