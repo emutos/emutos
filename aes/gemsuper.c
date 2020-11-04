@@ -79,9 +79,8 @@ static void aestrace(const char* message)
 static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_in[], WORD int_out[], LONG addr_in[])
 {
     LONG    count, buparm;
-    MFORM   *maddr;
     OBJECT  *tree;
-    WORD    mouse, ret;
+    WORD    ret;
     WORD    unsupported = FALSE;
 
     count = 0L;
@@ -292,25 +291,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = gl_handle;
         break;
     case GRAF_MOUSE:
-        if (GR_MNUMBER > USER_DEF)
-        {
-            if (GR_MNUMBER == M_OFF)
-                gsx_moff();
-            if (GR_MNUMBER == M_ON)
-                gsx_mon();
-            break;
-        }
-        if (GR_MNUMBER != USER_DEF)
-        {
-            if ((GR_MNUMBER < ARROW) || (GR_MNUMBER > OUTLN_CROSS))
-                mouse = ARROW;
-            else
-                mouse = GR_MNUMBER;
-            maddr = mouse_cursor[mouse];
-        }
-        else
-            maddr = (MFORM *)GR_MADDR;
-        gsx_mfset(maddr);
+        gr_mouse(GR_MNUMBER, (MFORM *)GR_MADDR);
         break;
     case GRAF_MKSTATE:
         gr_mkstate(&GR_MX, &GR_MY, &GR_MSTATE, &GR_KSTATE);

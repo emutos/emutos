@@ -9,7 +9,7 @@
 
 #ifndef GEMGRLIB_H
 #define GEMGRLIB_H
-
+#include "gsxdefs.h"
 
 void gr_stepcalc(WORD orgw, WORD orgh, GRECT *pt, WORD *pcx, WORD *pcy,
                  WORD *pcnt, WORD *pxstep, WORD *pystep);
@@ -25,6 +25,7 @@ void gr_growbox(GRECT *po, GRECT *pt);
 void gr_shrinkbox(GRECT *po, GRECT *pt);
 WORD gr_watchbox(OBJECT *tree, WORD obj, WORD instate, WORD outstate);
 WORD gr_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert);
+void gr_mouse(WORD mode, MFORM *maddr);
 void gr_mkstate(WORD *pmx, WORD *pmy, WORD *pmstat, WORD *pkstat);
 
 

@@ -23,6 +23,7 @@
 #include "aesext.h"
 #include "gemlib.h"
 
+#include "geminit.h"
 #include "gemevlib.h"
 #include "gemgraf.h"
 #include "gemwmlib.h"
@@ -372,6 +373,31 @@ WORD gr_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert)
         return mul_div(divnd, 1000, divis);
     else
         return 0;
+}
+
+
+/*
+ * handle graf_mouse() processing
+ */
+void gr_mouse(WORD mode, MFORM *maddr)
+{
+    switch(mode)
+    {
+    default:
+        if ((mode < ARROW) || (mode > OUTLN_CROSS))
+            mode = ARROW;       /* fail safe */
+        maddr = mouse_cursor[mode];
+        FALLTHROUGH;
+    case USER_DEF:
+        gsx_mfset(maddr);
+        break;
+    case M_OFF:
+        gsx_moff();
+        break;
+    case M_ON:
+        gsx_mon();
+        break;
+    }
 }
 
 
