@@ -713,7 +713,7 @@ void sh_main(BOOL isauto, BOOL isgem)
 
         if (gl_shgem)
         {
-            wm_start();
+            wm_init();                  /* re-init windows, without resetting colours */
             ratinit();
             sh_draw(D.s_cmd, TRUE);     /* clear the screen */
         }

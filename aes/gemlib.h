@@ -34,37 +34,7 @@ typedef struct moblk
 
 /*      WINDLIB.H       05/05/84 - 01/26/85     Lee Lorenzen            */
 
-#define VF_INUSE    0x0001      /* the window has been created */
-#define VF_BROKEN   0x0002      /* the window is overlapped, can't be blitted */
-#define VF_INTREE   0x0004      /* the window is currently open */
-
-
-typedef struct window
-{
-    WORD  w_flags;
-    AESPD *w_owner;
-    WORD  w_kind;
-    char  *w_pname;
-    char  *w_pinfo;
-    GRECT w_full;
-    GRECT w_work;
-    GRECT w_prev;
-    WORD  w_hslide;
-    WORD  w_vslide;
-    WORD  w_hslsiz;
-    WORD  w_vslsiz;
-    ORECT *w_rlist;             /* owner rectangle list */
-    ORECT *w_rnext;             /* used for search first, search next */
-} WINDOW;
-
-#define NUM_ORECT (NUM_WIN * 10)        /* is this enough???    */
-
-#define WS_FULL 0
-#define WS_CURR 1
-#define WS_PREV 2
-#define WS_WORK 3
-#define WS_TRUE 4
-
+/* indexes of elements in AES window */
 #define W_BOX       0
 #define W_TITLE     1
 #define W_CLOSER    2
@@ -86,6 +56,42 @@ typedef struct window
 #define W_HELEV     18
 
 #define NUM_ELEM    19
+
+/* values used in w_flags field of window structure */
+#define VF_INUSE    0x0001      /* the window has been created */
+#define VF_BROKEN   0x0002      /* the window is overlapped, can't be blitted */
+#define VF_INTREE   0x0004      /* the window is currently open */
+
+/* the AES window structure */
+typedef struct window
+{
+    WORD  w_flags;
+    AESPD *w_owner;
+    WORD  w_kind;
+    char  *w_pname;
+    char  *w_pinfo;
+    GRECT w_full;
+    GRECT w_work;
+    GRECT w_prev;
+    WORD  w_hslide;
+    WORD  w_vslide;
+    WORD  w_hslsiz;
+    WORD  w_vslsiz;
+#if CONF_WITH_WINDOW_COLOURS
+    WORD  w_tcolor[NUM_ELEM];   /* TEDINFO colour words for topped window */
+    WORD  w_bcolor[NUM_ELEM];   /* TEDINFO colour words for untopped window */
+#endif
+    ORECT *w_rlist;             /* owner rectangle list */
+    ORECT *w_rnext;             /* used for search first, search next */
+} WINDOW;
+
+#define NUM_ORECT (NUM_WIN * 10)        /* is this enough???    */
+
+#define WS_FULL 0
+#define WS_CURR 1
+#define WS_PREV 2
+#define WS_WORK 3
+#define WS_TRUE 4
 
 
 #define CMDTAILSIZE 128         /* architectural */

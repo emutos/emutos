@@ -26,6 +26,7 @@ void ap_sendmsg(WORD ap_msg[], WORD type, AESPD *towhom,
 void w_update(WORD bottom, GRECT *pt, WORD top, BOOL moved);
 
 void wm_start(void);
+void wm_init(void);
 
 WORD wm_create(WORD kind, GRECT *pt);
 void wm_open(WORD w_handle, GRECT *pt);

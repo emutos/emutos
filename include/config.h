@@ -286,6 +286,9 @@
 # ifndef CONF_WITH_XHDI
 #  define CONF_WITH_XHDI 0
 # endif
+# ifndef CONF_WITH_WINDOW_COLOURS
+#  define CONF_WITH_WINDOW_COLOURS 0
+# endif
 # ifndef CONF_WITH_WINDOW_ICONS
 #  define CONF_WITH_WINDOW_ICONS 0
 # endif
@@ -1285,6 +1288,15 @@
  */
 #ifndef CONF_WITH_VDI_VERTLINE
 # define CONF_WITH_VDI_VERTLINE 1
+#endif
+
+/*
+ * Set CONF_WITH_WINDOW_COLOURS to 1 to include AES support for managing
+ * window element colours.  Management is via modes WF_COLOR/WF_DCOLOR
+ * in wind_get()/wind_set().
+ */
+#ifndef CONF_WITH_WINDOW_COLOURS
+# define CONF_WITH_WINDOW_COLOURS 1
 #endif
 
 /*

@@ -509,6 +509,8 @@
 #define WF_HSLSIZ   15
 #define WF_VSLSIZ   16
 #define WF_SCREEN   17
+#define WF_COLOR    18
+#define WF_DCOLOR   19
 
 /* request type: wind_calc() */
 #define WC_BORDER   0
