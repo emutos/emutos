@@ -17,6 +17,7 @@
 
 #ifndef GEMSTRUCT_H
 #define GEMSTRUCT_H
+#include "aesdefs.h"
 
 typedef struct aespd   AESPD;           /* process descriptor           */
 typedef struct uda     UDA;             /* user stack data area         */
@@ -132,6 +133,10 @@ struct aespd                /* process descriptor */
             WORD wh;            /* window handle of applicable window */
         }       p_msg;
 
+#if CONF_WITH_GRAF_MOUSE_EXTENSION
+        MFORM   p_mouse;        /* used by graf_mouse(SAVE,RESTORE) */
+#endif
+
         char    *p_qaddr;       /* */
         WORD    p_qindex;       /* */
         char    p_queue[QUEUE_SIZE];    /* */
@@ -161,5 +166,4 @@ struct fpd                  /* fork process descriptor */
         FCODE   f_code;
         LONG    f_data;
 } ;
-
 #endif /* GEMSTRUCT_H */

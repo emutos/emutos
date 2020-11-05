@@ -9,7 +9,6 @@
 
 #ifndef GEMINIT_H
 #define GEMINIT_H
-#include "gsxdefs.h"
 
 #define DEF_DESKTOP "EMUDESK"   /* default desktop */
 
@@ -18,6 +17,9 @@ extern char     *ad_envrn;
 extern MFORM    *mouse_cursor[];
 
 extern MFORM    gl_mouse;
+#if CONF_WITH_GRAF_MOUSE_EXTENSION
+extern MFORM    gl_prevmouse;
+#endif
 
 extern WORD     totpds;
 extern WORD     num_accs;

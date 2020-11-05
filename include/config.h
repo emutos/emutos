@@ -286,6 +286,9 @@
 # ifndef CONF_WITH_XHDI
 #  define CONF_WITH_XHDI 0
 # endif
+# ifndef CONF_WITH_GRAF_MOUSE_EXTENSION
+#  define CONF_WITH_GRAF_MOUSE_EXTENSION 0
+# endif
 # ifndef CONF_WITH_WINDOW_COLOURS
 #  define CONF_WITH_WINDOW_COLOURS 0
 # endif
@@ -1288,6 +1291,14 @@
  */
 #ifndef CONF_WITH_VDI_VERTLINE
 # define CONF_WITH_VDI_VERTLINE 1
+#endif
+
+/*
+ * Set CONF_WITH_GRAF_MOUSE_EXTENSION to 1 to include AES support for
+ * graf_mouse() modes M_SAVE, M_RESTORE, M_PREVIOUS.
+ */
+#ifndef CONF_WITH_GRAF_MOUSE_EXTENSION
+# define CONF_WITH_GRAF_MOUSE_EXTENSION 1
 #endif
 
 /*

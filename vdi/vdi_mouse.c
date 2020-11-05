@@ -14,7 +14,7 @@
 #include "biosbind.h"
 #include "xbiosbind.h"
 #include "obdefs.h"
-#include "gsxdefs.h"
+#include "aesdefs.h"
 #include "aesext.h"
 #include "vdi_defs.h"
 #include "vdistub.h"

@@ -411,7 +411,12 @@ void gsx_mfset(const MFORM *pmfnew)
 {
     gsx_moff();
     if (!gl_ctmown)
+    {
+#if CONF_WITH_GRAF_MOUSE_EXTENSION
+        gl_prevmouse = gl_mouse;
+#endif
         gl_mouse = *pmfnew;
+    }
     memcpy(intin, (void *)pmfnew, sizeof(MFORM));
     gsx_ncode(SET_CUR_FORM, 0, sizeof(MFORM)/sizeof(WORD));
     gsx_mon();

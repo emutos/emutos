@@ -21,6 +21,7 @@
 #include "obdefs.h"
 #include "aesdefs.h"
 #include "aesext.h"
+#include "aesvars.h"
 #include "gemlib.h"
 
 #include "geminit.h"
@@ -381,23 +382,40 @@ WORD gr_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert)
  */
 void gr_mouse(WORD mode, MFORM *maddr)
 {
+    MFORM temp;
+    MAYBE_UNUSED(temp);
+
     switch(mode)
     {
     default:
         if ((mode < ARROW) || (mode > OUTLN_CROSS))
             mode = ARROW;       /* fail safe */
         maddr = mouse_cursor[mode];
-        FALLTHROUGH;
+        break;
     case USER_DEF:
-        gsx_mfset(maddr);
         break;
     case M_OFF:
         gsx_moff();
-        break;
+        return;
     case M_ON:
         gsx_mon();
+        return;
+#if CONF_WITH_GRAF_MOUSE_EXTENSION
+    case M_SAVE:
+        rlr->p_mouse = gl_mouse;
+        return;
+    case M_RESTORE:
+        maddr = &rlr->p_mouse;
         break;
+    case M_PREVIOUS:
+        /* we must use a temp because gsx_mfset() updates gl_prevmouse */
+        temp = gl_prevmouse;
+        maddr = &temp;
+        break;
+#endif
     }
+
+    gsx_mfset(maddr);
 }
 
 

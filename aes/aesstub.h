@@ -9,9 +9,7 @@
 
 #ifndef _AESSTUB_H
 #define _AESSTUB_H
-
-#include "obdefs.h"
-#include "gsxdefs.h"
+#include "aesdefs.h"
 
 /* returns default mouse form . Used by VDI. */
 MFORM *default_mform(void);

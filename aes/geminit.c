@@ -25,7 +25,6 @@
 #include "obdefs.h"
 #include "struct.h"
 #include "gemlib.h"
-#include "gsxdefs.h"
 #include "gem_rsc.h"
 #include "mforms.h"
 #include "xbiosbind.h"
@@ -122,6 +121,9 @@ GLOBAL char     *ad_envrn;              /* initialized in GEMSTART      */
 GLOBAL MFORM    *mouse_cursor[NUM_MOUSE_CURSORS];
 
 GLOBAL MFORM    gl_mouse;
+#if CONF_WITH_GRAF_MOUSE_EXTENSION
+GLOBAL MFORM    gl_prevmouse;           /* previous AES  mouse form */
+#endif
 
 GLOBAL AESPD    *rlr, *drl, *nrl;
 GLOBAL EVB      *eul, *dlr, *zlr;
@@ -528,6 +530,11 @@ static void setup_mouse_cursors(void)
 
     for (i = 0; i < NUM_MOUSE_CURSORS; i++)
         mouse_cursor[i] = (MFORM *)mform_rs_data[i];
+
+#if CONF_WITH_GRAF_MOUSE_EXTENSION
+    /* init mouse form so that first gsx_mfset() will populate gl_prevmouse */
+    gl_mouse = *(mouse_cursor[HOURGLASS]);
+#endif
 
 #if CONF_WITH_LOADABLE_CURSORS
     /* Do not load user cursors if Control was held on startup */

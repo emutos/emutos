@@ -1639,7 +1639,7 @@ PRIVATE int write_include(FILE *fp,char *name)
     fprintf(fp,"#include \"gemrslib.h\"\n");
 #endif
 #ifdef MFORM_RSC
-    fprintf(fp,"#include \"gsxdefs.h\"\n");
+    fprintf(fp,"#include \"aesdefs.h\"\n");
 #endif
     fprintf(fp,"#include \"%s.h\"\n",name);
     fprintf(fp,"#include \"nls.h\"\n\n");
