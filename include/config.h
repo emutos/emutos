@@ -1101,19 +1101,6 @@
 #endif
 
 /*
- * Define the AES version here. Valid values include:
- *      0x0120      AES 1.20, used by TOS v1.02
- *      0x0140      AES 1.40, used by TOS v1.04 & v1.62
- *      0x0320      AES 3.20, used by TOS v2.06 & v3.06
- *      0x0340      AES 3.40, used by TOS v4.04
- * Do not change this arbitrarily, as each value implies the presence or
- * absence of certain AES functions ...
- */
-#ifndef AES_VERSION
-# define AES_VERSION 0x0140
-#endif
-
-/*
  * With this switch you can control if some functions should be used as
  * static-inlines. This is generally a good idea if your compiler supports
  * this (the current GCC does). It will shrink the size of the ROM since
@@ -1383,6 +1370,25 @@
  */
 #ifndef CONF_SERIAL_IKBD
 # define CONF_SERIAL_IKBD 0
+#endif
+
+/*
+ * Define the AES version here. This must be done at the end of the
+ * "Software Section", since the value depends on features that are set
+ * within that section. Valid values include:
+ *      0x0120      AES 1.20, used by TOS v1.02
+ *      0x0140      AES 1.40, used by TOS v1.04 & v1.62
+ *      0x0320      AES 3.20, used by TOS v2.06 & v3.06
+ *      0x0340      AES 3.40, used by TOS v4.04
+ * Do not change this arbitrarily, as each value implies the presence or
+ * absence of certain AES functions ...
+ */
+#ifndef AES_VERSION
+# if CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
+#  define AES_VERSION 0x0320
+# else
+#  define AES_VERSION 0x0140
+# endif
 #endif
 
 
