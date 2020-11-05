@@ -31,7 +31,6 @@ static WORD gshift_s(void);
 void vdi_v_choice(Vwk * vwk)
 {
     gchc_key();
-    CONTRL[4] = 1;
     INTOUT[0] = TERM_CH & 0x00ff;
 
 }
@@ -110,7 +109,6 @@ void vdi_v_string(Vwk * vwk)
 /* Return Shift, Control, Alt State */
 void vdi_vq_key_s(Vwk * vwk)
 {
-    CONTRL[4] = 1;
     INTOUT[0] = gshift_s();
 }
 
@@ -121,7 +119,6 @@ void vdi_vsin_mode(Vwk * vwk)
 {
     WORD i;
 
-    CONTRL[4] = 1;
     INTOUT[0] = i = INTIN[1];
     i--;
 
@@ -157,8 +154,6 @@ void vdi_vsin_mode(Vwk * vwk)
 void vdi_vqin_mode(Vwk * vwk)
 {
     WORD *int_out;
-
-    CONTRL[4] = 1;
 
     int_out = INTOUT;
     switch (INTIN[0]) {

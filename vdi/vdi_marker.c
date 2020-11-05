@@ -43,7 +43,6 @@ void vdi_vsm_height(Vwk * vwk)
     vwk->mark_height = h;
     h = (h + DEF_MKHT / 2) / DEF_MKHT;
     vwk->mark_scale = h;
-    CONTRL[2] = 1;
     pts_out = PTSOUT;
     *pts_out++ = h * DEF_MKWD;
     *pts_out = h * DEF_MKHT;
@@ -63,7 +62,6 @@ void vdi_vsm_type(Vwk * vwk)
 
     vwk->mark_index = mk - 1;
     INTOUT[0] = mk;
-    CONTRL[4] = 1;
 }
 
 
@@ -78,7 +76,6 @@ void vdi_vsm_color(Vwk * vwk)
     i = validate_color_index(INTIN[0]);
     INTOUT[0] = i;
     vwk->mark_color = MAP_COL[i];
-    CONTRL[4] = 1;
 }
 
 
@@ -178,7 +175,5 @@ void vdi_vqm_attributes(Vwk * vwk)
     PTSOUT[0] = 0;
     PTSOUT[1] = vwk->mark_height;
 
-    CONTRL[4] = 3;
-    CONTRL[2] = 1;
     flip_y = 1;
 }

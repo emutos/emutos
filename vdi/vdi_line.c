@@ -89,7 +89,6 @@ void vdi_vsl_type(Vwk * vwk)
 {
     WORD li;
 
-    CONTRL[4] = 1;
     li = ((INTIN[0]<MIN_LINE_STYLE) || (INTIN[0]>MAX_LINE_STYLE)) ? DEF_LINE_STYLE : INTIN[0];
 
     INTOUT[0] = li;
@@ -116,7 +115,6 @@ void vdi_vsl_width(Vwk * vwk)
         w--;
 
     /* Set the line width internals and return parameters */
-    CONTRL[2] = 1;
     PTSOUT[0] = vwk->line_width = w;
     PTSOUT[1] = 0;
 }
@@ -128,8 +126,6 @@ void vdi_vsl_width(Vwk * vwk)
 void vdi_vsl_ends(Vwk * vwk)
 {
     WORD lb, le;
-
-    CONTRL[4] = 2;
 
     lb = ((INTIN[0] < MIN_END_STYLE) || (INTIN[0] > MAX_END_STYLE)) ? DEF_END_STYLE : INTIN[0];
     le = ((INTIN[1] < MIN_END_STYLE) || (INTIN[1] > MAX_END_STYLE)) ? DEF_END_STYLE : INTIN[1];
@@ -146,7 +142,6 @@ void vdi_vsl_color(Vwk * vwk)
 {
     WORD lc;
 
-    CONTRL[4] = 1;
     lc = validate_color_index(INTIN[0]);
     INTOUT[0] = lc;
     vwk->line_color = MAP_COL[lc];
@@ -164,9 +159,6 @@ void vdi_vql_attributes(Vwk * vwk)
 
     PTSOUT[0] = vwk->line_width;
     PTSOUT[1] = 0;
-
-    CONTRL[2] = 1;
-    CONTRL[4] = 3;
 }
 
 

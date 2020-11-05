@@ -291,8 +291,6 @@ static void output_text(Vwk *vwk, WORD count, WORD *str, WORD width, JUSTINFO *j
     const Fonthead *fnt_ptr;
     Point * point;
 
-    CONTRL[2] = 0;      /* # points in PTSOUT */
-
     if (count <= 0)     /* quick out for unlikely occurrence */
         return;
 
@@ -664,8 +662,6 @@ static void setup_width_height(const Fonthead *font)
     WORD *p;
     UWORD top;
 
-    CONTRL[2] = 2;      /* # points in PTSOUT */
-
     p = PTSOUT;
     *p++ = font->max_char_width;
     *p++ = top = font->top;
@@ -867,7 +863,7 @@ void vdi_vst_point(Vwk * vwk)
 
     setup_width_height(single_font);    /* set up return values */
 
-    CONTRL[4] = 1;          /* also return point size actually set */
+    /* also return point size actually set */
     INTOUT[0] = single_font->point;
 }
 
@@ -875,7 +871,6 @@ void vdi_vst_point(Vwk * vwk)
 void vdi_vst_effects(Vwk * vwk)
 {
     INTOUT[0] = vwk->style = INTIN[0] & INQ_TAB[2];
-    CONTRL[4] = 1;
 }
 
 
@@ -894,8 +889,6 @@ void vdi_vst_alignment(Vwk * vwk)
     if (a < 0 || a > 5)
         a = 0;
     vwk->v_align = *int_out = a;
-
-    CONTRL[4] = 2;
 }
 
 
@@ -930,7 +923,6 @@ void vdi_vst_rotation(Vwk * vwk)
 
     /* this sets a value of 0, 900, 1800, 2700 or 3600, just like TOS3/TOS4 */
     INTOUT[0] = vwk->chup = ((angle + 450) / 900) * 900;
-    CONTRL[4] = 1;
 }
 
 
@@ -978,8 +970,6 @@ void vdi_vst_font(Vwk * vwk)
     PTSIN = old_ptsin;
     PTSOUT = old_ptsout;
 
-    CONTRL[2] = 0;
-    CONTRL[4] = 1;
     INTOUT[0] = vwk->cur_font->font_id;
 }
 
@@ -990,7 +980,6 @@ void vdi_vst_color(Vwk * vwk)
 
     r = validate_color_index(INTIN[0]);
 
-    CONTRL[4] = 1;
     INTOUT[0] = r;
     vwk->text_color = MAP_COL[r];
 }
@@ -1017,8 +1006,6 @@ void vdi_vqt_attributes(Vwk * vwk)
     *pointer++ = fnt_ptr->max_cell_width;
     *pointer = fnt_ptr->top + fnt_ptr->bottom + 1;  /* handles scaled fonts */
 
-    CONTRL[2] = 2;
-    CONTRL[4] = 6;
     flip_y = 1;
 }
 
@@ -1029,8 +1016,6 @@ void vdi_vqt_extent(Vwk * vwk)
 
     height = calc_height(vwk);
     width = calc_width(vwk, CONTRL[3], INTIN);
-
-    CONTRL[2] = 4;
 
     bzero(PTSOUT,8*sizeof(WORD));
     switch (vwk->chup) {
@@ -1096,8 +1081,6 @@ void vdi_vqt_width(Vwk * vwk)
         }
     }
 
-    CONTRL[2] = 3;
-    CONTRL[4] = 1;
     flip_y = 1;
 }
 
@@ -1136,8 +1119,6 @@ void vdi_vqt_name(Vwk * vwk)
         *int_out++ = 0;
         i++;
     }
-    CONTRL[4] = 33;
-
 }
 
 
@@ -1177,8 +1158,6 @@ void vdi_vqt_fontinfo(Vwk * vwk)
     *pointer++ = 0;
     *pointer = fnt_ptr->top;
 
-    CONTRL[2] = 5;
-    CONTRL[4] = 2;
     flip_y = 1;
 }
 
@@ -1307,7 +1286,6 @@ void vdi_vst_load_fonts(Vwk * vwk)
 
     /* Init some common variables */
     control = CONTRL;
-    control[4] = 1;
 
     /* You only get one chance to load fonts.  If fonts are linked in, exit  */
     if (vwk->loaded_fonts) {
@@ -1353,7 +1331,6 @@ void vdi_vst_load_fonts(Vwk * vwk)
     vwk->num_fonts += count;
     INTOUT[0] = count;
 #else
-    CONTRL[4] = 1;
     INTOUT[0] = 0;      /* we loaded no new fonts */
 #endif
 }

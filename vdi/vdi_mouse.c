@@ -339,9 +339,6 @@ void vdi_vq_mouse(Vwk * vwk)
 {
     INTOUT[0] = MOUSE_BT;
 
-    CONTRL[4] = 1;
-    CONTRL[2] = 1;
-
     PTSOUT[0] = GCURX;
     PTSOUT[1] = GCURY;
 }

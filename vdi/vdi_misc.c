@@ -109,7 +109,6 @@ void vdi_vex_timv(Vwk * vwk)
     set_sr(old_sr);
 
     INTOUT[0] = (WORD)Tickcal();        /* ms between timer C calls */
-    CONTRL[4] = 1;
 }
 
 
