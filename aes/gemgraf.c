@@ -647,11 +647,16 @@ static void gr_gblt(WORD *pimage, GRECT *pi, WORD col1, WORD col2)
  *  Routine to draw an icon, which is a graphic image with a text
  *  string underneath it
  */
-void gr_gicon(WORD state, WORD *pmask, WORD *pdata, char *ptext, WORD ch,
-              WORD chx, WORD chy, GRECT *pi, GRECT *pt)
+void gr_gicon(WORD state, ICONBLK *ib)
 {
     WORD    ifgcol, ibgcol;
     WORD    tfgcol, tbgcol, tmp;
+    WORD    ch;
+    GRECT   *pi, *pt;
+
+    ch = ib->ib_char;
+    pi = (GRECT *)&ib->ib_xicon;
+    pt = (GRECT *)&ib->ib_xtext;
 
     /* crack the color/char definition word */
     tfgcol = ifgcol = (ch >> 12) & 0x000f;
@@ -674,27 +679,27 @@ void gr_gicon(WORD state, WORD *pmask, WORD *pdata, char *ptext, WORD ch,
 
     /* do mask unless it's on a white background */
     if ( !((state & WHITEBAK) && (ibgcol == WHITE)) )
-        gr_gblt(pmask, pi, ibgcol, ifgcol);
+        gr_gblt(ib->ib_pmask, pi, ibgcol, ifgcol);
 
     if ( !((state & WHITEBAK) && (tbgcol == WHITE)) )
     {
-        if (pt->g_w)
+        if (ib->ib_wtext)
             gr_rect(tbgcol, IP_SOLID, pt);
     }
 
     /* draw the image */
-    gr_gblt(pdata, pi, ifgcol, ibgcol);
+    gr_gblt(ib->ib_pdata, pi, ifgcol, ibgcol);
 
     if ((state & SELECTED) && (state & DRAW3D))
     {
-        pi->g_x--;
-        pi->g_y--;
-        gr_gblt(pmask, pi, ifgcol, ibgcol);
-        pi->g_x += 2;
-        pi->g_y += 2;
-        gr_gblt(pmask, pi, ifgcol, ibgcol);
-        pi->g_x--;
-        pi->g_y--;
+        ib->ib_xicon--;
+        ib->ib_yicon--;
+        gr_gblt(ib->ib_pmask, pi, ifgcol, ibgcol);
+        ib->ib_xicon += 2;
+        ib->ib_yicon += 2;
+        gr_gblt(ib->ib_pmask, pi, ifgcol, ibgcol);
+        ib->ib_xicon--;
+        ib->ib_yicon--;
     }
 
     /* draw the character */
@@ -702,12 +707,12 @@ void gr_gicon(WORD state, WORD *pmask, WORD *pdata, char *ptext, WORD ch,
     if (ch)
     {
         intin[0] = ch;
-        gsx_tblt(SMALL, pi->g_x+chx, pi->g_y+chy, 1);
+        gsx_tblt(SMALL, ib->ib_xicon+ib->ib_xchar, ib->ib_yicon+ib->ib_ychar, 1);
     }
 
     /* draw the label */
     gsx_attr(TRUE, MD_TRANS, tfgcol);
-    gr_gtext(TE_CNTR, SMALL, ptext, pt);
+    gr_gtext(TE_CNTR, SMALL, ib->ib_ptext, pt);
 }
 
 

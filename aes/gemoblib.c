@@ -329,9 +329,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
             ib.ib_yicon += t.g_y;
             ib.ib_xtext += t.g_x;
             ib.ib_ytext += t.g_y;
-            gr_gicon(state, ib.ib_pmask, ib.ib_pdata, ib.ib_ptext,
-                    ib.ib_char, ib.ib_xchar, ib.ib_ychar,
-                    (GRECT *)&ib.ib_xicon, (GRECT *)&ib.ib_xtext);  /* FIXME: Ugly typecasting */
+            gr_gicon(state, &ib);
             state &= ~SELECTED;
             break;
         case G_USERDEF:
