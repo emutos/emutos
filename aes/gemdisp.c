@@ -215,7 +215,7 @@ void disp(void)
     /* take the process p off the ready list root */
     p = rlr;
     rlr = p->p_link;
-    KDEBUG(("disp() to \"%8s\"\n", rlr->p_name));
+    KDEBUG(("disp() to \"%8.8s\"\n", rlr->p_name));
 
     /* based on the state of the process p, do something */
     if (p->p_stat & WAITIN)
