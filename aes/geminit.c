@@ -634,7 +634,7 @@ void wait_for_accs(WORD bitmask)
                 break;                  /* must go round again */
         }
     }
-    KDEBUG(("wait_for_accs(): %s took too long\n",pd->p_name));
+    KDEBUG(("wait_for_accs(): %8.8s took too long\n",pd->p_name));
 }
 
 
