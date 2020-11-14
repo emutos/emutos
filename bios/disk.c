@@ -621,11 +621,15 @@ static int atari_partition(UWORD unit,LONG *devices_available)
         struct rootsector *xrs = &physsect2.rs;
         unsigned long partsect;
 
+        /* ignore all inactive partitions */
         if ( !(pi->flg & 1) )
             continue;
+
         /* active partition */
         if (memcmp (pi->id, "XGM", 3) != 0) {
-            /* we don't care about other id's */
+            /* ignore partition ids that are not on the white-list */
+            if (!OK_id(pi->id))
+                continue;
             if (add_partition(unit,devices_available,pi->id,pi->st,pi->siz) < 0)
                 break;  /* max number of partitions reached */
 
