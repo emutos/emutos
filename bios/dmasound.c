@@ -524,14 +524,14 @@ LONG dsptristate(WORD dspxmit, WORD dsprec)
         return EBADRQ;
 
     if (dspxmit)
-        DMASOUND->crossbar_src |= 0x80;
+        DMASOUND->crossbar_src |= 0x0080;
     else
-        DMASOUND->crossbar_src &= 0x7f;
+        DMASOUND->crossbar_src &= ~0x0080;
 
     if (dsprec)
-        DMASOUND->crossbar_dest |= 0x80;
+        DMASOUND->crossbar_dest |= 0x0080;
     else
-        DMASOUND->crossbar_dest &= 0x7f;
+        DMASOUND->crossbar_dest &= ~0x0080;
 
     return 0;
 }
