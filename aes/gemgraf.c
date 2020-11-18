@@ -370,15 +370,15 @@ void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy,
 
 
 /*
- *  Routine to transform a standard form to device specific form
+ *  Routine to transform a mono standard form to device specific form, in place
  */
-void gsx_trans(void *saddr, UWORD swb, void *daddr, UWORD dwb, UWORD h)
+void gsx_trans(void *addr, UWORD wb, UWORD h)
 {
-    gsx_fix(&gl_src, saddr, swb, h);
+    gsx_fix(&gl_src, addr, wb, h);
     gl_src.fd_stand = TRUE;
     gl_src.fd_nplanes = 1;
 
-    gsx_fix(&gl_dst, daddr, dwb, h);
+    gsx_fix(&gl_dst, addr, wb, h);
     vrn_trnfm(&gl_src, &gl_dst);
 }
 
