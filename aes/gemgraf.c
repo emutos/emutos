@@ -669,12 +669,9 @@ void gr_gicon(WORD state, ICONBLK *ib)
         tmp = tfgcol;
         tfgcol = tbgcol;
         tbgcol = tmp;
-        if (!(state & DRAW3D))
-        {
-            tmp = ifgcol;
-            ifgcol = ibgcol;
-            ibgcol = tmp;
-        }
+        tmp = ifgcol;
+        ifgcol = ibgcol;
+        ibgcol = tmp;
     }
 
     /* do mask unless it's on a white background */
@@ -689,18 +686,6 @@ void gr_gicon(WORD state, ICONBLK *ib)
 
     /* draw the image */
     gr_gblt(ib->ib_pdata, pi, ifgcol, ibgcol);
-
-    if ((state & SELECTED) && (state & DRAW3D))
-    {
-        ib->ib_xicon--;
-        ib->ib_yicon--;
-        gr_gblt(ib->ib_pmask, pi, ifgcol, ibgcol);
-        ib->ib_xicon += 2;
-        ib->ib_yicon += 2;
-        gr_gblt(ib->ib_pmask, pi, ifgcol, ibgcol);
-        ib->ib_xicon--;
-        ib->ib_yicon--;
-    }
 
     /* draw the character */
     gsx_attr(TRUE, MD_TRANS, ifgcol);

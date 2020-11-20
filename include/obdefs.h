@@ -97,7 +97,6 @@
 #define OUTLINED    0x0010
 #define SHADOWED    0x0020
 #define WHITEBAK    0x0040
-#define DRAW3D      0x0080
 
 #define WHITE       0           /* Object colors */
 #define BLACK       1
