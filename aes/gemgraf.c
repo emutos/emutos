@@ -649,8 +649,7 @@ static void gr_gblt(WORD *pimage, GRECT *pi, WORD col1, WORD col2)
  */
 void gr_gicon(WORD state, ICONBLK *ib)
 {
-    WORD    ifgcol, ibgcol;
-    WORD    tfgcol, tbgcol, tmp;
+    WORD    fgcol, bgcol, tmp;
     WORD    ch;
     GRECT   *pi, *pt;
 
@@ -659,36 +658,31 @@ void gr_gicon(WORD state, ICONBLK *ib)
     pt = (GRECT *)&ib->ib_xtext;
 
     /* crack the color/char definition word */
-    tfgcol = ifgcol = (ch >> 12) & 0x000f;
-    tbgcol = ibgcol = (ch >> 8) & 0x000f;
+    fgcol = (ch >> 12) & 0x000f;
+    bgcol = (ch >> 8) & 0x000f;
     ch &= 0x00ff;
 
     /* invert if selected   */
     if (state & SELECTED)
     {
-        tmp = tfgcol;
-        tfgcol = tbgcol;
-        tbgcol = tmp;
-        tmp = ifgcol;
-        ifgcol = ibgcol;
-        ibgcol = tmp;
+        tmp = fgcol;
+        fgcol = bgcol;
+        bgcol = tmp;
     }
 
     /* do mask unless it's on a white background */
-    if ( !((state & WHITEBAK) && (ibgcol == WHITE)) )
-        gr_gblt(ib->ib_pmask, pi, ibgcol, ifgcol);
-
-    if ( !((state & WHITEBAK) && (tbgcol == WHITE)) )
+    if ( !((state & WHITEBAK) && (bgcol == WHITE)) )
     {
+        gr_gblt(ib->ib_pmask, pi, bgcol, fgcol);
         if (ib->ib_wtext)
-            gr_rect(tbgcol, IP_SOLID, pt);
+            gr_rect(bgcol, IP_SOLID, pt);
     }
 
     /* draw the image */
-    gr_gblt(ib->ib_pdata, pi, ifgcol, ibgcol);
+    gr_gblt(ib->ib_pdata, pi, fgcol, bgcol);
 
     /* draw the character */
-    gsx_attr(TRUE, MD_TRANS, ifgcol);
+    gsx_attr(TRUE, MD_TRANS, fgcol);
     if (ch)
     {
         intin[0] = ch;
@@ -696,7 +690,6 @@ void gr_gicon(WORD state, ICONBLK *ib)
     }
 
     /* draw the label */
-    gsx_attr(TRUE, MD_TRANS, tfgcol);
     gr_gtext(TE_CNTR, SMALL, ib->ib_ptext, pt);
 }
 
