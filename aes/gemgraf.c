@@ -330,9 +330,9 @@ void gsx_xcbox(GRECT *pt)
 /*
  *  Routine to blit, to and from a specific area
  */
-void gsx_blt(void *saddr, UWORD sx, UWORD sy, UWORD swb,
-             void *daddr, UWORD dx, UWORD dy, UWORD dwb, UWORD w, UWORD h,
-             UWORD rule, WORD fgcolor, WORD bgcolor)
+void gsx_blt(void *saddr, WORD sx, WORD sy, WORD swb,
+             void *daddr, WORD dx, WORD dy, WORD dwb, WORD w, WORD h,
+             WORD rule, WORD fgcolor, WORD bgcolor)
 {
     gsx_fix(&gl_src, (void *)saddr, swb, h);
     gsx_fix(&gl_dst, (void *)daddr, dwb, h);
