@@ -29,7 +29,7 @@ currently only required for the desktop resource.
 *IMPORTANT*
 If you add a tree (dialog), alert, free string, or menu item to the desktop
 resource, and the new item is dependent on a configuration option, you
-should update the exclude_items[] array in tools/draft.c so that draft
+should update the exclude_items[] array in tools/draftexc.c so that draft
 can exclude the new item where appropriate.
 
 
