@@ -376,7 +376,6 @@ void gsx_trans(void *addr, UWORD wb, UWORD h)
 {
     gsx_fix(&gl_src, addr, wb, h);
     gl_src.fd_stand = TRUE;
-    gl_src.fd_nplanes = 1;
 
     gsx_fix(&gl_dst, addr, wb, h);
     vrn_trnfm(&gl_src, &gl_dst);
