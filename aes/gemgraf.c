@@ -360,12 +360,12 @@ void gsx_blt(void *saddr, UWORD sx, UWORD sy, UWORD swb,
 /*
  *  Routine to blit around something on the screen
  */
-void bb_screen(WORD scrule, WORD scsx, WORD scsy, WORD scdx, WORD scdy,
+void bb_screen(WORD scsx, WORD scsy, WORD scdx, WORD scdy,
                WORD scw, WORD sch)
 {
     gsx_blt(NULL, scsx, scsy, 0,
             NULL, scdx, scdy, 0,
-            scw, sch, scrule, -1, -1);
+            scw, sch, S_ONLY, -1, -1);
 }
 
 

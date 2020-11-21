@@ -722,7 +722,7 @@ static BOOL w_move(WORD w_handle, WORD *pstop, GRECT *prc)
     if (*pstop == w_handle)
     {
         gsx_sclip(&gl_rfull);
-        bb_screen(S_ONLY, s.g_x, s.g_y, d.g_x, d.g_y, s.g_w, s.g_h);
+        bb_screen(s.g_x, s.g_y, d.g_x, d.g_y, s.g_w, s.g_h);
         /* cleanup left edge */
         if (sminus1 != dminus1)
         {

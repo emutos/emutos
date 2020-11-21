@@ -611,8 +611,7 @@ static void win_blt(WNODE *pw, BOOL horizontal, WORD newcv)
                 dy = tmp;
             }
             gsx_sclip(&c);
-            bb_screen(S_ONLY, sx+c.g_x, sy+c.g_y, dx+c.g_x, dy+c.g_y,
-                        wblt, hblt);
+            bb_screen(sx+c.g_x, sy+c.g_y, dx+c.g_x, dy+c.g_y, wblt, hblt);
 #if CONF_WITH_SIZE_TO_FIT
             if (horizontal)
             {

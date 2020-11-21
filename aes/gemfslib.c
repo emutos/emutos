@@ -356,8 +356,7 @@ static WORD fs_nscroll(OBJECT *tree, WORD *psel, WORD curr, WORD count,
                 sy = r[0].g_y;
             }
 
-            bb_screen(S_ONLY, r[0].g_x, sy, r[0].g_x, dy, r[0].g_w,
-                                r[0].g_h * (NM_NAMES - diffcurr) );
+            bb_screen(r[0].g_x, sy, r[0].g_x, dy, r[0].g_w, r[0].g_h * (NM_NAMES - diffcurr) );
             if (!neg)
                 r[0].g_y += r[0].g_h * (NM_NAMES - diffcurr);
         }
