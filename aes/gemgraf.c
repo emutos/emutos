@@ -51,8 +51,7 @@ GLOBAL WORD     gl_hschar;
 GLOBAL WORD     gl_wbox;
 GLOBAL WORD     gl_hbox;
 
-GLOBAL WORD     gl_wclip;
-GLOBAL WORD     gl_hclip;
+GLOBAL GRECT    gl_clip;        /* global clipping rectangle */
 
 GLOBAL WORD     gl_nplanes;
 GLOBAL WORD     gl_handle;
@@ -71,8 +70,6 @@ GLOBAL GRECT    gl_rzero;
 GLOBAL GRECT    gl_rcenter;
 GLOBAL GRECT    gl_rmenu;
 
-static WORD     gl_xclip;
-static WORD     gl_yclip;
 
 /*
  * the following are used to save the currently-set values for
@@ -98,14 +95,14 @@ static WORD     gl_hsptschar;
  */
 void gsx_sclip(const GRECT *pt)
 {
-    r_get(pt, &gl_xclip, &gl_yclip, &gl_wclip, &gl_hclip);
+    gl_clip = *pt;
 
-    if (gl_wclip && gl_hclip)
+    if (gl_clip.g_w && gl_clip.g_h)
     {
-        ptsin[0] = gl_xclip;
-        ptsin[1] = gl_yclip;
-        ptsin[2] = gl_xclip + gl_wclip - 1;
-        ptsin[3] = gl_yclip + gl_hclip - 1;
+        ptsin[0] = gl_clip.g_x;
+        ptsin[1] = gl_clip.g_y;
+        ptsin[2] = gl_clip.g_x + gl_clip.g_w - 1;
+        ptsin[3] = gl_clip.g_y + gl_clip.g_h - 1;
         vst_clip( TRUE, ptsin);
     }
     else
@@ -118,7 +115,7 @@ void gsx_sclip(const GRECT *pt)
  */
 void gsx_gclip(GRECT *pt)
 {
-    r_set(pt, gl_xclip, gl_yclip, gl_wclip, gl_hclip);
+    *pt = gl_clip;
 }
 
 
@@ -129,15 +126,15 @@ void gsx_gclip(GRECT *pt)
 WORD gsx_chkclip(GRECT *pt)
 {
     /* if clipping is on */
-    if (gl_wclip && gl_hclip)
+    if (gl_clip.g_w && gl_clip.g_h)
     {
-        if ((pt->g_y + pt->g_h) < gl_yclip)
+        if ((pt->g_y + pt->g_h) < gl_clip.g_y)
             return FALSE;                   /* all above    */
-        if ((pt->g_x + pt->g_w) < gl_xclip)
+        if ((pt->g_x + pt->g_w) < gl_clip.g_x)
             return FALSE;                   /* all left     */
-        if ((gl_yclip + gl_hclip) <= pt->g_y)
+        if ((gl_clip.g_y + gl_clip.g_h) <= pt->g_y)
             return FALSE;                   /* all below    */
-        if ((gl_xclip + gl_wclip) <= pt->g_x)
+        if ((gl_clip.g_x + gl_clip.g_w) <= pt->g_x)
             return FALSE;                   /* all right    */
     }
 
@@ -394,10 +391,10 @@ void gsx_start(void)
     gl_mode = gl_tcolor = gl_lcolor = -1;
     gl_fis = gl_patt = gl_font = -1;
 
-    gl_xclip = 0;
-    gl_yclip = 0;
-    gl_width = gl_wclip = gl_ws.ws_xres + 1;
-    gl_height = gl_hclip = gl_ws.ws_yres + 1;
+    gl_clip.g_x = 0;
+    gl_clip.g_y = 0;
+    gl_width = gl_clip.g_w = gl_ws.ws_xres + 1;
+    gl_height = gl_clip.g_h = gl_ws.ws_yres + 1;
     gl_nplanes = gsx_nplanes();
 
     KINFO(("VDI video mode = %dx%d %d-%s\n", gl_width, gl_height, gl_nplanes,

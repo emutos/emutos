@@ -215,7 +215,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
      * do trivial reject with full extent including outline, shadow,
      * & thickness
      */
-    if (gl_wclip && gl_hclip)
+    if (gl_clip.g_w && gl_clip.g_h)
     {
         rc_copy(&t, &c);
         if (state & OUTLINED)

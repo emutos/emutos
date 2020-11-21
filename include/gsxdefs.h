@@ -88,8 +88,7 @@ extern WORD     gl_hschar;
 extern WORD     gl_wbox;
 extern WORD     gl_hbox;
 
-extern WORD     gl_wclip;
-extern WORD     gl_hclip;
+extern GRECT    gl_clip;        /* global clipping rectangle */
 
 extern WORD     gl_nplanes;
 extern WORD     gl_handle;
