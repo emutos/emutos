@@ -338,11 +338,13 @@ void gsx_graphic(WORD tographic)
 
 
 
-static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
-                   FDB *pfd, FDB *psrc, FDB *pdst)
+static void bb_set(GRECT *r, WORD *pts1, WORD *pts2, FDB *pfd, FDB *psrc, FDB *pdst)
 {
-    WORD            oldsx;
+    WORD sx, sy, sw, sh, oldsx;
     LONG            size;
+
+    /* extract x/y/w/h from GRECT */
+    r_get(r, &sx, &sy, &sw, &sh);
 
     /* get on word boundary */
     oldsx = sx;
@@ -383,16 +385,14 @@ static void bb_set(WORD sx, WORD sy, WORD sw, WORD sh, WORD *pts1, WORD *pts2,
 
 void bb_save(GRECT *ps)
 {
-    bb_set(ps->g_x, ps->g_y, ps->g_w, ps->g_h, &ptsin[0], &ptsin[4],
-           &gl_src, &gl_src, &gl_tmp);
+    bb_set(ps, &ptsin[0], &ptsin[4], &gl_src, &gl_src, &gl_tmp);
 }
 
 
 
 void bb_restore(GRECT *pr)
 {
-    bb_set(pr->g_x, pr->g_y, pr->g_w, pr->g_h, &ptsin[4], &ptsin[0],
-           &gl_dst, &gl_tmp, &gl_dst);
+    bb_set(pr, &ptsin[4], &ptsin[0], &gl_dst, &gl_tmp, &gl_dst);
 }
 
 
