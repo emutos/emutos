@@ -106,10 +106,8 @@ WORD graf_dragbox(WORD w, WORD h, WORD sx, WORD sy, WORD xc, WORD yc,
                   WORD wc, WORD hc, WORD *pdx, WORD *pdy);
 WORD graf_mbox(WORD w, WORD h, WORD srcx, WORD srcy, WORD dstx, WORD dsty);
 */
-WORD graf_growbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
-                  WORD x, WORD y, WORD w, WORD h);
-WORD graf_shrinkbox(WORD orgx, WORD orgy, WORD orgw, WORD orgh,
-                    WORD x, WORD y, WORD w, WORD h);
+WORD graf_growbox_grect(GRECT *from, GRECT *to);
+WORD graf_shrinkbox_grect(GRECT *from, GRECT *to);
 /*
 WORD graf_watchbox(OBJECT *tree, WORD obj, UWORD instate, UWORD outstate);
 WORD graf_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert);
@@ -142,8 +140,8 @@ WORD fsel_exinput(char *pipath, char *pisel, WORD *pbutton, const char *title);
 /*
  *  Window Manager
  */
-WORD wind_create(UWORD kind, WORD wx, WORD wy, WORD ww, WORD wh);
-WORD wind_open(WORD handle, WORD wx, WORD wy, WORD ww, WORD wh);
+WORD wind_create_grect(UWORD kind, GRECT *gr);
+WORD wind_open_grect(WORD handle, GRECT *gr);
 WORD wind_close(WORD handle);
 WORD wind_delete(WORD handle);
 WORD wind_get(WORD w_handle, WORD w_field, WORD *pw1, WORD *pw2, WORD *pw3, WORD *pw4);
@@ -152,8 +150,7 @@ WORD wind_set(WORD w_handle, WORD w_field, ...);
 WORD wind_set_grect(WORD w_handle, WORD w_field, const GRECT *gr);
 WORD wind_find(WORD mx, WORD my);
 WORD wind_update(WORD beg_update);
-WORD wind_calc(WORD wctype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
-               WORD *px, WORD *py, WORD *pw, WORD *ph);
+WORD wind_calc_grect(WORD wctype, UWORD kind, GRECT *in, GRECT *out);
 WORD wind_new(void);
 
 

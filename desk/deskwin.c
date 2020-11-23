@@ -90,11 +90,10 @@ void win_view(void)
     G.g_ihspc = G.g_ihext + G.g_ihint;
 #if CONF_WITH_SIZE_TO_FIT
     {
-    WORD width, dummy;
+    GRECT t;
 
-    wind_calc(1, WINDOW_STYLE, G.g_desk.g_x, G.g_desk.g_y, G.g_desk.g_w, G.g_desk.g_h,
-                &dummy, &dummy, &width, &dummy);
-    G.g_icols = max(1, width / G.g_iwspc);
+    wind_calc_grect(1, WINDOW_STYLE, &G.g_desk, &t);
+    G.g_icols = max(1, t.g_w / G.g_iwspc);
     }
 #endif
 }
@@ -179,8 +178,7 @@ WNODE *win_alloc(WORD obid)
         pw->w_pnrow = (pt->g_h - gl_hchar) / G.g_ihspc;
         pw->w_vncol = 0;
         pw->w_vnrow = 0x0;
-        pw->w_id = wind_create(WINDOW_STYLE, G.g_desk.g_x, G.g_desk.g_y,
-                                 G.g_desk.g_w, G.g_desk.g_h);
+        pw->w_id = wind_create_grect(WINDOW_STYLE, &G.g_desk);
         if (pw->w_id != -1)
         {
             return pw;

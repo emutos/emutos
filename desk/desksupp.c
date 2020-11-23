@@ -274,11 +274,14 @@ void do_xyfix(WORD *px, WORD *py)
  * if we did allow a redraw, at best the display would show the wrong
  * values (or garbage) briefly; at worst, the desktop would crash.
  */
-void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
+void do_wopen(WORD new_win, WORD wh, WORD curr, GRECT *pt)
 {
+    GRECT t;
     GRECT c, d;
 
-    do_xyfix(&x, &y);
+    t = *pt;
+
+    do_xyfix(&t.g_x, &t.g_y);
 
     if (curr > 0)
     {
@@ -292,12 +295,12 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, WORD x, WORD y, WORD w, WORD h)
         d.g_x += c.g_x;     /* convert window to screen coordinates */
         d.g_y += c.g_y;
 
-        graf_growbox(d.g_x, d.g_y, d.g_w, d.g_h, x, y, w, h);
+        graf_growbox_grect(&d, &t);
         act_chg(G.g_cwin, G.g_croot, curr, &gl_rfull, FALSE, new_win?TRUE:FALSE);
     }
 
     if (new_win)
-        wind_open(wh, x, y, w, h);
+        wind_open_grect(wh, &t);
 
     G.g_wlastsel = wh;
 }
@@ -317,13 +320,11 @@ void do_wfull(WORD wh)
     if (rc_equal(&curr, &full)) /* currently full, so shrink */
     {
         wind_set_grect(wh, WF_CXYWH, &prev);
-        graf_shrinkbox(prev.g_x, prev.g_y, prev.g_w, prev.g_h,
-                        full.g_x, full.g_y, full.g_w, full.g_h);
+        graf_shrinkbox_grect(&prev, &full);
         return;
     }
 
-    graf_growbox(curr.g_x, curr.g_y, curr.g_w, curr.g_h,
-                full.g_x, full.g_y, full.g_w, full.g_h);
+    graf_growbox_grect(&curr, &full);
     wind_set_grect(wh, WF_CXYWH, &full);
 }
 
@@ -433,8 +434,7 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
     wind_set(pw->w_id, WF_NAME, pw->w_name, 0, 0);
 
     /* do actual wind_open  */
-    do_wopen(new_win, pw->w_id, curr_icon,
-                pt->g_x, pt->g_y, pt->g_w, pt->g_h);
+    do_wopen(new_win, pw->w_id, curr_icon, pt);
     if (new_win)
         win_top(pw);
 

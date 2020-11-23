@@ -1884,7 +1884,7 @@ BOOL deskmain(void)
     gl_handle = graf_handle(&gl_wchar, &gl_hchar, &gl_wbox, &gl_hbox);
 
     /* get desktop work area coordinates */
-    wind_get(DESKWH, WF_WXYWH, &G.g_desk.g_x, &G.g_desk.g_y, &G.g_desk.g_w, &G.g_desk.g_h);
+    wind_get_grect(DESKWH, WF_WXYWH, &G.g_desk);
 
     /* initialize mouse     */
     wind_update(BEG_UPDATE);

@@ -790,15 +790,16 @@ WORD fun_op(WORD op, WORD icontype, PNODE *pspath, char *pdest)
 
 static void w_setpath(WNODE *pw, char *pathname)
 {
-    WORD icx, icy;
+    GRECT curr;
     GRECT rc;
 
     wind_get_grect(pw->w_id,WF_WXYWH, &rc);
 
-    icx = rc.g_x + (rc.g_w / 2) - (G.g_wicon / 2);
-    icy = rc.g_y + (rc.g_h / 2) - (G.g_hicon / 2);
-    graf_shrinkbox(icx, icy, G.g_wicon, G.g_hicon,
-                    rc.g_x, rc.g_y, rc.g_w, rc.g_h);
+    curr.g_x = rc.g_x + (rc.g_w / 2) - (G.g_wicon / 2);
+    curr.g_y = rc.g_y + (rc.g_h / 2) - (G.g_hicon / 2);
+    curr.g_w = G.g_wicon;
+    curr.g_h = G.g_hicon;
+    graf_shrinkbox_grect(&curr,&rc);
 
     /* we're closing a folder, so we never want a new window */
     pw->w_cvrow = 0;        /* must reset slider */
@@ -808,7 +809,7 @@ static void w_setpath(WNODE *pw, char *pathname)
 
 static void fun_full_close(WNODE *pw)
 {
-    WORD icx, icy;
+    GRECT curr;
     GRECT rc;
 
     wind_get_grect(pw->w_id,WF_WXYWH, &rc);
@@ -819,10 +820,11 @@ static void fun_full_close(WNODE *pw)
      */
     if (pw->w_obid > 0)
     {
-        icx = G.g_screen[pw->w_obid].ob_x;
-        icy = G.g_screen[pw->w_obid].ob_y;
-        graf_shrinkbox(icx, icy, G.g_wicon, G.g_hicon,
-                        rc.g_x, rc.g_y, rc.g_w, rc.g_h);
+        curr.g_x = G.g_screen[pw->w_obid].ob_x;
+        curr.g_y = G.g_screen[pw->w_obid].ob_y;
+        curr.g_w = G.g_wicon;
+        curr.g_h = G.g_hicon;
+        graf_shrinkbox_grect(&curr, &rc);
     }
 
     pn_close(&pw->w_pnode);
