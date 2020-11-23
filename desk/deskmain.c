@@ -1422,23 +1422,23 @@ static void cnx_get(void)
         pws = &cnxsave->cs_wnode[nw];
 
         /* Check for valid position */
-        if (pws->x_save >= G.g_wdesk)
+        if (pws->x_save >= G.g_desk.g_w)
         {
-            pws->x_save = G.g_wdesk/2;
+            pws->x_save = G.g_desk.g_w/2;
         }
-        if (pws->y_save >= G.g_hdesk)
+        if (pws->y_save >= G.g_desk.g_h)
         {
-            pws->y_save = G.g_hdesk/2;
+            pws->y_save = G.g_desk.g_h/2;
         }
 
         /* Check for valid width + height */
-        if (pws->w_save <= 0 || pws->w_save > G.g_wdesk)
+        if (pws->w_save <= 0 || pws->w_save > G.g_desk.g_w)
         {
-            pws->w_save = G.g_wdesk;
+            pws->w_save = G.g_desk.g_w;
         }
-        if (pws->h_save <= 0 || pws->h_save > G.g_hdesk)
+        if (pws->h_save <= 0 || pws->h_save > G.g_desk.g_h)
         {
-            pws->h_save = G.g_hdesk;
+            pws->h_save = G.g_desk.g_h;
         }
 
         if (pws->pth_save[0])
@@ -1471,7 +1471,7 @@ static void adjust_menu(OBJECT *obj_array)
 
     int i;  /* index in the menu bar */
     int j;  /* index in the array of pull downs */
-    int width = (G.g_wdesk >> 3);   /* screen width in chars */
+    int width = (G.g_desk.g_w >> 3);    /* screen width in chars */
     int m;  /* max width of each set of menu items, needed for separator lines */
     int n, x;
     OBJECT *menu = OBJ(0);
@@ -1884,7 +1884,7 @@ BOOL deskmain(void)
     gl_handle = graf_handle(&gl_wchar, &gl_hchar, &gl_wbox, &gl_hbox);
 
     /* get desktop work area coordinates */
-    wind_get(DESKWH, WF_WXYWH, &G.g_xdesk, &G.g_ydesk, &G.g_wdesk, &G.g_hdesk);
+    wind_get(DESKWH, WF_WXYWH, &G.g_desk.g_x, &G.g_desk.g_y, &G.g_desk.g_w, &G.g_desk.g_h);
 
     /* initialize mouse     */
     wind_update(BEG_UPDATE);

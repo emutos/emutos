@@ -250,8 +250,8 @@ static ICONBLK *get_iconblk_ptr(OBJECT olist[], WORD obj)
 void do_xyfix(WORD *px, WORD *py)
 {
     *px = (*px + 8) & 0xfff0;   /* horizontally align to nearest word boundary */
-    if (*py < G.g_ydesk)        /* ensure it's below menu bar */
-        *py = G.g_ydesk;
+    if (*py < G.g_desk.g_y)     /* ensure it's below menu bar */
+        *py = G.g_desk.g_y;
 }
 
 
@@ -763,8 +763,8 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
 
     handle = (WORD)rc;
 
-    scr_width = G.g_wdesk;
-    scr_height = G.g_ydesk + G.g_hdesk;
+    scr_width = G.g_desk.g_w;
+    scr_height = G.g_desk.g_y + G.g_desk.g_h;
 
     /*
      * set up for text output
@@ -775,7 +775,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
     form_dial(FMD_START, 0,0,0,0, 0,0,scr_width,scr_height);
     clear_screen();
 
-    pagesize = (G.g_ydesk+G.g_hdesk)/gl_hchar - 1;
+    pagesize = (G.g_desk.g_y+G.g_desk.g_h)/gl_hchar - 1;
     linecount = 0L;
 
     while(1)

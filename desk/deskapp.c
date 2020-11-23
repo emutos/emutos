@@ -784,11 +784,11 @@ void app_start(void)
     G.g_wicon = (MAX_ICONTEXT_WIDTH * gl_wschar) + (2 * G.g_iblist[0].ib_xtext);
     G.g_hicon = G.g_iblist[0].ib_hicon + gl_hschar + 2;
 
-    xcnt = G.g_wdesk / (G.g_wicon+MIN_WINT);/* icon count */
-    G.g_icw = G.g_wdesk / xcnt;             /* width */
+    xcnt = G.g_desk.g_w / (G.g_wicon+MIN_WINT); /* icon count */
+    G.g_icw = G.g_desk.g_w / xcnt;              /* width */
 
-    ycnt = G.g_hdesk / (G.g_hicon+MIN_HINT);/* icon count */
-    G.g_ich = G.g_hdesk / ycnt;             /* height */
+    ycnt = G.g_desk.g_h / (G.g_hicon+MIN_HINT); /* icon count */
+    G.g_ich = G.g_desk.g_h / ycnt;              /* height */
 
 #if CONF_WITH_BACKGROUNDS
     /*
@@ -957,7 +957,7 @@ void app_start(void)
         if (pa->a_flags & AF_ISDESK)
         {
             x = pa->a_xspot * G.g_icw;
-            y = pa->a_yspot * G.g_ich + G.g_ydesk;
+            y = pa->a_yspot * G.g_ich + G.g_desk.g_y;
             snap_icon(x, y, &pa->a_xspot, &pa->a_yspot, 0, 0);
         }
     }
@@ -1234,7 +1234,7 @@ void app_save(WORD todisk)
         pcurr += sprintf(pcurr,"#%c",type);
         if (pa->a_flags & AF_ISDESK)
             pcurr += sprintf(pcurr," %02X %02X",(pa->a_xspot/G.g_icw)&0x00ff,
-                            (max(0,(pa->a_yspot-G.g_ydesk))/G.g_ich)&0x00ff);
+                            (max(0,(pa->a_yspot-G.g_desk.g_y))/G.g_ich)&0x00ff);
         pcurr += sprintf(pcurr," %02X %02X",pa->a_aicon&0x00ff,pa->a_dicon&0x00ff);
         if (pa->a_flags & AF_ISDESK)
             pcurr += sprintf(pcurr," %c",pa->a_letter?pa->a_letter:' ');
@@ -1373,7 +1373,7 @@ void app_blddesk(void)
 
     app_revit();    /* back to normal ... */
 
-    do_wredraw(DESKWH, (GRECT *)&G.g_xdesk);
+    do_wredraw(DESKWH, &G.g_desk);
 }
 
 

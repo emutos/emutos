@@ -923,7 +923,7 @@ BOOL inf_backgrounds(void)
             set_aes_background(curdesk & 0xff);
             G.g_patcol[index].desktop = curdesk & 0xff;
             G.g_screen[DROOT].ob_spec = curdesk;
-            do_wredraw(DESKWH, (GRECT *)&G.g_xdesk);
+            do_wredraw(DESKWH, &G.g_desk);
         }
 
         /* check for window background change */

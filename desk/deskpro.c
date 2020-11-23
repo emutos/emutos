@@ -58,7 +58,7 @@ WORD pro_run(WORD isgraf, char *cmd, char *tail, WORD wh, WORD curr)
     ret = pro_exec(isgraf, 1, cmd, tail);
 
     if (wh != -1)
-        do_wopen(FALSE, wh, curr, G.g_xdesk, G.g_ydesk, G.g_wdesk, G.g_hdesk);
+        do_wopen(FALSE, wh, curr, G.g_desk.g_x, G.g_desk.g_y, G.g_desk.g_w, G.g_desk.g_h);
 
     return ret;
 }

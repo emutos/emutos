@@ -27,7 +27,7 @@
  * actually requires about 50 bytes, so 400 pixels should be enough,
  * but for now we stick with standard Atari resolutions
  */
-#define USE_WIDE_FORMAT()   (G.g_wdesk >= 640)
+#define USE_WIDE_FORMAT()   (G.g_desk.g_w >= 640)
 
 /*
  * total length of highlighted text for selected files in

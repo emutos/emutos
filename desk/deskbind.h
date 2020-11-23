@@ -161,10 +161,7 @@ typedef struct
 
 /*GLOBAL*/ WORD         g_rmsg[8];              /* general AES message area */
 
-/*GLOBAL*/ WORD         g_xdesk;                /* desktop work area coordinates */
-/*GLOBAL*/ WORD         g_ydesk;
-/*GLOBAL*/ WORD         g_wdesk;
-/*GLOBAL*/ WORD         g_hdesk;
+/*GLOBAL*/ GRECT        g_desk;                 /* desktop work area coordinates */
 
 /*GLOBAL*/ WORD         g_croot;                /* current pseudo root  */
 

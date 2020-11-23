@@ -157,8 +157,8 @@ void snap_icon(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff)
      * and convert it to pixels
      */
     icw  = G.g_icw;
-    columns = G.g_wdesk / icw;
-    spare_pixels = G.g_wdesk - (columns * icw);
+    columns = G.g_desk.g_w / icw;
+    spare_pixels = G.g_desk.g_w - (columns * icw);
 
     xgrid = (x - sxoff + (icw / 2)) / icw;  /* x grid position */
     xgrid = min(xgrid, columns-1);          /* clamp it for safety */
@@ -173,14 +173,14 @@ void snap_icon(WORD x, WORD y, WORD *px, WORD *py, WORD sxoff, WORD syoff)
      * and convert it to pixels
      */
     ich = G.g_ich;
-    rows = G.g_hdesk / ich;
-    spare_pixels = G.g_hdesk - (rows * ich);
+    rows = G.g_desk.g_h / ich;
+    spare_pixels = G.g_desk.g_h - (rows * ich);
 
-    y -= G.g_ydesk;
+    y -= G.g_desk.g_y;
     ygrid  = (y - syoff + (ich / 2)) / ich; /* y grid position */
     ygrid = min(ygrid, rows-1);             /* clamp it for safety */
     *py = (ygrid * ich) + (spare_pixels / rows);
-    *py += G.g_ydesk;
+    *py += G.g_desk.g_y;
 }
 
 
@@ -198,8 +198,8 @@ static void ins_posdisk(WORD dx, WORD dy, WORD *pdx, WORD *pdy)
 {
     WORD  xcnt, ycnt, xin, yin, x, y;
 
-    xcnt = G.g_wdesk / G.g_icw;     /* number of grid positions */
-    ycnt = G.g_hdesk / G.g_ich;
+    xcnt = G.g_desk.g_w / G.g_icw;  /* number of grid positions */
+    ycnt = G.g_desk.g_h / G.g_ich;
 
     xin = dx / G.g_icw;             /* input grid position */
     yin = dy / G.g_ich;
