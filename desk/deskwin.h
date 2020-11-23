@@ -89,7 +89,7 @@ WNODE *win_alloc(WORD obid);
 WNODE *win_find(WORD wh);
 void win_top(WNODE *thewin);
 WNODE *win_ontop(void);
-void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h);
+void win_bldview(WNODE *pwin, GRECT *r);
 void win_slide(WORD wh, BOOL horizontal, WORD sl_value);
 void win_arrow(WORD wh, WORD arrow_type);
 void win_srtall(void);

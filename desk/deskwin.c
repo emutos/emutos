@@ -391,7 +391,7 @@ static void win_icalc(FNODE *pfnode, WNODE *pwin)
  *  viewable in a window.  Next adjust root of tree to take into
  *  account the current view of the window.
  */
-void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
+void win_bldview(WNODE *pwin, GRECT *r)
 {
     FNODE *pstart;
     ANODE *anode;
@@ -400,8 +400,11 @@ void win_bldview(WNODE *pwin, WORD x, WORD y, WORD w, WORD h)
     WORD  o_wfit, o_hfit;       /* object grid */
     WORD  i_index;
     WORD  xoff, yoff, wh, sl_size, sl_value;
+    WORD  x, y, w, h;
 
     MAYBE_UNUSED(skipcnt);
+
+    r_get(r, &x, &y, &w, &h);
 
     /* free all this window's kids and set size */
     obj_wfree(pwin->w_root, x, y, w, h);
@@ -571,7 +574,7 @@ static void win_blt(WNODE *pw, BOOL horizontal, WORD newcv)
     }
 
     wind_get_grect(pw->w_id, WF_WXYWH, &c);
-    win_bldview(pw, c.g_x, c.g_y, c.g_w, c.g_h);
+    win_bldview(pw, &c);
 
     /* see if any part is off the screen */
     wind_get_grect(pw->w_id, WF_FIRSTXYWH, &t);
@@ -666,7 +669,7 @@ void win_dispfile(WNODE *pw, WORD file)
 #endif
 
     wind_get_grect(pw->w_id, WF_WXYWH, &gr);
-    win_bldview(pw, gr.g_x, gr.g_y, gr.g_w, gr.g_h);
+    win_bldview(pw, &gr);
     do_wredraw(pw->w_id, &gr);
 }
 #endif
@@ -790,7 +793,7 @@ void win_bdall(void)
         if (pw->w_id != 0)
         {
             wind_get_grect(pw->w_id, WF_WXYWH, &clip);
-            win_bldview(pw, clip.g_x, clip.g_y, clip.g_w, clip.g_h);
+            win_bldview(pw, &clip);
         }
     }
 }

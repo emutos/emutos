@@ -180,7 +180,7 @@ void desk_verify(WORD wh, WORD changed)
             if (changed)
             {
                 wind_get_grect(wh, WF_WXYWH, &clip);
-                win_bldview(pw, clip.g_x, clip.g_y, clip.g_w, clip.g_h);
+                win_bldview(pw, &clip);
             }
             G.g_croot = pw->w_root;
         }
