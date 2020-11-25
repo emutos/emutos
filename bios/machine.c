@@ -137,6 +137,24 @@ static void detect_video(void)
         has_videl = 1;
 
     KDEBUG(("has_videl = %d\n", has_videl));
+
+    /*
+     * The Falcon Bus Control Register uses the following bits:
+     *   0x40 : type of start (0=cold, 1=warm)
+     *   0x20 : STe Bus emulation (0=on, 1=off)
+     *   0x08 : blitter control (0=on, 1=off)
+     *   0x04 : blitter speed (0=8MHz, 1=16MHz)
+     *   0x01 : cpu speed (0=8MHz, 1=16MHz)
+     * Source: Hatari source code
+     *
+     * STe Bus emulation needs to be switched off for
+     * bus-error-based hardware detection to work on the Falcon.
+     */
+    if (has_videl)      /* i.e. it's a Falcon */
+    {
+        volatile UBYTE *fbcr = (UBYTE *)FALCON_BUS_CTL;
+        *fbcr |= 0x25;  /* set STe Bus emulation off, 16MHz blitter & CPU */
+    }
 #endif
 }
 
@@ -576,20 +594,6 @@ void machine_detect(void)
  */
 void machine_init(void)
 {
-#if CONF_WITH_VIDEL
-volatile UBYTE *fbcr = (UBYTE *)FALCON_BUS_CTL;
-/* the Falcon Bus Control Register uses the following bits:
- *   0x40 : type of start (0=cold, 1=warm)
- *   0x20 : STe Bus emulation (0=on, 1=off)
- *   0x08 : blitter control (0=on, 1=off)
- *   0x04 : blitter speed (0=8MHz, 1=16MHz)
- *   0x01 : cpu speed (0=8MHz, 1=16MHz)
- * source: Hatari source code
- */
-    if (has_videl)      /* i.e. it's a Falcon */
-        *fbcr |= 0x25;  /* set STe Bus emulation off, blitter on, 16MHz blitter & CPU */
-#endif
-
 #if !CONF_WITH_RESET
 /*
  * we must disable interrupts here, because the reset instruction hasn't
