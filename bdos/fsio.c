@@ -312,6 +312,8 @@ static void addit(OFD *p, long siz, int flg)
  *      2. pointer (see above)
  */
 
+#define CNTMAX  0x7FFFul  /* 16-bit MAXINT */
+
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
 {
     DMD *dm;
@@ -409,10 +411,11 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
 
             /*
              *  if eof or non-contiguous cluster, or last cluster
-             *  of request, then finish pending I/O
+             *  of request, or request would be for more than CNTMAX sectors,
+             *  then finish pending I/O
              */
 
-            if ((!rc) && (p->o_currec == last + nrecs))
+            if ((!rc) && (p->o_currec == last + nrecs) && (nrecs + (long)dm->m_clsiz < CNTMAX))
             {
                 nrecs += dm->m_clsiz;
                 nbyts += dm->m_clsizb;
