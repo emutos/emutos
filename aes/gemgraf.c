@@ -328,14 +328,14 @@ void gsx_xcbox(GRECT *pt)
 
 
 /*
- *  Routine to blit, to and from a specific area
+ *  Routine to blit to a screen area
  */
-void gsx_blt(void *saddr, WORD sx, WORD sy, WORD swb,
-             void *daddr, WORD dx, WORD dy, WORD dwb, WORD w, WORD h,
+void gsx_blt(void *saddr, WORD sx, WORD sy,
+             WORD dx, WORD dy, WORD w, WORD h,
              WORD rule, WORD fgcolor, WORD bgcolor)
 {
-    gsx_fix(&gl_src, (void *)saddr, swb, h);
-    gsx_fix(&gl_dst, (void *)daddr, dwb, h);
+    gsx_fix(&gl_src, (void *)saddr, w/8, h);
+    gsx_fix_screen(&gl_dst);
 
     gsx_moff();
     ptsin[0] = sx;
@@ -360,8 +360,8 @@ void gsx_blt(void *saddr, WORD sx, WORD sy, WORD swb,
 void bb_screen(WORD scsx, WORD scsy, WORD scdx, WORD scdy,
                WORD scw, WORD sch)
 {
-    gsx_blt(NULL, scsx, scsy, 0,
-            NULL, scdx, scdy, 0,
+    gsx_blt(NULL, scsx, scsy,
+            scdx, scdy,
             scw, sch, S_ONLY, -1, -1);
 }
 
@@ -436,7 +436,7 @@ void gsx_start(void)
  */
 void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
 {
-    gsx_fix(&gl_dst, NULL, 0, 0);
+    gsx_fix_screen(&gl_dst);
     ptsin[0] = hx;
     ptsin[1] = hy;
     ptsin[2] = hx + hw - 1;
@@ -634,8 +634,8 @@ void gr_crack(UWORD color, WORD *pbc, WORD *ptc, WORD *pip, WORD *pic, WORD *pmd
 
 static void gr_gblt(WORD *pimage, GRECT *pi, WORD col1, WORD col2)
 {
-    gsx_blt(pimage, 0, 0, pi->g_w/8, NULL, pi->g_x, pi->g_y,
-            gl_width/8, pi->g_w, pi->g_h, MD_TRANS, col1, col2);
+    gsx_blt(pimage, 0, 0, pi->g_x, pi->g_y,
+            pi->g_w, pi->g_h, MD_TRANS, col1, col2);
 }
 
 

@@ -118,7 +118,7 @@ static void  g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out );
  */
 static ULONG gsx_mcalc(void)
 {
-    gsx_fix(&gl_tmp, NULL, 0, 0);           /* store screen info    */
+    gsx_fix_screen(&gl_tmp);            /* store screen info    */
     gl_mlen = (LONG)MENU_BUFFER_SIZE * gl_wchar * gl_hchar * gl_nplanes / 8;
 
     return(gl_mlen);
@@ -376,7 +376,7 @@ static void bb_set(GRECT *r, WORD *pts1, WORD *pts2, FDB *pfd, FDB *psrc, FDB *p
     pts2[2] = sw - 1;
     pts2[3] = sh - 1 ;
 
-    gsx_fix(pfd, NULL, 0, 0);
+    gsx_fix_screen(pfd);
     vro_cpyfm(S_ONLY, ptsin, psrc, pdst);
     gsx_mon();
 }
@@ -516,26 +516,36 @@ void gsx_textsize(WORD *charw, WORD *charh, WORD *cellw, WORD *cellh)
 
 
 /*
+ *  Routine to set the FDB to correspond to the current screen
+ */
+void gsx_fix_screen(FDB *pfd)
+{
+    pfd->fd_addr = NULL;
+    pfd->fd_w = gl_ws.ws_xres + 1;
+    pfd->fd_h = gl_ws.ws_yres + 1;
+    pfd->fd_wdwidth = pfd->fd_w / 16;
+    pfd->fd_stand = FALSE;
+    pfd->fd_nplanes = gl_nplanes;
+}
+
+
+/*
  *  Routine to fix up the MFDB of a particular raster form
  */
 void gsx_fix(FDB *pfd, void *theaddr, WORD wb, WORD h)
 {
     if (theaddr == NULL)
     {
-        pfd->fd_w = gl_ws.ws_xres + 1;
-        pfd->fd_wdwidth = pfd->fd_w / 16;
-        pfd->fd_h = gl_ws.ws_yres + 1;
-        pfd->fd_nplanes = gl_nplanes;
+        gsx_fix_screen(pfd);
+        return;
     }
-    else
-    {
-        pfd->fd_wdwidth = wb / 2;
-        pfd->fd_w = wb * 8;
-        pfd->fd_h = h;
-        pfd->fd_nplanes = 1;
-    }
-    pfd->fd_stand = FALSE;
+
     pfd->fd_addr = theaddr;
+    pfd->fd_w = wb * 8;
+    pfd->fd_h = h;
+    pfd->fd_wdwidth = wb / 2;
+    pfd->fd_stand = FALSE;
+    pfd->fd_nplanes = 1;
 }
 
 
