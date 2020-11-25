@@ -334,22 +334,24 @@ void gsx_blt(void *saddr, WORD sx, WORD sy,
              WORD dx, WORD dy, WORD w, WORD h,
              WORD rule, WORD fgcolor, WORD bgcolor)
 {
+    WORD pxyarray[8];
+
     gsx_fix(&gl_src, (void *)saddr, w/8, h);
     gsx_fix_screen(&gl_dst);
 
     gsx_moff();
-    ptsin[0] = sx;
-    ptsin[1] = sy;
-    ptsin[2] = sx + w - 1;
-    ptsin[3] = sy + h - 1;
-    ptsin[4] = dx;
-    ptsin[5] = dy;
-    ptsin[6] = dx + w - 1;
-    ptsin[7] = dy + h - 1 ;
+    pxyarray[0] = sx;
+    pxyarray[1] = sy;
+    pxyarray[2] = sx + w - 1;
+    pxyarray[3] = sy + h - 1;
+    pxyarray[4] = dx;
+    pxyarray[5] = dy;
+    pxyarray[6] = dx + w - 1;
+    pxyarray[7] = dy + h - 1 ;
     if (fgcolor == -1)
-        vro_cpyfm(rule, ptsin, &gl_src, &gl_dst);
+        vro_cpyfm(rule, pxyarray, &gl_src, &gl_dst);
     else
-        vrt_cpyfm(rule, ptsin, &gl_src, &gl_dst, fgcolor, bgcolor);
+        vrt_cpyfm(rule, pxyarray, &gl_src, &gl_dst, fgcolor, bgcolor);
     gsx_mon();
 }
 
