@@ -324,6 +324,9 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
                     bi.bi_hl, MD_TRANS, bi.bi_color, WHITE);
             break;
         case G_ICON:
+#if CONF_WITH_COLOUR_ICONS
+        case G_CICON:   /* a CICONBLK starts with an ICONBLK */
+#endif
             ib = *((ICONBLK *)spec);
             ib.ib_xicon += t.g_x;
             ib.ib_yicon += t.g_y;

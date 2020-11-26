@@ -286,6 +286,9 @@
 # ifndef CONF_WITH_XHDI
 #  define CONF_WITH_XHDI 0
 # endif
+# ifndef CONF_WITH_COLOUR_ICONS
+#  define CONF_WITH_COLOUR_ICONS 0
+# endif
 # ifndef CONF_WITH_GRAF_MOUSE_EXTENSION
 #  define CONF_WITH_GRAF_MOUSE_EXTENSION 0
 # endif
@@ -1219,6 +1222,14 @@
  */
 #ifndef CONF_WITH_BIOS_EXTENSIONS
 # define CONF_WITH_BIOS_EXTENSIONS 1
+#endif
+
+/*
+ * Set CONF_WITH_COLOUR_ICONS to 1 to enable support for colour icons,
+ * as in Atari TOS 4
+ */
+#ifndef CONF_WITH_COLOUR_ICONS
+# define CONF_WITH_COLOUR_ICONS 0
 #endif
 
 /*

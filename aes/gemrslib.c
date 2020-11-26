@@ -27,7 +27,9 @@
 #include "gemshlib.h"
 #include "gemgraf.h"
 #include "gemrslib.h"
+#include "gemgsxif.h"
 
+#include "intmath.h"
 #include "string.h"
 #include "nls.h"
 
@@ -169,6 +171,141 @@ static void *get_addr(UWORD rstype, UWORD rsindex)
 } /* get_addr() */
 
 
+#if CONF_WITH_COLOUR_ICONS
+/*
+ * fixup all of the CICONs for a CICONBLK
+ */
+static CICONBLK *fixup_colour_icons(LONG num_cicons, LONG mono_words, CICON *start)
+{
+    CICON *p = start;
+    WORD *q;
+    LONG i;
+
+    for (i = 0; i < num_cicons; i++)
+    {
+        q = (WORD *)(p+1);                  /* point to start of data area */
+        p->col_data = q;
+        q += mono_words * p->num_planes;
+        p->col_mask = q;
+        q += mono_words;                    /* mask is one plane */
+        if (p->sel_data)
+        {
+            p->sel_data = q;
+            q += mono_words * p->num_planes;
+            p->sel_mask = q;
+            q += mono_words;                /* mask is one plane */
+        }
+        p = (CICON *)q;
+    }
+
+    return (CICONBLK *)p;
+}
+
+/*
+ * this fixes up all of the CICONBLK-related pointers:
+ *  . the CICONBLK pointer table
+ *  . the pointers in the ICONBLK contained in the CICONBLK
+ *  . the pointers in the CICON
+ */
+static void fixup_all_ciconblks(LONG num_blks, CICONBLK **ciconblkptr, CICON *cicondata)
+{
+    CICONBLK *p = (CICONBLK *)cicondata;
+    WORD *q;
+    LONG i, num_cicons, mono_words;
+
+    for (i = 0; i < num_blks; i++)
+    {
+        ciconblkptr[i] = p;
+        num_cicons = (LONG)(p->mainlist);   /* number of colour icons for this CICONBLK */
+        mono_words = muls(p->monoblk.ib_wicon/16,p->monoblk.ib_hicon);
+        q = (WORD *)(p+1);                  /* point to start of data area */
+
+        p->monoblk.ib_pdata = q;            /* fixup mono icon */
+        q += mono_words;
+        p->monoblk.ib_pmask = q;
+        q += mono_words;
+        p->monoblk.ib_ptext = (char *)q;
+        q += 12 / 2;                        /* length of icon text */
+        if (num_cicons)
+        {
+            p->mainlist = (CICON *)q;
+            p = fixup_colour_icons(num_cicons, mono_words, (CICON *)q);
+        }
+        else
+        {
+            p->mainlist = NULL;
+            p = (CICONBLK *)q;
+        }
+    }
+}
+
+/*
+ * return pointer to start of CICONBLK pointer table
+ *
+ * returns NULL if none
+ */
+static CICONBLK **get_ciconblkptr(RSHDR *hdr)
+{
+    LONG *extarray;
+    LONG cptr_offset;
+
+    /* check if we could have CICONs */
+    if ((hdr->rsh_vrsn & NEW_FORMAT_RSC) == 0)
+        return NULL;
+
+    /*
+     * locate extension array, which has the following format (all longs):
+     *  extarray[0]     true length of RSC file
+     *  extarray[1]     offset of CICON table (-1L => none present)
+     *  extarray[2]...  other extensions
+     *  extarray[n]     0L indicates end of array
+     */
+    extarray = (LONG *)((char *)hdr + hdr->rsh_rssize);
+
+    /* do we have CICONs? */
+    cptr_offset = extarray[1];
+    if ((cptr_offset == 0L) || (cptr_offset == -1L))
+        return NULL;
+
+    return (CICONBLK **)((char *)hdr + cptr_offset);
+}
+
+/*
+ * initialise the colour icon stuff
+ *
+ * this includes:
+ *  . filling in the CICONBLK pointer table
+ *  . for each CICONBLK:
+ *      . fixing up all of the internal data/mask/text pointers
+ *      . determining the appropriate icon for the current resolution
+ *      . expanding the icon if necessary
+ *      . converting the icon to device-dependent form
+ */
+static void fix_cicons(void)
+{
+    RSHDR *hdr = rs_hdr;
+    CICONBLK **ciconblkptr, **p;
+    CICON *cicondata;
+    LONG num_ciconblks;
+
+    /* find the CICONBLK ptr table & count the CICONBLKs */
+    ciconblkptr = get_ciconblkptr(hdr);
+    if (!ciconblkptr)   /* yes, we have no CICONBLKs */
+        return;
+
+    for (num_ciconblks = 0, p = ciconblkptr; *p != (CICONBLK *)-1L; p++)
+        num_ciconblks++;
+
+    /* the CICON data area starts immediately after the pointer table */
+    cicondata = (CICON *)(p+1);
+
+    /* fixup the pointers in the resource */
+    fixup_all_ciconblks(num_ciconblks, ciconblkptr, cicondata);
+    /* TODO: transform all the icons to device-dependent format */
+}
+#endif
+
+
 static BOOL fix_long(LONG *plong)
 {
     LONG lngval;
@@ -204,14 +341,31 @@ static void fix_objects(void)
     WORD ii;
     WORD obtype;
     OBJECT *obj;
+#if CONF_WITH_COLOUR_ICONS
+    CICONBLK **ciconblkptr = get_ciconblkptr(rs_hdr);
+#endif
 
     for (ii = 0; ii < rs_hdr->rsh_nobs; ii++)
     {
         obj = (OBJECT *)get_addr(R_OBJECT, ii);
         rs_obfix(obj, 0);
         obtype = obj->ob_type & 0x00ff;
-        if ((obtype != G_BOX) && (obtype != G_IBOX) && (obtype != G_BOXCHAR))
+        switch(obtype)
+        {
+#if CONF_WITH_COLOUR_ICONS
+        case G_CICON:
+            if (ciconblkptr)
+                obj->ob_spec = (LONG)ciconblkptr[obj->ob_spec];
+            break;
+#endif
+        case G_BOX:
+        case G_IBOX:
+        case G_BOXCHAR:
+            break;
+        default:
             fix_long(&obj->ob_spec);
+            break;
+        }
     }
 }
 
@@ -263,9 +417,18 @@ static void rs_sglobe(AESGLOBAL *pglobal)
  */
 WORD rs_free(AESGLOBAL *pglobal)
 {
-    rs_global = pglobal;
+    WORD rc = 1;    /* default rc => OK */
 
-    return !dos_free(rs_global->ap_rscmem);
+    rs_sglobe(pglobal);
+
+#if CONF_WITH_COLOUR_ICONS
+    /* TODO: free cicon buffers allocated by cicon transform */
+#endif
+
+    if (dos_free(rs_global->ap_rscmem))
+        rc = 0;
+
+    return rc;
 }
 
 
@@ -312,7 +475,7 @@ WORD rs_saddr(AESGLOBAL *pglobal, UWORD rtype, UWORD rindex, void *rsaddr)
 static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
 {
     WORD ibcnt;
-    UWORD rslsize;
+    LONG rslsize;
     RSHDR hdr_buff;
 
     /* read the header */
@@ -321,6 +484,18 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
 
     /* get size of resource & allocate memory */
     rslsize = hdr_buff.rsh_rssize;
+
+#if CONF_WITH_COLOUR_ICONS
+    /* for 'new format' resource files, get actual resource size */
+    if (hdr_buff.rsh_vrsn & NEW_FORMAT_RSC)
+    {
+        if (dos_lseek(fd, 0, rslsize) < 0L)
+            return FALSE;
+        if (dos_read(fd, sizeof(rslsize), &rslsize) != sizeof(rslsize))
+            return FALSE;
+    }
+#endif
+
     rs_hdr = (RSHDR *)dos_alloc_anyram(rslsize);
     if (!rs_hdr)
         return FALSE;
@@ -341,6 +516,9 @@ static WORD rs_readit(AESGLOBAL *pglobal,UWORD fd)
      * base of file into pointers
      */
     fix_trindex();
+#if CONF_WITH_COLOUR_ICONS
+    fix_cicons();
+#endif
     fix_tedinfo_std();
     ibcnt = rs_hdr->rsh_nib;
     fix_nptrs(ibcnt, R_IBPMASK);
