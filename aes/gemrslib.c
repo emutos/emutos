@@ -240,6 +240,193 @@ static void fixup_all_ciconblks(LONG num_blks, CICONBLK **ciconblkptr, CICON *ci
 }
 
 /*
+ * returns pointer to a CICON that best matches the current resolution
+ *
+ * the order of preference is as follows:
+ *  1. the CICON with the same number of planes as the current resolution
+ *  2. of those CICONS with fewer planes than the current resolution, the
+ *     one with the most number of planes
+ * if neither applies, NULL is returned
+ */
+static CICON *best_match(CICONBLK *start)
+{
+    CICON *p, *found = NULL;
+
+    for (p = start->mainlist; p; p = p->next_res)
+    {
+        if (p->num_planes > gl_nplanes)     /* too many planes */
+            continue;
+        if (p->num_planes == gl_nplanes)    /* exact match */
+            return p;
+        if (!found || (p->num_planes > found->num_planes))
+            found = p;                      /* best so far */
+    }
+
+    return found;
+}
+
+/*
+ * expand cicon data from S to D planes (S is strictly less than D)
+ *
+ * we use the same algorithm as Atari TOS:
+ *  1. copy the source to the first S (0 to S-1) planes of the
+ *     destination data
+ *  2. create the Sth plane of the destination data by ANDing
+ *     together all the source planes
+ *  3. copy the Sth plane of the destination data to the remaining
+ *     destination planes
+ *  4. AND all the destination planes with the mask plane
+ */
+static void expand_cicondata(WORD *src, WORD *dst, WORD *mask, WORD w, WORD h, WORD src_planes, WORD dst_planes)
+{
+    WORD *p, *q;
+    WORD plane_words, src_words;
+    WORD i, j;
+
+    plane_words = w / 16 * h;           /* in WORDS */
+    src_words = plane_words * src_planes;
+
+    /*
+     * 1. the first src_planes of dst are the same as src
+     */
+    memcpy(dst, src, src_words*sizeof(WORD));
+
+    /*
+     * 2. copy the zeroth src plane to the next dst plane,
+     *    then AND in the remaining planes
+     */
+    memcpy(dst+src_words, src, plane_words*sizeof(WORD));
+    p = src + plane_words;      /* p -> start of remainder */
+    for (i = 1; i < src_planes; i++)
+    {
+        q = dst + src_words;    /* q -> target */
+        for (j = 0; j < plane_words; j++, p++, q++)
+            *q = *p & *q;
+    }
+
+    /*
+     * 3. copy the ANDed plane to the rest of the destination planes
+     */
+    p = dst + src_words;        /* p -> source (ANDed) plane */
+    q = p + plane_words;        /* q -> start of remaining planes */
+    for (i = 1; i < (dst_planes-src_planes); i++, q += plane_words)
+    {
+        memcpy(q, p, plane_words*sizeof(WORD));
+    }
+
+    /*
+     * 4. AND the mask plane into all destination planes
+     *
+     * NOTE: this may need to be modified for 16-bit colour
+     */
+    q = dst;
+    for (i = 0; i < dst_planes; i++)
+    {
+        p = mask;
+        for (j = 0; j < plane_words; j++, p++, q++)
+            *q &= *p;
+    }
+}
+
+/*
+ * transform a colour icon from device-independent to device-dependent form
+ *
+ * NOTE: this may need to be modified for 16-bit colour
+ */
+static void transform_cicon(WORD *src, WORD *dest, WORD w, WORD h, WORD planes)
+{
+    gsx_fix(&gl_src, src, w/8, h);
+    gl_src.fd_stand = TRUE;
+    gl_src.fd_nplanes = planes;
+
+    gsx_fix(&gl_dst, dest, w/8, h);
+    gl_dst.fd_nplanes = planes;
+
+    vrn_trnfm(&gl_src, &gl_dst);
+}
+
+/*
+ * for each CICONBLK in the resource, select the CICON with the number of
+ * planes that best matches the current resolution.  then expand the icon
+ * if necessary, and transform it from standard to device-dependent format
+ */
+static void transform_all_cicons(LONG num_cicons, CICONBLK **ciconblkptr)
+{
+    CICONBLK *ciconblk;
+    CICON *cicon;
+    WORD *colbuf, *selbuf, *expandbuf, *src;
+    LONG data_size, n;
+    BOOL expand;
+    WORD i, w, h;
+
+    for (i = 0; i < num_cicons; i++)
+    {
+        ciconblk = ciconblkptr[i];
+        cicon = best_match(ciconblk);   /* find a suitable CICON */
+        ciconblk->mainlist = cicon;
+        if (!cicon)                     /* nothing suitable ... */
+            continue;
+        w = ciconblk->monoblk.ib_wicon;
+        h = ciconblk->monoblk.ib_hicon;
+        data_size = muls(w/8*gl_nplanes,h);
+        expand = (cicon->num_planes != gl_nplanes); /* boolean */
+
+        /* if we need to expand the icon, we need a temp buffer */
+        expandbuf = NULL;
+        if (expand)
+        {
+            expandbuf = dos_alloc_anyram(data_size);
+            if (!expandbuf)
+            {
+                ciconblk->mainlist = NULL;  /* no colour for this icon */
+                continue;
+            }
+        }
+
+        /* we always allocate a data buffer so we avoid transform-in-place */
+        n = cicon->sel_data ? 2*data_size : data_size;
+        colbuf = dos_alloc_anyram(n);
+        if (!colbuf)
+        {
+            if (expandbuf)
+                dos_free(expandbuf);
+            ciconblk->mainlist = NULL;      /* no colour for this icon */
+            continue;
+        }
+
+        /* handle standard icon */
+        src = cicon->col_data;
+        if (expand)
+        {
+            expand_cicondata(src, expandbuf, cicon->col_mask, w, h, cicon->num_planes, gl_nplanes);
+            src = expandbuf;
+        }
+        transform_cicon(src, colbuf, w, h, gl_nplanes);
+        cicon->col_data = colbuf;
+
+        /* handle 'selected' icon (if present) */
+        if (cicon->sel_data)
+        {
+            selbuf = colbuf + data_size/sizeof(WORD);
+            src = cicon->sel_data;
+            if (expand)
+            {
+                expand_cicondata(src, expandbuf, cicon->sel_mask, w, h, cicon->num_planes, gl_nplanes);
+                src = expandbuf;
+            }
+            transform_cicon(src, selbuf, w, h, gl_nplanes);
+            cicon->sel_data = selbuf;
+        }
+
+        cicon->num_planes = gl_nplanes;     /* neatness only */
+        cicon->next_res = NULL;
+
+        if (expandbuf)
+            dos_free(expandbuf);
+    }
+}
+
+/*
  * return pointer to start of CICONBLK pointer table
  *
  * returns NULL if none
@@ -268,6 +455,34 @@ static CICONBLK **get_ciconblkptr(RSHDR *hdr)
         return NULL;
 
     return (CICONBLK **)((char *)hdr + cptr_offset);
+}
+
+/*
+ * free the CICON-related buffers allocated by transform_all_cicons()
+ *
+ * returns -1 iff dos_free() failed
+ */
+static WORD free_cicon_buffers(RSHDR *hdr)
+{
+    CICONBLK **ciconblkptr, **p;
+    CICON *cicon;
+    WORD rc = 0;
+
+    /* find the CICONBLK ptr table & count the CICONBLKs */
+    ciconblkptr = get_ciconblkptr(hdr);
+    if (!ciconblkptr)   /* yes, we have no CICONBLKs */
+        return 0;
+
+    /* free any buffers allocated by transform_all_cicons() */
+    for (p = ciconblkptr; *p != (CICONBLK *)-1L; p++)
+    {
+        cicon = (*p)->mainlist;
+        if (cicon)
+            if (dos_free(cicon->col_data))
+                rc = -1;
+    }
+
+    return rc;
 }
 
 /*
@@ -301,7 +516,9 @@ static void fix_cicons(void)
 
     /* fixup the pointers in the resource */
     fixup_all_ciconblks(num_ciconblks, ciconblkptr, cicondata);
-    /* TODO: transform all the icons to device-dependent format */
+
+    /* transform all the icons to device-dependent format */
+    transform_all_cicons(num_ciconblks, ciconblkptr);
 }
 #endif
 
@@ -422,7 +639,8 @@ WORD rs_free(AESGLOBAL *pglobal)
     rs_sglobe(pglobal);
 
 #if CONF_WITH_COLOUR_ICONS
-    /* TODO: free cicon buffers allocated by cicon transform */
+    if (free_cicon_buffers(rs_hdr) < 0)
+        rc = 0;
 #endif
 
     if (dos_free(rs_global->ap_rscmem))
