@@ -338,8 +338,10 @@ void gsx_graphic(WORD tographic)
 
 
 
-static void bb_set(GRECT *r, WORD *pts1, WORD *pts2, FDB *pfd, FDB *psrc, FDB *pdst)
+static void bb_set(BOOL save, GRECT *r)
 {
+    FDB *psrc, *pdst;
+    WORD pxyarray[8], *pts1, *pts2;
     WORD sx, sy, sw, sh, oldsx;
     LONG            size;
 
@@ -357,14 +359,31 @@ static void bb_set(GRECT *r, WORD *pts1, WORD *pts2, FDB *pfd, FDB *psrc, FDB *p
         sh = (ULONG)gl_mlen * sh / size;
 
         /* issue warning message for backup only, not for subsequent restore */
-        if (pdst == &gl_tmp)
+        if (save)
             KINFO(("Menu/alert buffer too small: need at least %ld bytes\n",size));
     }
 
+    gsx_fix_screen(&gl_src);
+    /* gl_tmp.fd_addr was set by gsx_malloc() */
     gl_tmp.fd_stand = TRUE;
     gl_tmp.fd_wdwidth = sw / 16;
     gl_tmp.fd_w = sw;
     gl_tmp.fd_h = sh;
+
+    if (save)
+    {
+        psrc = &gl_src;
+        pdst = &gl_tmp;
+        pts1 = pxyarray;
+        pts2 = pxyarray + 4;
+    }
+    else
+    {
+        psrc = &gl_tmp;         /* invert FDBs & coordinates */
+        pdst = &gl_src;
+        pts1 = pxyarray + 4;
+        pts2 = pxyarray;
+    }
 
     gsx_moff();
     pts1[0] = sx;
@@ -376,8 +395,7 @@ static void bb_set(GRECT *r, WORD *pts1, WORD *pts2, FDB *pfd, FDB *psrc, FDB *p
     pts2[2] = sw - 1;
     pts2[3] = sh - 1 ;
 
-    gsx_fix_screen(pfd);
-    vro_cpyfm(S_ONLY, ptsin, psrc, pdst);
+    vro_cpyfm(S_ONLY, pxyarray, psrc, pdst);
     gsx_mon();
 }
 
@@ -385,14 +403,14 @@ static void bb_set(GRECT *r, WORD *pts1, WORD *pts2, FDB *pfd, FDB *psrc, FDB *p
 
 void bb_save(GRECT *ps)
 {
-    bb_set(ps, &ptsin[0], &ptsin[4], &gl_src, &gl_src, &gl_tmp);
+    bb_set(TRUE, ps);
 }
 
 
 
 void bb_restore(GRECT *pr)
 {
-    bb_set(pr, &ptsin[4], &ptsin[0], &gl_dst, &gl_tmp, &gl_dst);
+    bb_set(FALSE, pr);
 }
 
 
