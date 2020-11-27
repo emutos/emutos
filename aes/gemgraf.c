@@ -756,7 +756,8 @@ void gr_gicon(WORD state, ICONBLK *ib, CICON *cicon)
     {
         /* NOTE: this may need to be modified for 16-bit colour */
         gr_gblt(pmask, pi, bgcol, fgcol);
-        if (ib->ib_wtext)
+        /* do not draw backround rectangle for icon text if the string is empty */
+        if (ib->ib_ptext[0])
         {
             if (cicon && (state & SELECTED))
                 gr_rect(fgcol, IP_SOLID, pt);
