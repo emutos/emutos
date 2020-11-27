@@ -1229,7 +1229,7 @@
  * as in Atari TOS 4
  */
 #ifndef CONF_WITH_COLOUR_ICONS
-# define CONF_WITH_COLOUR_ICONS 0
+# define CONF_WITH_COLOUR_ICONS 1
 #endif
 
 /*
