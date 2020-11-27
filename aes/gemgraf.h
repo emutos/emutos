@@ -25,7 +25,7 @@ void gr_rect(UWORD icolor, UWORD ipattern, GRECT *pt);
 WORD gr_just(WORD just, WORD font, char *ptext, WORD w, WORD h, GRECT *pt);
 void gr_gtext(WORD just, WORD font, char *ptext, GRECT *pt);
 void gr_crack(UWORD color, WORD *pbc, WORD *ptc, WORD *pip, WORD *pic, WORD *pmd);
-void gr_gicon(WORD state, ICONBLK *ib);
+void gr_gicon(WORD state, ICONBLK *ib, CICON *cicon);
 void gr_box(WORD x, WORD y, WORD w, WORD h, WORD th);
 
 #endif

@@ -202,6 +202,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
     TEDINFO edblk;
     BITBLK bi;
     ICONBLK ib;
+    CICON *cicon;
 
     ch = ob_sst(tree, obj, &spec, &state, &obtype, &flags, &t, &th);
 
@@ -324,15 +325,18 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
                     bi.bi_hl, MD_TRANS, bi.bi_color, WHITE);
             break;
         case G_ICON:
+            cicon = NULL;
 #if CONF_WITH_COLOUR_ICONS
         case G_CICON:   /* a CICONBLK starts with an ICONBLK */
+            if (obtype == G_CICON)
+                cicon = ((CICONBLK *)spec)->mainlist;
 #endif
             ib = *((ICONBLK *)spec);
             ib.ib_xicon += t.g_x;
             ib.ib_yicon += t.g_y;
             ib.ib_xtext += t.g_x;
             ib.ib_ytext += t.g_y;
-            gr_gicon(state, &ib);
+            gr_gicon(state, &ib, cicon);
             state &= ~SELECTED;
             break;
         case G_USERDEF:

@@ -25,6 +25,7 @@
 #include "aesext.h"
 #include "intmath.h"
 #include "funcdef.h"
+#include "gemdos.h"
 
 #include "gemgraf.h"
 #include "gemgsxif.h"
@@ -641,12 +642,73 @@ static void gr_gblt(WORD *pimage, GRECT *pi, WORD col1, WORD col2)
 }
 
 
+#if CONF_WITH_COLOUR_ICONS
 /*
- *  Routine to draw an icon, which is a graphic image with a text
- *  string underneath it
+ *  Blit a previously-transformed colour icon from memory to screen
  */
-void gr_gicon(WORD state, ICONBLK *ib)
+static void gr_colourblit(WORD *pdata, GRECT *pi, WORD num_planes)
 {
+    WORD pxyarray[8];
+
+    gsx_fix(&gl_src, pdata, pi->g_w/8, pi->g_h);
+    gl_src.fd_nplanes = num_planes;
+
+    gsx_fix_screen(&gl_dst);
+    gl_dst.fd_nplanes = num_planes;
+
+    gsx_moff();
+    pxyarray[0] = 0;
+    pxyarray[1] = 0;
+    pxyarray[2] = pi->g_w - 1;
+    pxyarray[3] = pi->g_h - 1;
+    pxyarray[4] = pi->g_x;
+    pxyarray[5] = pi->g_y;
+    pxyarray[6] = pi->g_x + pi->g_w - 1;
+    pxyarray[7] = pi->g_y + pi->g_h - 1;
+    gsx_mon();
+
+    vro_cpyfm(S_OR_D, pxyarray, &gl_src, &gl_dst);
+}
+
+
+/*
+ *  Create a dithered copy of the specified mask and return its address
+ *
+ *  returns NULL if memory can't be allocated
+ */
+static WORD *dither_mask(WORD *pdata, WORD w, WORD h)
+{
+    WORD width = w / 16;    /* in WORDs */
+    WORD i, j, dither;
+    WORD *mask, *p, *q;
+
+    mask = dos_alloc_anyram(width * sizeof(WORD) * h);
+    if (!mask)
+        return NULL;
+
+    for (i = 0, p = pdata, q = mask; i < h; i++)
+    {
+        dither = (i & 1) ? 0xaaaa : 0x5555;
+        for (j = 0; j < width; j++)
+        {
+            *q++ = *p++ & dither;
+        }
+    }
+
+    return mask;
+}
+#endif
+
+
+/*
+ *  Routine to draw a mono or colour icon
+ *
+ *  Iff colour icons are enabled, and 'cicon' is not NULL, this will
+ *  draw a colour icon
+ */
+void gr_gicon(WORD state, ICONBLK *ib, CICON *cicon)
+{
+    WORD    *pdata, *pmask;
     WORD    fgcol, bgcol, tmp;
     WORD    ch;
     GRECT   *pi, *pt;
@@ -660,24 +722,75 @@ void gr_gicon(WORD state, ICONBLK *ib)
     bgcol = (ch >> 8) & 0x000f;
     ch &= 0x00ff;
 
-    /* invert if selected   */
-    if (state & SELECTED)
+#if CONF_WITH_COLOUR_ICONS
+    /* set up the data & mask ptrs */
+    if (cicon)
     {
-        tmp = fgcol;
-        fgcol = bgcol;
-        bgcol = tmp;
+        /* use the 'selected' data/mask if available */
+        if ((state & SELECTED) && cicon->sel_data)
+        {
+            pdata = cicon->sel_data;
+            pmask = cicon->sel_mask;
+        }
+        else
+        {
+            pdata = cicon->col_data;
+            pmask = cicon->col_mask;
+        }
+    }
+    else
+#endif
+    {
+        if (state & SELECTED)       /* invert mono icon colours if selected   */
+        {
+            tmp = fgcol;
+            fgcol = bgcol;
+            bgcol = tmp;
+        }
+        pdata = ib->ib_pdata;
+        pmask = ib->ib_pmask;
     }
 
-    /* do mask unless it's on a white background */
+    /* do mask & text background unless WHITEBAK is set & the icon's background is white */
     if ( !((state & WHITEBAK) && (bgcol == WHITE)) )
     {
-        gr_gblt(ib->ib_pmask, pi, bgcol, fgcol);
+        /* NOTE: this may need to be modified for 16-bit colour */
+        gr_gblt(pmask, pi, bgcol, fgcol);
         if (ib->ib_wtext)
-            gr_rect(bgcol, IP_SOLID, pt);
+        {
+            if (cicon && (state & SELECTED))
+                gr_rect(fgcol, IP_SOLID, pt);
+            else
+                gr_rect(bgcol, IP_SOLID, pt);
+        }
     }
 
     /* draw the image */
-    gr_gblt(ib->ib_pdata, pi, fgcol, bgcol);
+#if CONF_WITH_COLOUR_ICONS
+    if (cicon)
+    {
+        gr_colourblit(pdata, pi, cicon->num_planes);
+        if (state & SELECTED)
+        {
+            tmp = fgcol;
+            fgcol = bgcol;
+            bgcol = tmp;
+            if (!cicon->sel_data)       /* check if we need to darken */
+            {
+                WORD *mask = dither_mask(pmask, pi->g_w, pi->g_h);
+                if (mask)               /* malloc ok */
+                {
+                    gr_gblt(mask, pi, BLACK, WHITE);
+                    dos_free(mask);
+                }
+            }
+        }
+    }
+    else
+#endif
+    {
+        gr_gblt(pdata, pi, fgcol, bgcol);
+    }
 
     /* draw the character */
     gsx_attr(TRUE, MD_TRANS, fgcol);
