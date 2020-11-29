@@ -174,6 +174,8 @@ static void *get_addr(UWORD rstype, UWORD rsindex)
 #if CONF_WITH_COLOUR_ICONS
 /*
  * fixup all of the CICONs for a CICONBLK
+ *
+ * returns a pointer to the next CICONBLK
  */
 static CICONBLK *fixup_colour_icons(LONG num_cicons, LONG mono_words, CICON *start)
 {
@@ -181,6 +183,12 @@ static CICONBLK *fixup_colour_icons(LONG num_cicons, LONG mono_words, CICON *sta
     WORD *q;
     LONG i;
 
+    /*
+     * loop through all the CICONs for one CICONBLK
+     *
+     * p points to the current CICON; q tracks sections of CICON data.
+     * at the end, p will point to the start of the next CICONBLK
+     */
     for (i = 0; i < num_cicons; i++)
     {
         q = (WORD *)(p+1);                  /* point to start of data area */
@@ -195,6 +203,9 @@ static CICONBLK *fixup_colour_icons(LONG num_cicons, LONG mono_words, CICON *sta
             p->sel_mask = q;
             q += mono_words;                /* mask is one plane */
         }
+        if (p->next_res == (CICON *)1L)     /* more CICONs follow */
+            p->next_res = (CICON *)q;
+        else p->next_res = NULL;
         p = (CICON *)q;
     }
 
