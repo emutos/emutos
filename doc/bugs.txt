@@ -1,32 +1,43 @@
 Video problems:
 
 Atari Falcon / TOS v4 compatibility bugs:
-- The text on some Falcon FalcAMP buttons is not visible becuase the text
++ When Delmpaint is started from a 320x200 8-plane window, startup and
+  help text colours differ between EmuTOS and TOS4.  Under EmuTOS they
+  are yellow/red/green on a white background; under TOS4 they are
+  orange/blue/white on a blue background.
++ There are many window management problems in Escape Paint (v0.72):
+  windows are not completely redrawn when uncovered, windows cannot be
+  moved, etc.
++ The text on some Falcon FalcAMP buttons is not visible becuase the text
   boxes are too small.  This is because FalcAMP marks them as 3D objects
   which causes Falcon AES to automatically expand the boxes by 2 pixels
   in each direction.  EmuTOS doesn't yet support 3D objects.
-- Videl Inside causes a desktop crash if a resolution is selected that
++ Videl Inside causes a desktop crash if a resolution is selected that
   requires more than the standard EmuTOS Falcon video memory allocation
   (307200 bytes).  It should be able to detect or avoid this situation
   but does not.
 
 Problems that also occur in Atari TOS:
-- BIOS: Startup time can be slow on a floppy-only system.  You can speed
++ BIOS: Startup time can be slow on a floppy-only system.  You can speed
   things up by ensuring that you have a formatted floppy diskette in
   drive A at boot time.  Boot time will be further reduced if the root
   directory of the diskette contains as few files as possible, and there
   are no "deleted file" entries in it.  This can be achieved by freshly
   formatting the diskette and then copying any desired files to it.
-- VDI: when drawing a wide polyline with squared ends and more than one
++ VDI: when drawing a wide polyline with squared ends and more than one
   segment, if the width of the line is greater than twice the length of
   an ending segment, the end will have a bump rather than being square.
   This is because wideline segments are joined by using filled circles
   whose radius is half the width of the line: the bump is a protruding
   part of the circle that joins the end segment to the previous one.
-- RAM: Cold boot may not be properly detected on some configurations. This
++ RAM: Cold boot may not be properly detected on some configurations. This
   may happen if the computer has been switched off and on too quickly.
   In that case, the welcome screen is not displayed.
 
 Links to programs listed above:
-- FalcAMP:
++ Delmpaint:
+  https://www.pouet.net/prod.php?which=29344
++ Escape Paint:
+  https://www.pouet.net/prod.php?which=25328
++ FalcAMP:
   http://deunstg.free.fr/sct1/falcamp/
