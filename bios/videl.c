@@ -41,6 +41,14 @@
  */
 #define MAX_BPP     8
 
+/*
+ * used for byte-juggling between various palette layouts
+ */
+typedef union {
+    ULONG l;
+    UBYTE b[4];
+} RGB;
+
 static const ULONG videl_dflt_palette[] = {
     FRGB_WHITE, FRGB_RED, FRGB_GREEN, FRGB_YELLOW,
     FRGB_BLUE, FRGB_MAGENTA, FRGB_CYAN, FRGB_LTGRAY,
@@ -633,10 +641,7 @@ LONG vgetsize(WORD mode)
 #define falc2ste(a) ((((a)>>1)&0x08)|(((a)>>5)&0x07))
 static void convert2ste(UWORD *ste,const ULONG *falcon)
 {
-    union {
-        LONG l;
-        UBYTE b[4];
-    } u;
+    RGB u;  /* staging area for Falcon shadow palette: RG0B */
     int i;
 
     for (i = 0; i < 16; i++) {
@@ -681,10 +686,7 @@ WORD vsetrgb(WORD index,WORD count,const ULONG *rgb)
 {
     ULONG *shadow;
     const ULONG *source;
-    union {
-        LONG l;
-        UBYTE b[4];
-    } u;
+    RGB u;      /* staging area for software palette: 0RGB */
     WORD limit;
 
     if (!has_videl)
@@ -734,10 +736,7 @@ WORD vsetrgb(WORD index,WORD count,const ULONG *rgb)
 WORD vgetrgb(WORD index,WORD count,ULONG *rgb)
 {
     ULONG *shadow;
-    union {
-        LONG l;
-        UBYTE b[4];
-    } u;
+    RGB u;      /* staging area for Falcon shadow palette: RG0B */
     WORD limit, mode;
     UWORD value;
 
