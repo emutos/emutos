@@ -1,3 +1,11 @@
+CHANGES BETWEEN RELEASE 1.0 AND RELEASE 1.0.1
+
+There was only one change to fix a bug in EmuTOS 1.0: On an Atari Falcon
+with 4 MB RAM, when using the 512k ROM version of EmuTOS, a Nova graphics
+card was erroneously detected. This caused a panic during boot, preventing
+the use of the 512k ROM version of EmuTOS 1.0 on such a machine.
+
+
 CHANGES BETWEEN RELEASE 0.9.12 AND RELEASE 1.0
 
 Major changes:
