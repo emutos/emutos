@@ -17,12 +17,20 @@ then
   exit 1
 fi
 
+# Skip deployment of releases tagged with VERSION_xxx to snapshots
+GIT_TAG=$(git tag --points-at HEAD)
+if echo $GIT_TAG | grep "^VERSION_" > /dev/null
+then
+  echo "Skipping deployment of $GIT_TAG."
+  exit 0
+fi
+
 LOCAL_DIRNAME=release-archives
 REMOTE_DIRNAME=$VERSION
 
 # SourceForge variables
 SF_PROJECT=emutos
-SF_USER=vriviere
+SF_USER=czietz
 SF_DIR=snapshots
 
 # SSH variables for SourceForge
@@ -37,6 +45,6 @@ cat << EOF | tee /dev/stderr | lftp
 set sftp:connect-program "ssh -a -x -o StrictHostKeyChecking=no"
 open sftp://$SSH_USER:@$SSH_HOST$SSH_PATH
 mirror -R $LOCAL_DIRNAME $REMOTE_DIRNAME
-ls | .travis/generate-purge.sh >purge.lftp
+ls | .scripts/generate-purge.sh >purge.lftp
 source purge.lftp
 EOF
