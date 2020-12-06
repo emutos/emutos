@@ -147,13 +147,13 @@ exit:
  *
  * The detection algorithm goes as follows:
  *
- * - FNOP is executed. If a Line-F exception follows, then there's no FPU
+ * - FRESTORE is executed. If a Line-F exception follows, then there's no FPU
  *   in coprocessor mode. If the CPU is >= 68020, no FPU is assumed.
- * - if FNOP doesn't take an exception, an FPU attached in coprocessor mode
- *   is present. Then if 68040 or 68060 CPU was detected previously, an
- *   appropriate FPU type is assumed. Otherwise the stackframe is checked
- *   for magic value indicating 68882 and if it is different, a 68881 is
- *   assumed.
+ * - If FRESTORE doesn't take an exception, an FPU attached in coprocessor
+ *   mode is present, that has been reset by FRESTORE. Then if 68040 or 68060
+ *   CPU was detected previously, an appropriate FPU type is assumed.
+ *   Otherwise the stackframe is checked for magic value indicating 68882 and
+ *   if it is different, a 68881 is assumed.
  *
  * I am very interested if this will really work on everything =)
  * On a 68030/68882 tandem it does.
@@ -189,8 +189,7 @@ _detect_fpu:
         bclr    #0x01,d2
         MOVEC_D2_PCR            // clear DFP (the disable-FPU bit)
 
-no60:   FNOP
-        clr.l   -(sp)           // push NULL frame
+no60:   clr.l   -(sp)           // push NULL frame
         clr.l   -(sp)           // extra longs for 68060
         clr.l   -(sp)
         FRESTORE_SP_PLUS        // frestore (sp)+   reset FPU into NULL state
