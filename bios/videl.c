@@ -290,6 +290,8 @@ static UWORD get_videl_bpp(void)
 {
     UWORD f_shift = *(volatile UWORD *)SPSHIFT;
     UBYTE st_shift = *(volatile UBYTE *)ST_SHIFTER;
+    UWORD bits_per_pixel;
+
     /*
      * to get bpp, we must examine f_shift and st_shift.
      *
@@ -300,7 +302,6 @@ static UWORD get_videl_bpp(void)
      * If all these bits are 0 we get the display depth from
      * st_shift (as for ST and STe)
      */
-    int bits_per_pixel = 1;
     if (f_shift & SPS_2COLOR)           /* 1 bitplane */
         bits_per_pixel = 1;
     else if (f_shift & SPS_HICOLOR)     /* 16-bit colour */
