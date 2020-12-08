@@ -16,7 +16,13 @@
 
 #if CONF_WITH_VIDEL
 
-#define SPSHIFT             0xffff8266L
+/* Falcon video shift register */
+#define SPSHIFT         0xffff8266L
+
+/* some bit usage in SPSHIFT */
+#define SPS_2COLOR      0x0400          /* 1 bitplane (mono) */
+#define SPS_HICOLOR     0x0100          /* 16-bit colour */
+#define SPS_256COLOR    0x0010          /* 8 bitplanes */
 
 #define FRGB_BLACK     0x00000000       /* Falcon palette */
 #define FRGB_BLUE      0x000000ff

@@ -290,25 +290,28 @@ static UWORD get_videl_bpp(void)
 {
     UWORD f_shift = *(volatile UWORD *)SPSHIFT;
     UBYTE st_shift = *(volatile UBYTE *)ST_SHIFTER;
-    /* to get bpp, we must examine f_shift and st_shift.
-     * f_shift is valid if any of bits no. 10, 8 or 4
-     * is set. Priority in f_shift is: 10 ">" 8 ">" 4, i.e.
-     * if bit 10 set then bit 8 and bit 4 don't care...
-     * If all these bits are 0 get display depth from st_shift
-     * (as for ST and STe)
+    /*
+     * to get bpp, we must examine f_shift and st_shift.
+     *
+     * f_shift is valid if any of bits 10, 8 or 4 is set.
+     * Priority in f_shift is: 10 ">" 8 ">" 4, i.e. if SPS_2COLOR
+     * is set then SPS_HICOLOR/SPS_256COLOR are don't care ...
+     *
+     * If all these bits are 0 we get the display depth from
+     * st_shift (as for ST and STe)
      */
     int bits_per_pixel = 1;
-    if (f_shift & 0x400)         /* 2 colors */
+    if (f_shift & SPS_2COLOR)           /* 1 bitplane */
         bits_per_pixel = 1;
-    else if (f_shift & 0x100)    /* hicolor */
+    else if (f_shift & SPS_HICOLOR)     /* 16-bit colour */
         bits_per_pixel = 16;
-    else if (f_shift & 0x010)    /* 8 bitplanes */
+    else if (f_shift & SPS_256COLOR)    /* 8 bitplanes */
         bits_per_pixel = 8;
-    else if (st_shift == 0)
+    else if (st_shift == ST_LOW)
         bits_per_pixel = 4;
-    else if (st_shift == 0x1)
+    else if (st_shift == ST_MEDIUM)
         bits_per_pixel = 2;
-    else /* if (st_shift == 0x2) */
+    else /* if (st_shift == ST_HIGH) */
         bits_per_pixel = 1;
 
     /*
