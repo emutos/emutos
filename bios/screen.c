@@ -1049,6 +1049,18 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
         return;
     }
 
+#if CONF_WITH_VIDEL
+    /*
+     * fixup videl mode if applicable (this is where we could test
+     * for NULL values in logLoc & physLoc, allocate new memory, &
+     * update logLoc/physLoc)
+     */
+    if (has_videl) {
+        if ((rez == FALCON_REZ) && (videlmode != -1))
+            videlmode = vfixmode(videlmode);
+    }
+#endif
+
     if ((LONG)logLoc > 0) {
         v_bas_ad = logLoc;
         KDEBUG(("v_bas_ad = %p\n", v_bas_ad));
