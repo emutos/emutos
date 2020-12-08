@@ -536,7 +536,7 @@ static int set_videl_vga(WORD mode)
 WORD current_video_mode;
 
 /*
- * Set Falcon video mode
+ * Set Falcon video mode - also sets 'sshiftmod' appropriately
  */
 WORD vsetmode(WORD mode)
 {
@@ -555,6 +555,22 @@ WORD vsetmode(WORD mode)
 
     ret = current_video_mode;
     current_video_mode = mode;
+
+    /*
+     * set sshiftmod
+     *
+     * NOTE: ST high can be displayed on both an Atari monochrome monitor
+     * (e.g. the SM124/SM125) and a VGA display, so we need to check
+     * both the videl & STe-compatible hardware registers.
+     */
+    if (mode & VIDEL_COMPAT) {
+        if (*(volatile UWORD *)SPSHIFT & SPS_2COLOR)
+            sshiftmod = ST_HIGH;
+        else
+            sshiftmod = *(volatile UBYTE *)ST_SHIFTER;
+    } else {
+        sshiftmod = FALCON_REZ;
+    }
 
     return ret;
 }
@@ -872,8 +888,7 @@ void videl_setrez(WORD rez, WORD videlmode)
         videlmode = vfixmode(videlmode);
     }
 
-    sshiftmod = rez;
-    vsetmode(videlmode);
+    vsetmode(videlmode);    /* sets 'sshiftmod' */
 }
 
 /*

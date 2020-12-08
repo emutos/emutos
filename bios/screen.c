@@ -534,14 +534,14 @@ void screen_init_mode(void)
         /* fix the video mode according to the actual monitor */
         boot_resolution = vfixmode(boot_resolution);
         KDEBUG(("Fixed boot video mode is 0x%04x\n", boot_resolution));
-        vsetmode(boot_resolution);
-        rez = FALCON_REZ;   /* fake value indicates Falcon/Videl */
+        vsetmode(boot_resolution);  /* sets 'sshiftmod' */
+        rez = sshiftmod;
     }
     else
 #endif /* CONF_WITH_VIDEL */
 #if CONF_WITH_TT_SHIFTER
     if (has_tt_shifter) {
-        rez = monitor_type?TT_MEDIUM:TT_HIGH;
+        sshiftmod = rez = monitor_type?TT_MEDIUM:TT_HIGH;
         *(volatile UBYTE *) TT_SHIFTER = rez;
     }
     else
@@ -557,7 +557,7 @@ void screen_init_mode(void)
         vsync();
 #endif
 
-        rez = monitor_type?ST_LOW:ST_HIGH;
+        sshiftmod = rez = monitor_type?ST_LOW:ST_HIGH;
         *(volatile UBYTE *) ST_SHIFTER = rez;
 
 #if CONF_WITH_STE_SHIFTER
@@ -570,7 +570,7 @@ void screen_init_mode(void)
     }
 
 #if CONF_WITH_VIDEL
-    if (rez == FALCON_REZ) {    /* detected a Falcon */
+    if (has_videl) {        /* detected a Falcon */
         sync_mode = (boot_resolution&VIDEL_PAL)?0x02:0x00;
     }
     else
@@ -597,7 +597,6 @@ void screen_init_mode(void)
 #else
     initialise_palette_registers(rez,0);
 #endif
-    sshiftmod = rez;
 
 #endif /* CONF_WITH_ATARI_VIDEO */
     MAYBE_UNUSED(get_default_palmode);
@@ -932,7 +931,7 @@ static void atari_setrez(WORD rez, WORD videlmode)
 #if CONF_WITH_VIDEL
     else if (has_videl) {
         if ((rez >= 0) && (rez <= 3))
-            videl_setrez(rez, videlmode);
+            videl_setrez(rez, videlmode);   /* sets 'sshiftmod' */
     }
 #endif
 #if CONF_WITH_TT_SHIFTER
