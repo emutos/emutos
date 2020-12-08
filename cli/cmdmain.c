@@ -209,10 +209,7 @@ PRIVATE void change_res(WORD res)
         return;
 
     Setscreen(-1L,-1L,res,0);
-#ifndef STANDALONE_CONSOLE
-    /* use EmuTOS extension to initialize palette for given resolution */
-    Setscreen(-1L,-1L,0xc000|res,0);
-#else
+#ifdef STANDALONE_CONSOLE
     /* mode changed *without* palette change -> set readable text color index */
     {
         static int old_color_3 = -1;
