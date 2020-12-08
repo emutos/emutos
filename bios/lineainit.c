@@ -71,8 +71,6 @@ void linea_init(void)
     DEV_TAB[0] = V_REZ_HZ - 1;
     DEV_TAB[1] = V_REZ_VT - 1;
 
-    KDEBUG(("planes: %d\n", v_planes));
-    KDEBUG(("lin_wr: %d\n", v_lin_wr));
-    KDEBUG(("hz_rez: %d\n", V_REZ_HZ));
-    KDEBUG(("vt_rez: %d\n", V_REZ_VT));
+    KDEBUG(("linea_init(): %dx%d %d-plane (v_lin_wr=%d)\n",
+            V_REZ_HZ, V_REZ_VT, v_planes, v_lin_wr));
 }
