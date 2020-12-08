@@ -1023,8 +1023,8 @@ WORD getrez(void)
  * setscreen(): implement the Setscreen() xbios call
  *
  * implementation details:
- *  . sets the logical screen address, iff logLoc >= 0
- *  . sets the physical screen address, iff physLoc >= 0
+ *  . sets the logical screen address, iff logLoc > 0
+ *  . sets the physical screen address, iff physLoc > 0
  *  . sets the screen resolution iff 0 <= rez <= 7
  *      if a VIDEL is present and rez==3, then the video mode is
  *      set by a call to vsetmode with 'videlmode' as the argument
@@ -1049,11 +1049,11 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
         return;
     }
 
-    if ((LONG)logLoc >= 0) {
+    if ((LONG)logLoc > 0) {
         v_bas_ad = logLoc;
         KDEBUG(("v_bas_ad = %p\n", v_bas_ad));
     }
-    if ((LONG)physLoc >= 0) {
+    if ((LONG)physLoc > 0) {
         setphys(physLoc);
     }
 
