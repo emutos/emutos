@@ -931,13 +931,8 @@ static void atari_setrez(WORD rez, WORD videlmode)
     }
 #if CONF_WITH_VIDEL
     else if (has_videl) {
-        if (rez == FALCON_REZ) {
-            vsetmode(videlmode);
-            sshiftmod = rez;
-        } else if (rez < 3) {   /* ST compatible resolution */
-            *(volatile UWORD *)SPSHIFT = 0;
-            *(volatile UBYTE *)ST_SHIFTER = sshiftmod = rez;
-        }
+        if ((rez >= 0) && (rez <= 3))
+            videl_setrez(rez, videlmode);
     }
 #endif
 #if CONF_WITH_TT_SHIFTER

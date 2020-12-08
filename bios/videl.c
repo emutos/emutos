@@ -852,6 +852,30 @@ void videl_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
     *vt_rez = get_videl_height();
 }
 
+void videl_setrez(WORD rez, WORD videlmode)
+{
+    if (rez == FALCON_REZ) {
+        if ((videlmode & VIDEL_COMPAT) && ((videlmode & VIDEL_BPPMASK) > VIDEL_4BPP))
+            return;     /* error */
+    } else {
+        switch(rez) {
+        case ST_LOW:
+            videlmode = FALCON_ST_LOW;
+            break;
+        case ST_MEDIUM:
+            videlmode = FALCON_ST_MEDIUM;
+            break;
+        case ST_HIGH:
+            videlmode = FALCON_ST_HIGH;
+            break;
+        }
+        videlmode = vfixmode(videlmode);
+    }
+
+    sshiftmod = rez;
+    vsetmode(videlmode);
+}
+
 /*
  * Initialise Falcon palette
  */

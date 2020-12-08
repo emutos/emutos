@@ -46,6 +46,8 @@
 
 /* selected Falcon videomodes */
 #define FALCON_ST_HIGH      (VIDEL_COMPAT|VIDEL_80COL|VIDEL_1BPP)
+#define FALCON_ST_MEDIUM    (VIDEL_COMPAT|VIDEL_80COL|VIDEL_2BPP)
+#define FALCON_ST_LOW       (VIDEL_COMPAT|VIDEL_4BPP)
 
 #define FALCON_DEFAULT_BOOT (VIDEL_VERTICAL|VIDEL_80COL|VIDEL_4BPP) /* 640x480x16 colours, TV, NTSC */
 
@@ -81,6 +83,7 @@ WORD vgetrgb(WORD index,WORD count,ULONG *rgb);
 WORD vfixmode(WORD mode);
 WORD videl_check_moderez(WORD moderez);
 void videl_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
+void videl_setrez(WORD rez, WORD videlmode);
 
 extern WORD current_video_mode;
 
