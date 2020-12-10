@@ -130,8 +130,8 @@ T tested and working on an emulator or real hardware
  BIOS devices
  ----------------------------------------------------------------------------
 
- t 0 PRN: parallel port
- t 1 AUX: default serial port
+ T 0 PRN: parallel port
+ T 1 AUX: default serial port
  T 2 CON: console (screen)
  T 3 MIDI
  T 4 IKBD
@@ -147,7 +147,7 @@ T tested and working on an emulator or real hardware
 
  - midierr
  - ikbderr
- t midi input
+ T midi input
  T ikbd key events
  T IKBD clock
  T mouse
@@ -175,7 +175,7 @@ T tested and working on an emulator or real hardware
  ----------------------------------------------------------------------------
 
 All XBIOS versions:
- X 0x00 Initmous
+ T 0x00 Initmous
  - 0x01 Ssbrk           (useless - will not be implemented)
  T 0x02 Physbase
  T 0x03 Logbase
@@ -188,8 +188,8 @@ All XBIOS versions:
  T 0x0a Flopfmt
  - 0x0b Dbmsg           (useless - will not be implemented)
  T 0x0c Midiws
- X 0x0d Mfpint
- X 0x0e Iorec
+ T 0x0d Mfpint
+ T 0x0e Iorec
  T 0x0f Rsconf
  T 0x10 Keytbl
  T 0x11 Random
@@ -209,7 +209,7 @@ All XBIOS versions:
  T 0x1f Xbtimer
  T 0x20 Dosound
  T 0x21 Setprt
- X 0x22 Kbdvbase
+ T 0x22 Kbdvbase
  T 0x23 Kbrate
  - 0x24 Prtblk          (useless - will not be implemented)
  T 0x25 Vsync
@@ -221,32 +221,33 @@ TOS v1.02:
  T 0x40 Blitmode
 
 TOS v2.0:
- t 0x2a DMAread
- t 0x2b DMAwrite
- t 0x2c Bconmap
+ T 0x2a DMAread
+ T 0x2b DMAwrite
+ T 0x2c Bconmap
 
 TOS v3.00:
  T 0x2e NVMaccess
 
- t 0x50 EsetShift       (for TT shifter only)
- t 0x51 EgetShift       (for TT shifter only)
- t 0x52 EsetBank        (for TT shifter only)
- t 0x53 EsetColor       (for TT shifter only)
- t 0x54 EsetPalette     (for TT shifter only)
- t 0x55 EgetPalette     (for TT shifter only)
- t 0x56 EsetGray        (for TT shifter only)
- t 0x57 EsetSmear       (for TT shifter only)
+ T 0x50 EsetShift       (for TT shifter only)
+ T 0x51 EgetShift       (for TT shifter only)
+ T 0x52 EsetBank        (for TT shifter only)
+ T 0x53 EsetColor       (for TT shifter only)
+ T 0x54 EsetPalette     (for TT shifter only)
+ T 0x55 EgetPalette     (for TT shifter only)
+ T 0x56 EsetGray        (for TT shifter only)
+ T 0x57 EsetSmear       (for TT shifter only)
 
 TOS v4.00:
- t 0x58 Vsetmode        (for Falcon Videl only)
- t 0x59 Vmontype        (for Falcon Videl only)
- t 0x5a VsetSync        (for Falcon Videl only)
+ T 0x58 Vsetmode        (for Falcon Videl only)
+ T 0x59 Vmontype        (for Falcon Videl only)
+ T 0x5a VsetSync        (for Falcon Videl only)
  t 0x5b VgetSize        (for Falcon Videl only)
+ - 0x5c VsetVars        (for Falcon Videl only) - undocumented
+ T 0x5d VsetRGB         (for Falcon Videl only)
+ T 0x5e VgetRGB         (for Falcon Videl only)
+ - 0x5f VfixMode        (for Falcon Videl only) - undocumented
 
- t 0x5d VsetRGB         (for Falcon Videl only)
- t 0x5e VgetRGB         (for Falcon Videl only)
-
- - 0x96 VsetMask        (for Falcon Videl only)
+ - 0x96 VsetMask        (for Falcon Videl only) - relevant when 16-bit colour is supported
 
 0x08 bit set in _SND:
  T 0x60 Dsp_DoBlock
@@ -299,7 +300,7 @@ TOS v4.00:
  t 0x8d Buffptr
 
 TOS v4 extended XBIOS functionality:
- - 16-bit Videl resolution setting
+ t 16-bit Videl resolution setting
 
 
  GEMDOS Functions
@@ -375,27 +376,27 @@ GEMDOS v0.19 (TOS v2/v3):
  (and Pexec mode 6)
 
 GEMDOS v0.30 (TOS v4):
- > 0x15 Srealloc (undocumented by Atari)
+ > 0x15 Srealloc        (undocumented by Atari)
 
 
  Line-A functions
  ----------------------------------------------------------------------------
- T $0 - Initialization
- t $1 - Put pixel
- t $2 - Get pixel
- t $3 - Arbitrary line
- t $4 - Horizontal line
- t $5 - Filled rectangle
- t $6 - Filled polygon (see bugs.txt)
- t $7 - Bit block transfer (may miss options not needed by VDI)
- t $8 - Text block transfer
- T $9 - Show mouse
- T $A - Hide mouse
- t $B - Transform mouse
- t $C - Undraw sprite
- t $D - Draw sprite
- t $E - Copy raster form
- t $F - Seedfill
+ T 0x00 Initialization
+ T 0x01 Put pixel
+ T 0x02 Get pixel
+ T 0x03 Arbitrary line
+ T 0x04 Horizontal line
+ T 0x05 Filled rectangle
+ T 0x06 Filled polygon
+ T 0x07 Bit block transfer (NOTE: this may be missing options not needed by VDI)
+ T 0x08 Text block transfer
+ T 0x09 Show mouse
+ T 0x0a Hide mouse
+ T 0x0b Transform mouse
+ T 0x0c Undraw sprite
+ T 0x0d Draw sprite
+ T 0x0e Copy raster form
+ T 0x0f Seedfill
 
 
  VDI functions
@@ -616,7 +617,7 @@ AES v3.40 (TOS >= v4):
  -      objc_sysvar            (3D look)
 
 TOS v4 extended AES functionality:
- -      RSC file color icon support
+ T      RSC file color icon support
 
 
  Misc desktop functions
