@@ -402,219 +402,218 @@ GEMDOS v0.30 (TOS v4):
  VDI functions
  ----------------------------------------------------------------------------
 
- All TOS 1.0 calls are implemented.
+ All TOS 1.0 calls are implemented
 
- T      v_opnwk
- X      v_clswk
- T      v_opnvwk
- T      v_clsvwk
- T      v_clrwk
- -      v_updwk
- >      vst_load_fonts      (needs GDOS or equivalent)
- >      vst_unload_fonts    (needs GDOS or equivalent)
- t      vs_clip
- T      v_pline
- T      v_pmarker
- T      v_gtext
- T      v_fillarea
- -      v_cellarray         (not supported by any current VDI driver)
- T      v_contourfill
- T      vr_recfl
- T      v_bar
- T      v_arc
- T      v_pieslice
- T      v_circle
- T      v_ellipse
- T      v_ellarc
- T      v_ellpie
- X      v_rbox
- T      v_rfbox
- T      v_justified
- T      vswr_mode
- >      vs_color
- T      vsl_type
- X      vsl_udsty
- T      vsl_width
- >      vsl_color
- T      vsl_ends
- T      vsm_type
- T      vsm_height
- >      vsm_color
- T      vst_height
- T      vst_point
- T      vst_rotation
- X      vst_font
- >      vst_color
- T      vst_effects
- T      vst_alignment
- T      vsf_interior
- T      vsf_style
- t      vsf_color
- T      vsf_perimeter
- X      vsf_udpat
- t      vro_cpyfm
- >      vrt_cpyfm
- T      vr_trnfm
- >      v_get_pixel
- X      vsin_mode
- X      vrq_locator
- X      vsm_locator
- -      vrq_valuator
- -      vsm_valuator
- X      vrq_choice
- X      vsm_choice
- X      vrq_string
- X      vsm_string
- X      vsc_form
- X      vex_timv
- T      v_show_c
- T      v_hide_c
- X      vq_mouse
- T      vex_butv
- T      vex_motv
- T      vex_curv
- X      vq_key_s
- t      vq_extnd
- >      vq_color
- >      vql_attributes
- >      vqm_attributes
- >      vqf_attributes
- >      vqt_attributes
- >      vqt_extent
- X      vqt_width
- X      vqt_name
- -      vq_cellarray        (not supported by any current VDI driver)
- X      vqin_mode
- X      vqt_fontinfo
- T      vq_chcells
- T      v_exit_cur
- T      v_enter_cur
- T      v_curup
- T      v_curdown
- T      v_curright
- T      v_curleft
- T      v_curhome
- T      v_eeos
- T      v_eeol
- T      vs_curaddress
- T      v_curtext
- T      v_rvon
- T      v_rvoff
- T      vq_curaddress
- T      vq_tabstatus
- -      v_hardcopy
- T      v_dspcur            (Atari docs are incorrect for this call)
- T      v_rmcur             (Atari docs are incorrect for this call)
- -      v_form_adv
- -      v_output_window
- -      v_clear_disp_list
- -      v_bit_image
- -      vs_palette
- -      vqp_films
- -      vqp_state
- -      vsp_state
- -      vsp_save
- -      vsp_message
- -      vqp_error
- -      v_meta_extents
- -      v_write_meta
- -      vm_filename
+ T   1      v_opnwk
+ T   2      v_clswk
+ T   3      v_clrwk
+ -   4      v_updwk
+ T   5,1    vq_chcells
+ T   5,2    v_exit_cur
+ T   5,3    v_enter_cur
+ T   5,4    v_curup
+ T   5,5    v_curdown
+ T   5,6    v_curright
+ T   5,7    v_curleft
+ T   5,8    v_curhome
+ T   5,9    v_eeos
+ T   5,10   v_eeol
+ T   5,11   vs_curaddress
+ T   5,12   v_curtext
+ T   5,13   v_rvon
+ T   5,14   v_rvoff
+ T   5,15   vq_curaddress
+ T   5,16   vq_tabstatus
+ -   5,17   v_hardcopy
+ T   5,18   v_dspcur            (Atari docs are incorrect for this call)
+ T   5,19   v_rmcur             (Atari docs are incorrect for this call)
+ -   5,xx   other subcodes are not implemented
+ T   6      v_pline
+ T   7      v_pmarker
+ T   8      v_gtext
+ T   9      v_fillarea
+ -  10      v_cellarray         (not supported by any current VDI driver)
+ T  11,1    v_bar
+ T  11,2    v_arc
+ T  11,3    v_pieslice
+ T  11,4    v_circle
+ T  11,5    v_ellipse
+ T  11,6    v_ellarc
+ T  11,7    v_ellpie
+ X  11,8    v_rbox
+ T  11,9    v_rfbox
+ T  11,10   v_justified
+ T  12      vst_height
+ T  13      vst_rotation
+ >  14      vs_color
+ T  15      vsl_type
+ T  16      vsl_width
+ >  17      vsl_color
+ T  18      vsm_type
+ T  19      vsm_height
+ >  20      vsm_color
+ X  21      vst_font
+ >  22      vst_color
+ T  23      vsf_interior
+ T  24      vsf_style
+ t  25      vsf_color
+ >  26      vq_color
+ -  27      vq_cellarray        (not supported by any current VDI driver)
+ X  28      vrq_locator
+ X  28      vsm_locator
+ -  29      vrq_valuator
+ -  29      vsm_valuator
+ X  30      vrq_choice
+ X  30      vsm_choice
+ X  31      vrq_string
+ X  31      vsm_string
+ T  32      vswr_mode
+ X  33      vsin_mode
 
-TOS v4 extended VDI functionality:
- -      16-bit support for graphics functions (for now, use fVDI)
+ >  35      vql_attributes
+ >  36      vqm_attributes
+ >  37      vqf_attributes
+ >  38      vqt_attributes
+ T  39      vst_alignment
+
+ T 100      v_opnvwk
+ T 101      v_clsvwk
+ t 102      vq_extnd
+ T 103      v_contourfill
+ T 104      vsf_perimeter
+ > 105      v_get_pixel
+ T 106      vst_effects
+ T 107      vst_point
+ T 108      vsl_ends
+ t 109      vro_cpyfm
+ T 110      vr_trnfm
+ X 111      vsc_form
+ X 112      vsf_udpat
+ X 113      vsl_udsty
+ T 114      vr_recfl
+ X 115      vqin_mode
+ > 116      vqt_extent
+ X 117      vqt_width
+ X 118      vex_timv
+ > 119      vst_load_fonts      (stub, needs GDOS or equivalent)
+ > 120      vst_unload_fonts    (stub, needs GDOS or equivalent)
+ > 121      vrt_cpyfm
+ T 122      v_show_c
+ T 123      v_hide_c
+ X 124      vq_mouse
+ T 125      vex_butv
+ T 126      vex_motv
+ T 127      vex_curv
+ X 128      vq_key_s
+ t 129      vs_clip
+ X 130      vqt_name
+ X 131      vqt_fontinfo
+
+ TOS v4 extended VDI functionality:
+ -          16-bit support for graphics functions (for now, use fVDI)
 
 
  AES functions
  ----------------------------------------------------------------------------
 
 All AES versions:
- t      appl_init
- X      appl_read
- X      appl_write
- t      appl_find
- t      appl_tplay
- X      appl_trecord
- X      appl_yield              (PC-GEM call)
- t      appl_exit
- X      evnt_keybd
- t      evnt_button
- X      evnt_mouse
- t      evnt_mesag
- X      evnt_timer
- t      evnt_multi
- X      evnt_dclick
- t      menu_bar
- t      menu_icheck
- X      menu_ienable
- X      menu_tnormal
- X      menu_text
- t      menu_register
- X      menu_unregister         (PC-GEM call)
- X      menu_click              (PC-GEM call)
- X      objc_add
- X      objc_delete
- t      objc_draw
- X      objc_find
- t      objc_offset
- X      objc_order
- X      objc_edit
- t      objc_change
- t      form_do
- t      form_dial
- t      form_alert
- X      form_error
- t      form_center
- X      form_keybd
- X      form_button
- t      graf_rubberbox
- X      graf_dragbox
- X      graf_mbox
- T      graf_growbox
- T      graf_shrinkbox
- X      graf_watchbox
- X      graf_slidebox
- t      graf_handle
- t      graf_mouse
- t      graf_mkstate
- X      scrp_read
- X      scrp_write
- X      scrp_clear              (PC-GEM call)
- X      fsel_input
- t      wind_create
- t      wind_open
- t      wind_close
- t      wind_delete
- t      wind_get
- X      wind_set
- X      wind_find
- t      wind_update
- t      wind_calc
- t      rsrc_load
- t      rsrc_free
- t      rsrc_gaddr
- X      rsrc_saddr
- t      rsrc_obfix
- X      shel_read
- X      shel_write
- X      shel_get
- X      shel_put
- T      shel_find
- X      shel_envrn
- X      shel_rdef              (PC-GEM call)
- X      shel_wdef              (PC-GEM call)
+ t  10  appl_init
+ X  11  appl_read
+ X  12  appl_write
+ t  13  appl_find
+ t  14  appl_tplay
+ X  15  appl_trecord
+ X  17  appl_yield          (PC-GEM call)
+ t  19  appl_exit
+
+ X  20  evnt_keybd
+ t  21  evnt_button
+ X  22  evnt_mouse
+ t  23  evnt_mesag
+ X  24  evnt_timer
+ t  25  evnt_multi
+ X  26  evnt_dclick
+
+ t  30  menu_bar
+ t  31  menu_icheck
+ X  32  menu_ienable
+ X  33  menu_tnormal
+ X  34  menu_text
+ t  35  menu_register
+ X  36  menu_unregister     (PC-GEM call)
+ X  37  menu_click          (PC-GEM call)
+
+ X  40  objc_add
+ X  41  objc_delete
+ t  42  objc_draw
+ X  43  objc_find
+ t  44  objc_offset
+ X  45  objc_order
+ X  46  objc_edit
+ t  47  objc_change
+
+ t  50  form_do
+ t  51  form_dial
+ t  52  form_alert
+ X  53  form_error
+ t  54  form_center
+ X  55  form_keybd
+ X  56  form_button
+
+ t  70  graf_rubberbox
+ X  71  graf_dragbox
+ X  72  graf_movebox
+ T  73  graf_growbox
+ T  74  graf_shrinkbox
+ X  75  graf_watchbox
+ X  76  graf_slidebox
+ t  77  graf_handle
+ t  78  graf_mouse
+ t  79  graf_mkstate
+
+ X  80  scrp_read
+ X  81  scrp_write
+ X  82  scrp_clear          (PC-GEM call)
+
+ X  90  fsel_input
+
+ t 100  wind_create
+ t 101  wind_open
+ t 102  wind_close
+ t 103  wind_delete
+ t 104  wind_get
+ X 105  wind_set
+ X 106  wind_find
+ t 107  wind_update
+ t 108  wind_calc
+
+ t 110  rsrc_load
+ t 111  rsrc_free
+ t 112  rsrc_gaddr
+ X 113  rsrc_saddr
+ t 114  rsrc_obfix
+
+ X 120  shel_read
+ X 121  shel_write
+ X 122  shel_get
+ X 123  shel_put
+ T 124  shel_find
+ X 125  shel_envrn
+ X 126  shel_rdef           (PC-GEM call)
+ X 127  shel_wdef           (PC-GEM call)
 
 AES v1.40 (TOS >= v1.04):
- T      fsel_exinput
- t      wind_new
+ T  91  fsel_exinput
+ t 109  wind_new
 
 AES v3.30 (TOS > v3.06):
- -      menu_attach
- -      menu_istart
- -      menu_popup
- -      menu_settings
+ -  36  menu_popup
+ -  37  menu_attach
+ -  38  menu_istart
+ -  39  menu_settings
 
 AES v3.40 (TOS >= v4):
- -      objc_sysvar            (3D look)
+ -  48  objc_sysvar         (3D look)
 
 TOS v4 extended AES functionality:
  T      RSC file color icon support
