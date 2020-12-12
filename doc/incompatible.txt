@@ -46,7 +46,17 @@ Move the program from the AUTO folder to the root of the drive, and run
 it from there.  While STOS programs will then start, most of them will
 remain unusable due to error 1 above.
 
-Note: STOS programs can often be identified by the presence of *.MBK
+Error 3: Any other error you could imagine.
+
+Bug analysis:
+STOS uses a builtin address to point to VDI private variables which it
+then updates.  Needless to say, this could cause just about any kind of
+bug you could imagine.  For example, the Bomb Squad game for the Falcon
+runs four times more slowly under (some versions of) EmuTOS than TOS.
+In this particular case, STOS overwrote the internal 'timer sieve'
+variable so that etv_timer() was called four times less frequently.
+
+Note: STOS programs can sometimes be identified by the presence of *.MBK
 files (STOS memory bank files).
 
 
