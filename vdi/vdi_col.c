@@ -536,7 +536,10 @@ static WORD adjust_mono_values(WORD colnum,WORD *rgb)
 static void set_color(WORD colnum, WORD *rgb)
 {
     WORD r, g, b;
-    WORD hwreg = MAP_COL[colnum];   /* get hardware register */
+    WORD hwreg;
+
+    /* get hardware register, clamped according to number of planes */
+    hwreg = MAP_COL[colnum] & (numcolors-1);
 
     r = rgb[0];
     g = rgb[1];
@@ -666,7 +669,7 @@ void init_colors(void)
 
     /* set up vdi pen -> hardware colour register mapping */
     memcpy(MAP_COL, MAP_COL_ROM, sizeof(MAP_COL_ROM));
-    MAP_COL[1] = numcolors - 1; /* pen 1 varies according to # colours available */
+    MAP_COL[1] = MAXCOLOURS - 1;
 
 #if EXTENDED_PALETTE
     for (i = 16; i < MAXCOLOURS-1; i++)
@@ -675,7 +678,7 @@ void init_colors(void)
 #endif
 
     /* set up reverse mapping (hardware colour register -> vdi pen) */
-    for (i = 0; i < numcolors; i++)
+    for (i = 0; i < MAXCOLOURS; i++)
         REV_MAP_COL[MAP_COL[i]] = i;
 
     /* now initialise the hardware */
