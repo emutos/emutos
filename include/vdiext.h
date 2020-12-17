@@ -68,6 +68,12 @@ typedef union {
 /* External definitions for internal use */
 extern VDISHARE vdishare;
 
+/* Line A extensions */
+extern struct _mcs *mcs_ptr;    /* ptr to mouse cursor save area in use */
+
+/* functions used by VDI & lineA */
+void update_rez_dependent(void);
+
 #endif /* ASM_SOURCE */
 
 #endif /* _VDIEXT_H */

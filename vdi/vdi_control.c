@@ -21,9 +21,17 @@
 #include "bdosbind.h"
 #include "tosvars.h"
 
+#define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
+
 #define FIRST_VDI_HANDLE    1
 #define LAST_VDI_HANDLE     (FIRST_VDI_HANDLE+NUM_VDI_HANDLES-1)
 #define VDI_PHYS_HANDLE     FIRST_VDI_HANDLE
+
+/*
+ * ptr to current mouse cursor save area, based on v_planes
+ */
+MCS *mcs_ptr;
+
 
 /*
  * entry n in the following array points to the Vwk corresponding to
@@ -163,6 +171,36 @@ Vwk * get_vwk_by_handle(WORD handle)
         return NULL;
 
     return vwk_ptr[handle];
+}
+
+
+
+/*
+ * update resolution-dependent VDI/lineA variables
+ *
+ * this function assumes that v_planes, V_REZ_HZ, V_REZ_VT are already set
+ */
+void update_rez_dependent(void)
+{
+    BYTES_LIN = v_lin_wr = V_REZ_HZ / 8 * v_planes;
+
+#if EXTENDED_PALETTE
+    mcs_ptr = (v_planes <= 4) ? &mouse_cursor_save : &ext_mouse_cursor_save;
+#else
+    mcs_ptr = &mouse_cursor_save;
+#endif
+
+    DEV_TAB[0] = V_REZ_HZ - 1;
+    DEV_TAB[1] = V_REZ_VT - 1;
+    get_pixel_size(&DEV_TAB[3],&DEV_TAB[4]);
+    DEV_TAB[13] = (v_planes<8) ? (1 << v_planes) : 256;
+    DEV_TAB[35] = (v_planes==1) ? 0 : 1;
+    DEV_TAB[39] = get_palette();    /* some versions of COLOR.CPX care about this */
+
+    INQ_TAB[4] = v_planes;
+    if ((v_planes == 16) || (get_monitor_type() == MON_MONO))
+        INQ_TAB[5] = 0;
+    else INQ_TAB[5] = 1;
 }
 
 
@@ -422,27 +460,8 @@ void vdi_v_opnwk(Vwk * vwk)
         INQ_TAB[i] = INQ_TAB_rom[i];
     }
 
-    /* Copy data from line-A variables */
-    xres = V_REZ_HZ - 1;        /* xres/yres are DEV_TAB[0]/[1] */
-    yres = V_REZ_VT - 1;
-    INQ_TAB[4] = v_planes;
-
-    /* get pixel sizes for use by routines in vdi_gdp.c & vdi_line.c */
-    get_pixel_size(&xsize,&ysize);  /* xsize/ysize are DEV_TAB[3]/[4] */
-
-    /* Indicate whether LUT is supported */
-    if ((INQ_TAB[4] == 16) || (get_monitor_type() == MON_MONO))
-        INQ_TAB[5] = 0;
-    else INQ_TAB[5] = 1;
-
-    /* Calculate colors allowed at one time */
-    if (INQ_TAB[4] < 8)
-        numcolors = 2<<(v_planes-1);/* numcolors is DEV_TAB[13] */
-    else
-        numcolors = 256;
-
-    /* get palette (COLOR.CPX from the MegaSTe language disk cares about this) */
-    DEV_TAB[39] = get_palette();
+    /* update resolution-dependent values */
+    update_rez_dependent();
 
     /* initialize the vwk pointer array */
     vwk = &phys_work;

@@ -69,7 +69,6 @@ extern void (*mousexvec)(WORD scancode);    /* Additional mouse buttons */
 #endif
 
 /* Line A extensions */
-extern struct _mcs *mcs_ptr; /* ptr to mouse cursor save area in use */
 extern UBYTE v_planes_shift; /* pixel to address helper */
 
 /* determine monitor type, ... */
