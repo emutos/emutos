@@ -113,7 +113,7 @@ static const WORD DEV_TAB_rom[45] = {
     0,                          /* 2    device precision 0=exact,1=not exact */
     372,                        /* 3    width of pixel           */
     372,                        /* 4    height of pixel          */
-    1,                          /* 5    character sizes          */
+    3,                          /* 5    number of text font heights */
     MAX_LINE_STYLE,             /* 6    linestyles               */
     0,                          /* 7    linewidth                */
     6,                          /* 8    marker types             */
