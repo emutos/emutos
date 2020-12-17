@@ -21,8 +21,6 @@
 #include "bdosbind.h"
 #include "tosvars.h"
 
-#define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
-
 #define FIRST_VDI_HANDLE    1
 #define LAST_VDI_HANDLE     (FIRST_VDI_HANDLE+NUM_VDI_HANDLES-1)
 #define VDI_PHYS_HANDLE     FIRST_VDI_HANDLE

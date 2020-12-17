@@ -15,8 +15,6 @@
 #include "xbiosbind.h"
 #include "lineavars.h"
 
-#define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
-
 #if EXTENDED_PALETTE
 #define MAXCOLOURS  256
 #else

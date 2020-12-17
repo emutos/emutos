@@ -17,6 +17,8 @@
 
 #define HAVE_BEZIER 0           /* switch on bezier capability */
 
+#define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
+
 /*
  * some VDI opcodes
  */
