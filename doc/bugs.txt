@@ -1,10 +1,8 @@
 Video problems:
 
 Atari Falcon / TOS v4 compatibility bugs:
-+ When Delmpaint is started from 320x200 8-plane resolution, startup and
-  help text colours differ between EmuTOS and TOS4.  Under EmuTOS they
-  are yellow/red/green on a white background; under TOS4 they are
-  orange/blue/white on a black background.
++ When Delmpaint exits, the desktop is not redrawn properly until a
+  mouse button is pressed.
 + There are many window management problems in Escape Paint (v0.72):
   windows are not completely redrawn when uncovered, windows cannot be
   moved, etc.
