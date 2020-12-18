@@ -932,6 +932,10 @@ void initialise_falcon_palette(WORD mode)
 
     /*
      * if appropriate, set up the STe shadow & real palette registers
+     *
+     * even though initialise_palette_registers() in screen.c has already
+     * set up the STe palette, we update it here for compatibility with
+     * Atari TOS.  this results in changes to registers 8-14 inclusive
      */
     if (use_ste_palette(mode)) {
         convert2ste(ste_shadow_palette,falcon_shadow_palette);
