@@ -720,8 +720,24 @@ WORD vsetrgb(WORD index,WORD count,const ULONG *rgb)
         return -1; /* Generic error */
 
     /*
-     * we always update the Falcon shadow palette, since that's
-     * what we'll return for VgetRGB()
+     * for ST low or 4-colour modes, we need to convert the RGB value
+     * to STe palette register format, and request the VBL interrupt
+     * handler to update the STe palette registers rather than the
+     * Falcon palette registers
+     */
+    if (use_ste_palette(vsetmode(-1))) {
+        UWORD *ste_shadow = ste_shadow_palette + index;
+        source = rgb;
+        while(count--) {
+            u.l = *source++;
+            *ste_shadow++ = (falc2ste(u.b[1])<<8) | (falc2ste(u.b[2])<<4) | falc2ste(u.b[3]);
+        }
+        colorptr = ste_shadow_palette;
+        return 0; /* OK */
+    }
+
+    /*
+     * update the Falcon shadow palette (that's what we return for VgetRGB())
      */
     shadow = falcon_shadow_palette + index;
     source = rgb;
@@ -731,18 +747,6 @@ WORD vsetrgb(WORD index,WORD count,const ULONG *rgb)
         u.b[1] = u.b[2];
         u.b[2] = 0x00;
         *shadow++ = u.l;
-    }
-
-    /*
-     * for ST low or 4-colour modes, we need to convert the
-     * Falcon shadow registers to STe palette register format, and
-     * request the VBL interrupt handler to update the STe palette
-     * registers rather than the Falcon registers
-     */
-    if (use_ste_palette(vsetmode(-1))) {
-        convert2ste(ste_shadow_palette,falcon_shadow_palette);
-        colorptr = ste_shadow_palette;
-        return 0; /* OK */
     }
 
     colorptr = (limit==256) ? (UWORD *)0x01L : (UWORD *)((LONG)falcon_shadow_palette|0x01L);
