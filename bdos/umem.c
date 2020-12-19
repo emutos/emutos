@@ -24,6 +24,7 @@
 #include "biosext.h"
 #include "xbiosbind.h"
 #include "bdosstub.h"
+#include "cookie.h"
 
 
 /*
@@ -34,7 +35,7 @@ MPB pmd;
 MPB pmdalt;
 int has_alt_ram;
 #endif
-
+ULONG malloc_align_stram;
 
 /* internal variables */
 
@@ -195,9 +196,9 @@ long xsetblk(int n, void *blk, long len)
      * Alignment on long boundaries is faster in FastRAM.
      */
     if (mpb == &pmd)
-        len = (len + 1) & ~1;
+        len = (len + malloc_align_stram) & ~malloc_align_stram;
     else
-        len = (len + 3) & ~3;
+        len = (len + MALLOC_ALIGN_ALTRAM) & ~MALLOC_ALIGN_ALTRAM;
 
     KDEBUG(("BDOS Mshrink: new length=%ld\n",len));
 
@@ -485,6 +486,9 @@ long total_alt_ram(void)
  */
 void umem_init(void)
 {
+    LONG cookie_mch;
+    MAYBE_UNUSED(cookie_mch);
+
     /* get the MPB */
     Getmpb((long)&pmd);
 
@@ -497,6 +501,22 @@ void umem_init(void)
     /* there is no known alternative RAM initially */
     has_alt_ram = 0;
 #endif
+
+    /*
+     * Atari TOS 1 - 3 aligns memory requested from ST-RAM on multiples of
+     * two bytes, whereas Atari TOS 4 aligns on multiples of four bytes.
+     * As programs might (implicitly) rely on this detail, EmuTOS bases
+     * its alignment on the type of machine it is running on. Note:
+     * Alt-RAM memory blocks are always aligned on multiples of 4 bytes.
+     */
+#if CONF_WITH_VIDEL
+    if (cookie_get(COOKIE_MCH, &cookie_mch) && (cookie_mch == MCH_FALCON)) {
+        malloc_align_stram = 3; /* 4 byte alignment */
+    } else
+#endif
+    {
+        malloc_align_stram = 1; /* 2 byte alignment */
+    }
 }
 
 /*

@@ -26,6 +26,12 @@ extern  MPB     pmd;    /* the mem pool for the main user ST ram */
 extern  MPB     pmdalt;  /* the memory pool for the alternative ram (TT-RAM or other) */
 #endif
 
+/*
+ * Alignment of malloc'ed memory.
+ * This value must be set to 2^n-1 to align on multiples of 2^n.
+ */
+extern  ULONG   malloc_align_stram;
+#define MALLOC_ALIGN_ALTRAM     3
 
 /*
  * in osmem.c
