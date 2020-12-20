@@ -265,9 +265,19 @@ struct IFINFO {
 
 #define DELAY_5US       delay_loop(delay5us)
 
+/*
+ * timeouts
+ *
+ * Note: the 'official' timeout for a reset is 31 seconds.  However, this
+ * causes excessively long delays during initialisation on (for example)
+ * a Falcon if a device is not present.  The value chosen below is
+ * conservative for modern IDE devices.  If this is insufficient in
+ * particular cases, the default cold boot delay can be patched in the
+ * ROM image.  See doc/version.txt for details.
+ */
 #define SHORT_TIMEOUT   (CLOCKS_PER_SEC/10) /* 100ms */
 #define XFER_TIMEOUT    (CLOCKS_PER_SEC)    /* 1000ms for data xfer */
-#define LONG_TIMEOUT    (31*CLOCKS_PER_SEC) /* 31 seconds for reset (!)*/
+#define LONG_TIMEOUT    (3*CLOCKS_PER_SEC)  /* 3 seconds for reset */
 
 static int has_ide;
 static struct IFINFO ifinfo[NUM_IDE_INTERFACES];
