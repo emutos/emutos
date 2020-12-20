@@ -278,6 +278,9 @@ WORD initinfo(ULONG *pshiftbits)
     LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
     ULONG shiftbits;
 
+    /* clear startup message */
+    cprintf("\033E");
+
     /*
      * If additional info lines are going to be printed in specific cases,
      * then initinfo_height must be adjusted in the same way here.
@@ -448,7 +451,7 @@ WORD initinfo(ULONG *pshiftbits)
 
 WORD initinfo(ULONG *pshiftbits)
 {
-    cprintf("EmuTOS Version %s\r\n", version);
+    /* we already displayed a startup message */
 
     *pshiftbits = kbshift(-1);
     return bootdev;
@@ -456,3 +459,9 @@ WORD initinfo(ULONG *pshiftbits)
 
 
 #endif   /* FULL_INITINFO */
+
+
+void display_startup_msg(void)
+{
+    cprintf("EmuTOS Version %s\r\n", version);
+}

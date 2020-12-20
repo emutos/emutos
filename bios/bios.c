@@ -318,6 +318,9 @@ static void bios_init(void)
     /* Now kcprintf() will also send debug info to the screen */
     KDEBUG(("after vt52_init()\n"));
 
+    /* now we have output, let the user know we're alive */
+    display_startup_msg();
+
 #if DETECT_NATIVE_FEATURES
     /*
      * Tell ARAnyM where the LineA variables are

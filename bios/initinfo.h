@@ -18,5 +18,6 @@
 /*==== Prototypes =========================================================*/
 
 WORD initinfo(ULONG *pshiftbits);
+void display_startup_msg(void);
 
 #endif /* INITINFO_H */
