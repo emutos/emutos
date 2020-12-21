@@ -76,7 +76,7 @@
         .extern _vblsem
         .extern _colorptr
 #if CONF_WITH_VIDEL
-        .extern _falcon_shadow_palette
+        .extern _falcon_shadow_count
 #endif
         .extern _screenpt
         .extern _has_videl
@@ -370,11 +370,8 @@ _int_vbl:
         jeq     docopy                      // wasn't set, so update STe regs
         // load Falcon color palette
         lea     0xffff9800.w,a1             // Falcon palette registers
-        moveq   #15,d1                      // assume 16 only
-        tst.l   d0                          // source address specified?
-        jne     docopy                      // yes, go update 16
-        move.l  #_falcon_shadow_palette,d0  // else set source address
-        move.l  #255,d1                     //  & prepare to update 256
+        move.l  _falcon_shadow_count,d1     // get count
+        subq.l  #1,d1                       // for dbra
 docopy:
 #endif
         move.l  d0,a0                       // a0 -> source

@@ -116,7 +116,8 @@ static const ULONG videl_dflt_palette[] = {
     0x44210000, 0x44110000, FRGB_WHITE, FRGB_BLACK
 };
 
-GLOBAL ULONG falcon_shadow_palette[256];   /* real Falcon does this, used by vectors.S */
+GLOBAL LONG falcon_shadow_count;        /* real Falcon does this, used by vectors.S */
+static ULONG falcon_shadow_palette[256];
 static UWORD ste_shadow_palette[16];
 
 #define MON_ALL     -1  /* code used in VMODE_ENTRY for match on mode only */
@@ -749,7 +750,8 @@ WORD vsetrgb(WORD index,WORD count,const ULONG *rgb)
         *shadow++ = u.l;
     }
 
-    colorptr = (limit==256) ? (UWORD *)0x01L : (UWORD *)((LONG)falcon_shadow_palette|0x01L);
+    falcon_shadow_count = limit;    /* tell VBL handler how many registers to copy */
+    colorptr = (UWORD *)((LONG)falcon_shadow_palette|0x01L);
 
     return 0; /* OK */
 }
