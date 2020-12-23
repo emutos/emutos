@@ -181,6 +181,12 @@ WORD esetshift(WORD mode)
     oldmode = *resreg & TT_SHIFTER_BITMASK;
     *resreg = mode & TT_SHIFTER_BITMASK;
 
+    /*
+     * because the resolution may have changed, we must reinitialise
+     * the VT52 emulator
+     */
+    vt52_init();
+
     return oldmode;
 }
 
