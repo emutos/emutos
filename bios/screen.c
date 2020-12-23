@@ -178,6 +178,12 @@ WORD esetshift(WORD mode)
     if (!has_tt_shifter)
         return 0x50;    /* unimplemented xbios call: return function # */
 
+    /*
+     * to avoid a possible resolution change in the middle of a screen
+     * display, we wait for a VBL (TOS3 does this too)
+     */
+    vsync();
+
     oldmode = *resreg & TT_SHIFTER_BITMASK;
     *resreg = mode & TT_SHIFTER_BITMASK;
 
