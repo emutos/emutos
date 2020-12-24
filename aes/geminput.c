@@ -153,6 +153,8 @@ void b_click(WORD state)
  */
 void b_delay(WORD amnt)
 {
+    WORD forkq_calls;
+
     /* see if we have a delay for mouse click in progress */
     if (gl_bdely)
     {
@@ -162,10 +164,17 @@ void b_delay(WORD amnt)
             gl_bdely = 0;
         if (!gl_bdely)
         {
-            forkq(bchange, MAKE_ULONG(gl_bdesired, gl_bclick));
-            if (gl_bdesired != gl_btrue)
+            /*
+             * to avoid a 'button stuck down' problem, we must make sure
+             * that, if we are creating two button change FPDs, there is
+             * sufficient room for both of them
+             */
+            forkq_calls = (gl_bdesired==gl_btrue) ? 1 : 2;
+            if (fpcnt+forkq_calls <= NFORKS)
             {
-                forkq(bchange, MAKE_ULONG(gl_btrue, 1));
+                forkq(bchange, MAKE_ULONG(gl_bdesired, gl_bclick));
+                if (forkq_calls == 2)
+                    forkq(bchange, MAKE_ULONG(gl_btrue, 1));
             }
         }
     }
