@@ -158,6 +158,8 @@ void b_delay(WORD amnt)
     {
         /* see if decrementing delay cnt causes delay to be over */
         gl_bdely -= amnt;
+        if (gl_bdely < 0)
+            gl_bdely = 0;
         if (!gl_bdely)
         {
             forkq(bchange, MAKE_ULONG(gl_bdesired, gl_bclick));
