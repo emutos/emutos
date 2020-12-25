@@ -42,8 +42,11 @@
 #define KEYSTOP 0x2b1c0000L             /* control-backslash */
 
 
-/* forkq puts a fork block with a routine in the fork ring      */
-
+/*
+ * forkq(): put an FPD (containing a function address and a parameter) into the fork ring
+ *
+ * this is expected to be called with interrupts disabled
+ */
 void forkq(FCODE fcode, LONG fdata)
 {
     FPD *f;
@@ -88,6 +91,11 @@ static void mwait_act(AESPD *p)
 }
 
 
+/*
+ * forker(): remove all FPDs from the fork ring, calling the specified function each time
+ *
+ * this also handles event recording for the AES function appl_trecd()
+ */
 void forker(void)
 {
     FPD *f;
