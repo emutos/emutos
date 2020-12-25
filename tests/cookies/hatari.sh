@@ -77,6 +77,7 @@ run_hatari --machine falcon --cpulevel 4
 check_cookie "_CPU" "0x00000028"
 check_cookie "_VDO" "0x00030000"
 check_cookie "_MCH" "0x00030000"
+check_cookie "_SND" "0x0000001f"
 echo "OK"
 
 # Mega-ST and Mega-STE are only available with newer versions of Hatari
