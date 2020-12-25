@@ -51,10 +51,6 @@ void forkq(FCODE fcode, LONG fdata)
 {
     FPD *f;
 
-    /* q a fork process, enter with ints OFF */
-    if (fpcnt == 0)
-        fpt = fph = 0;
-
     if (fpcnt < NFORKS)
     {
         f = &D.g_fpdx[fpt++];
