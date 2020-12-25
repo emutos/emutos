@@ -151,7 +151,11 @@ void ap_tplay(const EVNTREC *pbuff,WORD length,WORD scale)
         }
 
         if (f.f_code)   /* if valid, add to queue */
+        {
+            disable_interrupts();
             forkq(f.f_code,f.f_data);
+            enable_interrupts();
+        }
 
         dsptch();       /* let someone run */
     }
