@@ -66,6 +66,7 @@ WORD forkq(FCODE fcode, LONG fdata)
         return 0;   /* forkq() succeeded */
     }
 
+    KDEBUG(("forkq() failed: fcode=%p, fdata=0x%08lx\n",fcode,fdata));
     return -1;      /* forkq() failed */
 }
 
