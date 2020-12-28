@@ -395,10 +395,14 @@ _tikcod:
         subq.l  #1,_CMP_TICK
         jne     L2234
 
-        move.l  _NUM_TICK,-(sp)
+        move.l  _NUM_TICK,-(sp) // try to create an entry in the fork ring
         move.l  #_tchange,-(sp)
         jsr     _forkq
         addq.l  #8,sp
+        tst.w   d0              // did it work?
+        jeq     L2234
+        addq.l  #1,_CMP_TICK    // no, reset so that we try again on the next tick
+
 L2234:
         move.w  #1,-(sp)
         jsr     _b_delay

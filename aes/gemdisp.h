@@ -12,7 +12,7 @@
 
 #include "struct.h"
 
-void forkq(FCODE fcode, LONG fdata);
+WORD forkq(FCODE fcode, LONG fdata);
 void forker(void);
 void chkkbd(void);
 

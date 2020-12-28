@@ -46,8 +46,10 @@
  * forkq(): put an FPD (containing a function address and a parameter) into the fork ring
  *
  * this is expected to be called with interrupts disabled
+ *
+ * returns -ve value iff it fails (the fork ring is full)
  */
-void forkq(FCODE fcode, LONG fdata)
+WORD forkq(FCODE fcode, LONG fdata)
 {
     FPD *f;
 
@@ -61,7 +63,10 @@ void forkq(FCODE fcode, LONG fdata)
         f->f_data = fdata;
 
         fpcnt++;
+        return 0;   /* forkq() succeeded */
     }
+
+    return -1;      /* forkq() failed */
 }
 
 
