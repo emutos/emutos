@@ -200,6 +200,21 @@ crash happens on next private function which Cubase tries to search
 for.
 
 
+Program: HDCOOKIE
+-----------------
+Error: Fails to set the _FDC cookie.
+
+Bug analysis:
+HDCOOKIE is supposed to set the _FDC cookie to indicate high-density
+(HD) floppy disk support in machines upgraded with a HD module.
+However, it fails when an _FDC cookie already exists, as it is always
+the case under EmuTOS.
+
+Workaround:
+Use a different program to manipulate the _FDC cookie, e.g., ACC.PRG
+by Steffen Engel.
+
+
 Program: Luftschloss
 --------------------
 Error: Fails to load with an error message about the MPB variable.
