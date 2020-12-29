@@ -942,7 +942,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
             desk_busy_off();
             form_do(tree, 0);
             desk_busy_on();
-            more = inf_what(tree, CDOK, CDCNCL);
+            more = (tree[CDOK].ob_state & SELECTED) ? TRUE : FALSE;
         }
     }
 
@@ -1055,7 +1055,11 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
     }
 
     if (tree)
+    {
+        tree[CDOK].ob_state = NORMAL;       /* reset button states for next time */
+        tree[CDCNCL].ob_state = NORMAL;
         end_dialog(tree);
+    }
     desk_busy_off();
 
     return more;
