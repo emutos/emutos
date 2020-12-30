@@ -122,7 +122,7 @@ WORD oldres;
 
     inf_show(tree,ROOT);
 
-    if (inf_what(tree,TTREZOK,TTREZCAN) == 0)
+    if (inf_what(tree,TTREZOK) == 0)
         return 0;
 
     /* look for button with SELECTED state */
@@ -184,7 +184,7 @@ WORD oldmode, oldbase, oldoptions;
 
     inf_show(tree,ROOT);
 
-    if (inf_what(tree,FREZOK,FREZCAN) == 0)
+    if (inf_what(tree,FREZOK) == 0)
         return 0;
 
     /* look for button with SELECTED state */
@@ -249,7 +249,7 @@ WORD oldmode;
 
     inf_show(tree,ROOT);
 
-    if (inf_what(tree,AMREZOK,AMREZCAN) == 0)
+    if (inf_what(tree,AMREZOK) == 0)
         return 0;
 
     /* look for button with SELECTED state */

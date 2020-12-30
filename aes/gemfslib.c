@@ -820,7 +820,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
     fm_dial(FMD_FINISH, &gl_rcenter, &gl_rfs);
 
     /* return exit button */
-    *pbutton = inf_what(tree, FSOK, FSCANCEL);
+    *pbutton = inf_what(tree, FSOK);
     dos_free(memblk);
 
     return TRUE;

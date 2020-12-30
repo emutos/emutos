@@ -572,7 +572,7 @@ WORD inf_file_folder(char *ppath, FNODE *pf)
         obj = tree + FFOK;
         obj->ob_state &= ~SELECTED;
         inf_show(tree, ROOT);
-        ret = inf_what(tree, FFSKIP, FFCNCL);
+        ret = inf_what(tree, FFSKIP);
         if (ret >= 0)       /* skip or cancel */
             return ret;
 
@@ -689,7 +689,7 @@ WORD inf_disk(char dr_id)
     inf_numset(tree, DIAVAIL, avail);
 
     inf_show(tree, ROOT);
-    return inf_what(tree, DIOK, DICNCL);
+    return inf_what(tree, DIOK);
 }
 
 
@@ -786,7 +786,7 @@ WORD inf_pref(void)
 
     /* allow user to select preferences */
     inf_show(tree1, ROOT);
-    button = inf_what(tree1,SPOK,SPCNCL);
+    button = inf_what(tree1, SPOK);
 
     /*
      * handle dialog 2 if necessary
@@ -795,7 +795,7 @@ WORD inf_pref(void)
     {
         /* allow user to select preferences */
         inf_show(tree2, ROOT);
-        button = inf_what(tree2, SPOK2, SPCNCL2);
+        button = inf_what(tree2, SPOK2);
     }
 
     if (button)
@@ -1280,7 +1280,7 @@ WORD opn_appl(char *papname, char *ptail)
     inf_show(tree, APPLPARM);
 
     /* now find out what happened */
-    if ( inf_what(tree, APPLOK, APPLCNCL) )
+    if (inf_what(tree, APPLOK))
     {
         inf_sget(tree, APPLPARM, ptail);
         return TRUE;

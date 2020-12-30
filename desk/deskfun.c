@@ -331,7 +331,7 @@ static BOOL search_prompt(char *searchname)
      * get user input & if not 'OK', return FALSE
      */
     inf_show(tree, ROOT);
-    if (inf_what(tree, SFOK, SFCANCEL) != 1)
+    if (inf_what(tree, SFOK) != 1)
         return FALSE;
 
     /*
@@ -649,7 +649,7 @@ void fun_mask(WNODE *pw)
     /*
      * if 'OK', extract filemask from dialog, update pnode/display
      */
-    if (inf_what(tree, FMOK, FMCANCEL) == 1)
+    if (inf_what(tree, FMOK) == 1)
     {
         inf_sget(tree, FMMASK, filemask);
         unfmt_str(filemask, maskptr);
@@ -681,7 +681,7 @@ WORD fun_mkdir(WNODE *pw_node)
         inf_sset(tree, MKNAME, fnew_name);
         start_dialog(tree);
         form_do(tree, 0);
-        if (inf_what(tree, MKOK, MKCNCL) == 0)
+        if (inf_what(tree, MKOK) == 0)
             break;
 
         inf_sget(tree, MKNAME, fnew_name);

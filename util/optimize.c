@@ -147,10 +147,14 @@ WORD inf_gindex(OBJECT *tree, WORD baseobj, WORD numobj)
 
 
 /*
- *  Return 0 if cancel was selected, 1 if ok was selected, -1 if
- *  nothing was selected
+ *  Return 1 if the 'ok' object was selected, 0 if the 'ok'+1 object was
+ *  selected, -1 otherwise.  As a side effect, when returning 0 or 1,
+ *  the corresponding button is deselected.
+ *
+ *  Usage: generally this is expected to be used with a dialog where the
+ *  OK button is immediately followed by the Cancel button
  */
-WORD inf_what(OBJECT *tree, WORD ok, WORD cncl)
+WORD inf_what(OBJECT *tree, WORD ok)
 {
     WORD    field;
     OBJECT  *objptr;
