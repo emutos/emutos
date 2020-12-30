@@ -32,7 +32,7 @@ WORD wm_create(WORD kind, GRECT *pt);
 void wm_open(WORD w_handle, GRECT *pt);
 void wm_close(WORD w_handle);
 void wm_delete(WORD w_handle);
-void wm_get(WORD w_handle, WORD w_field, WORD *poutwds);
+void wm_get(WORD w_handle, WORD w_field, WORD *poutwds, WORD *pinwds);
 void wm_set(WORD w_handle, WORD w_field, WORD *pinwds);
 
 WORD wm_find(WORD x, WORD y);

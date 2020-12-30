@@ -1169,16 +1169,21 @@ void wm_delete(WORD w_handle)
 /*
  *  Gives information about the current window to the application that owns it
  *
- *  Note: the WF_COLOR and WF_DCOLOR modes were introduced in AES 3.30, and are
+ *  Note 1: the WF_COLOR and WF_DCOLOR modes were introduced in AES 3.30, and are
  *  not well-documented, so I'll add the documentation here:
  *
  *  wind_get(handle, WF_COLOR/WF_DCOLOR, &parm1, &parm2, &parm3, &parm4)
  *      input:  handle is the window handle (ignored for WF_DCOLOR)
+ *              mode is WF_COLOR or WF_DCOLOR
  *              parm1 contains the number of the gadget (W_BOX etc)
  *      output: parm2 contains the obspec colour word when the window is topped
  *              parm3 contains the obspec colour word when the window is untopped
+ *
+ *  Note 2: the application program binding for wind_get(WF_COLOR/WF_DCOLOR) is
+ *  a special case since there are three intin[] values, rather than the two
+ *  used for all other wind_get() functions.
  */
-void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
+void wm_get(WORD w_handle, WORD w_field, WORD *poutwds, WORD *pinwds)
 {
     WORD    which, gadget;
     GRECT   t;
@@ -1230,12 +1235,12 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds)
         break;
 #if CONF_WITH_WINDOW_COLOURS
     case WF_COLOR:
-        gadget = poutwds[0];
+        gadget = pinwds[0];
         poutwds[1] = pwin->w_tcolor[gadget];
         poutwds[2] = pwin->w_bcolor[gadget];
         break;
     case WF_DCOLOR:
-        gadget = poutwds[0];
+        gadget = pinwds[0];
         poutwds[1] = gl_wtcolor[gadget];
         poutwds[2] = gl_wbcolor[gadget];
         break;

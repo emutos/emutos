@@ -332,7 +332,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         wm_delete(WM_HANDLE);
         break;
     case WIND_GET:
-        wm_get(WM_HANDLE, WM_WFIELD, &WM_OX);
+        wm_get(WM_HANDLE, WM_WFIELD, &WM_OX, &WM_IX);
         break;
     case WIND_SET:
         wm_set(WM_HANDLE, WM_WFIELD, &WM_IX);
