@@ -782,7 +782,7 @@ void vdi_vq_color(Vwk *vwk)
      * return actual current value
      */
     colnum = INTIN[0];          /* may have been munged on TT system, see above */
-    hwreg = MAP_COL[colnum];    /* get hardware register */
+    hwreg = MAP_COL[colnum] & (numcolors-1);    /* get hardware register */
 
 #if CONF_WITH_VIDEL
     if (has_videl)
