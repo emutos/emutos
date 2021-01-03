@@ -475,8 +475,10 @@ static int set_videl_vga(WORD mode)
 
     videlregs[0x0a] = (mode&VIDEL_PAL) ? 2 : 0; /* video sync to 50Hz if PAL */
 
-    /* FIXME: vsync() can't work if the screen is initially turned off */
-    //vsync(); /* wait for VBL so we're not interrupted :-) */
+#ifndef MACHINE_FIREBEE
+    /* On the Falcon, synchronize Videl register updates like Atari TOS 4 */
+    vsync(); /* wait for VBL */
+#endif
 
     videlword(0x82) = p->hht;           /* H hold timer */
     videlword(0x84) = p->hbb;           /* H border begin */
@@ -506,9 +508,23 @@ static int set_videl_vga(WORD mode)
 
     switch(mode&VIDEL_BPPMASK) {        /* set SPSHIFT / ST shift */
     case VIDEL_1BPP:                    /* 2 colours (mono) */
-        if (monitor == MON_MONO)
+        if (monitor == MON_MONO) {
             videlregs[0x60] = 0x02;
-        else videlword(0x66) = 0x0400;
+        } else {
+            videlword(0x66) = 0x0400;
+#ifndef MACHINE_FIREBEE
+            /*
+             * When switching to monochrome mode, the Falcon Videl needs these
+             * additional steps; otherwise video output can become distorted.
+             * Based on: "patch for Videl monochrome bug in Falcons, posted
+             * by Thomas Binder" in FreeMiNT.
+             */
+            vsync();
+            videlword(0x66) = 0;
+            vsync();
+            videlword(0x66) = 0x0400;
+#endif
+        }
         break;
     case VIDEL_2BPP:                    /* 4 colours */
         videlregs[0x60] = 0x01;
