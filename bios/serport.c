@@ -123,7 +123,7 @@ static const MAPTAB maptable_mfp_tt =
  */
 LONG bconstat1(void)
 {
-#if CONF_SERIAL_CONSOLE
+#if CONF_SERIAL_CONSOLE_INTERRUPT_MODE
     /* Input from the serial port will be read on interrupt,
      * so we can't directly read the data. */
     return 0;

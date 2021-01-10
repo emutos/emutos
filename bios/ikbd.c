@@ -155,43 +155,6 @@ LONG kbshift(WORD flag)
 
 /*=== iorec handling (bios) ==============================================*/
 
-LONG bconstat2(void)
-{
-    if (ikbdiorec.head == ikbdiorec.tail) {
-        return 0;               /* iorec empty */
-    } else {
-        return -1;              /* not empty => input available */
-    }
-}
-
-LONG bconin2(void)
-{
-    WORD old_sr;
-    ULONG value;
-
-    while (!bconstat2()) {
-#if USE_STOP_INSN_TO_FREE_HOST_CPU
-        stop_until_interrupt();
-#endif
-    }
-    /* disable interrupts */
-    old_sr = set_sr(0x2700);
-
-    ikbdiorec.head += 4;
-    if (ikbdiorec.head >= ikbdiorec.size) {
-        ikbdiorec.head = 0;
-    }
-    value = *(ULONG_ALIAS *) (ikbdiorec.buf + ikbdiorec.head);
-
-    /* restore interrupts */
-    set_sr(old_sr);
-
-    if (!(conterm & 8))         /* shift status not wanted? */
-        value &= 0x00ffffffL;   /* true, so clean it out */
-
-    return value;
-}
-
 static void push_ikbdiorec(ULONG value)
 {
     short tail;
@@ -269,6 +232,52 @@ void push_ascii_ikbdiorec(UBYTE ascii)
 }
 
 #endif /* CONF_SERIAL_CONSOLE */
+
+LONG bconstat2(void)
+{
+#if CONF_SERIAL_CONSOLE_POLLING_MODE
+    return bconstat(1);
+#else
+    if (ikbdiorec.head == ikbdiorec.tail) {
+        return 0;               /* iorec empty */
+    } else {
+        return -1;              /* not empty => input available */
+    }
+#endif
+}
+
+LONG bconin2(void)
+{
+    ULONG value;
+#if CONF_SERIAL_CONSOLE_POLLING_MODE
+    UBYTE ascii = (UBYTE)bconin(1);
+    value = ikbdiorec_from_ascii(ascii);
+#else
+    WORD old_sr;
+
+    while (!bconstat2()) {
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+        stop_until_interrupt();
+#endif
+    }
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
+
+    ikbdiorec.head += 4;
+    if (ikbdiorec.head >= ikbdiorec.size) {
+        ikbdiorec.head = 0;
+    }
+    value = *(ULONG_ALIAS *) (ikbdiorec.buf + ikbdiorec.head);
+
+    /* restore interrupts */
+    set_sr(old_sr);
+#endif /* CONF_SERIAL_CONSOLE_POLLING_MODE */
+
+    if (!(conterm & 8))         /* shift status not wanted? */
+        value &= 0x00ffffffL;   /* true, so clean it out */
+
+    return value;
+}
 
 /*
  * emulated mouse support (alt-arrowkey support)
@@ -1049,13 +1058,13 @@ static void ikbd_reset(void)
 
 void kbd_init(void)
 {
-#if CONF_SERIAL_CONSOLE
+#if CONF_SERIAL_CONSOLE_INTERRUPT_MODE
 # ifdef __mcoldfire__
     coldfire_rs232_enable_interrupt();
 # else
-    /* FIXME: Enable interrupts on other hardware. */
+#  error FIXME: Enable interrupts on other hardware.
 # endif
-#endif /* CONF_SERIAL_CONSOLE */
+#endif /* CONF_SERIAL_CONSOLE_INTERRUPT_MODE */
 
 #if CONF_WITH_IKBD_ACIA
     /* initialize ikbd ACIA */

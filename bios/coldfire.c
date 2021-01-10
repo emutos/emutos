@@ -179,7 +179,7 @@ void firebee_shutdown(void)
 
 #endif /* MACHINE_FIREBEE */
 
-#if CONF_SERIAL_CONSOLE
+#if CONF_SERIAL_CONSOLE_INTERRUPT_MODE
 
 void coldfire_rs232_enable_interrupt(void)
 {
@@ -225,7 +225,7 @@ void coldfire_rs232_interrupt_handler(void)
     }
 }
 
-#endif /* CONF_SERIAL_CONSOLE */
+#endif /* CONF_SERIAL_CONSOLE_INTERRUPT_MODE */
 
 MCF_COOKIE cookie_mcf;
 

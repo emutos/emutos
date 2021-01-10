@@ -94,7 +94,7 @@ coldfire_int_61_ack:
         rte
 #endif
 
-#if CONF_SERIAL_CONSOLE
+#if CONF_SERIAL_CONSOLE_INTERRUPT_MODE
 /* PSC0 interrupt (ColdFire RS-232 port) */
         .globl _coldfire_int_35
 _coldfire_int_35:

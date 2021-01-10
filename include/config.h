@@ -1352,7 +1352,7 @@
 /*
  * Set CONF_SERIAL_CONSOLE to 1 in order to:
  * - send console output to the serial port, in addition to the screen
- * - use exclusively the serial port for console input.
+ * - use exclusively the serial port input for console input.
  */
 #ifndef CONF_SERIAL_CONSOLE
 # if !CONF_WITH_ATARI_VIDEO && !defined(MACHINE_AMIGA)
@@ -1361,6 +1361,13 @@
 #  define CONF_SERIAL_CONSOLE 0
 # endif
 #endif
+
+/* When possible, it's better to handle the serial console input with
+ * interrupts. This is a requirement for FreeMiNT's advanced keyboard
+ * processor. Otherwise, polling mode is enough for EmuTOS itself.
+ */
+#define CONF_SERIAL_CONSOLE_INTERRUPT_MODE (CONF_SERIAL_CONSOLE && defined(__mcoldfire__))
+#define CONF_SERIAL_CONSOLE_POLLING_MODE (CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_INTERRUPT_MODE)
 
 /*
  * Set CONF_SERIAL_CONSOLE_ANSI to 1 if the terminal connected to the
