@@ -81,6 +81,7 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 void init_serport(void);
 
 #if CONF_WITH_SCC
+void scc_init(void);
 LONG bconoutB(WORD,WORD);
 #endif
 

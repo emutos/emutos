@@ -296,6 +296,32 @@ static void bios_init(void)
 #endif
 
     /*
+     * Initialize MFP and SCC: among other things this ensures that the
+     * respective interrupts are disabled.
+     */
+
+#if CONF_WITH_MFP
+    KDEBUG(("mfp_init()\n"));
+    mfp_init();
+#endif
+
+#if CONF_WITH_TT_MFP
+    if (has_tt_mfp)
+    {
+        KDEBUG(("tt_mfp_init()\n"));
+        tt_mfp_init();
+    }
+#endif
+
+#if CONF_WITH_SCC
+    if (has_scc)
+    {
+        KDEBUG(("scc_init()\n"));
+        scc_init();
+    }
+#endif
+
+    /*
      * Initialize the screen mode
      * Must be done before calling linea_init().
      */
@@ -346,19 +372,6 @@ static void bios_init(void)
             vbl_list[i] = NULL;
         }
     }
-
-#if CONF_WITH_MFP
-    KDEBUG(("mfp_init()\n"));
-    mfp_init();
-#endif
-
-#if CONF_WITH_TT_MFP
-    if (has_tt_mfp)
-    {
-        KDEBUG(("tt_mfp_init()\n"));
-        tt_mfp_init();
-    }
-#endif
 
     /* Initialize the system 200 Hz timer */
     KDEBUG(("init_system_timer()\n"));

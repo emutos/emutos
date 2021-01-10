@@ -536,7 +536,7 @@ static const WORD SCC_init_string[] = {
 /*
  * initialise the SCC
  */
-static void init_scc(void)
+void scc_init(void)
 {
     SCC *scc = (SCC *)SCC_BASE;
     const WORD *p;
@@ -735,11 +735,6 @@ void init_serport(void)
 #if BCONMAP_AVAILABLE
     memcpy(&iorec_dummy,&iorec_init,sizeof(EXT_IOREC));
     init_bconmap();
-#endif
-
-#if CONF_WITH_SCC
-    if (has_scc)
-        init_scc();
 #endif
 
 #ifdef MACHINE_AMIGA
