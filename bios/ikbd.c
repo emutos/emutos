@@ -226,8 +226,8 @@ static UBYTE scancode_from_ascii(UBYTE ascii, const UBYTE *table)
     return 0;
 }
 
-/* Emulate a key press from an ASCII character */
-void push_ascii_ikbdiorec(UBYTE ascii)
+/* Guess full KBD record from ASCII character */
+static ULONG ikbdiorec_from_ascii(UBYTE ascii)
 {
     UBYTE scancode = 0;
     UBYTE mode = 0;
@@ -256,6 +256,15 @@ void push_ascii_ikbdiorec(UBYTE ascii)
     value = MAKE_ULONG(scancode, ascii);
     value |= (ULONG)mode << 24;
 
+    return value;
+}
+
+/* Emulate a key press from an ASCII character */
+void push_ascii_ikbdiorec(UBYTE ascii)
+{
+    ULONG value;
+
+    value = ikbdiorec_from_ascii(ascii);
     push_ikbdiorec(value);
 }
 
