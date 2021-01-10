@@ -1978,8 +1978,21 @@
 # define MIDI_DEBUG_PRINT 0
 #endif
 
+/*
+ * Set CARTRIDGE_DEBUG_PRINT to 1 to redirect debug prints to the
+ * cartridge port. A character 'c' is encoded into address lines
+ * A8-A1 by performing a read access to the upper half of the cartridge
+ * address space 0xFB0xxx, which is decoded to the /ROM3 signal.
+ * This has the advantage of being always available since it does not
+ * require initialization of a peripheral.
+ */
+#ifndef CARTRIDGE_DEBUG_PRINT
+# define CARTRIDGE_DEBUG_PRINT 0
+#endif
+
+
 /* Determine if kprintf() is available */
-#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || CONSOLE_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT || MIDI_DEBUG_PRINT
+#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || CONSOLE_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT || MIDI_DEBUG_PRINT || CARTRIDGE_DEBUG_PRINT
 #  define HAS_KPRINTF 1
 # else
 #  define HAS_KPRINTF 0
@@ -2181,8 +2194,8 @@
 # endif
 #endif
 
-#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT) > 1
-# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1.
+#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT + CARTRIDGE_DEBUG_PRINT) > 1
+# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT, MIDI_DEBUG_PRINT or CARTRIDGE_DEBUG_PRINT must be set to 1.
 #endif
 
 

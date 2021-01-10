@@ -110,6 +110,18 @@ static void kprintf_outc_sccB(int c)
 }
 #endif
 
+#if CARTRIDGE_DEBUG_PRINT
+#define CARTRIDGE_ROM3 0xFB0000ul
+static void kprintf_outc_cartridge(int c)
+{
+    /*
+     * Force a read from the cartridge port encoding the character
+     * into address lines A8-A1.
+     */
+    (void)(*((volatile short*)(CARTRIDGE_ROM3 + ((c & 0xFF)<<1))));
+}
+#endif
+
 #if DETECT_NATIVE_FEATURES
 static void kprintf_outc_natfeat(int c)
 {
@@ -206,6 +218,10 @@ static int vkprintf(const char *fmt, va_list ap)
             SuperToUser(stacksave);     /* switch back.    */
         return rc;
     }
+#endif
+
+#if CARTRIDGE_DEBUG_PRINT
+    return doprintf(kprintf_outc_cartridge, fmt, ap);
 #endif
 
 #if CONF_WITH_UAE
