@@ -476,6 +476,9 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
                 return E_CHNG;
             }
         }
+
+        /* In logical mode RW_NOBYTESWAP is not supported. */
+        rw &= ~RW_NOBYTESWAP;
     }
     else {                              /* physical */
         if (unit < 0 || unit >= UNITSNUM || !units[unit].valid)

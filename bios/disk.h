@@ -62,6 +62,8 @@
 #define RW_NOMEDIACH        2
 #define RW_NORETRIES        4
 #define RW_NOTRANSLATE      8
+/* EmuTOS extension: Rwabs without byteswap on IDE */
+#define RW_NOBYTESWAP     128
 
 /*
  *  return codes

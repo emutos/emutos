@@ -861,7 +861,9 @@ LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, UBYTE *buf)
     UWORD major = unit - NUMFLOPPIES;
     LONG ret;
     WORD bus, reldev;
+    BOOL no_byteswap;
     MAYBE_UNUSED(reldev);
+    MAYBE_UNUSED(no_byteswap);
 
 #if DETECT_NATIVE_FEATURES
     if (units[unit].features & UNIT_NATFEATS) {
@@ -874,6 +876,10 @@ LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, UBYTE *buf)
 
     bus = GET_BUS(major);
     reldev = major - bus * DEVICES_PER_BUS;
+
+    /* EmuTOS extension: Rwabs without byteswap on IDE */
+    no_byteswap = rw & RW_NOBYTESWAP;
+    rw &= ~RW_NOBYTESWAP;
 
     /* hardware access to device */
     switch(bus) {
@@ -892,7 +898,8 @@ LONG disk_rw(UWORD unit, UWORD rw, ULONG sector, UWORD count, UBYTE *buf)
 #if CONF_WITH_IDE
     case IDE_BUS:
     {
-        BOOL need_byteswap = units[unit].byteswap;
+        /* Never byteswap when RW_NOBYTESWAP was set */
+        BOOL need_byteswap = no_byteswap? FALSE : units[unit].byteswap;
         ret = ide_rw(rw, sector, count, buf, reldev, need_byteswap);
         KDEBUG(("ide_rw() returned %ld\n", ret));
         break;
