@@ -147,7 +147,7 @@ LONG kbshift(WORD flag)
 {
     WORD oldshifty = shifty;
 
-    if (flag != -1)
+    if (flag >= 0)
         shifty = flag;
 
     return oldshifty;

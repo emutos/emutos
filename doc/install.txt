@@ -46,6 +46,10 @@ COUNTRY. This is mainly useful for the 192 and 256 KB targets. Example:
 Many options are set via the configuration file include/config.h.  They can
 be overridden most easily via #defines in a user-created file localconf.h.
 
+It is required to do "make clean" before switching to a different target,
+e.g., switching from 512k to 256k ROMs. The only change allowed without
+"make clean" is to build (with same target) for a different language.
+
 A complete list of targets
 ==========================
 
