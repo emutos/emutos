@@ -207,6 +207,11 @@ int i;
 PRIVATE void change_res(WORD res)
 {
 #if CONF_ATARI_HARDWARE
+    WORD fgcol, bgcol;
+
+    MAYBE_UNUSED(fgcol);
+    MAYBE_UNUSED(bgcol);
+
     if (res == current_res)
         return;
 
@@ -226,8 +231,27 @@ PRIVATE void change_res(WORD res)
         Setcolor(3,BLACK);
     else if (current_res == ST_MEDIUM)
         Setcolor(3,original_color3);
+    fgcol = 15; /* OS masks color index, so 15 is fine also for mono/medium modes */
+    bgcol = 0;
+
+    /*
+     * handle ST high
+     *
+     * this can only happen with the TT shifter, and in this case ST high
+     * is implemented via the TT 'Duochrome' mode, so we must reverse
+     * foreground & background colours (see comments in bios/screen.c
+     * for the gory details)
+     */
+    if (res == ST_HIGH) {
+        fgcol = 0;
+        bgcol = 15;
+    }
+
     escape('b');    /* ESC b => set foreground colour */
-    conout(15);     /* OS masks color index, so 15 is fine also for mono/medium modes */
+    conout(fgcol);
+    escape('c');    /* ESC c => set background colour */
+    conout(bgcol);
+    clear_screen();
 #endif
     enable_cursor();
     current_res = res;
