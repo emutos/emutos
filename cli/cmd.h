@@ -131,6 +131,7 @@ extern LONG jmp_xbios(WORD, ...);
 #define TT_MEDIUM       4
 #define TT_HIGH         6
 #define TT_LOW          7
+#define BLACK           0x0000          /* for Setcolor() */
 
 /*
  *  typedefs

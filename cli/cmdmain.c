@@ -43,6 +43,7 @@ LOCAL char input_line[MAX_LINE_SIZE];
 LOCAL char *arglist[MAX_ARGS];
 LOCAL char redir_name[MAXPATHLEN];
 LOCAL WORD original_res;
+LOCAL WORD original_color3;
 LOCAL LONG vdo_value;
 
 /*
@@ -75,6 +76,7 @@ WORD argc, rc;
     original_res = (vdo_value < _VDO_TT) ? Getrez() : -1;
 #endif
     current_res = original_res;
+    original_color3 = Setcolor(3,-1);
 
     nflops_copy = Supexec(get_nflops);      /* number of floppy drives */
 
@@ -214,19 +216,18 @@ PRIVATE void change_res(WORD res)
     Setscreen(-1L,-1L,0xc000|res,0);
 #else
     /* mode changed *without* palette change -> set readable text color index */
-    {
-        static int old_color_3 = -1;
-        /* switching to ST medium: set color 3 to black */
-        if (res == ST_MEDIUM)
-            old_color_3 = Setcolor(3, 0);
-        /* switching from ST medium: reset color 3 */
-        if (current_res == ST_MEDIUM && old_color_3 != -1)
-            Setcolor(3, old_color_3);
-        conout(ESC);    /* with VT52 command */
-        conout('b');    /* b=foreground, c=background */
-        /* OS masks color index, so 15 is fine also for mono/medium modes */
-        conout(15);
-    }
+
+    /*
+     * handle ST medium:
+     *  when switching to ST medium, ensure colour 3 is black
+     *  when switching from ST medium, restore original colour
+     */
+    if (res == ST_MEDIUM)
+        Setcolor(3,BLACK);
+    else if (current_res == ST_MEDIUM)
+        Setcolor(3,original_color3);
+    escape('b');    /* ESC b => set foreground colour */
+    conout(15);     /* OS masks color index, so 15 is fine also for mono/medium modes */
 #endif
     enable_cursor();
     current_res = res;
