@@ -209,21 +209,14 @@ PRIVATE void change_res(WORD res)
 #if CONF_ATARI_HARDWARE
     WORD fgcol, bgcol;
 
-    MAYBE_UNUSED(fgcol);
-    MAYBE_UNUSED(bgcol);
-
     if (res == current_res)
         return;
 
     Setscreen(-1L,-1L,res,0);
-#ifndef STANDALONE_CONSOLE
-    /* use EmuTOS extension to initialize palette for given resolution */
-    Setscreen(-1L,-1L,0xc000|res,0);
-#else
-    /* mode changed *without* palette change -> set readable text color index */
 
     /*
-     * handle ST medium:
+     * set readable text color index for ST medium
+     *
      *  when switching to ST medium, ensure colour 3 is black
      *  when switching from ST medium, restore original colour
      */
@@ -235,7 +228,7 @@ PRIVATE void change_res(WORD res)
     bgcol = 0;
 
     /*
-     * handle ST high
+     * handle ST high (i.e. TT 'Duochrome')
      *
      * this can only happen with the TT shifter, and in this case ST high
      * is implemented via the TT 'Duochrome' mode, so we must reverse
@@ -251,8 +244,8 @@ PRIVATE void change_res(WORD res)
     conout(fgcol);
     escape('c');    /* ESC c => set background colour */
     conout(bgcol);
+
     clear_screen();
-#endif
     enable_cursor();
     current_res = res;
 #endif
