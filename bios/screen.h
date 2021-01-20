@@ -89,10 +89,7 @@ WORD esetsmear(WORD mode);
 
 #endif /* CONF_WITH_ATARI_VIDEO */
 
-/* misc routines */
-void initialise_palette_registers(WORD rez,WORD mode);
-
-/* determine screen address, monitor type, ... */
+/* set screen address, mode, ... */
 void screen_init_address(void);
 void screen_init_mode(void);
 void set_rez_hacked(void);

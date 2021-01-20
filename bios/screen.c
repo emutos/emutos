@@ -1034,27 +1034,9 @@ WORD getrez(void)
  *  . sets the screen resolution iff 0 <= rez <= 7
  *      if a VIDEL is present and rez==3, then the video mode is
  *      set by a call to vsetmode with 'videlmode' as the argument
- *
- * in addition, EmuTOS implements the following extensions iff
- * logLoc<0 and physLoc<0 and the 0x8000 bit is set in rez (TOS will
- * ignore these since it ignores negative values of 'rez'):
- *  . if the 0x4000 bit is set in rez, the palette registers are
- *    initialised according to 'rez' (bits 2-0) and 'videlmode'
  */
 void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
-    /* handle EmuCON extensions */
-    if (((LONG)logLoc < 0) && ((LONG)physLoc < 0) && (rez & 0x8000)) {
-        /* Don't allow any changes when Line A variables were 'hacked'. */
-        if (rez_was_hacked) {
-            return;
-        }
-        if (rez & 0x4000) {
-            initialise_palette_registers(rez&0x0007, videlmode);
-        }
-        return;
-    }
-
 #if CONF_WITH_VIDEL
     /*
      * fixup videl mode if applicable (this is where we could test
