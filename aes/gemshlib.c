@@ -539,6 +539,9 @@ static void sh_chdef(SHELL *psh)
         set_drvdir(sh_apdir);
         break;
     case CONSOLE_APP:
+#if WITH_CLI
+        set_drvdir(psh->sh_cdir);   /* set by EmuDesk via shel_wdef() */
+#endif
         break;
     case AUTORUN_APP:
     case DESKTOP_APP:

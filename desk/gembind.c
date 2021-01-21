@@ -976,11 +976,11 @@ WORD shel_rdef(char *lpcmd, char *lpdir)
 }
 */
 
-/* unused
+#if WITH_CLI
 WORD shel_wdef(char *lpcmd, char *lpdir)
 {
     SH_LPCMD = (LONG)lpcmd;
     SH_LPDIR = (LONG)lpdir;
     return gem_if(AES_CTRL_CODE(SHEL_WDEF, 0, 1, 2));
 }
-*/
+#endif

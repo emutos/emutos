@@ -177,7 +177,9 @@ WORD shel_put(const void *pdata, WORD len);
 WORD shel_find(char *ppath);
 WORD shel_envrn(char *ppath, const char *psrch);
 WORD shel_rdef(char *lpcmd, char *lpdir);
-WORD shel_wdef(char *lpcmd, char *lpdir);
 */
+#if WITH_CLI
+WORD shel_wdef(char *lpcmd, char *lpdir);
+#endif
 
 #endif  /* _AESBIND_H */

@@ -725,6 +725,19 @@ static WORD do_filemenu(WORD item)
     case CLIITEM:                         /* Start EmuCON */
         G.g_work[1] = '\0';
         done = pro_run(FALSE, DEF_CONSOLE, G.g_work, -1, -1);
+        if (done && pw)
+        {
+            /*
+             * set default directory according to path in topped window
+             *
+             * note that it is safe to trim the trailing wildcard spec
+             * in the PNODE because the latter will be recreated when
+             * EmuDesk starts up after EmuCON exits.
+             */
+            char *p = filename_start(pw->w_pnode.p_spec);
+            *p = '\0';
+            shel_wdef("", pw->w_pnode.p_spec);
+        }
         break;
 #endif
 
