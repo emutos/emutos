@@ -609,8 +609,7 @@ static WORD sh_ldapp(SHELL *psh)
     {
         /* start the EmuCON shell: */
         aes_run_rom_program(coma_start);
-        psh->sh_nextapp = DESKTOP_APP;
-        psh->sh_isgem = TRUE;
+        set_default_desktop(psh);
         return 0;
     }
 #endif
