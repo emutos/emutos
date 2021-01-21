@@ -729,14 +729,13 @@ static WORD do_filemenu(WORD item)
         {
             /*
              * set default directory according to path in topped window
-             *
-             * note that it is safe to trim the trailing wildcard spec
-             * in the PNODE because the latter will be recreated when
-             * EmuDesk starts up after EmuCON exits.
              */
-            char *p = filename_start(pw->w_pnode.p_spec);
+            char *p;
+
+            strcpy(G.g_work, pw->w_pnode.p_spec);
+            p = filename_start(G.g_work);
             *p = '\0';
-            shel_wdef("", pw->w_pnode.p_spec);
+            shel_wdef("", G.g_work);
         }
         break;
 #endif
