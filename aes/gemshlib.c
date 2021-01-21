@@ -522,24 +522,27 @@ static void sh_chgrf(SHELL *psh)
 }
 
 
+static void set_drvdir(char *path)
+{
+    if (path[1] == ':')     /* set default drive (if specified) */
+        dos_sdrv(path[0] - 'A');
+    dos_chdir(path);        /* and default directory */
+}
+
+
 static void sh_chdef(SHELL *psh)
 {
     int n;
 
     switch(psh->sh_nextapp) {
     case NORMAL_APP:
-        if (sh_apdir[1] == ':')     /* set default drive (if specified) */
-            dos_sdrv(sh_apdir[0] - 'A');
-        dos_chdir(sh_apdir);        /* and default directory */
+        set_drvdir(sh_apdir);
         break;
     case CONSOLE_APP:
         break;
     case AUTORUN_APP:
     case DESKTOP_APP:
-        if (psh->sh_cdir[1] == ':')
-            dos_sdrv(psh->sh_cdir[0] - 'A');
-        dos_chdir(psh->sh_cdir);
-
+        set_drvdir(psh->sh_cdir);
         /*
          * if not the default desktop, build a fully-qualified name
          */
