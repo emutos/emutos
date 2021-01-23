@@ -23,6 +23,7 @@
  */
 #include "cmd.h"
 #include "version.h"
+#include "shellutl.h"
 
 /*
  *  global variables
@@ -98,6 +99,32 @@ WORD argc, rc;
 
     if (init_cmdedit() < 0)
         messagenl(_("warning: no history buffers"));
+
+    {
+        /* Setup path from the PATH environment variable
+         * (should be correctly formatted, no TOS quirk) */
+        char *largv[2];
+        shellutl_getenv(environment,"PATH=",&largv[1]);
+        if (largv[1] && largv[1][0]) {
+            /* path ${PATH$} */
+            largv[0] = "path";
+            execute(2,largv,redir_name);
+        }
+		shellutl_getenv(environment,"HOME=",&largv[1]);
+        if (largv[1] && largv[1][0]) {
+            /* cd ${HOME} */
+            largv[0] = "cd";
+            execute(2,largv,redir_name);
+
+            if (largv[1][1] == ':') {
+                /* Switch to drive */
+                char set_drive[]="x:";
+                set_drive[0] = largv[1][0];
+                largv[0] = set_drive;
+                execute(1,largv,redir_name);
+            }
+        }
+    }
 
     while(1) {
         init_screen();      /* init variables for screen size */

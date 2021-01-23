@@ -22,7 +22,7 @@ all: default
 
 VPATH = ../util
 OBJECTS = cmdasm.o cmdmain.o cmdedit.o cmdexec.o cmdint.o cmdparse.o cmdutil.o \
-          version.o doprintf.o
+          version.o doprintf.o shellutl.o
 HEADERS = cmd.h
 
 %.o: %.c $(HEADERS)

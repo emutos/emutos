@@ -48,6 +48,7 @@
 #include "gemmnlib.h"
 
 #include "string.h"
+#include "shellutl.h"
 
 #include "gemshlib.h"
 #include "../desk/deskstub.h"
@@ -325,25 +326,7 @@ char *sh_name(char *ppath)
  */
 void sh_envrn(char **ppath, const char *psrch)
 {
-    char *p;
-    WORD len;
-
-    len = strlen(psrch);
-    *ppath = NULL;
-
-    /*
-     * scan environment string until double nul
-     */
-    for (p = ad_envrn; *p; )
-    {
-        if (strncmp(p, psrch, len) == 0)
-        {
-            *ppath = p + len;
-            break;
-        }
-        while(*p++) /* skip to end of current env variable */
-            ;
-    }
+	shellutl_getenv(ad_envrn, psrch, ppath);
 }
 
 
