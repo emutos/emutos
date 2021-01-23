@@ -13,6 +13,8 @@
  */
 
 #include "shellutl.h"
+#include <config.h>
+#include "string.h"
 
 /*
  *  Search for a particular string in the DOS environment and return a
