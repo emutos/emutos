@@ -505,9 +505,6 @@ $(ROM_512): ROMSIZE = 512
 $(ROM_512): emutos.img mkrom
 	./mkrom pad $(ROMSIZE)k $< $(ROM_512)
 
-.PHONY: falcon
-falcon: help
-
 #
 # 512kB PAK/3 Image (based on 256kB Image)
 #
