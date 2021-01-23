@@ -1,19 +1,20 @@
 /*
  * Shell utility functions.
  * These are factored functions that may be used by both the
- * AES, Desktop and embedded CLI (EmuCON)
+ * AES, Desktop and embedded CLI (EmuCON2)
  *
  * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
- *  RFB    Roger Burrows
+ *  VB     Vincent Barrilliot
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
-#include "shellutl.h"
 #include <config.h>
+
+#include "shellutl.h"
 #include "string.h"
 
 /*
