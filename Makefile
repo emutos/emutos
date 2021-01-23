@@ -487,7 +487,7 @@ $(ROM_256): emutos.img mkrom
 	./mkrom pad $(ROMSIZE)k $< $(ROM_256)
 
 #
-# 512kB Image (for Falcon)
+# 512kB Image (for TT or Falcon; also usable for ST/STe under Hatari)
 #
 
 ROM_512 = etos512k.img
