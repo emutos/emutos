@@ -245,23 +245,8 @@ const char *p;
  */
 WORD strequal(const char *s1,const char *s2)
 {
-const char *p, *q;
-char c1, c2;
+    return !strncasecmp(s1,s2,-1L);
 
-    for (p = s1, q = s2; *p; ) {
-        c1 = *p++;
-        if ((c1 >= 'A') && (c1 <= 'Z'))
-            c1 |= 0x20;
-        c2 = *q++;
-        if ((c2 >= 'A') && (c2 <= 'Z'))
-            c2 |= 0x20;
-        if (c1 != c2)
-            return 0;
-    }
-    if (*q)
-        return 0;
-
-    return 1;
 }
 
 PRIVATE LONG getjar(void)
