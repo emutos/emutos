@@ -326,45 +326,7 @@ char *sh_name(char *ppath)
  */
 void sh_envrn(char **ppath, const char *psrch)
 {
-	shellutl_getenv(ad_envrn, psrch, ppath);
-}
-
-
-/*
- *  Search next style routine to pick up each path in the PATH= portion
- *  of the DOS environment.  It returns a pointer to the start of the
- *  following path until there are no more paths to find.
- */
-static char *sh_path(char *src, char *dest, char *pname)
-{
-    char last = 0;
-    char *p;
-
-    if (!src)           /* precautionary */
-        return NULL;
-
-    /* check for end of PATH= env var */
-    if (!*src)
-        return NULL;
-
-    /* copy over path */
-    for (p = src; *p; )
-    {
-        if ((*p == ';') || (*p == ','))
-            break;
-        last = *p;
-        *dest++ = *p++;
-    }
-
-    /* see if extra slash is needed */
-    if ((last != '\\') && (last != ':'))
-        *dest++ = '\\';
-
-    /* append file name */
-    strcpy(dest, pname);
-
-    /* point past terminating separator or nul */
-    return p + 1;
+    shellutl_getenv(ad_envrn, psrch, ppath);
 }
 
 
