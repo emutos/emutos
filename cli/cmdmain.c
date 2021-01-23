@@ -110,7 +110,8 @@ WORD argc, rc;
             largv[0] = "path";
             execute(2,largv,redir_name);
         }
-		shellutl_getenv(environment,"HOME=",&largv[1]);
+#if 0
+        shellutl_getenv(environment,"HOME=",&largv[1]);
         if (largv[1] && largv[1][0]) {
             /* cd ${HOME} */
             largv[0] = "cd";
@@ -124,6 +125,7 @@ WORD argc, rc;
                 execute(1,largv,redir_name);
             }
         }
+#endif
     }
 
     while(1) {

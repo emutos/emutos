@@ -11,6 +11,7 @@
  */
 #include "cmd.h"
 #include "string.h"
+#include "shellutl.h"
 
 typedef struct {
     const char *name;
@@ -485,8 +486,11 @@ LONG rc = 0L;
     }
 
     for (p = argv[1]; *p; ) {
-        if (!get_path_component(&p,temp))
+        p = shellutl_find_next_path_component(p,temp);
+
+        if (p == NULL)
             break;
+
         rc = check_path_component(temp);
         if (rc < 0L)
             break;
@@ -577,8 +581,7 @@ PRIVATE LONG run_setdrv(WORD argc,char **argv)
     if (!is_valid_drive(argv[0][0]))
         return EDRIVE;
 
-    strlower(argv[0]);
-    Dsetdrv(argv[0][0]-'a');
+    Dsetdrv(shellutl_get_drive_number(argv[0][0]));
 
     return 0L;
 }
@@ -592,10 +595,8 @@ char id[] = "X:";
 
     if (argc == 1)
         drive = Dgetdrv();
-    else {
-        strlower(argv[1]);
-        drive = argv[1][0] - 'a';
-    }
+    else
+        drive = shellutl_get_drive_number(argv[1][0]);
 
     rc = Dfree(info,drive+1);
 
@@ -1052,7 +1053,7 @@ WORD drive;
     for (p = filespec; *p; p++)
         ;
     if (*(p-1) == ':') {        /* add current path for drive */
-        drive = (*(p-2) | 0x20) - 'a';
+        drive = shellutl_get_drive_number(*(p-2));
         Dgetpath(p,drive+1);
         for ( ; *p; p++)
             ;
@@ -1121,11 +1122,12 @@ PRIVATE LONG is_valid_drive(char drive_letter)
 ULONG drvbits;
 WORD drive_number;
 
-    drvbits = Dsetdrv(Dgetdrv());
-    drive_number = (drive_letter | 0x20) - 'a';
+    drive_number = shellutl_get_drive_number(drive_letter);
+
     if ((drive_number < 0) || (drive_number >= BLKDEVNUM))
         return 0;
 
+    drvbits = Dsetdrv(Dgetdrv());
     return (drvbits & (1L << drive_number)) ? 1 : 0;
 }
 
@@ -1141,7 +1143,6 @@ PRIVATE LONG check_path_component(char *component)
 char *p;
 WORD fixup;
 LONG rc;
-
     /*
      * if drive specified, validate it and check
      * for "X:" and "X:\" directory specifications
@@ -1161,9 +1162,7 @@ LONG rc;
             return EPTHNF;
     }
 
-    if (*(p-1) == '\\')
-        fixup = 1;
-    else fixup = 0;
+    fixup = (*(p-1) == '\\');
 
     if (fixup)
         *--p = '\0';

@@ -44,3 +44,48 @@ void shellutl_getenv(const char *environment, const char *varname, char **out_va
             ;
     }
 }
+
+
+/*
+ *  "Search next"-style routine to pick up each path component in a
+ *  list of paths separated by ";" or ",".
+ *  Returns a pointer to the start of the following component path
+ *  there are no more paths to find.
+ */
+char *shellutl_find_next_path_component(const char *paths, char *dest)
+{
+    char last = 0;
+    char *p;
+
+    if (!paths)           /* precautionary */
+        return NULL;
+
+    /* check for end of PATH= env var */
+    if (!*paths)
+        return NULL;
+
+    /* copy over path */
+    for (p = (char*)paths; *p; )
+    {
+        if ((*p == ';') || (*p == ','))
+            break;
+        last = *p;
+        *dest++ = *p++;
+    }
+
+    /* see if extra slash is needed */
+    if ((last != '\\') && (last != ':'))
+        *dest++ = '\\';
+
+	*dest = '\0';
+
+    /* point past terminating separator or nul */
+    return *p ? p + 1 : p;
+}
+
+/*
+ *  Return a drive number from a drive letter (lower or upper case)
+ */
+WORD shellutl_get_drive_number(char drive_letter) {
+	return (drive_letter | 0x20) - 'a';
+}

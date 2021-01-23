@@ -438,9 +438,11 @@ static WORD findfile(char *pspec)
 
     while(1)
     {
-        path = sh_path(path, D.g_work, pname);
-        if (!path)                  /* end of PATH= */
+        path = shellutl_find_next_path_component(path, D.g_work);
+        if (path == NULL)                  /* end of PATH= */
             break;
+
+        strcat(pname,path);
         if (dos_sfirst(D.g_work, FA_RO | FA_HIDDEN | FA_SYSTEM) == 0)   /* found */
         {
             strcpy(pspec, D.g_work);

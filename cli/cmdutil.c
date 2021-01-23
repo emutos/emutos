@@ -112,20 +112,6 @@ const char *p;
 }
 
 /*
- *  convert a string to lowercase
- */
-char *strlower(char *str)
-{
-char *p;
-
-    for (p = str; *p; p++)
-        if ((*p >= 'A') && (*p <= 'Z'))
-            *p |= 0x20;
-
-    return str;
-}
-
-/*
  *  convert a string to uppercase
  */
 char *strupper(char *str)
@@ -219,40 +205,6 @@ unsigned char date_sep;
     return p - s;
 }
 
-/*
- *  copies next path component from buffer &
- *  updates buffer pointer
- *
- *  returns:
- *      1   arg is normal
- *      0   no more args
- */
-WORD get_path_component(const char **pp,char *dest)
-{
-const char *p;
-char *q = dest;
-
-    /*
-     *  look for start of next component
-     */
-    for (p = *pp; *p; p++)
-        if (*p != ';')
-            break;
-    if (!*p) {          /* end of buffer */
-        *pp = p;
-        return 0;
-    }
-
-    while(*p) {
-        if (*p == ';')
-            break;
-        *q++ = *p++;
-    }
-    *q = '\0';
-
-    *pp = p;
-    return 1;
-}
 
 WORD has_wildcard(const char *name)
 {

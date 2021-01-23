@@ -12,12 +12,13 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#ifndef _SHELLUTL_H
+#define _SHELLUTL_H
+
 #include <portab.h>
 
-/*
- *  Search for a particular string in the DOS environment and return a
- *  value in the pointer pointed to by the first argument.  If the string
- *  is found, the value is a pointer to the first character after the
- *  string; otherwise it is a NULL pointer.
- */
 void shellutl_getenv(const char *environment, const char *varname, char **out_value);
+char *shellutl_find_next_path_component(const char *paths, char *dest);
+WORD shellutl_get_drive_number(char drive_letter);
+
+#endif
