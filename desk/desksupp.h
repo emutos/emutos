@@ -28,7 +28,7 @@ void do_wopen(WORD new_win, WORD wh, WORD curr, GRECT *pt);
 void do_wfull(WORD wh);
 WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
                 char *pathname, GRECT *pt, WORD redraw);
-WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, char *tail);
+WORD do_aopen(ANODE *pa, BOOL isapp, WORD curr, char *pathname, char *pname, char *tail);
 WORD do_dopen(WORD curr);
 void do_fopen(WNODE *pw, WORD curr, char *pathname, WORD allow_new_win);
 WORD do_open(WORD curr);
@@ -38,7 +38,7 @@ void malloc_fail_alert(void);
 BOOL print_file(char *name, LONG bufsize, char *iobuf);
 void refresh_drive(WORD drive);
 void refresh_window(WNODE *pw, BOOL force_mediach);
-ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp);
+ANODE *i_find(WORD wh, WORD item, FNODE **ppf, BOOL *pisapp);
 WORD set_default_path(char *path);
 BOOL valid_drive(char drive);
 

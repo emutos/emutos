@@ -335,7 +335,7 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
         obj = tree + *pdobj;
         if (!(obj->ob_state & SELECTED))
         {
-            WORD isapp;
+            BOOL isapp;
             pa = i_find(dst_wh, *pdobj, NULL, &isapp);
             if (pa)
             {

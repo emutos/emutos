@@ -454,8 +454,8 @@ WORD ins_app(WORD curr)
     WNODE *pw;
     OBJECT *tree;
     WORD change = 0;    /* -ve means cancel, 0 means no change, +ve means change */
-    WORD isapp, field, exitobj, funkey;
-    BOOL installed, viewer;
+    WORD field, exitobj, funkey;
+    BOOL installed, viewer, isapp;
     char *pfname, *p, *q;
     char name[LEN_ZFNAME];
     char pathname[MAXPATHLEN];
@@ -959,8 +959,8 @@ static ANODE *allocate_window_anode(WORD type)
  */
 static WORD install_window_icon(FNODE *pf)
 {
-    BOOL identical;
-    WORD edit_start, exitobj, dummy, type;
+    BOOL identical, dummy;
+    WORD edit_start, exitobj, type;
     WORD new_icon, curr_icon;
     WORD change = 0;
     OBJECT *tree;
@@ -1221,7 +1221,8 @@ WORD rmv_icon(WORD sobj)
 void ins_shortcut(WORD wh, WORD mx, WORD my)
 {
     char pathname[MAXPATHLEN], *p, *q;
-    WORD sobj, x, y, dummy;
+    WORD sobj, x, y;
+    BOOL dummy;
     ANODE *pa, *newpa;
     FNODE *pf;
     WNODE *pw;

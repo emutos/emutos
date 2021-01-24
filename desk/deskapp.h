@@ -164,7 +164,7 @@ void app_start(void);
 void app_save(WORD todisk);
 void app_blddesk(void);
 ANODE *app_afind_by_id(WORD obid);
-ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, WORD *pisapp);
+ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, BOOL *pisapp);
 void nomem_alert(void) NORETURN;
 
 #if CONF_WITH_READ_INF

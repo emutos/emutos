@@ -820,7 +820,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
  *
  *  returns TRUE iff shel_write() was issued successfully
  */
-WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, char *tail)
+WORD do_aopen(ANODE *pa, BOOL isapp, WORD curr, char *pathname, char *pname, char *tail)
 {
     WNODE *pw;
     WORD ret;
@@ -1187,7 +1187,7 @@ WORD do_open(WORD curr)
     ANODE *pa;
     WNODE *pw;
     FNODE *pf;
-    WORD isapp;
+    BOOL isapp;
     char pathname[MAXPATHLEN];
     char filename[LEN_ZFNAME];
 
@@ -1676,12 +1676,12 @@ void refresh_drive(WORD drive)
  *
  *  returns NULL if no matching index
  */
-ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
+ANODE *i_find(WORD wh, WORD item, FNODE **ppf, BOOL *pisapp)
 {
     ANODE *pa;
     WNODE *pw;
     FNODE *pf;
-    WORD isapp;
+    BOOL isapp;
 
     pa = (ANODE *) NULL;
     pf = (FNODE *) NULL;

@@ -456,7 +456,8 @@ static void men_list(OBJECT *mlist, const UBYTE *dlist, WORD enable)
  */
 static void men_update(void)
 {
-    WORD item, napp, ndesk, nsel, ntrash, nwin, isapp;
+    WORD item, napp, ndesk, nsel, ntrash, nwin;
+    BOOL isapp;
     ANODE *appl;
     OBJECT *tree = desk_rs_trees[ADMENU];
     OBJECT *obj;
@@ -1070,7 +1071,7 @@ static WORD process_funkey(WORD funkey)
         pfname = filename_start(pa->a_pappl);
         /* copy pathname including trailing backslash */
         strlcpy(pathname,pa->a_pappl,pfname-pa->a_pappl+1);
-        return do_aopen(pa,1,-1,pathname,pfname,NULL);
+        return do_aopen(pa,TRUE,-1,pathname,pfname,NULL);
     }
 
     return -1;

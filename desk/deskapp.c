@@ -1404,7 +1404,7 @@ ANODE *app_afind_by_id(WORD obid)
  *      TRUE if name matches application name
  *      FALSE if name matches data name
  */
-ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, WORD *pisapp)
+ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, BOOL *pisapp)
 {
     ANODE *pa;
     WORD match;
