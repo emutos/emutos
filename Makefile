@@ -1013,11 +1013,10 @@ GEN_SRC += include/i18nconf.h
 
 ifneq (,$(UNIQUE))
 include/i18nconf.h: obj/country
-	@echo '# Generating $@ with CONF_LANG="$(ETOSLANG)" CONF_KEYB=KEYB_$(ETOSKEYB) CONF_CHARSET=CHARSET_$(ETOSCSET)'
+	@echo '# Generating $@ with CONF_KEYB=KEYB_$(ETOSKEYB) CONF_CHARSET=CHARSET_$(ETOSCSET)'
 	@rm -f $@; touch $@
 	@echo '#define CONF_MULTILANG 0' >> $@
 	@echo '#define CONF_WITH_NLS 0' >> $@
-	@echo '#define CONF_LANG "$(ETOSLANG)"' >> $@
 	@echo '#define CONF_KEYB KEYB_$(ETOSKEYB)' >> $@
 	@echo '#define CONF_CHARSET CHARSET_$(ETOSCSET)' >> $@
 	@echo "#define CONF_IDT ($(ETOSIDT))" >> $@
