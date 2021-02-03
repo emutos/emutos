@@ -18,7 +18,6 @@
 #include "chardev.h"
 #include "conout.h"
 #include "vt52.h"
-#include "mfp.h"
 #include "bios.h"
 #include "asm.h"
 #include "serport.h"

@@ -25,7 +25,6 @@
 #include "delay.h"
 #include "disk.h"
 #include "ide.h"
-#include "mfp.h"
 #include "gemerror.h"
 #include "string.h"
 #include "tosvars.h"

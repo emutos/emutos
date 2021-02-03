@@ -18,7 +18,6 @@
 #include "blkdev.h"
 #include "delay.h"
 #include "gemerror.h"
-#include "mfp.h"
 #include "sd.h"
 #include "spi.h"
 #include "string.h"
