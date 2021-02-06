@@ -30,8 +30,7 @@ jobs:
     - name: Install packages
       run: |
         sudo add-apt-repository ppa:vriviere/ppa && sudo apt-get update
-        sudo apt-get install cross-mint-essential dos2unix hatari aranym mtools
-        sudo apt-get install lftp=4.8.1-1ubuntu0.1
+        sudo apt-get install cross-mint-essential dos2unix hatari aranym mtools lftp=4.8.1-1ubuntu0.1
         dpkg -l lftp
     - name: Display package versions
       run: |
@@ -41,6 +40,7 @@ jobs:
         gcc --version
         awk -W version
         m68k-atari-mint-ld --version
+        m68k-atari-mint-ar --version
         m68k-atari-mint-gcc --version
         tar --version
         unix2dos --version
