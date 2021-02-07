@@ -21,7 +21,6 @@
 #include "processor.h"
 #include "natfeat.h"
 #include "tosvars.h"
-#include "mfp.h"
 #include "ide.h"
 #include "acsi.h"
 #include "scsi.h"

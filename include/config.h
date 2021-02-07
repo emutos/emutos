@@ -511,6 +511,9 @@
 # ifndef CONF_TTRAM_SIZE
 #  define CONF_TTRAM_SIZE 48UL*1024*1024
 # endif
+# ifndef CONF_SERIAL_CONSOLE
+#  define CONF_SERIAL_CONSOLE 1
+# endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
 # endif
@@ -1355,11 +1358,7 @@
  * - use exclusively the serial port input for console input.
  */
 #ifndef CONF_SERIAL_CONSOLE
-# if !CONF_WITH_ATARI_VIDEO && !defined(MACHINE_AMIGA)
-#  define CONF_SERIAL_CONSOLE 1
-# else
-#  define CONF_SERIAL_CONSOLE 0
-# endif
+# define CONF_SERIAL_CONSOLE 0
 #endif
 
 /* When possible, it's better to handle the serial console input with

@@ -130,9 +130,9 @@ FONTOBJ_GR = fnt_gr_6x6.o fnt_gr_8x8.o fnt_gr_8x16.o
 FONTOBJ_RU = fnt_ru_6x6.o fnt_ru_8x8.o fnt_ru_8x16.o
 FONTOBJ_ALL = $(FONTOBJ_ST) $(FONTOBJ_L2) $(FONTOBJ_GR) $(FONTOBJ_RU)
 FONTOBJ_COMMON = obj/fnt_off_6x6.o obj/fnt_off_8x8.o
+FONTOBJ = $(FONTOBJ_ALL:%=obj/%)
 
-ifneq (,$(UNIQUE))
-FONTOBJ = $(FONTOBJ_$(ETOSCSET):%=obj/%) $(FONTOBJ_COMMON)
-else
-FONTOBJ = $(FONTOBJ_ALL:%=obj/%) $(FONTOBJ_COMMON)
-endif
+TOCLEAN = obj/*.a
+
+obj/libfont.a: $(FONTOBJ)
+	$(AR) $(ARFLAGS) obj/libfont.a $(FONTOBJ)

@@ -19,7 +19,6 @@
 #include "asm.h"
 #include "tosvars.h"
 #include "ahdi.h"
-#include "mfp.h"
 #include "floppy.h"
 #include "disk.h"
 #include "ikbd.h"
