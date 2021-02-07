@@ -62,6 +62,7 @@
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
+#include "lisa.h"
 #ifdef MACHINE_FIREBEE
 #include "coldfire.h"
 #endif
@@ -689,6 +690,8 @@ static void shutdown(void)
     firebee_shutdown();
 #elif defined(MACHINE_AMIGA)
     amiga_shutdown();
+#elif defined(MACHINE_LISA)
+    lisa_shutdown();
 #endif
 }
 
@@ -704,6 +707,8 @@ BOOL can_shutdown(void)
     return TRUE;
 #elif defined(MACHINE_AMIGA)
     return amiga_can_shutdown();
+#elif defined(MACHINE_LISA)
+    return TRUE;
 #else
     return FALSE;
 #endif

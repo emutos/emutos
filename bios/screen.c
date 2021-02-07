@@ -36,6 +36,7 @@
 #ifdef MACHINE_AMIGA
 #include "amiga.h"
 #endif
+#include "lisa.h"
 
 void detect_monitor_change(void);
 static void setphys(const UBYTE *addr);
@@ -617,6 +618,10 @@ void screen_init_mode(void)
     amiga_screen_init();
 #endif
 
+#ifdef MACHINE_LISA
+    lisa_screen_init();
+#endif
+
     rez_was_hacked = FALSE; /* initial assumption */
 }
 
@@ -728,6 +733,8 @@ ULONG initial_vram_size(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();
+#elif defined(MACHINE_LISA)
+    return 32*1024UL;
 #else
     ULONG vram_size;
 
@@ -782,6 +789,10 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
 
 #ifdef MACHINE_AMIGA
     amiga_get_current_mode_info(planes, hz_rez, vt_rez);
+#elif defined(MACHINE_LISA)
+    *planes = 1;
+    *hz_rez = 720;
+    *vt_rez = 364;
 #else
     atari_get_current_mode_info(planes, hz_rez, vt_rez);
 #endif
@@ -988,6 +999,8 @@ const UBYTE *physbase(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_physbase();
+#elif defined(MACHINE_LISA)
+    return lisa_physbase();
 #elif CONF_WITH_ATARI_VIDEO
     return atari_physbase();
 #else
@@ -1004,6 +1017,8 @@ static void setphys(const UBYTE *addr)
 
 #ifdef MACHINE_AMIGA
     amiga_setphys(addr);
+#elif defined(MACHINE_LISA)
+    lisa_setphys(addr);
 #elif CONF_WITH_ATARI_VIDEO
     atari_setphys(addr);
 #endif

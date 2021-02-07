@@ -10,6 +10,7 @@
 /*.sym
 /*.img
 /*.rom
+/*.dc42
 /*.map
 /localconf.h
 /makefile.dep

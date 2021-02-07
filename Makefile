@@ -207,6 +207,7 @@ bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              parport.c screen.c serport.c sound.c videl.c vt52.c xhdi.c \
              pmmu030.c 68040_pmmu.S \
              amiga.c amiga2.S spi_vamp.c \
+             lisa.c lisa2.S \
              delay.c delayasm.S sd.c memory2.c bootparams.c scsi.c nova.c \
              dsp.c dsp2.S
 
@@ -382,6 +383,7 @@ help:
 	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
 	@echo "amigaflop $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy"
 	@echo "amigaflopvampire $(EMUTOS_VAMPIRE_ADF), EmuTOS RAM as Amiga boot floppy optimized for Vampire V2"
+	@echo "lisaflop $(EMUTOS_DC42), EmuTOS RAM as Apple Lisa boot floppy"
 	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
@@ -805,6 +807,34 @@ amigaboot.img: obj/amigaboot.o obj/bootram.o
 	$(LD) $+ $(PCREL_LDFLAGS) -o $@
 
 obj/amigaboot.o: obj/ramtos.h
+
+#
+# lisaflop
+#
+
+TOCLEAN += *.dc42
+
+EMUTOS_DC42 = emutos.dc42
+LISA_DEFS =
+
+.PHONY: lisaflop
+NODEP += lisaflop
+lisaflop: UNIQUE = $(COUNTRY)
+lisaflop: OPTFLAGS = $(SMALL_OPTFLAGS)
+lisaflop: override DEF += -DTARGET_LISA_FLOPPY $(LISA_DEFS)
+lisaflop:
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) EMUTOS_DC42=$(EMUTOS_DC42) $(EMUTOS_DC42)
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
+	echo "# RAM used: $$(($$MEMBOT)) bytes"
+	@printf "$(LOCALCONFINFO)"
+
+$(EMUTOS_DC42): lisaboot.img emutos.img mkrom
+	./mkrom lisa-floppy lisaboot.img emutos.img $@
+
+lisaboot.img: obj/lisaboot.o obj/bootram.o
+	$(LD) $+ $(PCREL_LDFLAGS) -o $@
+
+obj/lisaboot.o: obj/ramtos.h
 
 #
 # NLS support
