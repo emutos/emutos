@@ -33,9 +33,7 @@
 #include "biosmem.h"
 #include "biosext.h"
 #include "bios.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
 #include "lisa.h"
 
 void detect_monitor_change(void);

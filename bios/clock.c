@@ -31,9 +31,7 @@
 #include "delay.h"
 #include "bios.h"
 #include "../bdos/bdosstub.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
 #include "lisa.h"
 
 #if (CONF_WITH_MONSTER || CONF_WITH_IKBD_CLOCK)

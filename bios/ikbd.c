@@ -37,9 +37,7 @@
 #include "delay.h"
 #include "bios.h"
 #include "coldfire.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
 #include "lisa.h"
 
 

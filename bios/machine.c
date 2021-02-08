@@ -39,9 +39,7 @@
 #include "dma.h"
 #include "nova.h"
 #include "biosext.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
 
 #if CONF_WITH_ADVANCED_CPU
 UBYTE is_bus32; /* 1 if address bus is 32-bit, 0 if it is 24-bit */

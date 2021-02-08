@@ -59,13 +59,9 @@
 #include "memory.h"
 #include "nova.h"
 #include "tosvars.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
 #include "lisa.h"
-#ifdef MACHINE_FIREBEE
 #include "coldfire.h"
-#endif
 #if WITH_CLI
 #include "../cli/clistub.h"
 #endif

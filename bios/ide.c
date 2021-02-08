@@ -34,9 +34,7 @@
 #include "coldfire.h"
 #include "processor.h"
 #include "biosmem.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
 
 #if CONF_WITH_IDE
 
