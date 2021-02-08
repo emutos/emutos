@@ -31,11 +31,67 @@ MAKEFLAGS = --no-print-directory
 
 NODEP =
 
+# This must be the *first* rule of this Makefile. Don't move!
+# Variable assignments are allowed before this, but *not* rules.
+# Note: The first rule is used when make is invoked without argument.
+# So "make" is actually a synonym of "make all", actually "make help".
+.PHONY: all
+NODEP += all
+all:	help
+
+.PHONY: help
+NODEP += help
+help: UNIQUE = $(COUNTRY)
+help:
+	@echo "target  meaning"
+	@echo "------  -------"
+	@echo "help    this help message"
+	@echo "version display the EmuTOS version"
+	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB"
+	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB"
+	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB"
+	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
+	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
+	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
+	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
+	@echo "amigavampire $(VAMPIRE_ROM_AMIGA), EmuTOS ROM for Amiga optimized for Vampire V2"
+	@echo "v4sa    $(V4_ROM_AMIGA), EmuTOS ROM for Amiga Vampire V4 Standalone"
+	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
+	@echo "amigaflop $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy"
+	@echo "amigaflopvampire $(EMUTOS_VAMPIRE_ADF), EmuTOS RAM as Amiga boot floppy optimized for Vampire V2"
+	@echo "lisaflop $(EMUTOS_DC42), EmuTOS RAM as Apple Lisa boot floppy"
+	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
+	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
+	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
+	@echo "prg     emutos.prg, a RAM tos"
+	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
+	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
+	@echo "all192  all 192 KB images"
+	@echo "all256  all 256 KB images"
+	@echo "allpak3 all PAK/3 images"
+	@echo "allprg  all emutos*.prg"
+	@echo "allflop all emutos*.st"
+	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
+	@echo "clean"
+	@echo "expand  expand tabs to spaces"
+	@echo "crlf    convert all end of lines to LF"
+	@echo "charset check the charset of all the source files"
+	@echo "bugready set up files in preparation for 'bug update'"
+	@echo "gitready same as $(MAKE) expand crlf"
+	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
+	@echo "release build the release archives into $(RELEASE_DIR)"
+
 #
 # EmuTOS version
 #
 
 include version.mk
+
+# Display the EmuTOS version
+.PHONY: version
+NODEP += version
+version:
+	@echo '$(VERSION)'
 
 #
 # the country. should be a lowercase two-letter code as found in
@@ -361,62 +417,6 @@ CORE_OBJ = $(foreach d,$(core_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.
 OPTIONAL_OBJ = $(foreach d,$(optional_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src))))
 END_OBJ = $(patsubst %,obj/%.o,$(basename $(notdir $(end_src))))
 OBJECTS = $(CORE_OBJ) $(OPTIONAL_OBJ) $(END_OBJ)
-
-#
-# production targets
-#
-
-.PHONY: all
-NODEP += all
-all:	help
-
-.PHONY: help
-NODEP += help
-help: UNIQUE = $(COUNTRY)
-help:
-	@echo "target  meaning"
-	@echo "------  -------"
-	@echo "help    this help message"
-	@echo "version display the EmuTOS version"
-	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB"
-	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB"
-	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB"
-	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
-	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
-	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
-	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
-	@echo "amigavampire $(VAMPIRE_ROM_AMIGA), EmuTOS ROM for Amiga optimized for Vampire V2"
-	@echo "v4sa    $(V4_ROM_AMIGA), EmuTOS ROM for Amiga Vampire V4 Standalone"
-	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
-	@echo "amigaflop $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy"
-	@echo "amigaflopvampire $(EMUTOS_VAMPIRE_ADF), EmuTOS RAM as Amiga boot floppy optimized for Vampire V2"
-	@echo "lisaflop $(EMUTOS_DC42), EmuTOS RAM as Apple Lisa boot floppy"
-	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
-	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
-	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
-	@echo "prg     emutos.prg, a RAM tos"
-	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
-	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
-	@echo "all192  all 192 KB images"
-	@echo "all256  all 256 KB images"
-	@echo "allpak3 all PAK/3 images"
-	@echo "allprg  all emutos*.prg"
-	@echo "allflop all emutos*.st"
-	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
-	@echo "clean"
-	@echo "expand  expand tabs to spaces"
-	@echo "crlf    convert all end of lines to LF"
-	@echo "charset check the charset of all the source files"
-	@echo "bugready set up files in preparation for 'bug update'"
-	@echo "gitready same as $(MAKE) expand crlf"
-	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
-	@echo "release build the release archives into $(RELEASE_DIR)"
-
-# Display the EmuTOS version
-.PHONY: version
-NODEP += version
-version:
-	@echo '$(VERSION)'
 
 #
 # Preprocess the linker script, to allow #include, #define, #if, etc.
