@@ -24,6 +24,14 @@
 MAKEFLAGS = --no-print-directory
 
 #
+# NODEP will accumulate the names of the targets which does not need to include
+# makefile.dep, to avoid rebuilding that file when not necessary.
+# This includes targets not using $(CC) and targets recursively invoking $(MAKE).
+#
+
+NODEP =
+
+#
 # EmuTOS version
 #
 
@@ -102,12 +110,11 @@ GEN_SRC =
 TOCLEAN = *~ */*~ $(CORE) *.tmp obj/*.h $(GEN_SRC)
 
 #
-# NODEP will accumulate the names of the targets which does not need to include
-# makefile.dep, to avoid rebuilding that file when not necessary.
-# This includes targets not using $(CC) and targets recursively invoking $(MAKE).
+# Don't update makefile.dep when the user asks to generate source files
+# from the command line. Does this really happen?
 #
 
-NODEP := %.c %.h %.pot
+NODEP += %.c %.h %.pot
 
 #
 # compilation flags
