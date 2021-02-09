@@ -844,6 +844,22 @@ lisaboot.img: obj/lisaboot.o obj/bootram.o
 obj/lisaboot.o: obj/ramtos.h
 
 #
+# localisation support: create bios/ctables.h include/i18nconf.h po/LINGUAS
+#
+# we group targets, since localise generates all three targets at the same time
+#
+
+GEN_SRC += bios/ctables.h include/i18nconf.h po/LINGUAS
+TOCLEAN += localise include/i18nconf.h bios/ctables.h po/LINGUAS
+
+NODEP += localise
+localise: tools/localise.c
+	$(NATIVECC) $< -o $@
+
+bios/ctables.h include/i18nconf.h po/LINGUAS &: obj/country localise.ctl localise
+	./localise -u$(UNIQUE) localise.ctl bios/ctables.h include/i18nconf.h po/LINGUAS
+
+#
 # NLS support
 #
 
@@ -856,8 +872,11 @@ NODEP += bug
 bug: tools/bug.c
 	$(NATIVECC) $< -o $@
 
+# never run 'bug make' if UNIQUE is specified
+ifeq (,$(UNIQUE))
 util/langs.c: $(POFILES) po/LINGUAS bug po/messages.pot
 	./bug make
+endif
 
 po/messages.pot: bug po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
 	./bug xgettext
@@ -1040,44 +1059,6 @@ obj/country: always-execute-recipe
 	  echo "rm -f $$i $$j"; \
 	  rm -f $$i $$j; \
 	done
-
-#
-# i18nconf.h - this file is automatically created by the Makefile. This
-# is done this way instead of simply passing the flags as -D on the
-# command line because:
-# - the command line is shorter
-# - it allows #defining CONF_KEYB as KEYB_US with KEYB_US #defined elsewhere
-# - explicit dependencies can force rebuilding files that include it
-#
-
-GEN_SRC += include/i18nconf.h
-
-ifneq (,$(UNIQUE))
-include/i18nconf.h: obj/country
-	@echo '# Generating $@ with CONF_KEYB=KEYB_$(ETOSKEYB) CONF_CHARSET=CHARSET_$(ETOSCSET)'
-	@rm -f $@; touch $@
-	@echo '#define CONF_MULTILANG 0' >> $@
-	@echo '#define CONF_WITH_NLS 0' >> $@
-	@echo '#define CONF_KEYB KEYB_$(ETOSKEYB)' >> $@
-	@echo '#define CONF_CHARSET CHARSET_$(ETOSCSET)' >> $@
-	@echo "#define CONF_IDT ($(ETOSIDT))" >> $@
-else
-include/i18nconf.h: obj/country
-	@echo '# Generating $@ with CONF_MULTILANG=1'
-	@rm -f $@; touch $@
-	@echo '#define CONF_MULTILANG 1' >> $@
-	@echo '#define CONF_WITH_NLS 1' >> $@
-endif
-
-#
-# ctables.h - the country tables, generated from country.mk, and only
-# included in bios/country.c
-#
-
-GEN_SRC += bios/ctables.h
-
-bios/ctables.h: country.mk tools/genctables.awk
-	awk -f tools/genctables.awk < country.mk > $@
 
 #
 # OS header
