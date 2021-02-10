@@ -122,7 +122,7 @@ Makefile and Git usage
 file              |   by make  |  make clean  |  into Git
 ------------------+------------+--------------+-------------
 po/POTFILES.in    |      no    |      no      |    yes
-po/LINGUAS        |      no    |      no      |    yes
+po/LINGUAS        |     yes    |      yes     |    no
 po/messages.pot   | only when  |      yes     |    no
                   | absent     |              |
 po/xx.po          |      no    |      no      |    yes
@@ -137,7 +137,8 @@ ignoring empty lines and lines beginning with #.
 
 po/LINGUAS gives the list of language names to consider, together
 with the charset name to which they will be displayed in the
-destination software.
+destination software.  It is created by the "localise" tool; this
+allows different sets of languages to be created dynamically.
 
 po/messages.pot and the various po/xx.po are po-files, described below.
 
