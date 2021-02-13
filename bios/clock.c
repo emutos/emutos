@@ -31,9 +31,8 @@
 #include "delay.h"
 #include "bios.h"
 #include "../bdos/bdosstub.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
+#include "lisa.h"
 
 #if (CONF_WITH_MONSTER || CONF_WITH_IKBD_CLOCK)
 static UBYTE int2bcd(UWORD a)
@@ -1201,6 +1200,12 @@ LONG gettime(void)
     else if (TRUE)
     {
         return amiga_getdt();
+    }
+#endif /* MACHINE_AMIGA */
+#ifdef MACHINE_LISA
+    else if (TRUE)
+    {
+        return lisa_getdt();
     }
 #endif /* MACHINE_AMIGA */
 #if CONF_WITH_NVRAM

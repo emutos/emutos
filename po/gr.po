@@ -381,7 +381,7 @@ msgstr "  ¢¨¦­¦¨åœª/‹œ«¦¤¦£˜©å˜..."
 
 #: desk/desk_rsc.c
 msgid "  Search..."
-msgstr "€¤˜ã«©..."
+msgstr "  €¤˜ã«©..."
 
 #: desk/desk_rsc.c
 msgid "  New folder..."

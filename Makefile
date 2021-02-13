@@ -24,10 +24,74 @@
 MAKEFLAGS = --no-print-directory
 
 #
+# NODEP will accumulate the names of the targets which does not need to include
+# makefile.dep, to avoid rebuilding that file when not necessary.
+# This includes targets not using $(CC) and targets recursively invoking $(MAKE).
+#
+
+NODEP =
+
+# This must be the *first* rule of this Makefile. Don't move!
+# Variable assignments are allowed before this, but *not* rules.
+# Note: The first rule is used when make is invoked without argument.
+# So "make" is actually a synonym of "make all", actually "make help".
+.PHONY: all
+NODEP += all
+all:	help
+
+.PHONY: help
+NODEP += help
+help: UNIQUE = $(COUNTRY)
+help:
+	@echo "target  meaning"
+	@echo "------  -------"
+	@echo "help    this help message"
+	@echo "version display the EmuTOS version"
+	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB"
+	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB"
+	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB"
+	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
+	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
+	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
+	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
+	@echo "amigavampire $(VAMPIRE_ROM_AMIGA), EmuTOS ROM for Amiga optimized for Vampire V2"
+	@echo "v4sa    $(V4_ROM_AMIGA), EmuTOS ROM for Amiga Vampire V4 Standalone"
+	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
+	@echo "amigaflop $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy"
+	@echo "amigaflopvampire $(EMUTOS_VAMPIRE_ADF), EmuTOS RAM as Amiga boot floppy optimized for Vampire V2"
+	@echo "lisaflop $(EMUTOS_DC42), EmuTOS RAM as Apple Lisa boot floppy"
+	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
+	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
+	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
+	@echo "prg     emutos.prg, a RAM tos"
+	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
+	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
+	@echo "all192  all 192 KB images"
+	@echo "all256  all 256 KB images"
+	@echo "allpak3 all PAK/3 images"
+	@echo "allprg  all emutos*.prg"
+	@echo "allflop all emutos*.st"
+	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
+	@echo "clean"
+	@echo "expand  expand tabs to spaces"
+	@echo "crlf    convert all end of lines to LF"
+	@echo "charset check the charset of all the source files"
+	@echo "bugready set up files in preparation for 'bug update'"
+	@echo "gitready same as $(MAKE) expand crlf"
+	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
+	@echo "release build the release archives into $(RELEASE_DIR)"
+
+#
 # EmuTOS version
 #
 
 include version.mk
+
+# Display the EmuTOS version
+.PHONY: version
+NODEP += version
+version:
+	@echo '$(VERSION)'
 
 #
 # the country. should be a lowercase two-letter code as found in
@@ -102,12 +166,11 @@ GEN_SRC =
 TOCLEAN = *~ */*~ $(CORE) *.tmp obj/*.h $(GEN_SRC)
 
 #
-# NODEP will accumulate the names of the targets which does not need to include
-# makefile.dep, to avoid rebuilding that file when not necessary.
-# This includes targets not using $(CC) and targets recursively invoking $(MAKE).
+# Don't update makefile.dep when the user asks to generate source files
+# from the command line. Does this really happen?
 #
 
-NODEP := %.c %.h %.pot
+NODEP += %.c %.h %.pot
 
 #
 # compilation flags
@@ -207,6 +270,7 @@ bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              parport.c screen.c serport.c sound.c videl.c vt52.c xhdi.c \
              pmmu030.c 68040_pmmu.S \
              amiga.c amiga2.S spi_vamp.c \
+             lisa.c lisa2.S \
              delay.c delayasm.S sd.c memory2.c bootparams.c scsi.c nova.c \
              dsp.c dsp2.S
 
@@ -353,61 +417,6 @@ CORE_OBJ = $(foreach d,$(core_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.
 OPTIONAL_OBJ = $(foreach d,$(optional_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src))))
 END_OBJ = $(patsubst %,obj/%.o,$(basename $(notdir $(end_src))))
 OBJECTS = $(CORE_OBJ) $(OPTIONAL_OBJ) $(END_OBJ)
-
-#
-# production targets
-#
-
-.PHONY: all
-NODEP += all
-all:	help
-
-.PHONY: help
-NODEP += help
-help: UNIQUE = $(COUNTRY)
-help:
-	@echo "target  meaning"
-	@echo "------  -------"
-	@echo "help    this help message"
-	@echo "version display the EmuTOS version"
-	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB"
-	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB"
-	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB"
-	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
-	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
-	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
-	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
-	@echo "amigavampire $(VAMPIRE_ROM_AMIGA), EmuTOS ROM for Amiga optimized for Vampire V2"
-	@echo "v4sa    $(V4_ROM_AMIGA), EmuTOS ROM for Amiga Vampire V4 Standalone"
-	@echo "amigakd $(AMIGA_KICKDISK), EmuTOS as Amiga 1000 Kickstart disk"
-	@echo "amigaflop $(EMUTOS_ADF), EmuTOS RAM as Amiga boot floppy"
-	@echo "amigaflopvampire $(EMUTOS_VAMPIRE_ADF), EmuTOS RAM as Amiga boot floppy optimized for Vampire V2"
-	@echo "m548x-dbug $(SREC_M548X_DBUG), EmuTOS-RAM for dBUG on ColdFire Evaluation Boards"
-	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
-	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
-	@echo "prg     emutos.prg, a RAM tos"
-	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
-	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
-	@echo "all192  all 192 KB images"
-	@echo "all256  all 256 KB images"
-	@echo "allpak3 all PAK/3 images"
-	@echo "allprg  all emutos*.prg"
-	@echo "allflop all emutos*.st"
-	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
-	@echo "clean"
-	@echo "expand  expand tabs to spaces"
-	@echo "crlf    convert all end of lines to LF"
-	@echo "charset check the charset of all the source files"
-	@echo "bugready set up files in preparation for 'bug update'"
-	@echo "gitready same as $(MAKE) expand crlf"
-	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
-	@echo "release build the release archives into $(RELEASE_DIR)"
-
-# Display the EmuTOS version
-.PHONY: version
-NODEP += version
-version:
-	@echo '$(VERSION)'
 
 #
 # Preprocess the linker script, to allow #include, #define, #if, etc.
@@ -807,6 +816,50 @@ amigaboot.img: obj/amigaboot.o obj/bootram.o
 obj/amigaboot.o: obj/ramtos.h
 
 #
+# lisaflop
+#
+
+TOCLEAN += *.dc42
+
+EMUTOS_DC42 = emutos.dc42
+LISA_DEFS =
+
+.PHONY: lisaflop
+NODEP += lisaflop
+lisaflop: UNIQUE = $(COUNTRY)
+lisaflop: OPTFLAGS = $(SMALL_OPTFLAGS)
+lisaflop: override DEF += -DTARGET_LISA_FLOPPY $(LISA_DEFS)
+lisaflop:
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) EMUTOS_DC42=$(EMUTOS_DC42) $(EMUTOS_DC42)
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
+	echo "# RAM used: $$(($$MEMBOT)) bytes"
+	@printf "$(LOCALCONFINFO)"
+
+$(EMUTOS_DC42): lisaboot.img emutos.img mkrom
+	./mkrom lisa-floppy lisaboot.img emutos.img $@
+
+lisaboot.img: obj/lisaboot.o obj/bootram.o
+	$(LD) $+ $(PCREL_LDFLAGS) -o $@
+
+obj/lisaboot.o: obj/ramtos.h
+
+#
+# localisation support: create bios/ctables.h include/i18nconf.h po/LINGUAS
+#
+# we group targets, since localise generates all three targets at the same time
+#
+
+GEN_SRC += bios/ctables.h include/i18nconf.h po/LINGUAS
+TOCLEAN += localise include/i18nconf.h bios/ctables.h po/LINGUAS
+
+NODEP += localise
+localise: tools/localise.c
+	$(NATIVECC) $< -o $@
+
+bios/ctables.h include/i18nconf.h po/LINGUAS &: obj/country localise.ctl localise
+	./localise -u$(UNIQUE) localise.ctl bios/ctables.h include/i18nconf.h po/LINGUAS
+
+#
 # NLS support
 #
 
@@ -819,8 +872,11 @@ NODEP += bug
 bug: tools/bug.c
 	$(NATIVECC) $< -o $@
 
+# never run 'bug make' if UNIQUE is specified
+ifeq (,$(UNIQUE))
 util/langs.c: $(POFILES) po/LINGUAS bug po/messages.pot
 	./bug make
+endif
 
 po/messages.pot: bug po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
 	./bug xgettext
@@ -1003,44 +1059,6 @@ obj/country: always-execute-recipe
 	  echo "rm -f $$i $$j"; \
 	  rm -f $$i $$j; \
 	done
-
-#
-# i18nconf.h - this file is automatically created by the Makefile. This
-# is done this way instead of simply passing the flags as -D on the
-# command line because:
-# - the command line is shorter
-# - it allows #defining CONF_KEYB as KEYB_US with KEYB_US #defined elsewhere
-# - explicit dependencies can force rebuilding files that include it
-#
-
-GEN_SRC += include/i18nconf.h
-
-ifneq (,$(UNIQUE))
-include/i18nconf.h: obj/country
-	@echo '# Generating $@ with CONF_KEYB=KEYB_$(ETOSKEYB) CONF_CHARSET=CHARSET_$(ETOSCSET)'
-	@rm -f $@; touch $@
-	@echo '#define CONF_MULTILANG 0' >> $@
-	@echo '#define CONF_WITH_NLS 0' >> $@
-	@echo '#define CONF_KEYB KEYB_$(ETOSKEYB)' >> $@
-	@echo '#define CONF_CHARSET CHARSET_$(ETOSCSET)' >> $@
-	@echo "#define CONF_IDT ($(ETOSIDT))" >> $@
-else
-include/i18nconf.h: obj/country
-	@echo '# Generating $@ with CONF_MULTILANG=1'
-	@rm -f $@; touch $@
-	@echo '#define CONF_MULTILANG 1' >> $@
-	@echo '#define CONF_WITH_NLS 1' >> $@
-endif
-
-#
-# ctables.h - the country tables, generated from country.mk, and only
-# included in bios/country.c
-#
-
-GEN_SRC += bios/ctables.h
-
-bios/ctables.h: country.mk tools/genctables.awk
-	awk -f tools/genctables.awk < country.mk > $@
 
 #
 # OS header

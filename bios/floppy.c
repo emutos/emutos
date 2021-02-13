@@ -31,9 +31,7 @@
 #include "biosext.h"    /* for cache control routines */
 #include "cookie.h"
 #include "intmath.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
 
 
 /*==== Introduction =======================================================*/
