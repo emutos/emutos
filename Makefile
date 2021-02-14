@@ -928,10 +928,10 @@ NODEP += mkrom
 mkrom: tools/mkrom.c
 	$(NATIVECC) $< -o $@
 
-# test target to build all tools
+# test target to build all tools that can be built by the Makefile
 .PHONY: tools
 NODEP += tools
-tools: bug draft erd mkflop mkrom tos-lang-change
+tools: bug draft erd grd ird localise mkflop mkrom mrd tos-lang-change
 
 # user tool, not needed in EmuTOS building
 TOCLEAN += tos-lang-change
