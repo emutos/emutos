@@ -872,11 +872,9 @@ NODEP += bug
 bug: tools/bug.c
 	$(NATIVECC) $< -o $@
 
-# never run 'bug make' if UNIQUE is specified
-ifeq (,$(UNIQUE))
+# even if UNIQUE is specified, we ensure langs.c exists to avoid dependency problems
 util/langs.c: $(POFILES) po/LINGUAS bug po/messages.pot
 	./bug make
-endif
 
 po/messages.pot: bug po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
 	./bug xgettext
