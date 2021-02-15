@@ -591,4 +591,9 @@ int init_nova(void)
     return 1;
 }
 
+UBYTE* get_novamembase(void)
+{
+    return (UBYTE *)novamembase;
+}
+
 #endif /* CONF_WITH_NOVA */

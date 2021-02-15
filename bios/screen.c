@@ -35,6 +35,7 @@
 #include "bios.h"
 #include "amiga.h"
 #include "lisa.h"
+#include "nova.h"
 
 void detect_monitor_change(void);
 static void setphys(const UBYTE *addr);
@@ -881,6 +882,13 @@ void get_pixel_size(WORD *width,WORD *height)
 static const UBYTE *atari_physbase(void)
 {
     ULONG addr;
+
+#if CONF_WITH_NOVA
+    if (HAS_NOVA && rez_was_hacked) {
+        /* Nova/Vofa present and in use? Return its screen memory */
+        return get_novamembase();
+    }
+#endif
 
     addr = *(volatile UBYTE *) VIDEOBASE_ADDR_HI;
     addr <<= 8;
