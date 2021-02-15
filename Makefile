@@ -114,6 +114,13 @@ COUNTRY = $(UNIQUE)
 endif
 
 #
+# Group-of-countries support: if GROUP is defined, then multilingual
+# versions of EmuTOS will be built with just the associated countries
+# (as defined by localise.ctl).
+#
+GROUP =
+
+#
 # Choose the features that should be included into EmuTOS
 #
 
@@ -856,8 +863,8 @@ NODEP += localise
 localise: tools/localise.c
 	$(NATIVECC) $< -o $@
 
-bios/ctables.h include/i18nconf.h po/LINGUAS &: obj/country localise.ctl localise
-	./localise -u$(UNIQUE) localise.ctl bios/ctables.h include/i18nconf.h po/LINGUAS
+bios/ctables.h include/i18nconf.h po/LINGUAS &: obj/country obj/group localise.ctl localise
+	./localise -g$(GROUP) -u$(UNIQUE) localise.ctl bios/ctables.h include/i18nconf.h po/LINGUAS
 
 #
 # NLS support
@@ -1057,6 +1064,26 @@ obj/country: always-execute-recipe
 	  echo "rm -f $$i $$j"; \
 	  rm -f $$i $$j; \
 	done
+
+#
+# obj/group contains the current value of $(GROUP).  to prevent
+# unnecessary rebuilds, it is only updated when $(GROUP) changes.
+#
+
+TOCLEAN += obj/group
+
+obj/group: always-execute-recipe
+	@echo $(GROUP) > last.tmp; \
+	if [ -e $@ ]; \
+	then \
+	  if cmp -s last.tmp $@; \
+	  then \
+	    rm last.tmp; \
+	    exit 0; \
+	  fi; \
+	fi; \
+	echo "echo $(GROUP) > $@"; \
+	mv last.tmp $@;
 
 #
 # OS header
