@@ -145,37 +145,6 @@ int keytable_count = 0;
 char now[26];                       /* for current date/time */
 
 
-/*
- *  function prototypes
- */
-#if 0
-static void build_keytable(void);
-static void clear_ignore_flags(void);
-static void copy2lwr(char *p, char *q);
-static void copy2upr(char *p, char *q);
-static int decode_charset(char *charset);
-static int get_charsets(void);
-static BOOL group_matches(CONTROL *entry);
-static void mark_matching_keyboard(char *keyboard);
-static void mark_matching_language(char *language);
-static int read_control_file(char *path);
-static char *strlwr(char *str);
-static char *strupr(char *str);
-static void usage(char *s);
-static int validate_control_file(void);
-static void write_countries(FILE *fp);
-static void write_font_stuff(FILE *fp);
-static int write_i18n_file(char *path);
-static void write_i18n_header(FILE *fp);
-static void write_keyb_stuff(FILE *fp);
-static int write_LING_file(char *path);
-static void write_LING_header(FILE *fp);
-static int write_tbl_file(char *path);
-static void write_tbl_header(FILE *fp);
-static char *xstrdup(const char *string);
-#endif
-
-
 
 /*
  ***** general-purpose functions *****
