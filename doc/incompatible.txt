@@ -294,6 +294,26 @@ hack.prg:
 This may also work with other Reservoir Gods programs.
 
 
+Program: Sea of Colour
+----------------------
+Error: does not run when started from an ACSI hard disk
+
+Bug analysis:
+To be compatible with all ACSI devices, EmuTOS must wait for five
+milliseconds between ACSI commands, as specified in the "Atari ACSI/DMA
+integration guide." However, the demo expects ACSI transfers to complete
+faster and therefore fails to run correctly. Such faster transfers can
+be achieved with HDDRIVER's "accelerated mode" at the expense of breaking
+compatibility with slower ACSI devices.
+
+Note 1: Sea of Colour fails with similar symptoms and for the same reason
+under Atari TOS when using AHDI or CBHD hard disk drivers or when using
+HDDRIVER without activating the "accelerated mode."
+
+Note 2: Sea of Colour can be run under EmuTOS from an IDE hard disk or an
+emulator's GEMDOS drive.
+
+
 Program: Spectrum 512
 ---------------------
 Error: crash during program initialisation
