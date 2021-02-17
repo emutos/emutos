@@ -1073,17 +1073,17 @@ obj/country: always-execute-recipe
 TOCLEAN += obj/group
 
 obj/group: always-execute-recipe
-	@echo $(GROUP) > last.tmp; \
+	@echo $(GROUP) > lastgroup.tmp; \
 	if [ -e $@ ]; \
 	then \
-	  if cmp -s last.tmp $@; \
+	  if cmp -s lastgroup.tmp $@; \
 	  then \
-	    rm last.tmp; \
+	    rm lastgroup.tmp; \
 	    exit 0; \
 	  fi; \
 	fi; \
 	echo "echo $(GROUP) > $@"; \
-	mv last.tmp $@;
+	mv lastgroup.tmp $@;
 
 #
 # OS header
