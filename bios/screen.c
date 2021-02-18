@@ -856,6 +856,15 @@ static __inline__ void get_std_pixel_size(WORD *width,WORD *height)
  * are displayed:
  *  - the output from v_arc()/v_circle()/v_pieslice()
  *  - the size of gl_wbox in pixels
+ *
+ * we used to base the pixel sizes for ST(e) systems on exact screen
+ * width and height values.  however, this does not work for enhanced
+ * screens, such as Hatari's 'extended VDI screen' or add-on hardware.
+ *
+ * we now use some heuristics in the hope that this will cover the most
+ * common situations.  unfortunately we cannot set the sizes based on
+ * the value from getrez(), since this may be inaccurate for non-standard
+ * hardware.
  */
 void get_pixel_size(WORD *width,WORD *height)
 {
@@ -867,10 +876,10 @@ void get_pixel_size(WORD *width,WORD *height)
     else
     {
         /* ST TOS has its own set of magic numbers */
-        if (V_REZ_VT == 400)        /* ST high */
-            *width = 372;
-        else if (V_REZ_HZ == 640)   /* ST medium */
+        if (5 * V_REZ_HZ >= 12 * V_REZ_VT)  /* includes ST medium */
             *width = 169;
+        else if (V_REZ_HZ >= 480)   /* ST high */
+            *width = 372;
         else *width = 338;          /* ST low */
         *height = 372;
     }
