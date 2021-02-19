@@ -327,6 +327,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
         case G_ICON:
             cicon = NULL;
 #if CONF_WITH_COLOUR_ICONS
+            FALLTHROUGH;
         case G_CICON:   /* a CICONBLK starts with an ICONBLK */
             if (obtype == G_CICON)
                 cicon = ((CICONBLK *)spec)->mainlist;
