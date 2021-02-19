@@ -1125,6 +1125,8 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
     char path[MAXPATHLEN];
 
     an_src = app_afind_by_id(sobj);
+    if (!an_src)   /* "can't happen" */
+        return FALSE;
 
 #if CONF_WITH_DESKTOP_SHORTCUTS
     if ((an_src->a_type == AT_ISFILE) || (an_src->a_type == AT_ISFOLD))
@@ -1156,7 +1158,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
             }
             else    /* we are dragging a desktop item to another desktop item */
             {
-                icontype = an_src ? an_src->a_type : -1;
+                icontype = an_src->a_type;
                 okay = fun_file2desk(pn_src, icontype, an_dest, dobj, keystate);
             }
         }
