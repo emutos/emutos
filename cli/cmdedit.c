@@ -445,8 +445,6 @@ PRIVATE LONG getfirstnondot(const char *buffer,WORD executable_only)
 LONG rc;
 
     for (rc = Fsfirst(buffer,0x17); !rc; rc=Fsnext()) {
-        if (rc < 0L)
-            break;
         if (dta->d_fname[0] == '.') /* ignore . & .. */
             continue;
         if (!executable_only)
