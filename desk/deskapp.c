@@ -421,13 +421,14 @@ static char *app_parse(char *pcurr, ANODE *pa)
                 pa->a_pdata = temp;
             }
         }
-    }
 
-    /* mark desktop shortcuts as executable based on file extension */
-    if ((pa->a_flags == AF_ISDESK) && (pa->a_type == AT_ISFILE) &&
-        is_executable(pa->a_pappl))
-    {
-        pa->a_flags |= AF_ISEXEC;
+        /*
+         * mark desktop shortcuts as executable based on file extension
+         */
+        if ((pa->a_type == AT_ISFILE) && is_executable(pa->a_pappl))
+        {
+            pa->a_flags |= AF_ISEXEC;
+        }
     }
 #endif
 
