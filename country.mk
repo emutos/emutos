@@ -26,7 +26,7 @@ FONTOBJ_ALL = $(FONTOBJ_ST) $(FONTOBJ_L2) $(FONTOBJ_GR) $(FONTOBJ_RU)
 FONTOBJ_COMMON = obj/fnt_off_6x6.o obj/fnt_off_8x8.o
 FONTOBJ = $(FONTOBJ_ALL:%=obj/%)
 
-TOCLEAN = obj/*.a
+TOCLEAN += obj/*.a
 
 obj/libfont.a: $(FONTOBJ)
 	$(AR) $(ARFLAGS) obj/libfont.a $(FONTOBJ)
