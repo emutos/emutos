@@ -126,7 +126,7 @@
 #define INF_AT_APPDIR   0x01    /* 1 => set current dir to app's dir (else to top window dir) */
 #define INF_AT_ISFULL   0x02    /* 1 => pass full path in args (else filename only) */
 
-#define INF_REV_LEVEL   0x01    /* revision level when creating EMUDESK.INF */
+#define INF_REV_LEVEL   0x02    /* revision level when creating EMUDESK.INF */
 
 /*
  * the following defines the number of bytes reserved for control panel
@@ -169,7 +169,7 @@ static char     *atextptr;      /* current pointer within ANODE text buffer */
  *     not otherwise necessary.
  */
 static const char desk_inf_data1[] =
-    "#R 01\r\n"                         /* INF_REV_LEVEL */
+    "#R 02\r\n"                         /* INF_REV_LEVEL */
     "#E 1A E0 00 00 60\r\n"             /* INF_E1_DEFAULT, INF_E2_DEFAULT, INF_E5_DEFAULT */
 #if CONF_WITH_BACKGROUNDS
     "#Q 41 40 43 40 43 40\r\n"          /* INF_Q1_DEFAULT -> INF_Q6_DEFAULT */
@@ -404,9 +404,28 @@ static char *app_parse(char *pcurr, ANODE *pa)
 #endif
 
 #if CONF_WITH_DESKTOP_SHORTCUTS
+    if (pa->a_flags & AF_ISDESK)
+    {
+        char *temp;
+        /*
+         * fix up old format of desktop icon entries if necessary
+         */
+        switch(pa->a_type)
+        {
+        case AT_ISFILE:
+        case AT_ISFOLD:
+            if (inf_rev_level < 2)
+            {
+                temp = pa->a_pappl;
+                pa->a_pappl = pa->a_pdata;
+                pa->a_pdata = temp;
+            }
+        }
+    }
+
     /* mark desktop shortcuts as executable based on file extension */
     if ((pa->a_flags == AF_ISDESK) && (pa->a_type == AT_ISFILE) &&
-        is_executable(pa->a_pdata))
+        is_executable(pa->a_pappl))
     {
         pa->a_flags |= AF_ISEXEC;
     }
@@ -1366,7 +1385,11 @@ void app_blddesk(void)
             pob->ob_spec = (LONG)pic;
             memcpy(pic, &G.g_iblist[icon], sizeof(ICONBLK));
             pic->ib_xicon = ((G.g_wicon - pic->ib_wicon) / 2);
-            pic->ib_ptext = pa->a_pappl;
+            /* the label position varies */
+            if ((pa->a_type == AT_ISFILE) || (pa->a_type == AT_ISFOLD))
+                pic->ib_ptext = pa->a_pdata;
+            else
+                pic->ib_ptext = pa->a_pappl;
             pic->ib_char |= pa->a_letter;
         }
     }

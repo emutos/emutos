@@ -84,11 +84,15 @@
  * ANODE: store application information for desktop
  *
  * usage of a_pappl/a_pdata/a_pargs below:
- *  (1) for a file or folder on the desktop:
- *      a_pappl: name (used as icon label), up to 12 chars
- *      a_pdata: fully-qualified name
+ *  (1) for a standard desktop icon (disk, printer, trash):
+ *      a_pappl: icon label, up to 12 chars
+ *      a_pdata: unused
  *      a_pargs: unused
- *  (2) for an installed application:
+ *  (2) for a file or folder on the desktop:
+ *      a_pappl: fully-qualified name       | The usage of these fields was reversed
+ *      a_pdata: icon label, up to 12 chars | prior to rev level 2 of the .INF file
+ *      a_pargs: unused
+ *  (3) for an installed application:
  *      a_pappl: fully_qualified filename
  *      a_pdata: document type, as TOS wildcard, up to 5 chars (e.g. *.DAT)
  *      a_pargs: fixed argument(s) for application, up to 11 chars

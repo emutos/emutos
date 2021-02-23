@@ -519,7 +519,7 @@ static BOOL search_icon(WORD win, WORD curr, char *searchwild)
 #if CONF_WITH_DESKTOP_SHORTCUTS
         if (pa->a_flags & AF_ISDESK)
         {
-            strcpy(pathname, pa->a_pdata);
+            strcpy(pathname, pa->a_pappl);
         }
         else
 #endif
@@ -748,7 +748,7 @@ static BOOL fun_print(WORD sobj, LONG bufsize, char *iobuf)
     }
     else        /* it's a desktop icon */
     {
-        strcpy(path,pa->a_pdata);   /* the path is in the anode */
+        strcpy(path, pa->a_pappl);  /* the path is in the anode */
     }
 
     return print_file(path, bufsize, iobuf);
@@ -1009,14 +1009,14 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
                 break;
 
             /* build pathname for do_aopen() */
-            strcpy(pathname,an_dest->a_pdata);
+            strcpy(pathname, an_dest->a_pappl);
             strcpy(filename_start(pathname),"*.*");
 
             /* set global so desktop will exit if do_aopen() succeeds */
-            exit_desktop = do_aopen(an_dest, TRUE, dobj, pathname, an_dest->a_pappl, tail);
+            exit_desktop = do_aopen(an_dest, TRUE, dobj, pathname, filename_start(an_dest->a_pappl), tail);
             break;
         case AT_ISFOLD:     /* dropping file on folder - copy or move */
-            strcpy(pathname,an_dest->a_pdata);
+            strcpy(pathname, an_dest->a_pappl);
             strcat(pathname,"\\*.*");
             operation = (keystate&MODE_CTRL) ? OP_MOVE : OP_COPY;
             break;
@@ -1129,7 +1129,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
 #if CONF_WITH_DESKTOP_SHORTCUTS
     if ((an_src->a_type == AT_ISFILE) || (an_src->a_type == AT_ISFOLD))
     {
-        strcpy(path, an_src->a_pdata);
+        strcpy(path, an_src->a_pappl);
     }
     else
 #endif
@@ -1352,7 +1352,7 @@ void fun_del(WORD sobj)
             switch(pa->a_type) {
             case AT_ISFILE:
             case AT_ISFOLD:
-                strcpy(path, pa->a_pdata);
+                strcpy(path, pa->a_pappl);
                 break;
             case AT_ISDISK:
                 build_root_path(path, pa->a_letter);
