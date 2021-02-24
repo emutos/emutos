@@ -110,7 +110,9 @@ typedef struct                      /* for input control file */
 #define FNT_RU_SMALL    "fnt_ru_6x6"
 #define FNT_RU_MEDIUM   "fnt_ru_8x8"
 #define FNT_RU_LARGE    "fnt_ru_8x16"
-
+#define FNT_TR_SMALL    "fnt_tr_6x6"
+#define FNT_TR_MEDIUM   "fnt_tr_8x8"
+#define FNT_TR_LARGE    "fnt_tr_8x16"
 
 /*
  *  other globals
@@ -138,6 +140,7 @@ int needed_charsets = 0;            /* charsets required */
 #define NEED_L2_CSET    0x02
 #define NEED_GR_CSET    0x04
 #define NEED_RU_CSET    0x08
+#define NEED_TR_CSET    0x10
 
 char keytable[MAX_CTL_LINES][MAX_STRLEN];   /* holds unique keyboard names from control[] */
 int keytable_count = 0;
@@ -185,6 +188,9 @@ static int decode_charset(char *charset)
 
     if (strcmp(charset, "ru") == 0)
         return NEED_RU_CSET;
+
+    if (strcmp(charset, "tr") == 0)
+        return NEED_TR_CSET;
 
     return -1;
 }
@@ -236,6 +242,9 @@ static char *get_dest_charset(char *charset)
         break;
     case NEED_RU_CSET:
         p = "russian-atarist";
+        break;
+    case NEED_TR_CSET:
+        p = "CP1254";
         break;
     }
 
@@ -531,6 +540,8 @@ static void write_font_stuff(FILE *fp)
         fprintf(fp, "#define CHARSET_GR %d\n", index++);
     if (needed_charsets & NEED_RU_CSET)
         fprintf(fp, "#define CHARSET_RU %d\n", index++);
+    if (needed_charsets & NEED_TR_CSET)
+        fprintf(fp, "#define CHARSET_TR %d\n", index++);
     fprintf(fp, "\n");
 
     /*
@@ -561,6 +572,12 @@ static void write_font_stuff(FILE *fp)
         fprintf(fp,"extern const Fonthead %s;\n", FNT_RU_MEDIUM);
         fprintf(fp,"extern const Fonthead %s;\n", FNT_RU_LARGE);
     }
+    if (needed_charsets & NEED_TR_CSET)
+    {
+        fprintf(fp,"extern const Fonthead %s;\n", FNT_TR_SMALL);
+        fprintf(fp,"extern const Fonthead %s;\n", FNT_TR_MEDIUM);
+        fprintf(fp,"extern const Fonthead %s;\n", FNT_TR_LARGE);
+    }
     fprintf(fp, "\n");
 
     /*
@@ -575,6 +592,8 @@ static void write_font_stuff(FILE *fp)
         fprintf(fp, "    { &%s, &%s, &%s },\n", FNT_GR_SMALL, FNT_GR_MEDIUM, FNT_GR_LARGE);
     if (needed_charsets & NEED_RU_CSET)
         fprintf(fp, "    { &%s, &%s, &%s },\n", FNT_RU_SMALL, FNT_RU_MEDIUM, FNT_RU_LARGE);
+    if (needed_charsets & NEED_TR_CSET)
+        fprintf(fp, "    { &%s, &%s, &%s },\n", FNT_TR_SMALL, FNT_TR_MEDIUM, FNT_TR_LARGE);
     fprintf(fp, "};\n\n");
 }
 
