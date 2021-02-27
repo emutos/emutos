@@ -653,7 +653,6 @@ static void write_countries(FILE *fp)
         }
     }
     fprintf(fp, "};\n\n");
-    
 }
 
 static int write_tbl_file(char *path)
