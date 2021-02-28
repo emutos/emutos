@@ -555,10 +555,11 @@ ROM_ARANYM = emutos-aranym.img
 .PHONY: aranym
 NODEP += aranym
 aranym: override DEF += -DMACHINE_ARANYM
+aranym: OPTFLAGS = $(SMALL_OPTFLAGS)
 aranym: CPUFLAGS = -m68040
 aranym:
 	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
-	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' OPTFLAGS='$(OPTFLAGS)' DEF='$(DEF)' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
