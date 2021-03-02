@@ -592,7 +592,7 @@ msgstr "Uygulama türü:"
 
 #: desk/desk_rsc.c
 msgid "Default dir:"
-msgstr "Varsayýlan dizin:"
+msgstr "Vars. dizin:"
 
 #: desk/desk_rsc.c
 msgid "Application"
