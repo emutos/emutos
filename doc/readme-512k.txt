@@ -38,6 +38,7 @@ The default language is English.  Other supported languages are:
 - Russian
 - Swedish
 - Swiss German
+- Turkish
 They can be used by setting the NVRAM appropriately.  If you wish to use
 this version of the ROM on a machine without NVRAM, the default language
 can be changed by using the tos-lang-change tool included with the EmuTOS

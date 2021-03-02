@@ -31,6 +31,7 @@ pl - Polish
 ru - Russian
 se - Swedish
 cd - Swiss German
+tr - Turkish
 us - English (US)
 uk - English (UK)
 

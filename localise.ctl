@@ -34,3 +34,4 @@ hu hu hu l2 IDT_24H|IDT_DDMMYY|'/'  B
 pl pl pl l2 IDT_24H|IDT_DDMMYY|'/'  B
 ru ru ru ru IDT_24H|IDT_DDMMYY|'/'  B
 gr gr gr gr IDT_24H|IDT_DDMMYY|'/'  B
+tr tr tr tr IDT_24H|IDT_DDMMYY|'.'  B
