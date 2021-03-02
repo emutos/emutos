@@ -134,7 +134,7 @@ msgid "[2]["
 "data on the disk in drive %c:.][Cancel|Retry]"
 msgstr "[2]["
 "Bu uygulama %c sürücüsünden|"
-"sürücüsünden veri okuyamýyor.|"
+"sürücüsünden veri okuyamýyor.]"
 "[Ýptal|Tekrar]"
 
 #: aes/gem_rsc.c
@@ -970,7 +970,7 @@ msgid "[1]["
 "operation.][  OK  ]"
 msgstr "[1]["
 "%c sürücüsünde bu iþlem|"
-"için yeterli yer yok.]|"
+"için yeterli yer yok.]"
 "[ Tamam ]"
 
 #: desk/desk_rsc.c
@@ -981,7 +981,7 @@ msgid "[3]["
 msgstr "[3]["
 "Bu kadar derin dizin yolunda|"
 "klasör oluþturaz veya|"
-"eriþemezsiniz.][  OK  ]"
+"eriþemezsiniz.][ Tamam ]"
 
 #: desk/desk_rsc.c
 msgid "[3]["
@@ -1118,7 +1118,7 @@ msgid "[1]["
 "Cannot delete file|"
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
-"%s dosyasý silinemedi]|"
+"%s dosyasý silinemedi]"
 "[ Atla | Tekrar | Ýptal ]"
 
 #: desk/desk_rsc.c
@@ -1126,7 +1126,7 @@ msgid "[1]["
 "Cannot delete directory|"
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
-"%s dizini silinemedi]|"
+"%s dizini silinemedi]"
 "[ Atla | Tekrar | Ýptal ]"
 
 #: desk/desk_rsc.c
@@ -1146,7 +1146,7 @@ msgid "[1]["
 "Cannot open file|"
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
-"%s dosyasý açýlamadý]|"
+"%s dosyasý açýlamadý]"
 "[ Atla | Tekrar | Ýptal ]"
 
 #: desk/desk_rsc.c
@@ -1154,7 +1154,7 @@ msgid "[1]["
 "Cannot create file|"
 "%s][ Skip | Retry | Abort ]"
 msgstr "[1]["
-"%s dosyasý oluþturulamadý]|"
+"%s dosyasý oluþturulamadý]"
 "[ Atla | Tekrar | Ýptal ]"
 
 #: desk/desk_rsc.c
@@ -1162,15 +1162,15 @@ msgid "[1]["
 "Cannot read file|"
 "%s][ Skip | Abort ]"
 msgstr "[1]["
-"%s dosyasý okunamadý]|"
-"[ Atla | Tekrar | Ýptal ]"
+"%s dosyasý okunamadý]"
+"[ Atla | Ýptal ]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
 "Cannot write file|"
 "%s][ Skip | Abort ]"
 msgstr "[1]["
-"%s dosyasý yazýlamadý]|"
+"%s dosyasý yazýlamadý]"
 "[ Atla | Ýptal ]"
 
 #: desk/desk_rsc.c
