@@ -68,25 +68,35 @@
 #define AC_BUTTON_LENGTH    -3
 #define AC_MISMATCH         -4
 
+/*
+ * various filenames
+ */
 #define TOOLNAME "bug"
 #define DOCNAME  "doc/nls.txt"
 #define LANGS_C  "util/langs.c"
+#define LANGUAGES_FILE  "po/LINGUAS"        /* maps languages to character sets */
+#define FILELIST_FILE   "po/POTFILES.in"    /* lists files to be checked for NLS macros */
+#define MESSAGES_FILE   "po/messages.pot"   /* list of text strings to translate */
 
 #define HERE fprintf(stderr, "%s:%d\n", __FUNCTION__, __LINE__);
+
+static char *languages_file = LANGUAGES_FILE;
+static char *filelist_file = FILELIST_FILE;
+static char *messages_file = MESSAGES_FILE;
 
 static int wants_linenum_xrefs = 0; /* no linenumber xrefs by default */
 
 static char *usagemsg[] = {
     "Usage: " TOOLNAME " [options] command\n",
     "Commands are:\n",
-    "  xgettext       scans source files listed in POTFILES.in\n",
-    "                 and (re)creates messages.pot\n",
-    "  update xx.po   compares xx.po to the current messages.pot\n",
+    "  xgettext       scans source files listed in " FILELIST_FILE "\n",
+    "                 and (re)creates " MESSAGES_FILE "\n",
+    "  update xx.po   compares xx.po to the current " MESSAGES_FILE "\n",
     "                 and creates a new xx.po (new entries added, old\n",
     "                 entries commented out)\n",
     "  translate xx from.c\n",
     "                 translates from.c into from.tr.c for language xx\n",
-    "  make           takes all languages listed in file LINGUAS\n",
+    "  make           takes all languages listed in file " LANGUAGES_FILE "\n",
     "                 and creates the C file(s) for the project\n",
     "Options are:\n",
     "  -L             include source code line numbers in comments\n",
@@ -1299,7 +1309,7 @@ static void parse_po_file(char *fname, oh *o, int ignore_ae)
     if (f == NULL)
     {
         /* TODO: UGLY HACK !!! */
-        if (!strcmp("po/messages.pot", fname))
+        if (!strcmp(messages_file, fname))
             fatal("could not open %s (run 'bug xgettext' to generate it)", fname);
         fatal("could not open %s", fname);
     }
@@ -1876,7 +1886,7 @@ static void print_po_file(FILE *f, oh *o)
 }
 
 /*
- * update po file against messages.pot
+ * update po file against messages_file
  */
 
 static void update(char *fname)
@@ -1893,7 +1903,7 @@ static void update(char *fname)
 
     /* get the reference first, before renaming the file */
     o1 = o_new();
-    parse_po_file("po/messages.pot", o1, 0);
+    parse_po_file(messages_file, o1, 0);
 
     /* rename the po file (backup) */
     s = s_new();
@@ -2004,7 +2014,7 @@ static void update(char *fname)
 
 
 /*
- * xgettext : parse POTFILES.in, and generate messages.pot
+ * xgettext : parse filelist_file, and generate messages_file
  */
 
 static void xgettext(void)
@@ -2013,12 +2023,11 @@ static void xgettext(void)
     oh *o;
     int i, n;
     FILE *f;
-    char *fname;
     ae_t a;
     poe *e;
 
     d = da_new();
-    parse_oipl_file("po/POTFILES.in", d);
+    parse_oipl_file(filelist_file, d);
 
     o = o_new();
 
@@ -2038,10 +2047,9 @@ static void xgettext(void)
 
     po_convert_refs(o);
 
-    fname = "po/messages.pot";
-    f = fopen(fname, "w");
+    f = fopen(messages_file, "w");
     if (f == NULL)
-        fatal("couldn't create %s", fname);
+        fatal("couldn't create %s", messages_file);
     print_po_file(f, o);
     fclose(f);
 }
@@ -2313,10 +2321,10 @@ static void make(void)
     langs = da_new();
 
     d = da_new();
-    parse_oipl_file("po/LINGUAS", d);
+    parse_oipl_file(languages_file, d);
 
     oref = o_new();
-    parse_po_file("po/messages.pot", oref, 1);
+    parse_po_file(messages_file, oref, 1);
 
     f = fopen(LANGS_C, "w");
     if (f == NULL)
@@ -2371,11 +2379,11 @@ static void make(void)
             th[j] = 0;
         }
 
-        /* obtain destination charset from LINGUAS */
+        /* obtain destination charset from languages_file */
         t = da_nth(d, i);
         if (!parse_linguas_item(t, lang, &to_charset))
         {
-            warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
+            warn("%s: bad lang/charset specification \"%s\"", languages_file, t);
             continue;
         }
 
@@ -2535,10 +2543,10 @@ static void translate(char *lang, char * from)
     p.f = g;
 
     to_charset = NULL;
-    { /* obtain destination charset from LINGUAS */
+    { /* obtain destination charset from languages_file */
         da *d = da_new();
         int i, n;
-        parse_oipl_file("po/LINGUAS", d);
+        parse_oipl_file(languages_file, d);
 
         n = da_len(d);
         for (i = 0; i < n; i++)
@@ -2547,7 +2555,7 @@ static void translate(char *lang, char * from)
             char l[LANG_LEN];
             if (! parse_linguas_item(t, l, &to_charset))
             {
-                warn("po/LINGUAS: bad lang/charset specification \"%s\"", t);
+                warn("%s: bad lang/charset specification \"%s\"", languages_file, t);
             }
             else if (!strcmp(lang, l))
             {
