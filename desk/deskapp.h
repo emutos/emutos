@@ -146,7 +146,6 @@ typedef struct
     char cs_confdel;            /* Confirm deletes (boolean) */
     char cs_confovwr;           /* Confirm overwrite (boolean) */
     char cs_dblclick;           /* Double click speed */
-    char cs_mnuclick;           /* Click required to drop down menu (boolean) */
     char cs_timefmt;            /* Time format */
     char cs_datefmt;            /* Date format */
     char cs_blitter;            /* Blitter enabled (boolean) */

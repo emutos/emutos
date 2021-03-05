@@ -96,7 +96,7 @@
 #define INF_E2_IDTDATE  0x40    /* 1 => get date format from _IDT (ignore INF_E2_DAYMONTH bit) */
 #define INF_E2_IDTTIME  0x20    /* 1 => get time format from _IDT (ignore INF_E2_24HCLOCK bit) */
 #define INF_E2_ALLOWOVW 0x10    /* 1 => allow overwrites (yes, it's backwards) */
-#define INF_E2_MNUCLICK 0x08    /* 1 => click to drop down menus */
+                                /* 0x08 was INF_E2_MNUCLICK: 1 => click to drop down menus */
 #define INF_E2_DAYMONTH 0x04    /* 1 => day before month */
 #define INF_E2_24HCLOCK 0x02    /* 1 => 24 hour clock */
                                 /* following are defaults if no .INF */
@@ -917,8 +917,6 @@ void app_start(void)
             pcurr = scan_2(pcurr, &envr);
             cnxsave->cs_blitter = ( (envr & INF_E2_BLITTER) != 0);
             cnxsave->cs_confovwr = ( (envr & INF_E2_ALLOWOVW) == 0);
-            cnxsave->cs_mnuclick = ( (envr & INF_E2_MNUCLICK) != 0);
-            menu_click(cnxsave->cs_mnuclick, 1);    /* tell system */
             if (envr & INF_E2_IDTDATE)
                 cnxsave->cs_datefmt = DATEFORM_IDT;
             else
@@ -1136,7 +1134,6 @@ void app_save(WORD todisk)
     env1 |= cnxsave->cs_dblclick & INF_E1_DCMASK;
     env2 = (cnxsave->cs_blitter) ? INF_E2_BLITTER : 0x00;
     env2 |= (cnxsave->cs_confovwr) ? 0x00 : INF_E2_ALLOWOVW;
-    env2 |= (cnxsave->cs_mnuclick) ? INF_E2_MNUCLICK : 0x00;
     switch(cnxsave->cs_datefmt)
     {
     case DATEFORM_IDT:

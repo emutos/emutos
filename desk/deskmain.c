@@ -1348,7 +1348,6 @@ static void cnx_put(void)
     cnxsave->cs_confdel = G.g_cdelepref;
     cnxsave->cs_dblclick = G.g_cdclkpref;
     cnxsave->cs_confovwr = G.g_covwrpref;
-    cnxsave->cs_mnuclick = G.g_cmclkpref;
     cnxsave->cs_timefmt = G.g_ctimeform;
     cnxsave->cs_datefmt = G.g_cdateform;
     cnxsave->cs_blitter = G.g_blitter;
@@ -1410,7 +1409,6 @@ static void cnx_get(void)
     G.g_cdelepref = cnxsave->cs_confdel;
     G.g_covwrpref = cnxsave->cs_confovwr;
     G.g_cdclkpref = cnxsave->cs_dblclick;
-    G.g_cmclkpref = cnxsave->cs_mnuclick;
     G.g_ctimeform = cnxsave->cs_timefmt;
     G.g_cdateform = cnxsave->cs_datefmt;
     G.g_blitter   = cnxsave->cs_blitter;
@@ -1427,7 +1425,6 @@ static void cnx_get(void)
     menu_icheck(desk_rs_trees[ADMENU], FITITEM, G.g_ifit ? 1 : 0);
 #endif
     G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
-    G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
 
     /* DESKTOP v1.2: Remove 2-window limit; and cnx_open() inlined. */
     for (nw = 0; nw < NUM_WNODES; nw++)
