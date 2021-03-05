@@ -6,7 +6,7 @@
  * Defines that should *not* be overridden should appear in sysconf.h
  * (or deskconf.h if they apply to EmuDesk).
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -1321,6 +1321,19 @@
  */
 #ifndef CONF_WITH_VDI_VERTLINE
 # define CONF_WITH_VDI_VERTLINE 1
+#endif
+
+/*
+ * The VDI functions v_fillarea(), v_pline(), v_pmarker() can handle
+ * up to MAX_VERTICES coordinates (MAX_VERTICES/2 points).
+ * TOS2 allows 512 vertices, TOS3/TOS4 allow 1024.
+ */
+#ifndef MAX_VERTICES
+# if defined(TARGET_512)
+#  define MAX_VERTICES   1024
+# else
+#  define MAX_VERTICES   512
+# endif
 #endif
 
 /*
