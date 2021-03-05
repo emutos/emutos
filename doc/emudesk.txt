@@ -259,7 +259,7 @@ present in EMUDESK.INF *will* be loaded.  So even with the 192K ROMs,
 you can set up your own preferred menu item shortcuts by inserting them
 in EMUDESK.INF.  If you are knowledgeable and careful, you could edit
 EMUDESK.INF directly.  But an easier way is to launch a PRG version of
-the 256K or 512K ROMs, set up the shortcuts there, and save the desktop.
+EmuTOS, set up the shortcuts there, and save the desktop.
 
 Other ROMs:
 This is equivalent to the corresponding Atari TOS menu item.  You may do

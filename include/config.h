@@ -1329,7 +1329,7 @@
  * TOS2 allows 512 vertices, TOS3/TOS4 allow 1024.
  */
 #ifndef MAX_VERTICES
-# if defined(TARGET_512) || defined(TARGET_PRG) || defined(MACHINE_FIREBEE) || defined(MACHINE_M548X)
+# if defined(TARGET_1024) || defined(TARGET_512) || defined(TARGET_PRG) || defined(MACHINE_FIREBEE) || defined(MACHINE_M548X)
 #  define MAX_VERTICES   1024
 # else
 #  define MAX_VERTICES   512

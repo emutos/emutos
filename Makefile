@@ -1,7 +1,7 @@
 #
 # Makefile - the EmuTOS overbloated Makefile
 #
-# Copyright (C) 2001-2020 The EmuTOS development team.
+# Copyright (C) 2001-2021 The EmuTOS development team.
 #
 # This file is distributed under the GPL, version 2 or at your
 # option any later version.  See doc/license.txt for details.
@@ -50,6 +50,7 @@ help:
 	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB"
 	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB"
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB"
+	@echo "1024    $(ROM_1024), EmuTOS ROM padded to size 1024 KB"
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
@@ -545,6 +546,24 @@ pak3:
 $(ROM_PAK3): ROMSIZE = 256
 $(ROM_PAK3): emutos.img mkrom
 	./mkrom pak3 $< $(ROM_PAK3)
+
+#
+# 1024kB Image (for Hatari (and potentially other emulators))
+#
+
+ROM_1024 = etos1024k.img
+SYMFILE = $(addsuffix .sym,$(basename $(ROM_1024)))
+
+.PHONY: 1024
+1024: override DEF += -DTARGET_1024
+1024: $(ROM_1024) $(SYMFILE)
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
+	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
+	@printf "$(LOCALCONFINFO)"
+
+$(ROM_1024): ROMSIZE = 1024
+$(ROM_1024): emutos.img mkrom
+	./mkrom pad $(ROMSIZE)k $< $(ROM_1024)
 
 #
 # ARAnyM Image
