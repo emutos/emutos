@@ -110,8 +110,10 @@ COUNTRY = us
 
 DEF =
 UNIQUE =
+UNIQUEARG =
 ifneq (,$(UNIQUE))
 COUNTRY = $(UNIQUE)
+UNIQUEARG = -u$(UNIQUE)
 endif
 
 #
@@ -120,6 +122,10 @@ endif
 # (as defined by localise.ctl).
 #
 GROUP =
+GROUPARG =
+ifneq (,$(GROUP))
+GROUPARG = -g$(GROUP)
+endif
 
 #
 # Choose the features that should be included into EmuTOS
@@ -884,7 +890,7 @@ localise: tools/localise.c
 	$(NATIVECC) $< -o $@
 
 bios/ctables.h include/i18nconf.h po/LINGUAS &: obj/country obj/group localise.ctl localise
-	./localise -g$(GROUP) -u$(UNIQUE) localise.ctl bios/ctables.h include/i18nconf.h po/LINGUAS
+	./localise $(GROUPARG) $(UNIQUEARG) localise.ctl bios/ctables.h include/i18nconf.h po/LINGUAS
 
 #
 # NLS support

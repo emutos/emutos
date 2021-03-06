@@ -30,20 +30,16 @@
  *      . LINGUAS, used by 'bug make'
  *
  *
- *  Syntax: localise [-v] [-u[<unique>]] [-g[<group>]] <country> <ctlfile> <tblfile> <i18nfile> <LINGfile>
+ *  Syntax: localise [-v] [-u<unique>] [-g<group>] <country> <ctlfile> <tblfile> <i18nfile> <LINGfile>
  *
  *      where:
  *          -v          is optional; if set, the program is more talkative
- *          -u[<unique>] is optional and specifies a unique country name; if set,
+ *          -u<unique>  is optional and specifies a unique country name; if set,
  *                      the generated files will be set up to produce a version
- *                      of EmuTOS that supports only country <unique>.  if the
- *                      value <unique> is omitted, it will be treated as though
- *                      the whole option was omitted.
- *          -g[<group>] is optional and specifies a group name; countries with
+ *                      of EmuTOS that supports only country <unique>.
+ *          -g<group>   is optional and specifies a group name; countries with
  *                      matching values in the control file will be included
- *                      (only when multi-country output is produced).  if the
- *                      value <group> is omitted, it will be treated as though
- *                      the whole option was omitted.
+ *                      (only when multi-country output is produced).
  *          <ctlfile>   is the name of the control file
  *          <tblfile>   is the name of the ctables.h file
  *          <i18nfile>  is the name of the i18nconf.h file
@@ -368,7 +364,7 @@ static void usage(char *s)
 {
     if (*s)
         fprintf(stderr,"%s %s: %s\n", PROGRAM_NAME, VERSION, s);
-    fprintf(stderr,"usage: %s [-v] [-u[<unique>]] [-g[<group>]] <ctlfile> <tblfile> <i18nfile> <LINGfile>\n", PROGRAM_NAME);
+    fprintf(stderr,"usage: %s [-v] [-u<unique>] [-g<group>] <ctlfile> <tblfile> <i18nfile> <LINGfile>\n", PROGRAM_NAME);
 
     exit(1);
 }
@@ -824,7 +820,7 @@ int main(int argc,char *argv[])
     int n;
     time_t t;
 
-    while((n=getopt(argc, argv, "g::u::v")) != -1)
+    while((n=getopt(argc, argv, "g:u:v")) != -1)
     {
         switch(n) {
         case 'g':
