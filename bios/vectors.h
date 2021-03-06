@@ -98,6 +98,10 @@ extern WORD trap_save_area[];
 extern void (*vector_5ms)(void);              /* 200 Hz system timer */
 #endif
 
+#if CONF_MFP_RS232_USE_INTERRUPT
+void mfp_rs232_rx_interrupt(void);
+#endif
+
 /* protect d2/a2 when calling external user-supplied code */
 
 LONG protect_v(LONG (*func)(void));
