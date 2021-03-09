@@ -27,6 +27,7 @@
 
 #include "portab.h"
 
+extern char *environment; /* environment string, from cmdasm.S */
 
 /*
  * system calls
@@ -242,7 +243,6 @@ void message(const char *msg);
 void messagenl(const char *msg);
 const char *program_extension(const DTA *dta);
 WORD strequal(const char *s1,const char *s2);
-char *strlower(char *str);
 char *strupper(char *str);
 
 /* cmdasm.S */
