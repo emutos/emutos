@@ -396,6 +396,11 @@ static void bios_init(void)
     KDEBUG(("snd_init()\n"));
     snd_init();         /* Reset Soundchip, deselect floppies */
 
+    if (FIRST_BOOT)
+	coldbootsound();
+    else
+        warmbootsound();
+
     /* Init the two ACIA devices (MIDI and KBD). The three actions below can
      * be done in any order provided they happen before allowing MFP
      * interrupts.
