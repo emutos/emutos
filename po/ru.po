@@ -368,7 +368,7 @@ msgstr "  Инфо/Переименовать..."
 
 #: desk/desk_rsc.c
 msgid "  Search..."
-msgstr "   Поиск..."
+msgstr "  Поиск..."
 
 #: desk/desk_rsc.c
 msgid "  New folder..."

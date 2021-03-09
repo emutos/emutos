@@ -355,12 +355,14 @@ WORD menu_unregister(WORD mid)
 */
 
 
+/* unused
 WORD menu_click(WORD click, WORD setit)
 {
     MN_CLICK = click;
     MN_SETIT = setit;
     return gem_if(AES_CTRL_CODE(MENU_CLICK, 2, 1, 0));
 }
+*/
 
 
 /*
@@ -976,11 +978,11 @@ WORD shel_rdef(char *lpcmd, char *lpdir)
 }
 */
 
-/* unused
+#if WITH_CLI
 WORD shel_wdef(char *lpcmd, char *lpdir)
 {
     SH_LPCMD = (LONG)lpcmd;
     SH_LPDIR = (LONG)lpdir;
     return gem_if(AES_CTRL_CODE(SHEL_WDEF, 0, 1, 2));
 }
-*/
+#endif

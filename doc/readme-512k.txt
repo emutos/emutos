@@ -7,9 +7,7 @@ This ROM is suitable for the following hardware:
 
 Note: Extra hardware is autodetected.
 
-This ROM is the optimal one for Hatari, with any hardware combination.
-
-Some legacy programs don't work with 512k TOS images, for those one may
+Some legacy programs may not work with a 512k image; for these one may
 need to use a smaller EmuTOS image.
 
 etos512k.img - Multilanguage
@@ -38,6 +36,7 @@ The default language is English.  Other supported languages are:
 - Russian
 - Swedish
 - Swiss German
+- Turkish
 They can be used by setting the NVRAM appropriately.  If you wish to use
 this version of the ROM on a machine without NVRAM, the default language
 can be changed by using the tos-lang-change tool included with the EmuTOS

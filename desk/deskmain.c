@@ -456,7 +456,8 @@ static void men_list(OBJECT *mlist, const UBYTE *dlist, WORD enable)
  */
 static void men_update(void)
 {
-    WORD item, napp, ndesk, nsel, ntrash, nwin, isapp;
+    WORD item, napp, ndesk, nsel, ntrash, nwin;
+    BOOL isapp;
     ANODE *appl;
     OBJECT *tree = desk_rs_trees[ADMENU];
     OBJECT *obj;
@@ -725,6 +726,18 @@ static WORD do_filemenu(WORD item)
     case CLIITEM:                         /* Start EmuCON */
         G.g_work[1] = '\0';
         done = pro_run(FALSE, DEF_CONSOLE, G.g_work, -1, -1);
+        if (done && pw)
+        {
+            /*
+             * set default directory according to path in topped window
+             */
+            char *p;
+
+            strcpy(G.g_work, pw->w_pnode.p_spec);
+            p = filename_start(G.g_work);
+            *p = '\0';
+            shel_wdef("", G.g_work);
+        }
         break;
 #endif
 
@@ -1058,7 +1071,7 @@ static WORD process_funkey(WORD funkey)
         pfname = filename_start(pa->a_pappl);
         /* copy pathname including trailing backslash */
         strlcpy(pathname,pa->a_pappl,pfname-pa->a_pappl+1);
-        return do_aopen(pa,1,-1,pathname,pfname,NULL);
+        return do_aopen(pa,TRUE,-1,pathname,pfname,NULL);
     }
 
     return -1;
@@ -1335,7 +1348,6 @@ static void cnx_put(void)
     cnxsave->cs_confdel = G.g_cdelepref;
     cnxsave->cs_dblclick = G.g_cdclkpref;
     cnxsave->cs_confovwr = G.g_covwrpref;
-    cnxsave->cs_mnuclick = G.g_cmclkpref;
     cnxsave->cs_timefmt = G.g_ctimeform;
     cnxsave->cs_datefmt = G.g_cdateform;
     cnxsave->cs_blitter = G.g_blitter;
@@ -1397,7 +1409,6 @@ static void cnx_get(void)
     G.g_cdelepref = cnxsave->cs_confdel;
     G.g_covwrpref = cnxsave->cs_confovwr;
     G.g_cdclkpref = cnxsave->cs_dblclick;
-    G.g_cmclkpref = cnxsave->cs_mnuclick;
     G.g_ctimeform = cnxsave->cs_timefmt;
     G.g_cdateform = cnxsave->cs_datefmt;
     G.g_blitter   = cnxsave->cs_blitter;
@@ -1414,7 +1425,6 @@ static void cnx_get(void)
     menu_icheck(desk_rs_trees[ADMENU], FITITEM, G.g_ifit ? 1 : 0);
 #endif
     G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
-    G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
 
     /* DESKTOP v1.2: Remove 2-window limit; and cnx_open() inlined. */
     for (nw = 0; nw < NUM_WNODES; nw++)

@@ -403,7 +403,10 @@ valid_st_mmu_config:
         // address which will become our BIOS stack after memconf.
         lea     _stktop,sp
 
-#ifndef __mcoldfire__
+// Note: LisaEm doesn't properly implement movec/pmove illegal instructions,
+// so we just avoid them on MACHINE_LISA.
+
+#if !defined(__mcoldfire__) && !defined(MACHINE_LISA)
         // first, reset the VBR
         // it may have been modified before emutos-ram or soft reset
         move.l  #vbr_ok,16     // must be 68000 if we get illegal instrn error
@@ -462,7 +465,7 @@ nodiag:
 /*
  * disable the instruction/data caches
  */
-#ifndef __mcoldfire__
+#if !defined(__mcoldfire__) && !defined(MACHINE_LISA)
         move.l  #cache_done,0x10   // must be 68000 if we get illegal instrn error
         move.l  #0x00000808,d0     // clear & disable instruction/data caches on
         MOVEC_D0_CACR              //  68020-60 (even though bit usage differs!)
@@ -472,7 +475,7 @@ cache_done:
 /*
  * disable the MMU
  */
-#ifndef __mcoldfire__
+#if !defined(__mcoldfire__) && !defined(MACHINE_LISA)
         move.l  #not_68030,0x2c    // PMOVE is lineF on non-68030 systems
         lea     zero,a0
         PMOVE_A0_TTR0              // first we initialise the TTRs (ACRs on a 68ec030)

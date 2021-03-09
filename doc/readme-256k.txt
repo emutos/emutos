@@ -27,6 +27,7 @@ etos256pl.img - Polish (PAL)
 etos256ru.img - Russian (PAL)
 etos256se.img - Swedish (PAL)
 etos256sg.img - Swiss German (PAL)
+etos256tr.img - Turkish (PAL)
 etos256us.img - English (NTSC)
 etos256uk.img - English (PAL)
 

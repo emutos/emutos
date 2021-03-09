@@ -58,7 +58,7 @@ WORD menu_tnormal(OBJECT *tree, WORD titlenum, WORD normalit);
 /* WORD menu_text(OBJECT *tree, WORD inum, const char *ptext); */
 /* WORD menu_register(WORD pid, const char *pstr); */
 /* WORD menu_unregister(WORD mid); */
-WORD menu_click(WORD click, WORD setit);
+/* WORD menu_click(WORD click, WORD setit); */
 
 
 /*
@@ -177,7 +177,9 @@ WORD shel_put(const void *pdata, WORD len);
 WORD shel_find(char *ppath);
 WORD shel_envrn(char *ppath, const char *psrch);
 WORD shel_rdef(char *lpcmd, char *lpdir);
-WORD shel_wdef(char *lpcmd, char *lpdir);
 */
+#if WITH_CLI
+WORD shel_wdef(char *lpcmd, char *lpdir);
+#endif
 
 #endif  /* _AESBIND_H */

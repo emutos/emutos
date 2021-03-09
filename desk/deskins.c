@@ -454,8 +454,8 @@ WORD ins_app(WORD curr)
     WNODE *pw;
     OBJECT *tree;
     WORD change = 0;    /* -ve means cancel, 0 means no change, +ve means change */
-    WORD isapp, field, exitobj, funkey;
-    BOOL installed, viewer;
+    WORD field, exitobj, funkey;
+    BOOL installed, viewer, isapp;
     char *pfname, *p, *q;
     char name[LEN_ZFNAME];
     char pathname[MAXPATHLEN];
@@ -485,13 +485,13 @@ WORD ins_app(WORD curr)
     {
         ANODE *temppa;
 
-        strcpy(pathname,pa->a_pdata);   /* get path for app_afind_by_name() */
+        strcpy(pathname, pa->a_pappl);  /* get path for app_afind_by_name() */
         p = filename_start(pathname);
         *p = '\0';
-        temppa = app_afind_by_name(AT_ISFILE,AF_ISDESK|AF_WINDOW,pathname,pa->a_pappl,&isapp);
+        temppa = app_afind_by_name(AT_ISFILE,AF_ISDESK|AF_WINDOW, pathname, filename_start(pa->a_pappl), &isapp);
         if (temppa)
         {
-            if (strcmp(temppa->a_pappl,pa->a_pdata) == 0)
+            if (strcmp(temppa->a_pappl, pa->a_pappl) == 0)
             {
                 pa = temppa;
                 KDEBUG(("Found installed app anode for desktop shortcut\n"));
@@ -522,9 +522,9 @@ WORD ins_app(WORD curr)
          */
         if (pa->a_flags & AF_ISDESK)
         {
-            p = pa->a_pdata;
+            p = pa->a_pappl;
             q = filename_start(p);
-            pfname = pa->a_pappl;
+            pfname = q;
         }
         else
 #endif
@@ -709,6 +709,7 @@ static WORD install_desktop_icon(ANODE *pa)
     WORD start_fld = ID_ID;
     WORD change = 0;
     char curr_label[LEN_ZFNAME], new_label[LEN_ZFNAME], id[2];
+    char **label_ptr;
 
     /* find first available spot on desktop (before we alloc a new one) */
     ins_posdisk(0, 0, &x, &y);
@@ -746,6 +747,7 @@ static WORD install_desktop_icon(ANODE *pa)
     }
 
     id[0] = id[1] = '\0';
+    label_ptr = &pa->a_pappl;       /* default, true for disk/trash/printer icons */
 
     switch(pa->a_type)
     {
@@ -761,6 +763,7 @@ static WORD install_desktop_icon(ANODE *pa)
         tree[ID_PRINT].ob_state |= DISABLED;
         start_fld = ID_LABEL;
 #endif
+        label_ptr = &pa->a_pdata;
         break;
     case AT_ISDISK:
         id[0] = pa->a_letter;
@@ -788,8 +791,8 @@ static WORD install_desktop_icon(ANODE *pa)
         tree[ID_PRINT].ob_state &= ~DISABLED;
 #endif
     }
-    strcpy(curr_label, pa->a_pappl);
-    inf_sset(tree, ID_LABEL, pa->a_pappl);
+    strcpy(curr_label, *label_ptr);
+    inf_sset(tree, ID_LABEL, curr_label);
 
     curr_icon = (pa->a_aicon < 0) ? pa->a_dicon : pa->a_aicon;
     if (curr_icon < 0)
@@ -837,7 +840,7 @@ static WORD install_desktop_icon(ANODE *pa)
             }
             inf_sget(tree, ID_LABEL, new_label);
             if (strcmp(curr_label, new_label))      /* if label changed, */
-                scan_str(new_label, &pa->a_pappl);  /* update it         */
+                scan_str(new_label, label_ptr);     /* update it         */
             if (pa->a_aicon < 0)
                 pa->a_dicon = curr_icon;
             else
@@ -959,8 +962,8 @@ static ANODE *allocate_window_anode(WORD type)
  */
 static WORD install_window_icon(FNODE *pf)
 {
-    BOOL identical;
-    WORD edit_start, exitobj, dummy, type;
+    BOOL identical, dummy;
+    WORD edit_start, exitobj, type;
     WORD new_icon, curr_icon;
     WORD change = 0;
     OBJECT *tree;
@@ -1221,7 +1224,8 @@ WORD rmv_icon(WORD sobj)
 void ins_shortcut(WORD wh, WORD mx, WORD my)
 {
     char pathname[MAXPATHLEN], *p, *q;
-    WORD sobj, x, y, dummy;
+    WORD sobj, x, y;
+    BOOL dummy;
     ANODE *pa, *newpa;
     FNODE *pf;
     WNODE *pw;
@@ -1265,8 +1269,8 @@ void ins_shortcut(WORD wh, WORD mx, WORD my)
         newpa->a_letter = '\0';
         newpa->a_type = pa->a_type;
         newpa->a_obid = 0;          /* filled in by app_blddesk() */
-        scan_str(pf->f_name,&newpa->a_pappl);   /* store name */
-        scan_str(pathname,&newpa->a_pdata);     /* store full path */
+        scan_str(pathname, &newpa->a_pappl);    /* store full path */
+        scan_str(pf->f_name,&newpa->a_pdata);   /* store name */
         newpa->a_pargs = "";
         newpa->a_aicon = pa->a_aicon;
         newpa->a_dicon = pa->a_dicon;

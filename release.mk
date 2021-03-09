@@ -1,7 +1,7 @@
 #
 # release.mk - Makefile fragment for building releases
 #
-# Copyright (C) 2011-2020 The EmuTOS development team.
+# Copyright (C) 2011-2021 The EmuTOS development team.
 #
 # Authors:
 #  VRI      Vincent Rivière
@@ -48,6 +48,27 @@ release-src:
 	find $(RELEASE_DIR)/$(RELEASE_SRC) -type f -name '*.sh' -exec chmod 755 '{}' ';'
 	tar -C $(RELEASE_DIR) --owner=0 --group=0 -zcf $(RELEASE_DIR)/$(RELEASE_SRC).tar.gz $(RELEASE_SRC)
 	rm -r $(RELEASE_DIR)/$(RELEASE_SRC)
+
+.PHONY: release-1024k
+NODEP += release-1024k
+RELEASE_1024K = emutos-1024k-$(VERSION)
+release-1024k:
+	$(MAKE) clean
+	$(MAKE) 1024
+	mkdir $(RELEASE_DIR)/$(RELEASE_1024K)
+	cp etos1024k.img etos1024k.sym $(RELEASE_DIR)/$(RELEASE_1024K)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_1024K)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_1024K)/emuicon.rsc
+	cat doc/readme-1024k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_1024K)/readme.txt
+	mkdir $(RELEASE_DIR)/$(RELEASE_1024K)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_1024K)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_1024K)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_1024K)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_1024K)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_1024K)/extras/emucurs.rsc
+	find $(RELEASE_DIR)/$(RELEASE_1024K) -name '*.txt' -exec unix2dos '{}' ';'
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_1024K).zip $(RELEASE_1024K)
+	rm -r $(RELEASE_DIR)/$(RELEASE_1024K)
 
 .PHONY: release-512k
 NODEP += release-512k
@@ -223,6 +244,27 @@ release-amiga-floppy:
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA_FLOPPY).zip $(RELEASE_AMIGA_FLOPPY)
 	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)
 
+.PHONY: release-lisa
+NODEP += release-lisa
+RELEASE_LISA = emutos-lisa-$(VERSION)
+release-lisa:
+	$(MAKE) clean
+	$(MAKE) lisaflop
+	mkdir $(RELEASE_DIR)/$(RELEASE_LISA)
+	cp $(EMUTOS_DC42) $(RELEASE_DIR)/$(RELEASE_LISA)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_LISA)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_LISA)/emuicon.rsc
+	cat doc/readme-lisa.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_LISA)/readme.txt
+	mkdir $(RELEASE_DIR)/$(RELEASE_LISA)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_LISA)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_LISA)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_LISA)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_LISA)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_LISA)/extras/emucurs.rsc
+	find $(RELEASE_DIR)/$(RELEASE_LISA) -name '*.txt' -exec unix2dos '{}' ';'
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_LISA).zip $(RELEASE_LISA)
+	rm -r $(RELEASE_DIR)/$(RELEASE_LISA)
+
 .PHONY: release-m548x-dbug
 NODEP += release-m548x-dbug
 RELEASE_M548X_DBUG = emutos-m548x-dbug-$(VERSION)
@@ -333,8 +375,9 @@ release-emucon:
 .PHONY: release
 NODEP += release
 release: clean release-clean release-mkdir \
-  release-src release-512k release-256k release-192k release-cartridge \
+  release-src release-1024k release-512k release-256k release-192k release-cartridge \
   release-aranym release-firebee release-amiga-rom release-amiga-floppy \
+  release-lisa \
   release-m548x-dbug release-m548x-bas release-prg release-floppy \
   release-pak3 release-emucon
 	$(MAKE) clean

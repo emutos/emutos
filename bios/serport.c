@@ -26,9 +26,7 @@
 #include "tosvars.h"
 #include "vectors.h"
 #include "coldfire.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
 
 /*
  * defines

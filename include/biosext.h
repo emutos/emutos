@@ -77,6 +77,7 @@ WORD get_palette(void);
 void get_pixel_size(WORD *width,WORD *height);
 int rez_changeable(void);
 WORD check_moderez(WORD moderez);
+void initialise_palette_registers(WORD rez,WORD mode);
 
 /* RAM-copies of the ROM-fontheaders. See bios/fntxxx.c */
 extern struct font_head fon6x6;

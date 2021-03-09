@@ -19,7 +19,6 @@
 #include "asm.h"
 #include "tosvars.h"
 #include "ahdi.h"
-#include "mfp.h"
 #include "floppy.h"
 #include "disk.h"
 #include "ikbd.h"
@@ -476,6 +475,9 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
                 return E_CHNG;
             }
         }
+
+        /* In logical mode RW_NOBYTESWAP is not supported. */
+        rw &= ~RW_NOBYTESWAP;
     }
     else {                              /* physical */
         if (unit < 0 || unit >= UNITSNUM || !units[unit].valid)
@@ -721,11 +723,13 @@ LONG blkdev_getbpb(WORD dev)
 static LONG blkdev_mediach(WORD dev)
 {
     BLKDEV *b = &blkdev[dev];
-    UWORD unit = b->unit;
+    UWORD unit;
     LONG ret;
 
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !(b->flags&DEVICE_VALID))
         return EUNDEV;  /* unknown device */
+
+    unit = b->unit;
 
     /* if we've already marked the drive as MEDIACHANGE, don't change it */
     if (b->mediachange == MEDIACHANGE)

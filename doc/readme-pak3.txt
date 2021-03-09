@@ -29,6 +29,7 @@ etospak3pl.img - Polish (PAL)
 etospak3ru.img - Russian (PAL)
 etospak3se.img - Swedish (PAL)
 etospak3sg.img - Swiss German (PAL)
+etospak3tr.img - Turkish (PAL)
 etospak3us.img - English (NTSC)
 etospak3uk.img - English (PAL)
 

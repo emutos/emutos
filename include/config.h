@@ -6,7 +6,7 @@
  * Defines that should *not* be overridden should appear in sysconf.h
  * (or deskconf.h if they apply to EmuDesk).
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -33,7 +33,7 @@
 /*
  * Determine if this EmuTOS is built for ROM or RAM
  */
-#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_AMIGA_FLOPPY)
+#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_AMIGA_FLOPPY) || defined(TARGET_LISA_FLOPPY)
 #  define EMUTOS_LIVES_IN_RAM 1
 # else
 #  define EMUTOS_LIVES_IN_RAM 0
@@ -496,6 +496,35 @@
 #endif
 
 /*
+ * Defaults for the Apple Lisa floppy target
+ */
+#ifdef TARGET_LISA_FLOPPY
+# define MACHINE_LISA
+#endif
+
+/*
+ * Defaults for the Apple Lisa machine
+ */
+#ifdef MACHINE_LISA
+# ifndef CONF_ATARI_HARDWARE
+#  define CONF_ATARI_HARDWARE 0
+# endif
+# ifndef CONF_WITH_ADVANCED_CPU
+#  define CONF_WITH_ADVANCED_CPU 0
+# endif
+# ifndef CONF_WITH_APOLLO_68080
+#  define CONF_WITH_APOLLO_68080 0
+# endif
+# ifndef CONF_WITH_CACHE_CONTROL
+#  define CONF_WITH_CACHE_CONTROL 0
+# endif
+# ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
+   /* This makes LisaEm timings completely inaccurate, so disable it */
+#  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
+# endif
+#endif
+
+/*
  * Defaults for the M548x machine
  */
 #ifdef MACHINE_M548X
@@ -510,6 +539,9 @@
 # endif
 # ifndef CONF_TTRAM_SIZE
 #  define CONF_TTRAM_SIZE 48UL*1024*1024
+# endif
+# ifndef CONF_SERIAL_CONSOLE
+#  define CONF_SERIAL_CONSOLE 1
 # endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
@@ -1292,6 +1324,19 @@
 #endif
 
 /*
+ * The VDI functions v_fillarea(), v_pline(), v_pmarker() can handle
+ * up to MAX_VERTICES coordinates (MAX_VERTICES/2 points).
+ * TOS2 allows 512 vertices, TOS3/TOS4 allow 1024.
+ */
+#ifndef MAX_VERTICES
+# if defined(TARGET_1024) || defined(TARGET_512) || defined(TARGET_PRG) || defined(MACHINE_FIREBEE) || defined(MACHINE_M548X) || defined(MACHINE_ARANYM)
+#  define MAX_VERTICES   1024
+# else
+#  define MAX_VERTICES   512
+# endif
+#endif
+
+/*
  * Set CONF_WITH_GRAF_MOUSE_EXTENSION to 1 to include AES support for
  * graf_mouse() modes M_SAVE, M_RESTORE, M_PREVIOUS.
  */
@@ -1355,11 +1400,7 @@
  * - use exclusively the serial port input for console input.
  */
 #ifndef CONF_SERIAL_CONSOLE
-# if !CONF_WITH_ATARI_VIDEO && !defined(MACHINE_AMIGA)
-#  define CONF_SERIAL_CONSOLE 1
-# else
-#  define CONF_SERIAL_CONSOLE 0
-# endif
+# define CONF_SERIAL_CONSOLE 0
 #endif
 
 /* When possible, it's better to handle the serial console input with
@@ -1688,7 +1729,7 @@
  * It tries to power off the machine, if possible.
  */
 #ifndef CONF_WITH_SHUTDOWN
-# if DETECT_NATIVE_FEATURES || defined(MACHINE_FIREBEE) || defined(MACHINE_AMIGA)
+# if DETECT_NATIVE_FEATURES || defined(MACHINE_FIREBEE) || defined(MACHINE_AMIGA) || defined(MACHINE_LISA)
 #  define CONF_WITH_SHUTDOWN 1
 # else
 #  define CONF_WITH_SHUTDOWN 0

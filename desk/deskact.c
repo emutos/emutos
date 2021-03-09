@@ -335,9 +335,13 @@ static void gr_drgplns(WORD in_mx, WORD in_my, GRECT *pc,
         obj = tree + *pdobj;
         if (!(obj->ob_state & SELECTED))
         {
-            pa = i_find(dst_wh, *pdobj, NULL, NULL);
+            BOOL isapp;
+            pa = i_find(dst_wh, *pdobj, NULL, &isapp);
             if (pa)
             {
+                /* don't highlight plain files */
+                if ((pa->a_type == AT_ISFILE) && !isapp)
+                    continue;
                 curr_wh = dst_wh;
                 curr_root = root;
                 curr_sel = *pdobj;

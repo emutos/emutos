@@ -37,9 +37,8 @@
 #include "delay.h"
 #include "bios.h"
 #include "coldfire.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
+#include "lisa.h"
 
 
 /* forward declarations */
@@ -1083,6 +1082,10 @@ void kbd_init(void)
 
 #ifdef MACHINE_AMIGA
     amiga_kbd_init();
+#endif
+
+#ifdef MACHINE_LISA
+    lisa_kbd_init();
 #endif
 
     /* initialize the IKBD */

@@ -41,6 +41,7 @@ a ROM version of EmuTOS.
   FireBee             |  yes  | RFB | 26 Aug 2020 | also tested with PRG
   M5484LITE           |  yes  | (3) | 30 Aug 2020 |
   Vampire V4          |  yes  | CZ  | 24 Aug 2020 |
+  Apple Lisa          |  yes  | (8) |  4 Feb 2021 |
 
 Abbreviations for testers:
     CZ:  Christian Zietz
@@ -57,6 +58,7 @@ Other testers:
   (5) reported by Stefan Niestegge
   (6) reported by Claude Labelle
   (7) reported by Siegfried Hübner
+  (8) reported by Stéphane Pitteloud
 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 

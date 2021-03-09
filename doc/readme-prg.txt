@@ -20,6 +20,7 @@ emutospl.prg - Polish (PAL)
 emutosru.prg - Russian (PAL)
 emutosse.prg - Swedish (PAL)
 emutossg.prg - Swiss German (PAL)
+emutostr.prg - Turkish (PAL)
 emutosuk.prg - English (PAL)
 emutosus.prg - English (NTSC)
 

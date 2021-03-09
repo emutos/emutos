@@ -390,7 +390,7 @@ void remove_locate_shortcut(WORD curr)
             strcpy(p, fname);
         else
             *(p-1) = '\0';
-        scan_str(path,&pa->a_pdata);
+        scan_str(path, &pa->a_pappl);
     }
 }
 #endif
@@ -820,7 +820,7 @@ static void show_file(char *name,LONG bufsize,char *iobuf)
  *
  *  returns TRUE iff shel_write() was issued successfully
  */
-WORD do_aopen(ANODE *pa, WORD isapp, WORD curr, char *pathname, char *pname, char *tail)
+WORD do_aopen(ANODE *pa, BOOL isapp, WORD curr, char *pathname, char *pname, char *tail)
 {
     WNODE *pw;
     WORD ret;
@@ -1187,7 +1187,7 @@ WORD do_open(WORD curr)
     ANODE *pa;
     WNODE *pw;
     FNODE *pf;
-    WORD isapp;
+    BOOL isapp;
     char pathname[MAXPATHLEN];
     char filename[LEN_ZFNAME];
 
@@ -1206,16 +1206,16 @@ WORD do_open(WORD curr)
 #if CONF_WITH_DESKTOP_SHORTCUTS
         if (pa->a_flags & AF_ISDESK)
         {
-            char *p = filename_start(pa->a_pdata);
+            char *p = filename_start(pa->a_pappl);
             /* check for root folder */
-            if ((pa->a_type == AT_ISFOLD) && (p == pa->a_pdata))
+            if ((pa->a_type == AT_ISFOLD) && (p == pa->a_pappl))
             {
-                strcpy(pathname, pa->a_pdata);
+                strcpy(pathname, pa->a_pappl);
                 filename[0] = '\0';
             }
             else
             {
-                strlcpy(pathname, pa->a_pdata, p - pa->a_pdata);
+                strlcpy(pathname, pa->a_pappl, p-pa->a_pappl);
                 strcpy(filename, p);
             }
             strcat(pathname, "\\*.*");
@@ -1291,7 +1291,7 @@ WORD do_info(WORD curr)
             {
                 DTA *dta;
 
-                dta = file_exists(pa->a_pdata, NULL);
+                dta = file_exists(pa->a_pappl, NULL);
                 if (!dta)
                 {
                     remove_locate_shortcut(curr);
@@ -1300,7 +1300,7 @@ WORD do_info(WORD curr)
 
                 pf = &fn;
                 memcpy(&pf->f_attr, &dta->d_attrib, 23);
-                strcpy(pathname, pa->a_pdata);
+                strcpy(pathname, pa->a_pappl);
                 strcpy(filename_start(pathname),"*.*");
                 pathptr = pathname;
             }
@@ -1676,12 +1676,12 @@ void refresh_drive(WORD drive)
  *
  *  returns NULL if no matching index
  */
-ANODE *i_find(WORD wh, WORD item, FNODE **ppf, WORD *pisapp)
+ANODE *i_find(WORD wh, WORD item, FNODE **ppf, BOOL *pisapp)
 {
     ANODE *pa;
     WNODE *pw;
     FNODE *pf;
-    WORD isapp;
+    BOOL isapp;
 
     pa = (ANODE *) NULL;
     pf = (FNODE *) NULL;

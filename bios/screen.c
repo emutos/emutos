@@ -33,9 +33,9 @@
 #include "biosmem.h"
 #include "biosext.h"
 #include "bios.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
+#include "lisa.h"
+#include "nova.h"
 
 void detect_monitor_change(void);
 static void setphys(const UBYTE *addr);
@@ -617,6 +617,10 @@ void screen_init_mode(void)
     amiga_screen_init();
 #endif
 
+#ifdef MACHINE_LISA
+    lisa_screen_init();
+#endif
+
     rez_was_hacked = FALSE; /* initial assumption */
 }
 
@@ -728,6 +732,8 @@ ULONG initial_vram_size(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();
+#elif defined(MACHINE_LISA)
+    return 32*1024UL;
 #else
     ULONG vram_size;
 
@@ -782,6 +788,10 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
 
 #ifdef MACHINE_AMIGA
     amiga_get_current_mode_info(planes, hz_rez, vt_rez);
+#elif defined(MACHINE_LISA)
+    *planes = 1;
+    *hz_rez = 720;
+    *vt_rez = 364;
 #else
     atari_get_current_mode_info(planes, hz_rez, vt_rez);
 #endif
@@ -846,6 +856,15 @@ static __inline__ void get_std_pixel_size(WORD *width,WORD *height)
  * are displayed:
  *  - the output from v_arc()/v_circle()/v_pieslice()
  *  - the size of gl_wbox in pixels
+ *
+ * we used to base the pixel sizes for ST(e) systems on exact screen
+ * width and height values.  however, this does not work for enhanced
+ * screens, such as Hatari's 'extended VDI screen' or add-on hardware.
+ *
+ * we now use some heuristics in the hope that this will cover the most
+ * common situations.  unfortunately we cannot set the sizes based on
+ * the value from getrez(), since this may be inaccurate for non-standard
+ * hardware.
  */
 void get_pixel_size(WORD *width,WORD *height)
 {
@@ -857,10 +876,10 @@ void get_pixel_size(WORD *width,WORD *height)
     else
     {
         /* ST TOS has its own set of magic numbers */
-        if (V_REZ_VT == 400)        /* ST high */
-            *width = 372;
-        else if (V_REZ_HZ == 640)   /* ST medium */
+        if (5 * V_REZ_HZ >= 12 * V_REZ_VT)  /* includes ST medium */
             *width = 169;
+        else if (V_REZ_HZ >= 480)   /* ST high */
+            *width = 372;
         else *width = 338;          /* ST low */
         *height = 372;
     }
@@ -872,6 +891,13 @@ void get_pixel_size(WORD *width,WORD *height)
 static const UBYTE *atari_physbase(void)
 {
     ULONG addr;
+
+#if CONF_WITH_NOVA
+    if (HAS_NOVA && rez_was_hacked) {
+        /* Nova/Vofa present and in use? Return its screen memory */
+        return get_novamembase();
+    }
+#endif
 
     addr = *(volatile UBYTE *) VIDEOBASE_ADDR_HI;
     addr <<= 8;
@@ -988,6 +1014,8 @@ const UBYTE *physbase(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_physbase();
+#elif defined(MACHINE_LISA)
+    return lisa_physbase();
 #elif CONF_WITH_ATARI_VIDEO
     return atari_physbase();
 #else
@@ -1004,6 +1032,8 @@ static void setphys(const UBYTE *addr)
 
 #ifdef MACHINE_AMIGA
     amiga_setphys(addr);
+#elif defined(MACHINE_LISA)
+    lisa_setphys(addr);
 #elif CONF_WITH_ATARI_VIDEO
     atari_setphys(addr);
 #endif
@@ -1034,27 +1064,9 @@ WORD getrez(void)
  *  . sets the screen resolution iff 0 <= rez <= 7
  *      if a VIDEL is present and rez==3, then the video mode is
  *      set by a call to vsetmode with 'videlmode' as the argument
- *
- * in addition, EmuTOS implements the following extensions iff
- * logLoc<0 and physLoc<0 and the 0x8000 bit is set in rez (TOS will
- * ignore these since it ignores negative values of 'rez'):
- *  . if the 0x4000 bit is set in rez, the palette registers are
- *    initialised according to 'rez' (bits 2-0) and 'videlmode'
  */
 void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
-    /* handle EmuCON extensions */
-    if (((LONG)logLoc < 0) && ((LONG)physLoc < 0) && (rez & 0x8000)) {
-        /* Don't allow any changes when Line A variables were 'hacked'. */
-        if (rez_was_hacked) {
-            return;
-        }
-        if (rez & 0x4000) {
-            initialise_palette_registers(rez&0x0007, videlmode);
-        }
-        return;
-    }
-
 #if CONF_WITH_VIDEL
     /*
      * fixup videl mode if applicable (this is where we could test

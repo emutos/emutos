@@ -84,11 +84,15 @@
  * ANODE: store application information for desktop
  *
  * usage of a_pappl/a_pdata/a_pargs below:
- *  (1) for a file or folder on the desktop:
- *      a_pappl: name (used as icon label), up to 12 chars
- *      a_pdata: fully-qualified name
+ *  (1) for a standard desktop icon (disk, printer, trash):
+ *      a_pappl: icon label, up to 12 chars
+ *      a_pdata: unused
  *      a_pargs: unused
- *  (2) for an installed application:
+ *  (2) for a file or folder on the desktop:
+ *      a_pappl: fully-qualified name       | The usage of these fields was reversed
+ *      a_pdata: icon label, up to 12 chars | prior to rev level 2 of the .INF file
+ *      a_pargs: unused
+ *  (3) for an installed application:
  *      a_pappl: fully_qualified filename
  *      a_pdata: document type, as TOS wildcard, up to 5 chars (e.g. *.DAT)
  *      a_pargs: fixed argument(s) for application, up to 11 chars
@@ -142,7 +146,6 @@ typedef struct
     char cs_confdel;            /* Confirm deletes (boolean) */
     char cs_confovwr;           /* Confirm overwrite (boolean) */
     char cs_dblclick;           /* Double click speed */
-    char cs_mnuclick;           /* Click required to drop down menu (boolean) */
     char cs_timefmt;            /* Time format */
     char cs_datefmt;            /* Date format */
     char cs_blitter;            /* Blitter enabled (boolean) */
@@ -164,7 +167,7 @@ void app_start(void);
 void app_save(WORD todisk);
 void app_blddesk(void);
 ANODE *app_afind_by_id(WORD obid);
-ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, WORD *pisapp);
+ANODE *app_afind_by_name(WORD atype, WORD ignore, char *pspec, char *pname, BOOL *pisapp);
 void nomem_alert(void) NORETURN;
 
 #if CONF_WITH_READ_INF

@@ -25,7 +25,6 @@
 #include "delay.h"
 #include "disk.h"
 #include "ide.h"
-#include "mfp.h"
 #include "gemerror.h"
 #include "string.h"
 #include "tosvars.h"
@@ -35,9 +34,7 @@
 #include "coldfire.h"
 #include "processor.h"
 #include "biosmem.h"
-#ifdef MACHINE_AMIGA
 #include "amiga.h"
-#endif
 
 #if CONF_WITH_IDE
 

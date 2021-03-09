@@ -531,31 +531,6 @@ f2op_02:
         jra     f2_rtn
 
         and.w   d7,d0           // S and P                                       4
-mode_03:
-        move.w  d0,(a1)         // D' <- S                                       8
-        jmp     (a3)            //                                               8
-
-        .org    mode_03+F1OP-SAP
-        and.w   d7,d0           // S and P                                       4
-f1op_03:
-        move.w  (a1),d1         // D' <- S
-        eor.w   d1,d0
-        and.w   d6,d0
-        eor.w   d1,d0
-        move.w  d0,(a1)
-        jmp     (a3)
-
-        .org    mode_03+F2OP-SAP
-        and.w   d7,d0           // S and P                                       4
-f2op_03:
-        move.w  (a1),d1         // D' <- S
-        eor.w   d1,d0
-        and.w   d6,d0
-        eor.w   d1,d0
-        move.w  d0,(a1)
-        jra     f2_rtn
-
-        and.w   d7,d0           // S and P                                       4
 mode_04:
         not.w   d0              // D' <- [not S] and D                           4
         and.w   d0,(a1)         //                                              12
@@ -615,6 +590,31 @@ f1op_07:
 f2op_07:
         and.w   d6,d0
         or.w    d0,(a1)
+        jra     f2_rtn
+
+        and.w   d7,d0           // S and P                                       4
+mode_03:
+        move.w  d0,(a1)         // D' <- S                                       8
+        jmp     (a3)            //                                               8
+
+        .org    mode_03+F1OP-SAP
+        and.w   d7,d0           // S and P                                       4
+f1op_03:
+        move.w  (a1),d1         // D' <- S
+        eor.w   d1,d0
+        and.w   d6,d0
+        eor.w   d1,d0
+        move.w  d0,(a1)
+        jmp     (a3)
+
+        .org    mode_03+F2OP-SAP
+        and.w   d7,d0           // S and P                                       4
+f2op_03:
+        move.w  (a1),d1         // D' <- S
+        eor.w   d1,d0
+        and.w   d6,d0
+        eor.w   d1,d0
+        move.w  d0,(a1)
         jra     f2_rtn
 
         and.w   d7,d0           // S and P                                       4

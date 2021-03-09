@@ -28,6 +28,7 @@ Other supported languages are:
 - Russian
 - Swedish
 - Swiss German
+- Turkish
 They can be used by setting the NVRAM appropriately.
 
 Note that selecting Norwegian/Swedish currently sets the language to English,

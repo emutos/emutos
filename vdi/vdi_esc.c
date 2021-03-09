@@ -82,10 +82,13 @@ static void escfn2(Vwk * vwk)
 
 /*
  * escfn3: v_enter_cur() - enter alpha mode and exit graphics mode
+ *
+ * note: we send a CR to reset the BDOS column counter (important for
+ * tab expansion)
  */
 static void escfn3(Vwk * vwk)
 {
-    cconws("\033E\033e");       /* clear-and-home, then show alpha cursor */
+    cconws("\033E\033e\015");   /* clear-and-home, then show alpha cursor */
 }
 
 
