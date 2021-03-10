@@ -92,21 +92,21 @@ void mfpint(WORD num, LONG vector)
 void jdisint(WORD num)
 {
     MFP *mfp=MFP_BASE;   /* set base address of MFP */
-    UBYTE i;
+    UBYTE mask;
 
     num &= 0x0F;
     if(num >= 8) {
-        i = 1 << (num - 8);
-        mfp->imra &= ~i;
-        mfp->iera &= ~i;
-        mfp->ipra &= ~i;
-        mfp->isra &= ~i;
+        mask = ~(1<<(num-8));
+        mfp->imra &= mask;
+        mfp->iera &= mask;
+        mfp->ipra &= mask;
+        mfp->isra &= mask;
     } else {
-        i = 1 << num;
-        mfp->imrb &= ~i;
-        mfp->ierb &= ~i;
-        mfp->iprb &= ~i;
-        mfp->isrb &= ~i;
+        mask = ~(1<<num);
+        mfp->imrb &= mask;
+        mfp->ierb &= mask;
+        mfp->iprb &= mask;
+        mfp->isrb &= mask;
     }
 }
 
