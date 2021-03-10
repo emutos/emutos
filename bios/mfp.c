@@ -99,14 +99,14 @@ void jdisint(WORD num)
         mask = ~(1<<(num-8));
         mfp->imra &= mask;
         mfp->iera &= mask;
-        mfp->ipra &= mask;
-        mfp->isra &= mask;
+        mfp->ipra = mask;   /* note: IPRA/ISRA ignore '1' bits */
+        mfp->isra = mask;
     } else {
         mask = ~(1<<num);
         mfp->imrb &= mask;
         mfp->ierb &= mask;
-        mfp->iprb &= mask;
-        mfp->isrb &= mask;
+        mfp->iprb = mask;   /* note: IPRA/ISRA ignore '1' bits */
+        mfp->isrb = mask;
     }
 }
 
