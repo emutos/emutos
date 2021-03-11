@@ -18,8 +18,8 @@
 #include "string.h"
 
 /*
- *  Search for a particular string in the DOS environment and return a
- *  value in the pointer pointed to by the first argument.  If the string
+ *  Search for a particular string in the environment string and return a
+ *  value in the pointer pointed to by the third argument.  If the string
  *  is found, the value is a pointer to the first character after the
  *  string; otherwise it is a NULL pointer.
  */
