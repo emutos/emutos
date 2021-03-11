@@ -261,13 +261,14 @@ static void load_one_acc(ACC *acc)
  */
 static WORD count_accs(void)
 {
+    const char accpathvar[] = "ACCPATH=";
     WORD i, rc;
 
     /* if the user decided to skip loading accessories, then do so */
     if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
         return 0;
 
-    shellutl_getenv(ad_envrn, "ACCPATH=", &accpath);
+    shellutl_getenv(ad_envrn, accpathvar, &accpath);
     if (accpath == NULL)
 	accpath = "";
     sprintf(D.g_work,"%s\\*.ACC", accpath);
@@ -280,7 +281,6 @@ static WORD count_accs(void)
         if (rc < 0)
             break;
         strlcpy(acc[i].name,D.g_dta.d_fname,LEN_ZFNAME);
-	Cconws(acc[i].name);Cconws("\r\n");
     }
 
     return i;
