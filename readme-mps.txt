@@ -11,4 +11,4 @@ Changelog:
 	
 2020-Mar-10 VB:
 	* Support ACCPATH environment variable in the AES, indicating the folder where to search
-	  for accessories. Must not including trailing backslash.
+	  for accessories. Must not include trailing backslash.
