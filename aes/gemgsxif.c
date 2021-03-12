@@ -34,29 +34,6 @@
 #include "asm.h"
 
 /*
- * Calls used in Crystal:
- *
- * g_vsf_interior();
- * vr_recfl();
- * vst_height();
- * g_vsl_type();
- * g_vsl_udsty();
- * g_vsl_width();
- * g_v_pline();
- * vs_clip();
- * vex_butv();
- * vex_motv();
- * vex_curv();
- * vex_timv();
- * vr_cpyfm();
- * g_v_opnwk();
- * v_clswk();
- * vq_extnd();
- * v_clsvwk( handle )
- * v_opnvwk( pwork_in, phandle, pwork_out )
- */
-
-/*
  * calculate memory size to buffer a display area, given its
  * width (in words), height (in pixels), and the number of planes
  */
