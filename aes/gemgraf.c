@@ -33,11 +33,11 @@
 #include "gsx2.h"
 #include "rectfunc.h"
 
-#define g_vsf_interior( x )       gsx_1code(SET_FILL_INTERIOR, x)
-#define g_vsl_type( x )           gsx_1code(SET_LINE_TYPE, x)
-#define g_vsf_style( x )          gsx_1code(SET_FILL_STYLE, x)
-#define g_vsf_color( x )          gsx_1code(SET_FILL_COLOR, x)
-#define g_vsl_udsty( x )          gsx_1code(SET_UD_LINE_STYLE, x)
+#define vsf_interior(x)     gsx_1code(SET_FILL_INTERIOR, x)
+#define vsl_type(x)         gsx_1code(SET_LINE_TYPE, x)
+#define vsf_style(x)        gsx_1code(SET_FILL_STYLE, x)
+#define vsf_color(x)        gsx_1code(SET_FILL_COLOR, x)
+#define vsl_udsty(x)        gsx_1code(SET_UD_LINE_STYLE, x)
 
 
 GLOBAL WORD     gl_width;
@@ -161,11 +161,11 @@ static void gsx_xline(WORD ptscount, WORD *ppoints)
             linexy = (*ppoints < *(ppoints+2)) ? ppoints : ppoints + 2;
             st = hztltbl[*(linexy+1) & 1];
         }
-        g_vsl_udsty(st);
+        vsl_udsty(st);
         g_v_pline(2, ppoints);
         ppoints += 2;
     }
-    g_vsl_udsty(0xffff);
+    vsl_udsty(0xffff);
 }
 
 
@@ -423,9 +423,9 @@ void gsx_start(void)
     KDEBUG(("gsx_start(): gl_wchar=%d, gl_hchar=%d, gl_wbox=%d, gl_hbox=%d\n",
             gl_wchar, gl_hchar, gl_wbox, gl_hbox));
 
-    g_vsl_type(7);
+    vsl_type(7);
     g_vsl_width(1);
-    g_vsl_udsty(0xffff);
+    vsl_udsty(0xffff);
     r_set(&gl_rscreen, 0, 0, gl_width, gl_height);
     r_set(&gl_rfull, 0, gl_hbox, gl_width, (gl_height - gl_hbox));
     r_set(&gl_rzero, 0, 0, 0, 0);
@@ -447,12 +447,12 @@ void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
     gsx_attr(TRUE, mode, gl_tcolor);
     if (fis != gl_fis)
     {
-        g_vsf_interior(fis);
+        vsf_interior(fis);
         gl_fis = fis;
     }
     if (patt != gl_patt)
     {
-        g_vsf_style(patt);
+        vsf_style(patt);
         gl_patt = patt;
     }
     vr_recfl(ptsin);
@@ -560,7 +560,7 @@ void gr_rect(UWORD icolor, UWORD ipattern, GRECT *pt)
     else if (ipattern == IP_SOLID)
         fis = FIS_SOLID;
 
-    g_vsf_color(icolor);
+    vsf_color(icolor);
     bb_fill(MD_REPLACE, fis, ipattern, pt->g_x, pt->g_y, pt->g_w, pt->g_h);
 }
 
