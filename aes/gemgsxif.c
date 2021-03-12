@@ -83,7 +83,7 @@ static WORD  gl_graphic;
 
 
 /* Some local Prototypes: */
-static void  g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out );
+static void v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out);
 
 
 /*
@@ -180,7 +180,7 @@ static void gsx_wsopen(void)
         *p++ = 1;
     *p = 2;                         /* device coordinate space */
     gl_ws.ws_pts0 = VsetMode(-1);   /* ptsout points here ... harmless if not a Falcon */
-    g_v_opnwk(intin, &gl_handle, &gl_ws);
+    v_opnwk(intin, &gl_handle, &gl_ws);
     gl_graphic = TRUE;
 }
 
@@ -544,9 +544,10 @@ void gsx_fix(FDB *pfd, void *theaddr, WORD wb, WORD h)
 }
 
 
-/* This function was formerly just called v_opnwk, but there was a
-   conflict with the VDI then, so I renamed it to g_v_opnwk  - Thomas */
-static void g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out )
+/*
+ *  Routine to issue v_opnwk()
+ */
+static void v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out)
 {
     WORD            *ptsptr;
 
@@ -564,16 +565,15 @@ static void g_v_opnwk(WORD *pwork_in, WORD *phandle, WS *pwork_out )
 }
 
 
-
-/* This function was formerly just called v_pline, but there was a
- conflict with the VDI then, so I renamed it to g_v_pline  - Thomas */
-void g_v_pline(WORD  count, WORD *pxyarray )
+/*
+ *  Routine to issue v_pline()
+ */
+void v_pline(WORD count, WORD *pxyarray)
 {
     i_ptsin( pxyarray );
     gsx_ncode(POLYLINE, count, 0);
     i_ptsin( ptsin );
 }
-
 
 
 void vs_clip(WORD clip_flag, WORD *pxyarray )
@@ -646,10 +646,9 @@ void vrn_trnfm(FDB *psrcMFDB, FDB *pdesMFDB)
 
 
 /*
- * This function was formerly just called vsl_width, but there was a
- * conflict with the VDI then, so I renamed it to g_vsl_width  - Thomas
+ *  Routine to call vsl_width()
  */
-void g_vsl_width(WORD width)
+void vsl_width(WORD width)
 {
     ptsin[0] = width;
     ptsin[1] = 0;

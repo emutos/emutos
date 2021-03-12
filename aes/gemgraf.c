@@ -162,7 +162,7 @@ static void gsx_xline(WORD ptscount, WORD *ppoints)
             st = hztltbl[*(linexy+1) & 1];
         }
         vsl_udsty(st);
-        g_v_pline(2, ppoints);
+        v_pline(2, ppoints);
         ppoints += 2;
     }
     vsl_udsty(0xffff);
@@ -196,7 +196,7 @@ void gsx_cline(UWORD x1, UWORD y1, UWORD x2, UWORD y2)
     WORD pxy[4] = { x1, y1, x2, y2 };
 
     gsx_moff();
-    g_v_pline(2, pxy);
+    v_pline(2, pxy);
     gsx_mon();
 }
 
@@ -270,7 +270,7 @@ static void gsx_bxpts(GRECT *pt)
 static void gsx_box(GRECT *pt)
 {
     gsx_bxpts(pt);
-    g_v_pline(5, ptsin);
+    v_pline(5, ptsin);
 }
 
 
@@ -424,7 +424,7 @@ void gsx_start(void)
             gl_wchar, gl_hchar, gl_wbox, gl_hbox));
 
     vsl_type(7);
-    g_vsl_width(1);
+    vsl_width(1);
     vsl_udsty(0xffff);
     r_set(&gl_rscreen, 0, 0, gl_width, gl_height);
     r_set(&gl_rfull, 0, gl_hbox, gl_width, (gl_height - gl_hbox));
