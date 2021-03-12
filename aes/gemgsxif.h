@@ -53,7 +53,7 @@ void g_v_pline(WORD  count, WORD *pxyarray );
 void vs_clip(WORD clip_flag, WORD *pxyarray );
 void vst_height(WORD height, WORD *pchr_width, WORD *pchr_height,
                 WORD *pcell_width, WORD *pcell_height);
-void vr_recfl(WORD *pxyarray, FDB *pdesMFDB);
+void vr_recfl(WORD *pxyarray);
 void vro_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB );
 void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB,
                WORD fgcolor, WORD bgcolor);

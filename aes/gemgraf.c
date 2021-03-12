@@ -439,7 +439,6 @@ void gsx_start(void)
  */
 void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
 {
-    gsx_fix_screen(&gl_dst);
     ptsin[0] = hx;
     ptsin[1] = hy;
     ptsin[2] = hx + hw - 1;
@@ -456,7 +455,7 @@ void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
         g_vsf_style(patt);
         gl_patt = patt;
     }
-    vr_recfl(ptsin, &gl_dst);
+    vr_recfl(ptsin);
 }
 
 

@@ -622,9 +622,8 @@ void vst_height(WORD height, WORD *pchr_width, WORD *pchr_height,
 
 
 
-void vr_recfl(WORD *pxyarray, FDB *pdesMFDB)
+void vr_recfl(WORD *pxyarray)
 {
-    i_ptr( pdesMFDB );
     i_ptsin( pxyarray );
     gsx_ncode(FILL_RECTANGLE, 2, 0);
     i_ptsin( ptsin );
