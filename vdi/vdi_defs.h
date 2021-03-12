@@ -19,6 +19,14 @@
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 
+#if CONF_WITH_VIDEL
+# define UDPAT_PLANES   16
+#elif CONF_WITH_TT_SHIFTER
+# define UDPAT_PLANES   8
+#else
+# define UDPAT_PLANES   4
+#endif
+
 /*
  * some VDI opcodes
  */
@@ -184,7 +192,7 @@ struct Vwk_ {
     Fonthead scratch_head;      /* Holder for the doubled font data */
     WORD text_color;            /* Current text color (PEL value)   */
     WORD ud_ls;                 /* User defined linestyle       */
-    WORD ud_patrn[4 * 16];      /* User defined pattern         */
+    WORD ud_patrn[UDPAT_PLANES*16]; /* User defined pattern             */
     WORD v_align;               /* Current text vertical alignment  */
     WORD wrt_mode;              /* Current writing mode         */
     WORD xfm_mode;              /* Transformation mode requested (NDC) */
