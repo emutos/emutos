@@ -304,5 +304,6 @@ const Fonthead fnt_gr_8x16 = {
     dat_table,          /*   UWORD *dat_table   */
     256,  /* form_width */
     16,  /* form_height */
-    0    /* Fonthead * next_font */
+    0,   /* Fonthead * next_font */
+    0                   /*   reserved by Atari  */
 };

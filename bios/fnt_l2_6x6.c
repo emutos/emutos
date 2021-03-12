@@ -114,5 +114,6 @@ const Fonthead fnt_l2_6x6 = {
     dat_table,  /* dat_table */
     192,  /* form_width */
     6,  /* form_height */
-    0   /* Fonthead * next_font */
+    0,  /* Fonthead * next_font */
+    0   /* reserved by Atari */
 };
