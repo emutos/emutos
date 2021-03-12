@@ -43,7 +43,7 @@
  * g_vsl_udsty();
  * g_vsl_width();
  * g_v_pline();
- * vst_clip();
+ * vs_clip();
  * vex_butv();
  * vex_motv();
  * vex_curv();
@@ -599,7 +599,7 @@ void g_v_pline(WORD  count, WORD *pxyarray )
 
 
 
-void vst_clip(WORD clip_flag, WORD *pxyarray )
+void vs_clip(WORD clip_flag, WORD *pxyarray )
 {
     WORD            value;
 

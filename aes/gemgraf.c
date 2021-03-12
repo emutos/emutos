@@ -104,10 +104,10 @@ void gsx_sclip(const GRECT *pt)
         ptsin[1] = gl_clip.g_y;
         ptsin[2] = gl_clip.g_x + gl_clip.g_w - 1;
         ptsin[3] = gl_clip.g_y + gl_clip.g_h - 1;
-        vst_clip( TRUE, ptsin);
+        vs_clip( TRUE, ptsin);
     }
     else
-        vst_clip( FALSE, ptsin);
+        vs_clip( FALSE, ptsin);
 }
 
 
