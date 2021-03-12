@@ -601,12 +601,9 @@ void g_v_pline(WORD  count, WORD *pxyarray )
 
 void vs_clip(WORD clip_flag, WORD *pxyarray )
 {
-    WORD            value;
-
-    value = ( clip_flag != 0 ) ? 2 : 0;
     i_ptsin( pxyarray );
     intin[0] = clip_flag;
-    gsx_ncode(TEXT_CLIP, value, 1);
+    gsx_ncode(TEXT_CLIP, 2, 1);
     i_ptsin(ptsin);
 }
 
@@ -629,7 +626,7 @@ void vr_recfl(WORD *pxyarray, FDB *pdesMFDB)
 {
     i_ptr( pdesMFDB );
     i_ptsin( pxyarray );
-    gsx_ncode(FILL_RECTANGLE, 2, 1);
+    gsx_ncode(FILL_RECTANGLE, 2, 0);
     i_ptsin( ptsin );
 }
 
