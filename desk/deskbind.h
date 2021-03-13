@@ -175,7 +175,9 @@ typedef struct
 /*GLOBAL*/ char         g_cdclkpref;            /* double click speed           */
 /*GLOBAL*/ char         g_ctimeform;            /* time format                  */
 /*GLOBAL*/ char         g_cdateform;            /* date format                  */
+#if !MPS_BLITTER_ALWAYS_ON
 /*GLOBAL*/ char         g_blitter;              /* blitter enabled (boolean)    */
+#endif
 /*GLOBAL*/ char         g_cache;                /* cache enabled (boolean)      */
 /*GLOBAL*/ char         g_appdir;               /* default is app dir (boolean) */
 /*GLOBAL*/ char         g_fullpath;             /* full path for arg (boolean)  */

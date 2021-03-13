@@ -280,7 +280,8 @@ static void bios_init(void)
     KDEBUG(("font_init()\n"));
     font_init();        /* initialize font ring (requires cookie_akp) */
 
-#if CONF_WITH_BLITTER
+#if !MPS_STF && !MPS_STE
+  #if CONF_WITH_BLITTER
     /*
      * If a PAK 68/3 is installed, the blitter cannot access the PAK ROMs.
      * So we must mark the blitter as not installed (this is what the
@@ -290,6 +291,7 @@ static void bios_init(void)
     if ((mcpu == 30)
      && ((cookie_mch == MCH_ST) || (cookie_mch == MCH_STE) || (cookie_mch == MCH_MSTE)))
         has_blitter = 0;
+  #endif
 #endif
 
     /*

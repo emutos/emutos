@@ -440,10 +440,14 @@ static BOOL process_inf2(BOOL *isauto)
             pcurr = scan_2(pcurr, &env);
             ev_dclick(env & 0x07, TRUE);
             pcurr = scan_2(pcurr, &env);    /* get desired blitter state */
-#if CONF_WITH_BLITTER
+#if MPS_BLITTER_ALWAYS_ON
+	    Blitmode(1);
+#else
+  #if CONF_WITH_BLITTER
             if (has_blitter)
                 Blitmode((env&0x80)?1:0);
-#endif
+  #endif
+#endif // MPS_BLITTER_ALWAYS_ON
 #if CONF_WITH_CACHE_CONTROL
             pcurr = scan_2(pcurr, &env);    /* skip over video bytes if present */
             pcurr = scan_2(pcurr, &env);
