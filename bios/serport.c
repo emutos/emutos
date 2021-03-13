@@ -805,7 +805,7 @@ void init_serport(void)
 
 #if CONF_MFP_RS232_USE_INTERRUPT
     /* Set up a handler for MFP vector 12, the receive buffer full interrupt */
-    mfpint(0xc, (LONG) mfp_rs232_rx_interrupt);
+    mfpint(MFP_RBF, (LONG) mfp_rs232_rx_interrupt);
 #endif
 }
 
