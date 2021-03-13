@@ -573,15 +573,10 @@ static void men_update(void)
     menu_ienable(tree, BLITITEM, FALSE); // Cannot disable blitter
     menu_icheck(tree, BLITITEM, TRUE);
 #else
-  #if CONF_WITH_BLITTER
-    if (blitter_is_present)
-    {
-	menu_ienable(tree, BLITITEM, TRUE);
-	menu_icheck(tree, BLITITEM, G.g_blitter);
-    }
-    else
-        menu_ienable(tree, BLITITEM, FALSE);
-  #endif
+  //#if CONF_WITH_BLITTER
+    menu_ienable(tree, BLITITEM, blitter_is_present);
+    menu_icheck(tree, BLITITEM, G.g_blitter);
+  //#endif
 #endif
 
 #if CONF_WITH_CACHE_CONTROL
@@ -1423,7 +1418,11 @@ static void cnx_get(void)
     G.g_ctimeform = cnxsave->cs_timefmt;
     G.g_cdateform = cnxsave->cs_datefmt;
 #if !MPS_BLITTER_ALWAYS_ON
+#if CONF_WITH_BLITTER
     G.g_blitter   = cnxsave->cs_blitter;
+#else
+    G.g_blitter   = FALSE; // If no blitter, don't tick
+#endif
 #endif
 #if CONF_WITH_CACHE_CONTROL
     G.g_cache     = cnxsave->cs_cache;
