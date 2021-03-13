@@ -85,6 +85,10 @@ void scc_init(void);
 LONG bconoutB(WORD,WORD);
 #endif
 
+#if CONF_MFP_RS232_USE_INTERRUPT
+void mfp_rs232_rx_interrupt_handler(void);
+#endif
+
 #if BCONMAP_AVAILABLE
 /*
  * Bconmap() stuff

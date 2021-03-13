@@ -168,5 +168,6 @@ const Fonthead fnt_tr_8x8 = {
     dat_table,           /*   UWORD *dat_table   */
     256,  /* UWORD form_width */
     8,  /* UWORD form_height */
-    0   /* Fonthead * next_font */
+    0,  /* Fonthead * next_font */
+    0                   /*   reserved by Atari  */
 };

@@ -200,6 +200,21 @@ crash happens on next private function which Cubase tries to search
 for.
 
 
+Program: G-Loc (game)
+---------------------
+Error: Fails to load from original floppy disk.
+
+Bug analysis:
+On the floppy disk, sector 6 of the first track is unreadable as part of
+the copy protection. To reliably detect media change, EmuTOS calculates
+a checksum over the first six sectors, which fails. Therefore, the disk
+is considered unreadable by EmuTOS and the game loader (in the AUTO
+folder) is not run.
+
+Note: The game fails to load for the same reason under Atari TOS 2.06,
+which uses a similar media change detection method.
+
+
 Program: HDCOOKIE
 -----------------
 Error: Fails to set the _FDC cookie.

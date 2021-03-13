@@ -567,6 +567,25 @@ timerc_end:
         // our caller with RTE.
         rte
 
+#if CONF_MFP_RS232_USE_INTERRUPT
+        .globl _mfp_rs232_rx_interrupt
+_mfp_rs232_rx_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        jbsr    _mfp_rs232_rx_interrupt_handler
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+#endif
 
 // ==== Critical error handler functions =====================================
 

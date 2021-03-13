@@ -827,6 +827,15 @@
 #endif
 
 /*
+ * Set CONF_MFP_RS232_USE_INTERRUPT to 1 to enable the use of
+ * the MFP receive interrupt for MFP serial input. Use polling
+ * if not enabled.
+ */
+#ifndef CONF_MFP_RS232_USE_INTERRUPT
+# define CONF_MFP_RS232_USE_INTERRUPT 0
+#endif
+
+/*
  * Set CONF_WITH_TT_MFP to 1 to enable TT MFP support
  */
 #ifndef CONF_WITH_TT_MFP
@@ -1860,6 +1869,12 @@
 # endif
 # if CONF_WITH_SCSI
 #  error CONF_WITH_SCSI requires CONF_WITH_MFP.
+# endif
+#endif
+
+#if !CONF_WITH_MFP_RS232
+# if CONF_MFP_RS232_USE_INTERRUPT
+#  error CONF_MFP_RS232_USE_INTERRUPT requires CONF_WITH_MFP_RS232.
 # endif
 #endif
 

@@ -114,5 +114,6 @@ const Fonthead fnt_tr_6x6 = {
     192,                /*   UWORD form_width   */
     6,                  /*   UWORD form_height  */
 
-    0                   /*   Fonthead * next_font    */
+    0,                  /*   Fonthead * next_font    */
+    0                   /*   reserved by Atari  */
 };

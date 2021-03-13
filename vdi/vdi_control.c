@@ -339,6 +339,7 @@ static void init_wk(Vwk * vwk)
     for (l = 0; l < 12; l++)
         *pointer++ = *src_ptr++;
 
+#if HAVE_BEZIER
     /* setup initial bezier values */
     vwk->bez_qual = 7;
 #if 0
@@ -347,6 +348,7 @@ static void init_wk(Vwk * vwk)
     vwk->bezier.depth_scale.max = 0;
     vwk->bezier.depth.min = 2;
     vwk->bezier.depth.max = 7;
+#endif
 #endif
 
     vwk->next_work = NULL;  /* neatness */
