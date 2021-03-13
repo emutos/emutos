@@ -871,6 +871,9 @@ static WORD xbios_2e(WORD op, WORD start, WORD count, UBYTE *buffer)
  */
 static WORD blitmode(WORD mode)
 {
+#if MPS_BLITTER_ALWAYS_ON
+    return  1 << 1;
+#else
 #if CONF_WITH_BLITTER
     WORD status = 0x0000;
 
@@ -886,6 +889,7 @@ static WORD blitmode(WORD mode)
 #else
     return 0x0000;
 #endif
+#endif // MPS_BLITTER_ALWAYS_ON
 }
 
 #if DBG_XBIOS

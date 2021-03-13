@@ -7,7 +7,8 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
-
+#include "../localconf.h"
+#if ASM_BLIT_IS_AVAILABLE
 #include "asmdefs.h"
 
         .globl  _fast_bit_blt
@@ -1404,3 +1405,4 @@ sc_mp_enter:
 sc_plane:
         dbra    d4,sc_mp_enter
         rts
+#endif

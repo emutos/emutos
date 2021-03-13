@@ -455,6 +455,7 @@ static void hwblit_rect_common(const VwkAttrib *attr, const Rect *rect)
  * 8MHz ST or 16MHz Falcon.  You are strongly advised not to change this
  * without a lot of careful thought & performance testing!
  */
+#if !MPS_BLITTER_ALWAYS_ON
 static void OPTIMIZE_SMALL swblit_rect_common(const VwkAttrib *attr, const Rect *rect)
 {
     const UWORD patmsk = attr->patmsk;
@@ -665,7 +666,7 @@ static void OPTIMIZE_SMALL swblit_rect_common(const VwkAttrib *attr, const Rect 
         break;
     }
 }
-
+#endif
 
 /*
  * draw_rect_common - draw one or more horizontal lines
@@ -674,16 +675,20 @@ static void OPTIMIZE_SMALL swblit_rect_common(const VwkAttrib *attr, const Rect 
  */
 void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
 {
-#if CONF_WITH_BLITTER
+#if MPS_BLITTER_ALWAYS_ON	
+    hwblit_rect_common(attr, rect);
+#else
+  #if CONF_WITH_BLITTER
     if (blitter_is_enabled)
     {
         hwblit_rect_common(attr, rect);
     }
     else
-#endif
+  #endif
     {
         swblit_rect_common(attr, rect);
     }
+#endif
 }
 
 
@@ -1798,6 +1803,7 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
 
 
 #if CONF_WITH_VDI_VERTLINE
+#if !MPS_BLITTER_ALWAYS_ON
 /*
  * vertical_line - draw a vertical line
  *
@@ -1894,6 +1900,7 @@ static void vertical_line(const Line *line, WORD wrt_mode, UWORD color)
     }
     LN_MASK = linemask;
 }
+#endif // MPS_BLITTER_ALWAYS_ON
 #endif
 
 
@@ -1926,6 +1933,10 @@ void abline(const Line *line, const WORD wrt_mode, UWORD color)
      * optimize drawing of vertical lines
      */
     if (line->x1 == line->x2) {
+#if MPS_BLITTER_ALWAYS_ON
+	hwblit_vertical_line(line, wrt_mode, color);
+        return;
+#else
 #if CONF_WITH_BLITTER
         if (blitter_is_enabled)
         {
@@ -1938,8 +1949,9 @@ void abline(const Line *line, const WORD wrt_mode, UWORD color)
             vertical_line(line, wrt_mode, color);
             return;
         }
+#endif // MPS_BLITTER_ALWAYS_ON
     }
-#endif
+#endif // CONF_WITH_VDI_VERTLINE
 
     /* Always draw from left to right */
     if (line->x2 < line->x1) {
