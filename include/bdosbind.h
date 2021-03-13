@@ -21,6 +21,7 @@ extern long trap1_pexec(short mode, const char *path, const char *tail, const ch
 
 #define Crawio(w) trap1(0x06, w)
 #define Crawcin() trap1(0x07)
+#define Cnecin() trap1(0x08)
 #define Cconws(buf) trap1(0x09, buf)
 #define Cconis() trap1(0x0b)
 #define Dsetdrv(drv) trap1(0x0e, drv)

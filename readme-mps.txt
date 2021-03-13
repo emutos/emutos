@@ -6,5 +6,9 @@ Changelog:
 	* EmuCON recognizes the PATH environnement variable that is provided to the AES (if any).
 	* Sound is played at boot time using the PSG. The sound is different for cold and warm boot.
 	  For cold boot it's C5 C4 G4. For warm boot it C5 C5 C5.
-	* Book screen is now in black with green text.
-	* Blue-ish desktop background color instead of flashy green.
+	* Dark theme for boot.
+	* Blue-ish background for desktop.
+	
+2020-Mar-10 VB:
+	* Support ACCPATH environment variable in the AES, indicating the folder where to search
+	  for accessories. Must not include trailing backslash.
