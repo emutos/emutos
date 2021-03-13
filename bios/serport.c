@@ -256,15 +256,17 @@ void mfp_rs232_rx_interrupt_handler(void)
     /* disable interrupts */
     old_sr = set_sr(0x2700);
 
-    tail = iorec1.in.tail + 1;
-    if (tail >= iorec1.in.size) {
-        tail = 0;
-    }
-    if (tail == iorec1.in.head) {
-        /* iorec full, do nothing */
-    } else {
-        *((UBYTE *)(iorec1.in.buf + tail)) = MFP_BASE->udr;
-        iorec1.in.tail = tail;
+    if (MFP_BASE->rsr & 0x80) {
+        tail = iorec1.in.tail + 1;
+        if (tail >= iorec1.in.size) {
+            tail = 0;
+        }
+        if (tail == iorec1.in.head) {
+            /* iorec full, do nothing */
+        } else {
+            *((UBYTE *)(iorec1.in.buf + tail)) = MFP_BASE->udr;
+            iorec1.in.tail = tail;
+        }
     }
 
     /* clear the interrupt service bit */
