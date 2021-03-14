@@ -1,3 +1,13 @@
+This is a customized EmuTOS version I play with. It's targetted specifically at stock Atari STf/STe hardware, so support from other machines or extensions is removed to make room for goodies.
+Original EmuTOS aims at being perfectly TOS compatible, support as much hardware as realisticly possible, and C is prefered whenever possible over asm.
+This fork aims at packing as much as possible into 256K ROM, compatibility to games/demos will be sacrificed (original ROMs are so easy to find and are perfect for that purpose), as the OS aims at being useful if the Atari is used as "main computer" for programming.
+
+Full credits to the EmuTOS team for making great EmuTOS and for allowing such customizations.
+See readme-mps.txt for more details on differences between EmuTOS and this fork.
+
+----
+The below is the original EmuTOS readme:
+
 This release has been built on Linux Mint (a Ubuntu derivative), using
 Vincent Rivière's GCC 4.6.4 cross-compiler.  The custom tools used in
 the build process were built with native GCC 4.8.4.
