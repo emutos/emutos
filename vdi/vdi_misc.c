@@ -163,8 +163,27 @@ void timer_exit(void)
  * our point of view: high-order bits are 1-filled, so the number remains
  * negative.
  */
+#if MPS_LINES_LUT
+extern UWORD lineslut[]; // Kept in vdi_control
+#endif
 UWORD * get_start_addr(const WORD x, const WORD y)
 {
+#if MPS_LINES_LUT // Rewritten in ASM for fun. Is marginally quicker than the C
+__asm__ (
+	"move.w	4(%sp),%d0		\n\t"
+	"andi.l #0x0000fff0,%d0		\n\t"	// Also clears the MSW of d0 
+	//"clr.w 	%d1			\n\t" useless because of alignement of variables
+	"move.b _v_planes_shift.w,%d1	\n\t"
+	"asr.w 	%d1,%d0			\n\t"
+	"move.w 6(%sp),%d1		\n\t"
+	"add.w  d1,d1			\n\t"
+	"lea    _lineslut,%a0		\n\t"
+	"add.w 	(%a0,%d1.w),%d0		\n\t"
+	//"ext.l 	%d0			\n\t" //d0 MSW already cleared
+	"add.l 	_v_bas_ad.w,%d0		\n\t"
+	"rts				\r\t"
+);
+#else
     UBYTE * addr;
     WORD x2 = x & 0xfff0;   /* ensure that value to be shifted remains signed! */
 
@@ -174,4 +193,5 @@ UWORD * get_start_addr(const WORD x, const WORD y)
     addr += muls(y, v_lin_wr);          /* add y coordinate part of addr */
 
     return (UWORD*)addr;
+#endif
 }
