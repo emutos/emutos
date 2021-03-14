@@ -14,6 +14,16 @@
 
 #include "emutos.h"
 #include "biosmem.h"
+#include "../vdi/vdi_defs.h"    /* FIXME */
+
+/*
+ * VDI physical work station
+ *
+ * This could in theory go anywhere.  However, Warp9 accesses it via
+ * a short address, so for compatibility we place it in the first 32K
+ * of memory.
+ */
+Vwk phys_work;
 
 /* Disk buffer pointed by dskbufp
  *

@@ -36,7 +36,7 @@ MCS *mcs_ptr;
  * VDI handle n.  entry 0 is unused.
  */
 static Vwk *vwk_ptr[NUM_VDI_HANDLES+1];
-static Vwk phys_work;          /* attribute area for physical workstation */
+extern Vwk phys_work;       /* attribute area for physical workstation */
 
 
 /*
