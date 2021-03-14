@@ -49,16 +49,16 @@ void gsx_textsize(WORD *charw, WORD *charh, WORD *cellw, WORD *cellh);
 
 void gsx_fix(FDB *pfd, void *theaddr, WORD wb, WORD h);
 void gsx_fix_screen(FDB *pfd);
-void g_v_pline(WORD  count, WORD *pxyarray );
-void vst_clip(WORD clip_flag, WORD *pxyarray );
+void v_pline(WORD count, WORD *pxyarray);
+void vs_clip(WORD clip_flag, WORD *pxyarray );
 void vst_height(WORD height, WORD *pchr_width, WORD *pchr_height,
                 WORD *pcell_width, WORD *pcell_height);
-void vr_recfl(WORD *pxyarray, FDB *pdesMFDB);
+void vr_recfl(WORD *pxyarray);
 void vro_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB );
 void vrt_cpyfm(WORD wr_mode, WORD *pxyarray, FDB *psrcMFDB, FDB *pdesMFDB,
                WORD fgcolor, WORD bgcolor);
 void vrn_trnfm(FDB *psrcMFDB, FDB *pdesMFDB);
-void g_vsl_width(WORD width);
+void vsl_width(WORD width);
 
 #if CONF_WITH_EXTENDED_MOUSE
 void vex_wheelv(PFVOID new, PFVOID *old);

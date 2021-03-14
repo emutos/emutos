@@ -342,7 +342,9 @@ static const UBYTE dura[EGG_NOTES] =
 static char separator[MAXLEN_SEPARATOR+1];
 
 static int can_change_resolution;
+#if !MPS_BLITTER_ALWAYS_ON
 static int blitter_is_present;
+#endif
 #if CONF_WITH_CACHE_CONTROL
 static int cache_is_present;
 #endif
@@ -387,7 +389,9 @@ static void play_sound(UWORD frequency, UWORD duration)
 static void detect_features(void)
 {
     can_change_resolution = rez_changeable();
+#if !MPS_BLITTER_ALWAYS_ON
     blitter_is_present = Blitmode(-1) & 0x0002;
+#endif
 #if CONF_WITH_CACHE_CONTROL
     cache_is_present = cache_exists();
 #endif
@@ -565,14 +569,14 @@ static void men_update(void)
 
     menu_ienable(tree, RESITEM, can_change_resolution);
 
-#if CONF_WITH_BLITTER
-    if (blitter_is_present)
-    {
-        menu_ienable(tree, BLITITEM, TRUE);
-        menu_icheck(tree, BLITITEM, G.g_blitter);
-    }
-    else
-        menu_ienable(tree, BLITITEM, FALSE);
+#if MPS_BLITTER_ALWAYS_ON
+    menu_ienable(tree, BLITITEM, FALSE); // Cannot disable blitter
+    menu_icheck(tree, BLITITEM, TRUE);
+#else
+  //#if CONF_WITH_BLITTER
+    menu_ienable(tree, BLITITEM, blitter_is_present);
+    menu_icheck(tree, BLITITEM, G.g_blitter);
+  //#endif
 #endif
 
 #if CONF_WITH_CACHE_CONTROL
@@ -896,7 +900,7 @@ static WORD do_optnmenu(WORD item)
         }
         break;
 #endif
-#if CONF_WITH_BLITTER
+#if CONF_WITH_BLITTER && !MPS_BLITTER_ALWAYS_ON
     case BLITITEM:
         G.g_blitter = !G.g_blitter;
         menu_icheck(desk_rs_trees[ADMENU], BLITITEM, G.g_blitter);  /* flip blit mode */
@@ -1348,10 +1352,11 @@ static void cnx_put(void)
     cnxsave->cs_confdel = G.g_cdelepref;
     cnxsave->cs_dblclick = G.g_cdclkpref;
     cnxsave->cs_confovwr = G.g_covwrpref;
-    cnxsave->cs_mnuclick = G.g_cmclkpref;
     cnxsave->cs_timefmt = G.g_ctimeform;
     cnxsave->cs_datefmt = G.g_cdateform;
-    cnxsave->cs_blitter = G.g_blitter;
+#if !MPS_BLITTER_ALWAYS_ON
+    cnxsave->cs_blitter = TRUE;
+#endif
 #if CONF_WITH_CACHE_CONTROL
     cnxsave->cs_cache = G.g_cache;
 #endif
@@ -1410,10 +1415,15 @@ static void cnx_get(void)
     G.g_cdelepref = cnxsave->cs_confdel;
     G.g_covwrpref = cnxsave->cs_confovwr;
     G.g_cdclkpref = cnxsave->cs_dblclick;
-    G.g_cmclkpref = cnxsave->cs_mnuclick;
     G.g_ctimeform = cnxsave->cs_timefmt;
     G.g_cdateform = cnxsave->cs_datefmt;
+#if !MPS_BLITTER_ALWAYS_ON
+#if CONF_WITH_BLITTER
     G.g_blitter   = cnxsave->cs_blitter;
+#else
+    G.g_blitter   = FALSE; // If no blitter, don't tick
+#endif
+#endif
 #if CONF_WITH_CACHE_CONTROL
     G.g_cache     = cnxsave->cs_cache;
     menu_icheck(desk_rs_trees[ADMENU], CACHITEM, G.g_cache);
@@ -1427,7 +1437,6 @@ static void cnx_get(void)
     menu_icheck(desk_rs_trees[ADMENU], FITITEM, G.g_ifit ? 1 : 0);
 #endif
     G.g_cdclkpref = evnt_dclick(G.g_cdclkpref, TRUE);
-    G.g_cmclkpref = menu_click(G.g_cmclkpref, TRUE);
 
     /* DESKTOP v1.2: Remove 2-window limit; and cnx_open() inlined. */
     for (nw = 0; nw < NUM_WNODES; nw++)
@@ -1996,7 +2005,7 @@ BOOL deskmain(void)
     cnx_get();
     wind_update(END_UPDATE);
 
-#if CONF_WITH_BLITTER
+#if CONF_WITH_BLITTER && !MPS_BLITTER_ALWAYS_ON
     /*
      * we now have the desired blitter state from EMUDESK.INF, so we can
      * call Blitmode() here.  note that we call it here, even if we've

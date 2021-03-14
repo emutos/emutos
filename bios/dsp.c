@@ -834,7 +834,7 @@ static WORD handle_DATA(char **pptr, char **qptr)
     }
 
     p = skipspaces(p+1);
-    addr = (hex(p) << 8) + hex(p+2);
+    addr = ((UWORD)hex(p) << 8) + hex(p+2);
     p = skiptoeol(p);
 
     /* initialise 'header' */

@@ -26,6 +26,7 @@ etos192pl.img - Polish (PAL)
 etos192ru.img - Russian (PAL)
 etos192se.img - Swedish (PAL)
 etos192sg.img - Swiss German (PAL)
+etos192tr.img - Turkish (PAL)
 etos192us.img - English (NTSC)
 etos192uk.img - English (PAL)
 

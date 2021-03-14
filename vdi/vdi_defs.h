@@ -15,9 +15,17 @@
 #include "aesext.h"
 #include "vdiext.h"
 
-#define HAVE_BEZIER 0           /* switch on bezier capability */
+#define HAVE_BEZIER 0           /* switch on bezier capability - entirely untested */
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
+
+#if CONF_WITH_VIDEL
+# define UDPAT_PLANES   16
+#elif CONF_WITH_TT_SHIFTER
+# define UDPAT_PLANES   8
+#else
+# define UDPAT_PLANES   4
+#endif
 
 /*
  * some VDI opcodes
@@ -184,7 +192,7 @@ struct Vwk_ {
     Fonthead scratch_head;      /* Holder for the doubled font data */
     WORD text_color;            /* Current text color (PEL value)   */
     WORD ud_ls;                 /* User defined linestyle       */
-    WORD ud_patrn[4 * 16];      /* User defined pattern         */
+    WORD ud_patrn[UDPAT_PLANES*16]; /* User defined pattern             */
     WORD v_align;               /* Current text vertical alignment  */
     WORD wrt_mode;              /* Current writing mode         */
     WORD xfm_mode;              /* Transformation mode requested (NDC) */
@@ -193,7 +201,9 @@ struct Vwk_ {
     WORD ymn_clip;              /* Low y point of clipping rectangle    */
     WORD ymx_clip;              /* High y point of clipping rectangle   */
     /* newly added */
+#if HAVE_BEZIER
     WORD bez_qual;              /* actual quality for bezier curves */
+#endif
 };
 
 /*
@@ -395,10 +405,12 @@ void vdi_vex_wheelv(Vwk *);         /* 134 */
 void direct_screen_blit(WORD count, WORD *str);
 #endif
 
+#if HAVE_BEZIER
 /* not in original TOS */
 void v_bez_qual(Vwk *);
 void v_bez_control(Vwk *);
 void v_bez(Vwk *vwk, Point *points, int count);
 void v_bez_fill(Vwk *vwk, Point *points, int count);
+#endif
 
 #endif                          /* VDIDEF_H */

@@ -171,7 +171,18 @@ Vwk * get_vwk_by_handle(WORD handle)
     return vwk_ptr[handle];
 }
 
+#if MPS_LINES_LUT
+UWORD lineslut[400];
+void lineslut_setup(void);
+void lineslut_setup(void) {
+    UWORD i, offset;
 
+    for (i = offset = 0; i<V_REZ_VT ; i++) {
+        lineslut[i] = offset;
+	offset += BYTES_LIN;
+    }
+}
+#endif
 
 /*
  * update resolution-dependent VDI/lineA variables
@@ -181,6 +192,10 @@ Vwk * get_vwk_by_handle(WORD handle)
 void update_rez_dependent(void)
 {
     BYTES_LIN = v_lin_wr = V_REZ_HZ / 8 * v_planes;
+
+#if MPS_LINES_LUT
+    lineslut_setup();
+#endif
 
 #if EXTENDED_PALETTE
     mcs_ptr = (v_planes <= 4) ? &mouse_cursor_save : &ext_mouse_cursor_save;
@@ -339,6 +354,7 @@ static void init_wk(Vwk * vwk)
     for (l = 0; l < 12; l++)
         *pointer++ = *src_ptr++;
 
+#if HAVE_BEZIER
     /* setup initial bezier values */
     vwk->bez_qual = 7;
 #if 0
@@ -347,6 +363,7 @@ static void init_wk(Vwk * vwk)
     vwk->bezier.depth_scale.max = 0;
     vwk->bezier.depth.min = 2;
     vwk->bezier.depth.max = 7;
+#endif
 #endif
 
     vwk->next_work = NULL;  /* neatness */

@@ -390,7 +390,7 @@ void remove_locate_shortcut(WORD curr)
             strcpy(p, fname);
         else
             *(p-1) = '\0';
-        scan_str(path,&pa->a_pdata);
+        scan_str(path, &pa->a_pappl);
     }
 }
 #endif
@@ -1206,16 +1206,16 @@ WORD do_open(WORD curr)
 #if CONF_WITH_DESKTOP_SHORTCUTS
         if (pa->a_flags & AF_ISDESK)
         {
-            char *p = filename_start(pa->a_pdata);
+            char *p = filename_start(pa->a_pappl);
             /* check for root folder */
-            if ((pa->a_type == AT_ISFOLD) && (p == pa->a_pdata))
+            if ((pa->a_type == AT_ISFOLD) && (p == pa->a_pappl))
             {
-                strcpy(pathname, pa->a_pdata);
+                strcpy(pathname, pa->a_pappl);
                 filename[0] = '\0';
             }
             else
             {
-                strlcpy(pathname, pa->a_pdata, p - pa->a_pdata);
+                strlcpy(pathname, pa->a_pappl, p-pa->a_pappl);
                 strcpy(filename, p);
             }
             strcat(pathname, "\\*.*");
@@ -1291,7 +1291,7 @@ WORD do_info(WORD curr)
             {
                 DTA *dta;
 
-                dta = file_exists(pa->a_pdata, NULL);
+                dta = file_exists(pa->a_pappl, NULL);
                 if (!dta)
                 {
                     remove_locate_shortcut(curr);
@@ -1300,7 +1300,7 @@ WORD do_info(WORD curr)
 
                 pf = &fn;
                 memcpy(&pf->f_attr, &dta->d_attrib, 23);
-                strcpy(pathname, pa->a_pdata);
+                strcpy(pathname, pa->a_pappl);
                 strcpy(filename_start(pathname),"*.*");
                 pathptr = pathname;
             }

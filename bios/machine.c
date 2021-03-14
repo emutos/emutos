@@ -289,6 +289,7 @@ static void detect_magnum(void)
 
 #endif /* CONF_WITH_MAGNUM */
 
+#if !MPS_BLITTER_ALWAYS_ON
 #if CONF_WITH_BLITTER
 
 /* blitter */
@@ -317,7 +318,7 @@ static void detect_blitter(void)
 }
 
 #endif /* CONF_WITH_BLITTER */
-
+#endif // MPS_BLITTER_ALWAYS_ON
 
 #if CONF_WITH_DIP_SWITCHES
 
@@ -570,7 +571,7 @@ void machine_detect(void)
 #if CONF_WITH_DIP_SWITCHES
     detect_dip_switches();
 #endif
-#if CONF_WITH_BLITTER
+#if CONF_WITH_BLITTER && !MPS_BLITTER_ALWAYS_ON
     detect_blitter();
 #endif
 #if CONF_WITH_IDE

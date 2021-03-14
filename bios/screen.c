@@ -35,6 +35,7 @@
 #include "bios.h"
 #include "amiga.h"
 #include "lisa.h"
+#include "nova.h"
 
 void detect_monitor_change(void);
 static void setphys(const UBYTE *addr);
@@ -44,10 +45,10 @@ static void setphys(const UBYTE *addr);
 /* Define palette */
 
 static const UWORD dflt_palette[] = {
-    RGB_WHITE, RGB_RED, RGB_GREEN, RGB_YELLOW,
+    RGB_BLACK, RGB_RED, RGB_WHITE, RGB_YELLOW,
     RGB_BLUE, RGB_MAGENTA, RGB_CYAN, RGB_LTGRAY,
     RGB_GRAY, RGB_LTRED, RGB_LTGREEN, RGB_LTYELLOW,
-    RGB_LTBLUE, RGB_LTMAGENTA, RGB_LTCYAN, RGB_BLACK
+    RGB_LTBLUE, RGB_LTMAGENTA, RGB_LTCYAN, RGB_GREEN
 };
 
 /*
@@ -855,6 +856,15 @@ static __inline__ void get_std_pixel_size(WORD *width,WORD *height)
  * are displayed:
  *  - the output from v_arc()/v_circle()/v_pieslice()
  *  - the size of gl_wbox in pixels
+ *
+ * we used to base the pixel sizes for ST(e) systems on exact screen
+ * width and height values.  however, this does not work for enhanced
+ * screens, such as Hatari's 'extended VDI screen' or add-on hardware.
+ *
+ * we now use some heuristics in the hope that this will cover the most
+ * common situations.  unfortunately we cannot set the sizes based on
+ * the value from getrez(), since this may be inaccurate for non-standard
+ * hardware.
  */
 void get_pixel_size(WORD *width,WORD *height)
 {
@@ -866,10 +876,10 @@ void get_pixel_size(WORD *width,WORD *height)
     else
     {
         /* ST TOS has its own set of magic numbers */
-        if (V_REZ_VT == 400)        /* ST high */
-            *width = 372;
-        else if (V_REZ_HZ == 640)   /* ST medium */
+        if (5 * V_REZ_HZ >= 12 * V_REZ_VT)  /* includes ST medium */
             *width = 169;
+        else if (V_REZ_HZ >= 480)   /* ST high */
+            *width = 372;
         else *width = 338;          /* ST low */
         *height = 372;
     }
@@ -881,6 +891,13 @@ void get_pixel_size(WORD *width,WORD *height)
 static const UBYTE *atari_physbase(void)
 {
     ULONG addr;
+
+#if CONF_WITH_NOVA
+    if (HAS_NOVA && rez_was_hacked) {
+        /* Nova/Vofa present and in use? Return its screen memory */
+        return get_novamembase();
+    }
+#endif
 
     addr = *(volatile UBYTE *) VIDEOBASE_ADDR_HI;
     addr <<= 8;

@@ -96,7 +96,7 @@
 #define INF_E2_IDTDATE  0x40    /* 1 => get date format from _IDT (ignore INF_E2_DAYMONTH bit) */
 #define INF_E2_IDTTIME  0x20    /* 1 => get time format from _IDT (ignore INF_E2_24HCLOCK bit) */
 #define INF_E2_ALLOWOVW 0x10    /* 1 => allow overwrites (yes, it's backwards) */
-#define INF_E2_MNUCLICK 0x08    /* 1 => click to drop down menus */
+                                /* 0x08 was INF_E2_MNUCLICK: 1 => click to drop down menus */
 #define INF_E2_DAYMONTH 0x04    /* 1 => day before month */
 #define INF_E2_24HCLOCK 0x02    /* 1 => 24 hour clock */
                                 /* following are defaults if no .INF */
@@ -126,7 +126,7 @@
 #define INF_AT_APPDIR   0x01    /* 1 => set current dir to app's dir (else to top window dir) */
 #define INF_AT_ISFULL   0x02    /* 1 => pass full path in args (else filename only) */
 
-#define INF_REV_LEVEL   0x01    /* revision level when creating EMUDESK.INF */
+#define INF_REV_LEVEL   0x02    /* revision level when creating EMUDESK.INF */
 
 /*
  * the following defines the number of bytes reserved for control panel
@@ -169,7 +169,7 @@ static char     *atextptr;      /* current pointer within ANODE text buffer */
  *     not otherwise necessary.
  */
 static const char desk_inf_data1[] =
-    "#R 01\r\n"                         /* INF_REV_LEVEL */
+    "#R 02\r\n"                         /* INF_REV_LEVEL */
     "#E 1A E0 00 00 60\r\n"             /* INF_E1_DEFAULT, INF_E2_DEFAULT, INF_E5_DEFAULT */
 #if CONF_WITH_BACKGROUNDS
     "#Q 41 40 43 40 43 40\r\n"          /* INF_Q1_DEFAULT -> INF_Q6_DEFAULT */
@@ -404,11 +404,31 @@ static char *app_parse(char *pcurr, ANODE *pa)
 #endif
 
 #if CONF_WITH_DESKTOP_SHORTCUTS
-    /* mark desktop shortcuts as executable based on file extension */
-    if ((pa->a_flags == AF_ISDESK) && (pa->a_type == AT_ISFILE) &&
-        is_executable(pa->a_pdata))
+    if (pa->a_flags & AF_ISDESK)
     {
-        pa->a_flags |= AF_ISEXEC;
+        char *temp;
+        /*
+         * fix up old format of desktop icon entries if necessary
+         */
+        switch(pa->a_type)
+        {
+        case AT_ISFILE:
+        case AT_ISFOLD:
+            if (inf_rev_level < 2)
+            {
+                temp = pa->a_pappl;
+                pa->a_pappl = pa->a_pdata;
+                pa->a_pdata = temp;
+            }
+        }
+
+        /*
+         * mark desktop shortcuts as executable based on file extension
+         */
+        if ((pa->a_type == AT_ISFILE) && is_executable(pa->a_pappl))
+        {
+            pa->a_flags |= AF_ISEXEC;
+        }
     }
 #endif
 
@@ -897,8 +917,6 @@ void app_start(void)
             pcurr = scan_2(pcurr, &envr);
             cnxsave->cs_blitter = ( (envr & INF_E2_BLITTER) != 0);
             cnxsave->cs_confovwr = ( (envr & INF_E2_ALLOWOVW) == 0);
-            cnxsave->cs_mnuclick = ( (envr & INF_E2_MNUCLICK) != 0);
-            menu_click(cnxsave->cs_mnuclick, 1);    /* tell system */
             if (envr & INF_E2_IDTDATE)
                 cnxsave->cs_datefmt = DATEFORM_IDT;
             else
@@ -1116,7 +1134,6 @@ void app_save(WORD todisk)
     env1 |= cnxsave->cs_dblclick & INF_E1_DCMASK;
     env2 = (cnxsave->cs_blitter) ? INF_E2_BLITTER : 0x00;
     env2 |= (cnxsave->cs_confovwr) ? 0x00 : INF_E2_ALLOWOVW;
-    env2 |= (cnxsave->cs_mnuclick) ? INF_E2_MNUCLICK : 0x00;
     switch(cnxsave->cs_datefmt)
     {
     case DATEFORM_IDT:
@@ -1366,7 +1383,11 @@ void app_blddesk(void)
             pob->ob_spec = (LONG)pic;
             memcpy(pic, &G.g_iblist[icon], sizeof(ICONBLK));
             pic->ib_xicon = ((G.g_wicon - pic->ib_wicon) / 2);
-            pic->ib_ptext = pa->a_pappl;
+            /* the label position varies */
+            if ((pa->a_type == AT_ISFILE) || (pa->a_type == AT_ISFOLD))
+                pic->ib_ptext = pa->a_pdata;
+            else
+                pic->ib_ptext = pa->a_pappl;
             pic->ib_char |= pa->a_letter;
         }
     }

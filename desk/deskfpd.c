@@ -70,7 +70,7 @@ PNODE *pn_open(char *pathname, WNODE *pw)
 {
     PNODE *thepath;
 
-    if (strlen(pathname) >= MAXPATHLEN)
+    if (strlen(pathname) >= LEN_ZPATH)
         return NULL;
 
     /*

@@ -1,0 +1,1567 @@
+#
+# tr.po: turkish translations
+#
+#
+msgid ""
+msgstr ""
+"Last-Translator: Levent Karakaþ <levent at mektup.at>\n"
+"Language-Team: Turkish\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=cp1254\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: bios/bios.c
+msgid ""
+"System halted!\n"
+msgstr ""
+"Sistem durdu!\n"
+
+#: bios/initinfo.c
+msgid "GEMDOS drives"
+msgstr "GEMDOS sürücüleri"
+
+#: bios/initinfo.c
+msgid "MB"
+msgstr "MB"
+
+#: bios/initinfo.c desk/deskinf.c
+msgid "KB"
+msgstr "KB"
+
+#: bios/initinfo.c
+msgid "EmuTOS Version"
+msgstr "EmuTOS Sürümü"
+
+#: bios/initinfo.c
+msgid "CPU type"
+msgstr "CPU türü"
+
+#: bios/initinfo.c
+msgid "Machine"
+msgstr "Bilgisayar"
+
+#: bios/initinfo.c
+msgid "Boot time"
+msgstr "Önyükleme zamaný"
+
+#: bios/initinfo.c
+msgid "Hold <Control> to skip AUTO/ACC"
+msgstr "AUTO/ACC atlamak için <Kontrol> tuþuna basýn"
+
+#: bios/initinfo.c
+msgid "Hold <Alternate> to skip HDD boot"
+msgstr "Sabit diskten yüklemeyi atlamak için <Alternate> tuþuna basýn"
+
+#: bios/initinfo.c
+msgid "Press key 'X' to boot from X:"
+msgstr "X: den önyükleme için 'X' tuþuna basýn"
+
+#: bios/initinfo.c
+msgid "Press <Esc> to run an early console"
+msgstr "Erken konsol için <Esc> tuþuna basýn"
+
+#: bios/initinfo.c
+msgid "Hold <Shift> to pause this screen"
+msgstr "Ekraný duraklatmak için <Shift> tuþuna basýn"
+
+#: bios/kprint.c
+msgid ""
+"\n"
+"*** Press any key to continue ***"
+msgstr ""
+"\n"
+"*** Devam etmek için bir tuþa basýn ***"
+
+#: bdos/osmem.c
+msgid ""
+"\033EOut of internal memory.\n"
+"Use FOLDR100.PRG to get more.\n"
+"System halted!\n"
+msgstr ""
+"\033E Dahili bellek tükendi.\n"
+"Daha fazlasý için FOLDR100.PRG kullanýn.\n"
+"Sistem durdu!\n"
+
+#: aes/gem_rsc.c desk/desk_rsc.c
+msgid "Drive:"
+msgstr "Sürücü:"
+
+#: aes/gem_rsc.c
+msgid "Selection: ________.___"
+msgstr "Seçim: ________.___"
+
+#: aes/gem_rsc.c
+msgid "Directory:"
+msgstr "Dizin:"
+
+#: aes/gem_rsc.c desk/desk_rsc.c
+msgid "OK"
+msgstr "Tamam"
+
+#: aes/gem_rsc.c desk/desk_rsc.c
+msgid "Cancel"
+msgstr "iptal"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"The disk in drive %c: is|"
+"physically write-protected.][Cancel|Retry]"
+msgstr "[1]["
+"%c diski fiziksel olarak|"
+"yazmaya karþý korumalý.][Ýptal|Tekrar]"
+
+#: aes/gem_rsc.c
+msgid "[2]["
+"Drive %c: is not responding.|"
+"Please check the disk drive,|"
+"or insert a disk.][Cancel|Retry]"
+msgstr "[2]["
+"Sürücü %c: yanýt vermiyor.|"
+"Lütfen ortamý kontrol edin veya|"
+"doðru þekilde yerleþtirin][Ýptal|Tekrar]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"Data on the disk in drive %c:|"
+"may be damaged.][Cancel|Retry]"
+msgstr "[1]["
+"%c sürücüsündeki veriler bozuk |"
+" olabilir.][Ýptal|Tekrar]"
+
+#: aes/gem_rsc.c
+msgid "[2]["
+"This application cannot read|"
+"data on the disk in drive %c:.][Cancel|Retry]"
+msgstr "[2]["
+"Bu uygulama %c sürücüsünden|"
+"sürücüsünden veri okuyamýyor.]"
+"[Ýptal|Tekrar]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"Your output device is not|"
+"receiving data.][Cancel|Retry]"
+msgstr "[1]["
+"Çýktý cihazýnýz veri|"
+"almýyor.][Ýptal|Tekrar]"
+
+#: aes/gem_rsc.c
+msgid "[3]["
+"An error has occurred in GEM.|"
+"Please contact the EmuTOS|"
+"Development Team.][Cancel]"
+msgstr "[3]["
+"GEM'de bir hata oluþtu.|"
+"Lütfen EmuTOS ekibiyle iletiþime|"
+"geçin.][Ýptal]"
+
+#: aes/gem_rsc.c
+msgid "[2]["
+"This application cannot|"
+"find the folder or file|"
+"you just tried to access.][  OK  ]"
+msgstr "[1]["
+"Uygulama eriþilecek|"
+"klasörü veya dosyayý|"
+"bulamýyor.][ Tamam ]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"This application does not|"
+"have room to open another|"
+"document.  To make room,|"
+"close any document that|"
+"you do not need.][  OK  ]"
+msgstr "[1]["
+"Bu uygulamanýn baþka bir|"
+"belge açmak için yeri yok.|"
+"Yer açmak için gereksiz bir|"
+"belgeyi kapatýn.][ Tamam ]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"An item with this name|"
+"already exists in the|"
+"directory, or this item|"
+"is set to Read Only status.][  OK  ]"
+msgstr "[1]["
+"Bu adda bir kayýt bu dizinde|"
+"zaten var veya bu kayýt |"
+"yazmaya karþý korumalý][ Tamam ]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"The drive you specified|"
+"does not exist.][Cancel]"
+msgstr "[1]["
+"Belirtilen sürücü|"
+"mevcut deðil.][Ýptal]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"There is not enough memory|"
+"in your computer for the|"
+"application you just tried|"
+"to run.][  OK  ]"
+msgstr "[1]["
+"Çalýþtýrmak istediðiniz|"
+"uygulama için bilgisayarýnýzda|"
+"yeterli hafýza .|"
+"bulunmuyor.][ Tamam ]"
+
+#: aes/gem_rsc.c
+msgid "[3]["
+"TOS error #%u.][Cancel]"
+msgstr "[3]["
+"TOS hatasý #%u.][Ýptal]"
+
+#: aes/gem_rsc.c
+msgid "[3]["
+"Unsupported AES function #%d.][Cancel]"
+msgstr "[3]["
+"Desteklenmeyen AES fonksiyonu|"
+"#%d.][Ýptal]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"Not enough memory for|"
+"this directory][  OK  ]"
+msgstr "[1]["
+"Bu dizin için yeterli|"
+"hafýze yok][ Tamam ]"
+
+#: aes/gem_rsc.c
+msgid "ITEM SELECTOR"
+msgstr "SEÇÝM"
+
+#: desk/desk_rsc.c
+msgid "Number of folders: _____"
+msgstr "Klasör adedi: _____"
+
+#: desk/desk_rsc.c
+msgid "Number of files: _____"
+msgstr "Dosya adedi: _____"
+
+#: desk/desk_rsc.c
+msgid "Skip"
+msgstr "Atla"
+
+#: desk/desk_rsc.c
+msgid "Install"
+msgstr "Yükle"
+
+#: desk/desk_rsc.c
+msgid "Remove"
+msgstr "Kaldýr"
+
+#: desk/desk_rsc.c
+msgid "Yes"
+msgstr "Evet"
+
+#: desk/desk_rsc.c
+msgid "No"
+msgstr "Hayýr"
+
+#: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "Adý: ________.___"
+
+#: desk/desk_rsc.c
+msgid "Size: __________"
+msgstr "Boyut: __________"
+
+#: desk/desk_rsc.c
+msgid "Date: __________"
+msgstr "Tarih: __________"
+
+#: desk/desk_rsc.c
+msgid "Time: __:__ __"
+msgstr "Zaman: __: __ __"
+
+#: desk/desk_rsc.c
+msgid "Drive identifier:     _"
+msgstr "Sürücü kimliði: _"
+
+#: desk/desk_rsc.c
+msgid "Disk label: ________.___"
+msgstr "Sürücü etiketi: ________.___"
+
+#: desk/desk_rsc.c
+msgid "Bytes used: __________"
+msgstr "Kullanýlan bayt: __________"
+
+#: desk/desk_rsc.c
+msgid "Bytes available: __________"
+msgstr "Kalan bayt: __________"
+
+#: desk/desk_rsc.c
+msgid "Identifier: _:"
+msgstr "Tanýmlayýcý: _:"
+
+#: desk/desk_rsc.c
+msgid "Label: ____________"
+msgstr "Etiket: ____________"
+
+#: desk/desk_rsc.c
+msgid "Application name: ________.___"
+msgstr "Uygulama Adý: ________.___"
+
+#: desk/desk_rsc.c
+msgid "Arguments: ___________"
+msgstr "Argümanlar: ___________"
+
+#: desk/desk_rsc.c
+msgid "Document type: ___"
+msgstr "Döküman türü: ___"
+
+#: desk/desk_rsc.c
+msgid "Install as: F__"
+msgstr "Olarak yükle: F__"
+
+#: desk/desk_rsc.c
+msgid "Current name: ________.___"
+msgstr "Geçerli isim: ________.___"
+
+#: desk/desk_rsc.c
+msgid "Copy's name: ________.___"
+msgstr "Kopyanýn adý: ________.___"
+
+#: desk/desk_rsc.c
+msgid "Key: ^_"
+msgstr "Anahtar: ^ _"
+
+#: desk/desk_rsc.c
+msgid "Free RAM: _____________________"
+msgstr "Boþ RAM: _____________________"
+
+#: desk/desk_rsc.c
+msgid "Label: ________.___"
+msgstr "Etiket: ________.___"
+
+#: desk/desk_rsc.c
+msgid " Desk "
+msgstr " Masa "
+
+#: desk/desk_rsc.c
+msgid " File "
+msgstr " Dosya "
+
+#: desk/desk_rsc.c
+msgid " View "
+msgstr " Görünüm "
+
+#: desk/desk_rsc.c
+msgid " Options "
+msgstr " Seçenekler "
+
+#: desk/desk_rsc.c
+msgid "  Desktop info..."
+msgstr "  Masaüstü bilgisi..."
+
+#: desk/desk_rsc.c
+msgid "  Open"
+msgstr "  Aç"
+
+#: desk/desk_rsc.c
+msgid "  Info/Rename..."
+msgstr "  Bilgi/Yeniden Adlandýr..."
+
+#: desk/desk_rsc.c
+msgid "  Search..."
+msgstr "  Arama..."
+
+#: desk/desk_rsc.c
+msgid "  New folder..."
+msgstr "  Yeni klasör..."
+
+#: desk/desk_rsc.c
+msgid "  Close folder"
+msgstr "  Klasörü kapat"
+
+#: desk/desk_rsc.c
+msgid "  Close top window"
+msgstr "  Pencereyi kapat"
+
+#: desk/desk_rsc.c
+msgid "  Cycle windows"
+msgstr "  Pencereleri deðiþtir"
+
+#: desk/desk_rsc.c
+msgid "  Select all items"
+msgstr "  Her þeyi seçin"
+
+#: desk/desk_rsc.c
+msgid "  Set file mask..."
+msgstr "  Dosya maskesini ayarla ..."
+
+#: desk/desk_rsc.c
+msgid "  Delete..."
+msgstr "  Sil ..."
+
+#: desk/desk_rsc.c
+msgid "  Format floppy..."
+msgstr "  Disket biçimlendir..."
+
+#: desk/desk_rsc.c
+msgid "  Execute EmuCON"
+msgstr "  EmuCON'u çalýþtýr"
+
+#: desk/desk_rsc.c
+msgid "  Shutdown"
+msgstr "  Kapat"
+
+#: desk/desk_rsc.c
+msgid "  Show as icons"
+msgstr "  Simge olarak"
+
+#: desk/desk_rsc.c
+msgid "  Show as text"
+msgstr "  Metin olarak"
+
+#: desk/desk_rsc.c
+msgid "  Sort by name"
+msgstr "  Ýsme göre sýrala"
+
+#: desk/desk_rsc.c
+msgid "  Sort by type"
+msgstr "  Türe göre sýrala"
+
+#: desk/desk_rsc.c
+msgid "  Sort by size"
+msgstr "  Boyuta göre sýrala"
+
+#: desk/desk_rsc.c
+msgid "  Sort by date"
+msgstr "  Tarihe göre sýrala"
+
+#: desk/desk_rsc.c
+msgid "  No sort"
+msgstr "  Sýralama"
+
+#: desk/desk_rsc.c
+msgid "  Size to fit"
+msgstr "  Sýðdýr"
+
+#: desk/desk_rsc.c
+msgid "  Set background..."
+msgstr "  Arka fon belirle..."
+
+#: desk/desk_rsc.c
+msgid "  Install icon..."
+msgstr "  Simge yükle..."
+
+#: desk/desk_rsc.c
+msgid "  Install application..."
+msgstr "  Uygulama kur..."
+
+#: desk/desk_rsc.c
+msgid "  Install devices"
+msgstr "  Cihaz kur"
+
+#: desk/desk_rsc.c
+msgid "  Remove desktop icon"
+msgstr "  Masaüstü simgesini kaldýr"
+
+#: desk/desk_rsc.c
+msgid "  Set preferences..."
+msgstr "  Tercihler..."
+
+#: desk/desk_rsc.c
+msgid "  Desktop configuration..."
+msgstr "  Masaüstünü ayarla..."
+
+#: desk/desk_rsc.c
+msgid "  Change resolution..."
+msgstr "  Çözünürlüðü deðiþtir..."
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  .INF dosyasýný okuyun..."
+
+#: desk/desk_rsc.c
+msgid "  Save desktop..."
+msgstr "  Masaüstünü kaydet..."
+
+#: desk/desk_rsc.c
+msgid "  Blitter"
+msgstr "  Blitter"
+
+#: desk/desk_rsc.c
+msgid "  Cache"
+msgstr "  Önbellek"
+
+#: desk/desk_rsc.c
+msgid "Read/Write"
+msgstr "Okuma/Yazma"
+
+#: desk/desk_rsc.c
+msgid "Read-Only"
+msgstr "Salt-Okunur"
+
+#: desk/desk_rsc.c
+msgid "DISK INFORMATION"
+msgstr "SÜRÜCÜ BÝLGÝSÝ"
+
+#: desk/desk_rsc.c
+msgid "Version"
+msgstr "Sürüm"
+
+#: desk/desk_rsc.c
+msgid "Copyright \275 2001-"
+msgstr "Telif hakký © 2001-"
+
+#: desk/desk_rsc.c
+msgid "The EmuTOS development team"
+msgstr "EmuTOS geliþtirme ekibi"
+
+#: desk/desk_rsc.c
+msgid "Based on 'GPLed' sources"
+msgstr "GPL'leþmiþ kaynaklara dayalý"
+
+#: desk/desk_rsc.c
+msgid "\275 1987 Digital Research, Inc."
+msgstr "© 1987 Digital Research, Inc."
+
+#: desk/desk_rsc.c
+msgid "\275 1999 Caldera Thin Clients, Inc."
+msgstr "© 1999 Caldera Thin Clients, Inc."
+
+#: desk/desk_rsc.c
+msgid "\275 2001 Lineo, Inc."
+msgstr "© 2001 Lineo, Inc."
+
+#: desk/desk_rsc.c
+msgid "EmuTOS is distributed under the GPL"
+msgstr "EmuTOS GPL lisansýyla daðýtýlmaktadýr"
+
+#: desk/desk_rsc.c
+msgid "See doc\\license.txt for details"
+msgstr "Ayrýntý için doc\\license.txt bakýn"
+
+#: desk/desk_rsc.c
+msgid "OPEN APPLICATION"
+msgstr "UYGULAMA AÇ"
+
+#: desk/desk_rsc.c
+msgid "Parameters:"
+msgstr "Parametreler:"
+
+#: desk/desk_rsc.c
+msgid "INSTALL DESKTOP ICON"
+msgstr "MASAÜSTÜ SÝMGESÝ KUR"
+
+#: desk/desk_rsc.c
+msgid "Item type:"
+msgstr "Nesne türü:"
+
+#: desk/desk_rsc.c
+msgid "Drive"
+msgstr "Sürücü"
+
+#: desk/desk_rsc.c
+msgid "Trash can"
+msgstr "Çöp Kutusu"
+
+#: desk/desk_rsc.c
+msgid "Printer"
+msgstr "Yazýcý"
+
+#: desk/desk_rsc.c
+msgid "Icon:"
+msgstr "Simge:"
+
+#: desk/desk_rsc.c
+msgid "INSTALL APPLICATION"
+msgstr "UYGULAMA KUR"
+
+#: desk/desk_rsc.c
+msgid "Boot status:"
+msgstr "Önyükleme durumu:"
+
+#: desk/desk_rsc.c
+msgid "Auto"
+msgstr "Otomatik"
+
+#: desk/desk_rsc.c
+msgid "Normal"
+msgstr "Normal"
+
+#: desk/desk_rsc.c
+msgid "Application type:"
+msgstr "Uygulama türü:"
+
+#: desk/desk_rsc.c
+msgid "Default dir:"
+msgstr "Vars. dizin:"
+
+#: desk/desk_rsc.c
+msgid "Application"
+msgstr "Uygulama"
+
+#: desk/desk_rsc.c
+msgid "Window"
+msgstr "Pencere"
+
+#: desk/desk_rsc.c
+msgid "Parameter:"
+msgstr "Parametre:"
+
+#: desk/desk_rsc.c
+msgid "Full path"
+msgstr "Tam yol"
+
+#: desk/desk_rsc.c
+msgid "File name"
+msgstr "Dosya adý"
+
+#: desk/desk_rsc.c
+msgid "NAME CONFLICT DURING COPY"
+msgstr "KOPYALAMA SIRASINDA ÝSÝM ÇATIÞMASI"
+
+#: desk/desk_rsc.c
+msgid "Stop"
+msgstr "Dur"
+
+#: desk/desk_rsc.c
+msgid "NEW FOLDER"
+msgstr "YENÝ KLASÖR"
+
+#: desk/desk_rsc.c
+msgid "SEARCH FILE"
+msgstr "DOSYA ARA"
+
+#: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "DOSYA YAZDIR"
+
+#: desk/desk_rsc.c
+msgid "SET PREFERENCES"
+msgstr "AYARLAR"
+
+#: desk/desk_rsc.c
+msgid "Confirm deletes:"
+msgstr "Silme onayý:"
+
+#: desk/desk_rsc.c
+msgid "Confirm copies:"
+msgstr "Kopyalama onayý:"
+
+#: desk/desk_rsc.c
+msgid "Confirm overwrites:"
+msgstr "Üzerine yazma onayý:"
+
+#: desk/desk_rsc.c
+msgid "More preferences"
+msgstr "Daha fazla ayar"
+
+#: desk/desk_rsc.c
+msgid "Double-click speed:"
+msgstr "Çift-týklama hýzý:"
+
+#: desk/desk_rsc.c
+msgid "To drop down menus:"
+msgstr "Menüler için:"
+
+#: desk/desk_rsc.c
+msgid "Click"
+msgstr "Týkla"
+
+#: desk/desk_rsc.c
+msgid "No click"
+msgstr "Týklama"
+
+#: desk/desk_rsc.c
+msgid "Time format:"
+msgstr "Zaman formatý:"
+
+#: desk/desk_rsc.c
+msgid "Default"
+msgstr "Varsayýlan"
+
+#: desk/desk_rsc.c
+msgid "12H"
+msgstr "12S"
+
+#: desk/desk_rsc.c
+msgid "24H"
+msgstr "24S"
+
+#: desk/desk_rsc.c
+msgid "Date format:"
+msgstr "Tarih formatý:"
+
+#: desk/desk_rsc.c
+msgid "MDY"
+msgstr "AGY"
+
+#: desk/desk_rsc.c
+msgid "DMY"
+msgstr "GAY"
+
+#: desk/desk_rsc.c
+msgid "SET FILE MASK"
+msgstr "DOSYA MASKESÝ AYARLA"
+
+#: desk/desk_rsc.c
+msgid "DESKTOP CONFIGURATION"
+msgstr "MASAÜSTÜ AYARLARI"
+
+#: desk/desk_rsc.c
+msgid "Default directory:"
+msgstr "Varsayýlan dizin:"
+
+#: desk/desk_rsc.c
+msgid "Input parameter:"
+msgstr "Giriþ parametresi:"
+
+#: desk/desk_rsc.c
+msgid "Function keys:"
+msgstr "Fonksiyon tuþlarý:"
+
+#: desk/desk_rsc.c
+msgid "Menu shortcut keys:"
+msgstr "Menü kýsayol tuþu:"
+
+#: desk/desk_rsc.c
+msgid "Clear all"
+msgstr "Hepsini sil"
+
+#: desk/desk_rsc.c
+msgid "SET SCREEN RESOLUTION"
+msgstr "ÇÖZÜNÜRLÜK AYARLAYIN"
+
+#: desk/desk_rsc.c
+msgid "ST Low"
+msgstr "ST Düþük"
+
+#: desk/desk_rsc.c
+msgid "ST Medium"
+msgstr "ST Orta"
+
+#: desk/desk_rsc.c
+msgid "ST High"
+msgstr "ST Yüksek"
+
+#: desk/desk_rsc.c
+msgid "TT Low"
+msgstr "TT Düþük"
+
+#: desk/desk_rsc.c
+msgid "TT Medium"
+msgstr "TT Orta"
+
+#: desk/desk_rsc.c
+msgid "High"
+msgstr "Yüksek"
+
+#: desk/desk_rsc.c
+msgid "Medium"
+msgstr "Orta"
+
+#: desk/desk_rsc.c
+msgid "Low"
+msgstr "Düþük"
+
+#: desk/desk_rsc.c
+msgid "ST Compatible"
+msgstr "ST uyumlu"
+
+#: desk/desk_rsc.c
+msgid "INSTALL WINDOW ICON"
+msgstr "PENCERE SÝMGESÝ KUR"
+
+#: desk/desk_rsc.c
+msgid "Folder"
+msgstr "Klasör"
+
+#: desk/desk_rsc.c
+msgid "File"
+msgstr "Dosya"
+
+#: desk/desk_rsc.c
+msgid "Monochrome only"
+msgstr "Yalnýzca siyah-beyaz"
+
+#: desk/desk_rsc.c
+msgid "FORMAT FLOPPY DISKETTE"
+msgstr "DÝSKET BÝÇÝMLENDÝR"
+
+#: desk/desk_rsc.c
+msgid "Single sided"
+msgstr "Tek taraflý"
+
+#: desk/desk_rsc.c
+msgid "Double sided"
+msgstr "Ýki taraflý"
+
+#: desk/desk_rsc.c
+msgid "High density"
+msgstr "Yüksek yoðunluk"
+
+#: desk/desk_rsc.c
+msgid "SET BACKGROUND"
+msgstr "ARKA PLANI AYARLA"
+
+#: desk/desk_rsc.c
+msgid "Select:"
+msgstr "Seçim:"
+
+#: desk/desk_rsc.c
+msgid "Desktop"
+msgstr "Masaüstü"
+
+#: desk/desk_rsc.c
+msgid "Style:"
+msgstr "Tarz:"
+
+#: desk/desk_rsc.c
+msgid "Color:"
+msgstr "Renk:"
+
+#: desk/desk_rsc.c
+msgid " %ld bytes used in %d items."
+msgstr " %ld bayt %d nesne kullanýyor."
+
+#: desk/desk_rsc.c
+msgid " %ld bytes used in %d selected items."
+msgstr " %ld bayt seçili %d nesne kullanýyor."
+
+#: desk/desk_rsc.c
+msgid "FILE INFORMATION"
+msgstr "DOSYA BÝLGÝSÝ"
+
+#: desk/desk_rsc.c
+msgid "FOLDER INFORMATION"
+msgstr "KLASÖR BÝLGÝSÝ"
+
+#: desk/desk_rsc.c
+msgid "COPY FILE(S)"
+msgstr "DOSYA(LARI) KOPYALA"
+
+#: desk/desk_rsc.c
+msgid "MOVE FILE(S)"
+msgstr "DOSYA(LARI) TAÞI"
+
+#: desk/desk_rsc.c
+msgid "DELETE FILE(S)"
+msgstr "DOSYA(LARI) SÝL"
+
+#: desk/desk_rsc.c
+msgid "DISK"
+msgstr "SÜRÜCÜ"
+
+#: desk/desk_rsc.c
+msgid "TRASH"
+msgstr "ÇÖP KUTUSU"
+
+#: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "YAZICI"
+
+#: desk/desk_rsc.c
+msgid "-More-"
+msgstr "-Daha-"
+
+#: desk/desk_rsc.c
+msgid "-End of file-"
+msgstr "-Dosya sonu-"
+
+#: desk/desk_rsc.c
+msgid "-File read error-"
+msgstr "-Dosya okuma hatasý-"
+
+#: desk/desk_rsc.c
+msgid "Locate item"
+msgstr "Nesneyi bulun"
+
+#: desk/desk_rsc.c
+msgid "Select .INF file"
+msgstr ".INF dosyasý seçin"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Switch resolution?][ Yes | No ]"
+msgstr "[2]["
+"Çözünürlüðü deðiþtir?][ Evet | Hayýr ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Show or print this document?][Show|Print|Cancel]"
+msgstr "[2]["
+"Belgeyi göster veya yazdýr?][Görüntüle|Yazdýr|Ýptal]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Print error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Yazdýrma hatasý!][ Tekrar | Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"This document type has no|"
+"associated application.][  OK  ]"
+msgstr "[1]["
+"Bu belge bir uygulamayla|"
+"iliþkilendirilmemiþ.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"The GEM Desktop has no more|"
+"windows.  Please close a|"
+"window that you are not|"
+"using.][  OK  ]"
+msgstr "[1]["
+"GEM Masaüstünde daha fazla|"
+"pencere yok. Lütfen|"
+"kullanmadýðýnýz bir pencereyi|"
+"kapatýn.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal directory operation!][ Skip | Abort ]"
+msgstr "[1]["
+"Geçersiz dizin iþlemi!][ Atla | Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal operation!][  OK  ]"
+msgstr "[1]["
+"Geçersiz iþlem!][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Abort this operation?][ Yes | No ]"
+msgstr "[2]["
+"Ýþlem iptal edilsin mi?][ Evet | Hayýr ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Do you want to delete all|"
+"the files on drive %c: ?][Yes| No ]"
+msgstr "[2]["
+"%c sürücüsündeki tüm dosyalarý|"
+"silmek istiyor musunuz?][ Evet | Hayýr ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Sorry, the desktop cannot|"
+"install any more icons|"
+"or applications.][  OK  ]"
+msgstr "[1]["
+"Üzgünüm, masaüstüne daha|"
+"fazla simge veya uygulama|"
+"kurulamaz.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"You cannot create a folder|"
+"with that name. Please retry|"
+"with a new name, or cancel.][Cancel|Retry]"
+msgstr "[2]["
+"Bu isimle bir klasör|"
+"oluþturamazsýnýz. Lütfen|"
+"yeni bir isimle deneyin|"
+"veya iptal edin.][Ýptal|Tekrar]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Drive %c: does not have|"
+"enough room for this|"
+"operation.][  OK  ]"
+msgstr "[1]["
+"%c sürücüsünde bu iþlem|"
+"için yeterli yer yok.]"
+"[ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[3]["
+"You cannot create or|"
+"access a folder this far|"
+"down the directory path.][  OK  ]"
+msgstr "[3]["
+"Bu kadar derin dizin yolunda|"
+"klasör oluþturaz veya|"
+"eriþemezsiniz.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[3]["
+"You cannot create or access|"
+"a file or folder with that|"
+"name, because the pathname|"
+"is too long.][  OK  ]"
+msgstr "[3]["
+"Bu isimde bir dosya veya|"
+"klasör oluþturamazsýnýz veya.|"
+"eriþemezsiniz çünkü|"
+"yolu çok uzun.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s is used to|"
+"permanently delete files|"
+"or folders.][  OK  ]"
+msgstr "[1]["
+"Kalýcý olarak dosyalarý|"
+"ve klasörleri silmek için %s|"
+"kullanýldý.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s|"
+"is a printer.][  OK  ]"
+msgstr "[1]["
+"%s|"
+"bir yazýcýdýr.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"You cannot drag applications,|"
+"files or folders onto the|"
+"Desktop.][  OK  ]"
+msgstr "[1]["
+"Uygulamalarý, dosyalarý ve|"
+"klasörler masaüstüne sürükleyip|"
+"býrakamazsýnýz.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Save Desktop?][  OK  |Cancel]"
+msgstr "[2]["
+"Masaüstü kaydedilsin mi?][ Tamam |Ýptal]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Do you want to remove icons|"
+"or delete files?][Icons|Files|Cancel]"
+msgstr "[2]["
+"Simge kaldýrmak veya|"
+"dosyalarý sil?][Simgeler|Dosyalar|Ýptal]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Invalid function key value.][  OK  ]"
+msgstr "[1]["
+"Geçersiz fonksiyon tuþu deðeri.][Tamam]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Function key already assigned.|"
+"Do you want to reassign it?][  OK  |Cancel]"
+msgstr "[2]["
+"Fonksiyon tuþu zaten atanmýþ.|"
+"Yeniden atamak istiyor musunuz?][Tamam|Ýptal]"
+
+#: desk/desk_rsc.c
+msgid "[3]["
+"Not enough memory to|"
+"initialise EmuDesk.|"
+"You must reboot.][  OK  ]"
+msgstr "[3]["
+"Emudesk'i baþlatmak için|"
+"yeterli hafýza yok.|"
+"Yeniden baþlatmalýsýnýz.][Tamam]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"%s not found.|"
+"Do you want to remove the|"
+"icon or locate the item?][Remove|Locate|Cancel]"
+msgstr "[2]["
+"%s bulunamadý.|"
+"Simge kaldýr veya yerini|"
+"bul?][Kaldýr|Bul|Ýptal]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Please select icon type.][Desktop|Window|Cancel]"
+msgstr "[2]["
+"Lütfen simge türü seçin.][Masaüstü|Pencere|Ýptal]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No matching file type.][  OK  ]"
+msgstr "[1]["
+"Eþleþen Dosya türü yok.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[3]["
+"Formatting error. The target|"
+"disk may be write-protected|"
+"or unusable.][ Retry | Abort ]"
+msgstr "[3]["
+"Biçimlendirme hatasý. Hedef|"
+"disket yazma-korumalý veya bozuk|"
+"olabilir.][ Tekrar | Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"This disk has %ld bytes|"
+"available to the user.][ Continue | Quit ]"
+msgstr "[1]["
+"Bu diskte kullanýlabilir|"
+"%ld bayt var..][ Devam | Çýk ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Drive %s: does not exist.][ Cancel ]"
+msgstr "[1]["
+"Sürücü %s: mevcut deðil.][ Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No drive identifier.][ Retry ]"
+msgstr "[1]["
+"Sürücü tanýmlayýcý yok.][ Tekrar ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot delete file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"%s dosyasý silinemedi]"
+"[ Atla | Tekrar | Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot delete directory|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"%s dizini silinemedi]"
+"[ Atla | Tekrar | Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Not enough memory.][  OK  ]"
+msgstr "[1]["
+"Yeterli hafýza yok.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s not found.][  OK  ]"
+msgstr "[1]["
+"%s bulunamadý.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot open file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"%s dosyasý açýlamadý]"
+"[ Atla | Tekrar | Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot create file|"
+"%s][ Skip | Retry | Abort ]"
+msgstr "[1]["
+"%s dosyasý oluþturulamadý]"
+"[ Atla | Tekrar | Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot read file|"
+"%s][ Skip | Abort ]"
+msgstr "[1]["
+"%s dosyasý okunamadý]"
+"[ Atla | Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot write file|"
+"%s][ Skip | Abort ]"
+msgstr "[1]["
+"%s dosyasý yazýlamadý]"
+"[ Atla | Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Rename error!][ Retry | Cancel ]"
+msgstr "[1]["
+"Yeniden adlandýrma hatasý!][ Tekrar | Ýptal ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Failed to set default|"
+"directory.][  OK  ]"
+msgstr "[1]["
+"Varsayýlan dizin|"
+"ayarlanamadý.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal .INF file format.][  OK  ]"
+msgstr "[1]["
+"Geçersiz.INF dosya formatý.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Continue to search?][  OK  |Cancel]"
+msgstr "[2]["
+"Aramaya devam edilsin mi?][ Tamam |Ýptal]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No more files.][  OK  ]"
+msgstr "[1]["
+"Baþka dosya yok.][ Tamam ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Last key is already assigned.|"
+"Do you want to reassign it?][  OK  |Cancel]"
+msgstr "[2]["
+"Son tuþ zaten atanmýþ.|"
+"Yeniden atamak istiyor musunuz?][ Tamam  |Ýptal]"
+
+#: cli/cmdint.c
+msgid "Copy <filespec> ... to standard output"
+msgstr "<filespec>'ný standart çýktýya kopyala"
+
+#: cli/cmdint.c
+msgid "Change current directory to <dir>"
+msgstr "Geçerli dizini <dir> olarak deðiþtir"
+
+#: cli/cmdint.c
+msgid "or display current directory"
+msgstr "veya mevcut dizini gösterir"
+
+#: cli/cmdint.c
+msgid "Change attributes for <filename>"
+msgstr "<filename>'nin niteliklerini deðiþtir"
+
+#: cli/cmdint.c
+msgid "<mode> specifies the new attribute(s):"
+msgstr "<mode> yeni öznitelikleri belirle:"
+
+#: cli/cmdint.c
+msgid "r=read-only  h=hidden  s=system  -=none"
+msgstr "r=salt-okunur  h=gizli  s=sistem  -=yok"
+
+#: cli/cmdint.c
+msgid "Clear screen"
+msgstr "Ekraný temizle"
+
+#: cli/cmdint.c
+msgid "Copy files matching <filespec> to <dest>"
+msgstr "<filespec> ile eþleþen dosyalarý <dest> konumuna kopyala"
+
+#: cli/cmdint.c
+msgid "If <filespec> matches multiple files,"
+msgstr "<filespec> birkaç dosyayý tanýmlýyorsa,"
+
+#: cli/cmdint.c
+msgid "<dest> must be a directory"
+msgstr "<dest> bir dizin olmalýdýr"
+
+#: cli/cmdint.c
+msgid "Copy <string> ... to standard output"
+msgstr "<string>'yi standart çýktýya kopyala"
+
+#: cli/cmdint.c
+msgid "Strings may be surrounded by \"\""
+msgstr "Dizeler \"\" ile çevrelenmelidir"
+
+#: cli/cmdint.c
+msgid "Exit EmuCON2"
+msgstr "EmuCON2'den çýk"
+
+#: cli/cmdint.c
+msgid "Get help about <cmd> or list available commands"
+msgstr "<cmd> hakkýnda yardým alýn veya mevcut komutlarý listeleyin"
+
+#: cli/cmdint.c
+msgid "Use HELP ALL for help on all commands"
+msgstr "Tüm komutlarla ilgili yardým almak için HELP ALL kullanýn"
+
+#: cli/cmdint.c
+msgid "Use HELP EDIT for help on line editing"
+msgstr "Satýr girme konusunda yardým almak için HELP EDIT'i kullanýn"
+
+#: cli/cmdint.c
+msgid "List files (default terse, horizontal)"
+msgstr "Dosyalarý listele (varsayýlan olarak kompakt, yatay)"
+
+#: cli/cmdint.c
+msgid "Specify -l for detailed list"
+msgstr "Ayrýntýlý liste için -l belirtin"
+
+#: cli/cmdint.c
+msgid "Create directory <dir>"
+msgstr "<dir> dizini oluþtur"
+
+#: cli/cmdint.c
+msgid "Set or display console settings:"
+msgstr "Konsol ayarlarýný belirleyin veya görüntüleyin:"
+
+#: cli/cmdint.c
+msgid "res for screen resolution (0,1)[ST] (0,1,2,4,7)[TT];"
+msgstr "res: ekran çözünürlüðü (0,1) [ST] (0,1,2,4,7) [TT];"
+
+#: cli/cmdint.c
+msgid "delay/rate for the keyboard"
+msgstr "klavyenin gecikme oraný"
+
+#: cli/cmdint.c
+msgid "Copy <filespec> to standard output,"
+msgstr "Standart çýktýya <filespec> kopyala,"
+
+#: cli/cmdint.c
+msgid "pausing every screenful"
+msgstr "her ekranda dolduðunda duraklayarak"
+
+#: cli/cmdint.c
+msgid "Copy files matching <filespec> to <dir>,"
+msgstr "<filespec> kalýbýna sahip dosyalarý <dir> konumuna kopyala"
+
+#: cli/cmdint.c
+msgid "then delete input files"
+msgstr "sonra girdi dosyalarýný sil"
+
+#: cli/cmdint.c
+msgid "Set search path for external programs"
+msgstr "Harici programlar için arama yolunu belirle"
+
+#: cli/cmdint.c
+msgid "or display current search path"
+msgstr "veya mevcut arama yolunu gösterir"
+
+#: cli/cmdint.c
+msgid "Display current drive and directory"
+msgstr "Mevcut sürücüyü ve dizini göster"
+
+#: cli/cmdint.c
+msgid "Rename <oldname> to <newname>"
+msgstr "<oldname> olan adý <newname> olarak deðiþtir"
+
+#: cli/cmdint.c
+msgid "Delete files matching <filespec>"
+msgstr "<filespec> kalýbýna sahip dosyalarý sil"
+
+#: cli/cmdint.c
+msgid "Specify -q to be prompted each time"
+msgstr "Her seferinde onay için -q seçeneðini belirtin"
+
+#: cli/cmdint.c
+msgid "Delete directory <dir>"
+msgstr "<dir> dizinini sil"
+
+#: cli/cmdint.c
+msgid "Show info for <drive> or current drive"
+msgstr "<drive> veya mevcut sürücü hakkýnda bilgi göster"
+
+#: cli/cmdint.c
+msgid "Display GEMDOS version"
+msgstr "GEMDOS sürümünü göster"
+
+#: cli/cmdint.c
+msgid "Set line wrap or show current status"
+msgstr "Bir satýr sonu ayarlar veya mevcut durumu göster"
+
+#: cli/cmdint.c
+msgid "up/down arrow = previous/next line in history"
+msgstr "yukarý/aþaðý ok = geçmiþteki önceki/sonraki satýr"
+
+#: cli/cmdint.c
+msgid "left/right arrow = previous/next character"
+msgstr "sol/sað ok = önceki/sonraki karakter"
+
+#: cli/cmdint.c
+msgid "control-left/right arrow = previous/next word"
+msgstr "kontrol-sol/sað ok = önceki/sonraki kelime"
+
+#: cli/cmdint.c
+msgid "invalid mode argument"
+msgstr "geçersiz mod parametresi"
+
+#: cli/cmdint.c
+msgid "Builtin commands:"
+msgstr "Yerleþik komutlar:"
+
+#: cli/cmdint.c
+msgid "Listing of "
+msgstr "Listesi "
+
+#: cli/cmdint.c
+msgid "Status for CON:"
+msgstr "CON Durumu:"
+
+#: cli/cmdint.c
+msgid "  Resolution:     "
+msgstr "  Çözünürlük:     "
+
+#: cli/cmdint.c
+msgid "  Keyboard delay: "
+msgstr "  Klavye gecikmesi:"
+
+#: cli/cmdint.c
+msgid "  Keyboard rate:  "
+msgstr "  Klavye tekrar oraný:"
+
+#: cli/cmdint.c
+msgid "(empty)"
+msgstr "(boþ)"
+
+#: cli/cmdint.c
+msgid "Delete ALL matching files"
+msgstr "TÜM eþleþen dosyalarý sil"
+
+#: cli/cmdint.c
+msgid "Delete file "
+msgstr "Dosyayý sil "
+
+#: cli/cmdint.c
+msgid "Allocation info for drive "
+msgstr "Sürücü için tahsis bilgisi"
+
+#: cli/cmdint.c
+msgid "  Size (bytes):   "
+msgstr "  Boyut (bayt):"
+
+#: cli/cmdint.c
+msgid "  Bytes used:     "
+msgstr "  Kullanýlan bayt: "
+
+#: cli/cmdint.c
+msgid "  Bytes free:     "
+msgstr "  Boþ bayt:    "
+
+#: cli/cmdint.c
+msgid "  Total clusters: "
+msgstr "  Toplam küme:"
+
+#: cli/cmdint.c
+msgid "  Free clusters:  "
+msgstr "  Boþ kümeler:"
+
+#: cli/cmdint.c
+msgid "  Sectors/cluster:"
+msgstr " Sektör/küme:"
+
+#: cli/cmdint.c
+msgid "  Bytes/sector:   "
+msgstr "  Bayt/sektör:"
+
+#: cli/cmdint.c
+msgid " is not a directory"
+msgstr " bir dizin deðil"
+
+#: cli/cmdint.c
+msgid " and "
+msgstr " ve"
+
+#: cli/cmdint.c
+msgid "Copying "
+msgstr "Kopyalanýyor "
+
+#: cli/cmdint.c
+msgid " to "
+msgstr " hedef "
+
+#: cli/cmdint.c
+msgid " ... deleting "
+msgstr " ... siliniyor"
+
+#: cli/cmdint.c
+msgid " ... done"
+msgstr " ... bitti"
+
+#: cli/cmdint.c
+msgid " or "
+msgstr " veya"
+
+#: cli/cmdint.c
+msgid "CR to continue ..."
+msgstr "Devam etmek için ENTER ..."
+
+#: cli/cmdint.c
+msgid "--More--"
+msgstr "--Devam--"
+
+#: cli/cmdmain.c
+msgid "Welcome to EmuCON2 version "
+msgstr "EmuCON2 sürümüne hoþ geldiniz "
+
+#: cli/cmdmain.c
+msgid "Type HELP for builtin commands"
+msgstr "HELP, yerleþik komutlarla ilgili yardýmý gösterir"
+
+#: cli/cmdmain.c
+msgid "warning: no history buffers"
+msgstr "uyarý: geçmiþ belleði yok"
+
+#: cli/cmdparse.c
+msgid "more than one redirection"
+msgstr "birden fazla yönlendirme"
+
+#: cli/cmdparse.c
+msgid "no filename for redirection"
+msgstr "yeniden yönlendirme için dosya adý yok"
+
+#: cli/cmdparse.c
+msgid "error in quoted field"
+msgstr "týrnak iþaretli alanda hata"
+
+#: cli/cmdparse.c
+msgid "error parsing line"
+msgstr "satýr ayrýþtýrýlýrken hata oluþtu"
+
+#: cli/cmdutil.c
+msgid "file not found"
+msgstr "dosya bulunamadý"
+
+#: cli/cmdutil.c
+msgid "path not found"
+msgstr "yol bulunamadý"
+
+#: cli/cmdutil.c
+msgid "no more file handles"
+msgstr "baþka dosya tutacaðý yok"
+
+#: cli/cmdutil.c
+msgid "can't create file"
+msgstr "dosya yaratýlamýyor"
+
+#: cli/cmdutil.c
+msgid "not enough memory"
+msgstr "yeterli hafýza yok"
+
+#: cli/cmdutil.c
+msgid "invalid drive"
+msgstr "geçersiz sürücü"
+
+#: cli/cmdutil.c
+msgid "interrupted"
+msgstr "kesildi"
+
+#: cli/cmdutil.c
+msgid "invalid path"
+msgstr "geçersiz yol"
+
+#: cli/cmdutil.c
+msgid "can't write to disk (full?)"
+msgstr "diske yazýlamýyor (dolu?)"
+
+#: cli/cmdutil.c
+msgid "cmdline too long"
+msgstr "komut satýrý çok uzun"
+
+#: cli/cmdutil.c
+msgid "directory not empty"
+msgstr "dizin boþ deðil"
+
+#: cli/cmdutil.c
+msgid "can't delete file (read-only?)"
+msgstr "dosya silinemiyor (salt-okunur?)"
+
+#: cli/cmdutil.c
+msgid "invalid parameter"
+msgstr "geçersiz parametre"
+
+#: cli/cmdutil.c
+msgid "wrong number of arguments"
+msgstr "yanlýþ parametre adedi"
+
+#: cli/cmdutil.c
+msgid "error code %ld"
+msgstr "hata kodu %ld"
+

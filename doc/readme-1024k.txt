@@ -1,17 +1,17 @@
-EmuTOS - 512 KB version
+EmuTOS - 1024 KB version
 
-This ROM is suitable for the following hardware:
-- TT
-- Falcon
-- emulators of the above
+This ROM image is not suitable for original Atari hardware, due to
+hardware restrictions.  It is suitable for the following emulators:
+- Hatari
 
-Note: Extra hardware is autodetected.
+This ROM image is the optimal one for Hatari, with any combination of
+emulated hardware.
 
-Some legacy programs may not work with a 512k image; for these one may
+Some legacy programs may not work with a 1024k image; for these one may
 need to use a smaller EmuTOS image.
 
-etos512k.img - Multilanguage
-etos512k.sym - Symbol address information for Hatari debugger and profiler
+etos1024k.img - Multilanguage
+etos1024k.sym - Symbol address information for Hatari debugger and profiler
 
 The following optional files are also supplied:
 emuicon.rsc - contains additional icons for the desktop
@@ -23,24 +23,21 @@ is included with Hatari:
 
 The default language is English.  Other supported languages are:
 - Czech
-- German
-- Spanish
+- Dutch
 - Finnish
 - French
+- German
 - Greek
 - Hungarian
 - Italian
-- Dutch
 - Norwegian
 - Polish
 - Russian
+- Spanish
 - Swedish
 - Swiss German
 - Turkish
-They can be used by setting the NVRAM appropriately.  If you wish to use
-this version of the ROM on a machine without NVRAM, the default language
-can be changed by using the tos-lang-change tool included with the EmuTOS
-sources.
+They can be selected by setting the NVRAM appropriately.
 
 Notes on possible points of confusion
 1. The emuicon.rsc file format differs from deskicon.rsc used by later
@@ -52,5 +49,5 @@ emulator supporting NatFeats (under Hatari, you need to enable this
 with the "--natfeats on" option).
 
 This ROM image has been built using:
-make 512
+make 1024
 

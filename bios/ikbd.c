@@ -235,6 +235,11 @@ void push_ascii_ikbdiorec(UBYTE ascii)
 LONG bconstat2(void)
 {
 #if CONF_SERIAL_CONSOLE_POLLING_MODE
+    /*
+     * Note: If device 1 is the MFP, whether or not the MFP is actually
+     * polled or is interrupt-driven depends on
+     * CONF_MFP_RS232_USE_INTERRUPT.
+     */
     return bconstat(1);
 #else
     if (ikbdiorec.head == ikbdiorec.tail) {
@@ -249,6 +254,8 @@ LONG bconin2(void)
 {
     ULONG value;
 #if CONF_SERIAL_CONSOLE_POLLING_MODE
+    /* See note above about whether or not the MFP is actually polled
+       in the bconin(1) call. */
     UBYTE ascii = (UBYTE)bconin(1);
     value = ikbdiorec_from_ascii(ascii);
 #else

@@ -6,7 +6,7 @@
  * Defines that should *not* be overridden should appear in sysconf.h
  * (or deskconf.h if they apply to EmuDesk).
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -827,6 +827,15 @@
 #endif
 
 /*
+ * Set CONF_MFP_RS232_USE_INTERRUPT to 1 to enable the use of
+ * the MFP receive interrupt for MFP serial input. Use polling
+ * if not enabled.
+ */
+#ifndef CONF_MFP_RS232_USE_INTERRUPT
+# define CONF_MFP_RS232_USE_INTERRUPT 0
+#endif
+
+/*
  * Set CONF_WITH_TT_MFP to 1 to enable TT MFP support
  */
 #ifndef CONF_WITH_TT_MFP
@@ -1321,6 +1330,19 @@
  */
 #ifndef CONF_WITH_VDI_VERTLINE
 # define CONF_WITH_VDI_VERTLINE 1
+#endif
+
+/*
+ * The VDI functions v_fillarea(), v_pline(), v_pmarker() can handle
+ * up to MAX_VERTICES coordinates (MAX_VERTICES/2 points).
+ * TOS2 allows 512 vertices, TOS3/TOS4 allow 1024.
+ */
+#ifndef MAX_VERTICES
+# if defined(TARGET_1024) || defined(TARGET_512) || defined(TARGET_PRG) || defined(MACHINE_FIREBEE) || defined(MACHINE_M548X) || defined(MACHINE_ARANYM)
+#  define MAX_VERTICES   1024
+# else
+#  define MAX_VERTICES   512
+# endif
 #endif
 
 /*
@@ -1847,6 +1869,12 @@
 # endif
 # if CONF_WITH_SCSI
 #  error CONF_WITH_SCSI requires CONF_WITH_MFP.
+# endif
+#endif
+
+#if !CONF_WITH_MFP_RS232
+# if CONF_MFP_RS232_USE_INTERRUPT
+#  error CONF_MFP_RS232_USE_INTERRUPT requires CONF_WITH_MFP_RS232.
 # endif
 #endif
 

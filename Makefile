@@ -1,7 +1,7 @@
 #
 # Makefile - the EmuTOS overbloated Makefile
 #
-# Copyright (C) 2001-2020 The EmuTOS development team.
+# Copyright (C) 2001-2021 The EmuTOS development team.
 #
 # This file is distributed under the GPL, version 2 or at your
 # option any later version.  See doc/license.txt for details.
@@ -50,6 +50,7 @@ help:
 	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB"
 	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB"
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB"
+	@echo "1024    $(ROM_1024), EmuTOS ROM padded to size 1024 KB"
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
@@ -109,8 +110,21 @@ COUNTRY = us
 
 DEF =
 UNIQUE =
+UNIQUEARG =
 ifneq (,$(UNIQUE))
 COUNTRY = $(UNIQUE)
+UNIQUEARG = -u$(UNIQUE)
+endif
+
+#
+# Group-of-countries support: if GROUP is defined, then multilingual
+# versions of EmuTOS will be built with just the associated countries
+# (as defined by localise.ctl).
+#
+GROUP =
+GROUPARG =
+ifneq (,$(GROUP))
+GROUPARG = -g$(GROUP)
 endif
 
 #
@@ -291,7 +305,7 @@ bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
 #
 
 util_src = cookie.c doprintf.c intmath.c langs.c memmove.S memset.S miscasm.S \
-           nls.c nlsasm.S setjmp.S string.c
+           nls.c nlsasm.S setjmp.S string.c shellutl.c
 
 # The functions in the following modules are used by the AES and EmuDesk
 ifeq ($(WITH_AES),1)
@@ -540,6 +554,24 @@ $(ROM_PAK3): emutos.img mkrom
 	./mkrom pak3 $< $(ROM_PAK3)
 
 #
+# 1024kB Image (for Hatari (and potentially other emulators))
+#
+
+ROM_1024 = etos1024k.img
+SYMFILE = $(addsuffix .sym,$(basename $(ROM_1024)))
+
+.PHONY: 1024
+1024: override DEF += -DTARGET_1024
+1024: $(ROM_1024) $(SYMFILE)
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
+	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
+	@printf "$(LOCALCONFINFO)"
+
+$(ROM_1024): ROMSIZE = 1024
+$(ROM_1024): emutos.img mkrom
+	./mkrom pad $(ROMSIZE)k $< $(ROM_1024)
+
+#
 # ARAnyM Image
 #
 
@@ -548,10 +580,11 @@ ROM_ARANYM = emutos-aranym.img
 .PHONY: aranym
 NODEP += aranym
 aranym: override DEF += -DMACHINE_ARANYM
+aranym: OPTFLAGS = $(SMALL_OPTFLAGS)
 aranym: CPUFLAGS = -m68040
 aranym:
 	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
-	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' OPTFLAGS='$(OPTFLAGS)' DEF='$(DEF)' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
@@ -856,8 +889,8 @@ NODEP += localise
 localise: tools/localise.c
 	$(NATIVECC) $< -o $@
 
-bios/ctables.h include/i18nconf.h po/LINGUAS &: obj/country localise.ctl localise
-	./localise -u$(UNIQUE) localise.ctl bios/ctables.h include/i18nconf.h po/LINGUAS
+bios/ctables.h include/i18nconf.h po/LINGUAS &: obj/country obj/group localise.ctl localise
+	./localise $(GROUPARG) $(UNIQUEARG) localise.ctl bios/ctables.h include/i18nconf.h po/LINGUAS
 
 #
 # NLS support
@@ -872,11 +905,9 @@ NODEP += bug
 bug: tools/bug.c
 	$(NATIVECC) $< -o $@
 
-# never run 'bug make' if UNIQUE is specified
-ifeq (,$(UNIQUE))
+# even if UNIQUE is specified, we ensure langs.c exists to avoid dependency problems
 util/langs.c: $(POFILES) po/LINGUAS bug po/messages.pot
 	./bug make
-endif
 
 po/messages.pot: bug po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
 	./bug xgettext
@@ -930,10 +961,10 @@ NODEP += mkrom
 mkrom: tools/mkrom.c
 	$(NATIVECC) $< -o $@
 
-# test target to build all tools
+# test target to build all tools that can be built by the Makefile
 .PHONY: tools
 NODEP += tools
-tools: bug draft erd mkflop mkrom tos-lang-change
+tools: bug draft erd grd ird localise mkflop mkrom mrd tos-lang-change
 
 # user tool, not needed in EmuTOS building
 TOCLEAN += tos-lang-change
@@ -1059,6 +1090,26 @@ obj/country: always-execute-recipe
 	  echo "rm -f $$i $$j"; \
 	  rm -f $$i $$j; \
 	done
+
+#
+# obj/group contains the current value of $(GROUP).  to prevent
+# unnecessary rebuilds, it is only updated when $(GROUP) changes.
+#
+
+TOCLEAN += obj/group
+
+obj/group: always-execute-recipe
+	@echo $(GROUP) > lastgroup.tmp; \
+	if [ -e $@ ]; \
+	then \
+	  if cmp -s lastgroup.tmp $@; \
+	  then \
+	    rm lastgroup.tmp; \
+	    exit 0; \
+	  fi; \
+	fi; \
+	echo "echo $(GROUP) > $@"; \
+	mv lastgroup.tmp $@;
 
 #
 # OS header

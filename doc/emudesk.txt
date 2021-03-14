@@ -6,7 +6,7 @@ Atari TOS 2/3/4 desktop, including:
 
 1) menu items
     . search
-    . bottom to top
+    . cycle windows
     . select all items
     . set file mask
     . size to fit
@@ -60,7 +60,7 @@ files" if at least one file was found, or "xxx not found" if no matching
 files were found.
 
 
-Bottom to top
+Cycle windows
 =============
 192K ROMs:
 This is not available.
@@ -69,6 +69,7 @@ Other ROMs:
 This is used to cycle through open windows: each time it is selected,
 the window that is currently bottom of the window stack is topped.
 Thus it is only selectable if two or more windows are open.
+Note: this is called "Bottom to top" in the Atari TOS desktop.
 
 
 Select all items
@@ -258,7 +259,7 @@ present in EMUDESK.INF *will* be loaded.  So even with the 192K ROMs,
 you can set up your own preferred menu item shortcuts by inserting them
 in EMUDESK.INF.  If you are knowledgeable and careful, you could edit
 EMUDESK.INF directly.  But an easier way is to launch a PRG version of
-the 256K or 512K ROMs, set up the shortcuts there, and save the desktop.
+EmuTOS, set up the shortcuts there, and save the desktop.
 
 Other ROMs:
 This is equivalent to the corresponding Atari TOS menu item.  You may do

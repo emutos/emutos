@@ -227,7 +227,7 @@ static const UBYTE bellsnd[] = {
   11, 0,      /* envelope */
   12, 16,
   13, 9,
-  0xFF, 0,    /* stop sound */
+  0xFF, 0    /* stop sound */
 };
 
 static const UBYTE keyclicksnd[] = {
@@ -243,7 +243,48 @@ static const UBYTE keyclicksnd[] = {
   13, 3,
   11, 0x80,
   12, 1,
-  0xFF, 0,
+  0xFF, 0
+};
+
+static const UBYTE coldbootsnd[] = {
+  13, 00,  /* Env: attack */
+  11, 0,
+  12, 12,
+  2, 0xef, /* C5 */
+  3, 0x00,
+  7, 0xfd, /* B ON */
+  9,0x12,  /* Volume */
+  0x82, 6,
+  13,00,
+  2,0xdd, /* C4 */
+  3,0x01,
+  0x82,6,
+  13,00,
+  2,0x3e, /* G4 */
+  3,0x01,
+  0x82,6,
+  13,00,
+  2,0xef,
+  3,0x00,	
+  0x82,6,
+  7,0xf7,
+  0xff,00
+};
+
+static const UBYTE warmbootsnd[] = {
+  11,0,
+  12,10,
+  13,00,	/* Env: attack */
+  2,0xef,	/* C5 */
+  3,0x00,
+  7,0xfd,	/* B ON */
+  9,0x12,	/* Volume */
+  0x82, 6,
+  13,0,
+  0x82,6,
+  13, 0,
+  0x82, 6,
+  0xff, 00	
 };
 
 #endif /* CONF_WITH_YM2149 */
@@ -264,5 +305,17 @@ static void do_keyclick(void)
 {
 #if CONF_WITH_YM2149
     dosound(keyclicksnd);
+#endif
+}
+
+void coldbootsound(void) {
+#if CONF_WITH_YM2149
+    dosound(coldbootsnd);
+#endif
+}
+
+void warmbootsound(void) {
+#if CONF_WITH_YM2149
+    dosound(warmbootsnd);
 #endif
 }

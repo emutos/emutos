@@ -111,13 +111,13 @@ Unique issues
 Program: Art for Kids
 ---------------------
 Error: crash during program startup, before anything is displayed, when
-using 512K ROMs
+using 512K/1024K ROMs
 
 Bug analysis:
 The program uses the TOS version in the OS header to decide how to
 interpret the country code in os_conf.  If the version is not 4, the
 program assumes a valid country code and uses it as an index into an
-array of pointers.  EmuTOS 512K ROMs use a TOS version of 2, but set
+array of pointers.  EmuTOS 512K/1024K ROMs use a TOS version of 2, but set
 os_conf to 0xff to indicate multilanguage.  This causes a crash when the
 program indexes beyond the end of the array and loads a garbage pointer.
 
@@ -198,6 +198,21 @@ function.  Cubase tries to guess the address of that private function
 in an undocumented way, which crashes on EmuTOS. If that is patched,
 crash happens on next private function which Cubase tries to search
 for.
+
+
+Program: G-Loc (game)
+---------------------
+Error: Fails to load from original floppy disk.
+
+Bug analysis:
+On the floppy disk, sector 6 of the first track is unreadable as part of
+the copy protection. To reliably detect media change, EmuTOS calculates
+a checksum over the first six sectors, which fails. Therefore, the disk
+is considered unreadable by EmuTOS and the game loader (in the AUTO
+folder) is not run.
+
+Note: The game fails to load for the same reason under Atari TOS 2.06,
+which uses a similar media change detection method.
 
 
 Program: HDCOOKIE
@@ -294,6 +309,26 @@ hack.prg:
 This may also work with other Reservoir Gods programs.
 
 
+Program: Sea of Colour
+----------------------
+Error: does not run when started from an ACSI hard disk
+
+Bug analysis:
+To be compatible with all ACSI devices, EmuTOS must wait for five
+milliseconds between ACSI commands, as specified in the "Atari ACSI/DMA
+integration guide." However, the demo expects ACSI transfers to complete
+faster and therefore fails to run correctly. Such faster transfers can
+be achieved with HDDRIVER's "accelerated mode" at the expense of breaking
+compatibility with slower ACSI devices.
+
+Note 1: Sea of Colour fails with similar symptoms and for the same reason
+under Atari TOS when using AHDI or CBHD hard disk drivers or when using
+HDDRIVER without activating the "accelerated mode."
+
+Note 2: Sea of Colour can be run under EmuTOS from an IDE hard disk or an
+emulator's GEMDOS drive.
+
+
 Program: Spectrum 512
 ---------------------
 Error: crash during program initialisation
@@ -380,13 +415,13 @@ Use NVDI.
 
 Program: Warp9 v3.80 (and probably all other versions)
 ------------------------------------------------------
-Errors: Crash during EmuDesk startup (512K versions of EmuTOS)
+Errors: Crash during EmuDesk startup (512K/1024K versions of EmuTOS)
         EmuDesk screen drawing errors (other versions)
 
 Bug analysis:
 The crash is caused because Warp9 implicitly assumes that VDI's physical
 workstation structure is in the first 32K of memory.  This is not true
-for the 512K versions of EmuTOS.  The screen drawing errors are under
+for the 512K/1024K versions of EmuTOS.  The screen drawing errors are under
 investigation, but may be caused by assumptions about the contents of
 internal VDI structures.
 NOTE: under EmuTOS releases prior to 1.0, Warp9 fails to install and

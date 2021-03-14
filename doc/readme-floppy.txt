@@ -19,6 +19,7 @@ emutospl.st - Polish (PAL)
 emutosru.st - Russian (PAL)
 emutosse.st - Swedish (PAL)
 emutossg.st - Swiss German (PAL)
+emutostr.st - Turkish (PAL)
 emutosuk.st - English (PAL)
 emutosus.st - English (NTSC)
 

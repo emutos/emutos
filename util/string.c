@@ -28,8 +28,8 @@ char *strcpy(char *dest, const char *src)
 {
     char *tmp = dest;
 
-    while( (*tmp++ = *src++) )
-        ;
+    while( (*tmp++ = *src++) );
+	*dest = '\0';
     return dest;
 }
 #endif
