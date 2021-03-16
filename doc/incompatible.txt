@@ -413,19 +413,22 @@ Workaround:
 Use NVDI.
 
 
-Program: Warp9 v3.80 (and probably all other versions)
-------------------------------------------------------
-Errors: Crash during EmuDesk startup (512K/1024K versions of EmuTOS)
-        EmuDesk screen drawing errors (other versions)
+Program: Warp9 v3.80 (TT version)
+---------------------------------
+Errors: EmuDesk screen drawing errors with 512K/1024K EmuTOS images on a TT
 
 Bug analysis:
-The crash is caused because Warp9 implicitly assumes that VDI's physical
-workstation structure is in the first 32K of memory.  This is not true
-for the 512K/1024K versions of EmuTOS.  The screen drawing errors are under
-investigation, but may be caused by assumptions about the contents of
-internal VDI structures.
+The different versions of Warp9 for different systems correspond to
+differing internal layouts of the virtual workstation structure, which
+are related to the maximum number of bits/pixel supported.  Since the
+512K/1024K EmuTOS images must handle the Falcon (16bpp) as well as the
+TT (8bpp), the virtual workstation layout used by 512K/1024K EmuTOS
+images corresponds to that of the Falcon rather than the TT.
 NOTE: under EmuTOS releases prior to 1.0, Warp9 fails to install and
 therefore no errors are seen.
 
 Workaround:
-Use NVDI.
+When running EmuTOS on emulated or real TT hardware, use the Falcon
+version of Warp9 (WARP9_FA.PRG).
+NOTE: Since 192K/256K versions of EmuTOS only support ST(e) hardware,
+WARP9_ST.PRG is the version to use for them.
