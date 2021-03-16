@@ -1061,14 +1061,6 @@ static void ikbd_reset(void)
 
 void kbd_init(void)
 {
-#if CONF_SERIAL_CONSOLE_INTERRUPT_MODE
-# ifdef __mcoldfire__
-    coldfire_rs232_enable_interrupt();
-# else
-#  error FIXME: Enable interrupts on other hardware.
-# endif
-#endif /* CONF_SERIAL_CONSOLE_INTERRUPT_MODE */
-
 #if CONF_WITH_IKBD_ACIA
     /* initialize ikbd ACIA */
     ikbd_acia.ctrl = ACIA_RESET;        /* master reset */

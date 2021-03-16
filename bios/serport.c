@@ -122,14 +122,9 @@ static const MAPTAB maptable_mfp_tt =
 LONG bconstat1(void)
 {
 #if CONF_WITH_COLDFIRE_RS232
-# if CONF_SERIAL_CONSOLE_INTERRUPT_MODE
-    /* Input from the serial port will be read on interrupt,
-     * so we can't directly read the data. */
-    return 0;
-# else
+    /* FIXME: Fill iorec1 on interrupt and remove this special case */
     return coldfire_rs232_can_read() ? -1 : 0;
-# endif
-#elif CONF_WITH_MFP_RS232
+#else
     /* Character available in the serial input buffer? */
     if (iorec1.in.head == iorec1.in.tail) {
         return 0;   /* iorec empty */
@@ -137,8 +132,6 @@ LONG bconstat1(void)
     else {
         return -1;  /* not empty => input available */
     }
-#else
-    return 0;
 #endif
 }
 
@@ -149,8 +142,9 @@ LONG bconin1(void)
         ;
 
 #if CONF_WITH_COLDFIRE_RS232
+    /* FIXME: Fill iorec1 on interrupt and remove this special case */
     return coldfire_rs232_read_byte();
-#elif CONF_WITH_MFP_RS232
+#else
     /* Return character... */
     WORD old_sr;
     LONG value;
@@ -167,9 +161,6 @@ LONG bconin1(void)
     /* restore interrupts */
     set_sr(old_sr);
     return value;
-#else
-    /* The above loop will never return */
-    return 0;
 #endif
 }
 
@@ -791,6 +782,10 @@ void init_serport(void)
 #if CONF_WITH_MFP_RS232
     /* Set up a handler for MFP receive buffer full interrupt */
     mfpint(MFP_RBF, (LONG) mfp_rs232_rx_interrupt);
+#endif
+
+#ifdef __mcoldfire__
+    coldfire_rs232_enable_interrupt();
 #endif
 }
 

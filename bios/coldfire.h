@@ -42,11 +42,9 @@ void firebee_pic_write_byte(UBYTE b);
 void firebee_shutdown(void);
 #endif /* MACHINE_FIREBEE */
 
-#if CONF_SERIAL_CONSOLE_INTERRUPT_MODE
 void coldfire_rs232_enable_interrupt(void);
 void coldfire_rs232_interrupt_handler(void);
 void coldfire_int_35(void); /* In coldfire2.S */
-#endif /* CONF_SERIAL_CONSOLE_INTERRUPT_MODE */
 
 /*
  *  Structure pointed by the '_MCF' cookie's value

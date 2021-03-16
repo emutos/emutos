@@ -1403,12 +1403,18 @@
 # define CONF_SERIAL_CONSOLE 0
 #endif
 
-/* When possible, it's better to handle the serial console input with
- * interrupts. This is a requirement for FreeMiNT's advanced keyboard
- * processor. Otherwise, polling mode is enough for EmuTOS itself.
+/*
+ * Set CONF_SERIAL_CONSOLE_POLLING_MODE to 1 if ikbdiorec is not filled
+ * on serial interrupt when CONF_SERIAL_CONSOLE is enabled. This is handy
+ * in early stages when porting EmuTOS to new hardware, as this works even if
+ * bconstat1()/bconin1() are implemented by polling. Interrupts are generally
+ * more complicated to set up.
+ * Pros: Polling mode is good enough for EmuTOS itself.
+ * Cons: FreeMiNT's advanced keyboard processor doesn't support polling mode.
  */
-#define CONF_SERIAL_CONSOLE_INTERRUPT_MODE (CONF_SERIAL_CONSOLE && defined(__mcoldfire__))
-#define CONF_SERIAL_CONSOLE_POLLING_MODE (CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_INTERRUPT_MODE)
+#ifndef CONF_SERIAL_CONSOLE_POLLING_MODE
+# define CONF_SERIAL_CONSOLE_POLLING_MODE 0
+#endif
 
 /*
  * Set CONF_SERIAL_CONSOLE_ANSI to 1 if the terminal connected to the
@@ -1878,6 +1884,12 @@
 #if !CONF_SERIAL_CONSOLE
 # if CONF_SERIAL_CONSOLE_ANSI
 #  error CONF_SERIAL_CONSOLE_ANSI requires CONF_SERIAL_CONSOLE.
+# endif
+#endif
+
+#if !CONF_SERIAL_CONSOLE
+# if CONF_SERIAL_CONSOLE_POLLING_MODE
+#  error CONF_SERIAL_CONSOLE_POLLING_MODE requires CONF_SERIAL_CONSOLE.
 # endif
 #endif
 
