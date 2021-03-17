@@ -121,10 +121,6 @@ static const MAPTAB maptable_mfp_tt =
  */
 LONG bconstat1(void)
 {
-#if CONF_WITH_COLDFIRE_RS232
-    /* FIXME: Fill iorec1 on interrupt and remove this special case */
-    return coldfire_rs232_can_read() ? -1 : 0;
-#else
     /* Character available in the serial input buffer? */
     if (iorec1.in.head == iorec1.in.tail) {
         return 0;   /* iorec empty */
@@ -132,22 +128,18 @@ LONG bconstat1(void)
     else {
         return -1;  /* not empty => input available */
     }
-#endif
 }
 
 LONG bconin1(void)
 {
+    WORD old_sr;
+    LONG value;
+
     /* Wait for character at the serial line */
     while(!bconstat1())
         ;
 
-#if CONF_WITH_COLDFIRE_RS232
-    /* FIXME: Fill iorec1 on interrupt and remove this special case */
-    return coldfire_rs232_read_byte();
-#else
     /* Return character... */
-    WORD old_sr;
-    LONG value;
 
     /* disable interrupts */
     old_sr = set_sr(0x2700);
@@ -161,7 +153,6 @@ LONG bconin1(void)
     /* restore interrupts */
     set_sr(old_sr);
     return value;
-#endif
 }
 
 LONG bcostat1(void)
@@ -197,6 +188,22 @@ LONG bconout1(WORD dev, WORD b)
 #endif
 }
 
+void push_serial_iorec(UBYTE data)
+{
+    WORD tail;
+
+    tail = iorec1.in.tail + 1;
+    if (tail >= iorec1.in.size) {
+        tail = 0;
+    }
+    if (tail == iorec1.in.head) {
+        /* iorec full, do nothing */
+    } else {
+        *((UBYTE *)(iorec1.in.buf + tail)) = data;
+        iorec1.in.tail = tail;
+    }
+}
+
 /*
  * MFP Rsconf() routines
  */
@@ -227,23 +234,14 @@ static const struct mfp_rs232_table mfp_rs232_init[] = {
 
 void mfp_rs232_rx_interrupt_handler(void)
 {
-    WORD tail;
     WORD old_sr;
 
     /* disable interrupts */
     old_sr = set_sr(0x2700);
 
     if (MFP_BASE->rsr & 0x80) {
-        tail = iorec1.in.tail + 1;
-        if (tail >= iorec1.in.size) {
-            tail = 0;
-        }
-        if (tail == iorec1.in.head) {
-            /* iorec full, do nothing */
-        } else {
-            *((UBYTE *)(iorec1.in.buf + tail)) = MFP_BASE->udr;
-            iorec1.in.tail = tail;
-        }
+        UBYTE data = MFP_BASE->udr;
+        push_serial_iorec(data);
     }
 
     /* clear the interrupt service bit */

@@ -24,6 +24,7 @@
 #include "string.h"
 #include "delay.h"
 #include "asm.h"
+#include "serport.h"
 
 #if DEBUG_FLEXCAN
 static void flexcan_dump_registers(void);
@@ -204,27 +205,27 @@ void coldfire_rs232_enable_interrupt(void)
 /* Called from assembler routine coldfire_int_35 */
 void coldfire_rs232_interrupt_handler(void)
 {
-    UBYTE ascii;
+    UBYTE data;
 
     /* While there are pending bytes */
     while (MCF_UART_USR(RS232_UART_PORT) & MCF_UART_USR_RXRDY)
     {
-        /* Read the ASCII character */
-        ascii = MCF_UART_URB(RS232_UART_PORT);
+        /* Read the data byte */
+        data = MCF_UART_URB(RS232_UART_PORT);
 
 #if CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_POLLING_MODE
         /* And append a new IOREC value into the IKBD buffer */
-        push_ascii_ikbdiorec(ascii);
+        push_ascii_ikbdiorec(data);
 
 #if DEBUG_FLEXCAN
         /* Dump FlexCAN registers when Return is typed on the serial console */
-        if (ascii == '\r')
+        if (data == '\r')
             flexcan_dump_registers();
 #endif
 
 #else
-        /* FIXME: Do something with this data */
-        UNUSED(ascii);
+        /* And append a new IOREC value into the serial buffer */
+        push_serial_iorec(data);
 #endif /* CONF_SERIAL_CONSOLE */
     }
 }
