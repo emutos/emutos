@@ -49,10 +49,10 @@ The GEMDOS part is based on Digital Research's GEMDOS sources, which were
 made available under GPL license in 1999 by Caldera.
 
 The graphical parts like VDI and AES are now more or less fully
-implemented up to TOS v1.04 level. They work in all the graphics modes
-of the original Atari ST, with some extensions. For example, systems with
-VIDEL support 256 colours and 640x480 screen resolution. Some emulators
-can patch EmuTOS to work with much bigger screen resolutions.
+implemented up to TOS v3.06 level. They work in all the graphics modes
+of the original Atari ST(e) and TT, with some extensions. For example,
+systems with VIDEL support 256 colours and 640x480 screen resolution.
+Some emulators can patch EmuTOS to work with much bigger screen resolutions.
 
 The desktop is now pretty much the same as the one in TOS 2 or higher
 (although it is not fully implemented in the 192K ROMs for space reasons).
@@ -98,26 +98,27 @@ This is the currently supported original Atari hardware:
 - CPU support for M68000, M68030
 - FPU detection
 - 68030 MMU and cache
-- Memory controller (both ST and Falcon)
+- Memory controller (ST, TT, and Falcon)
 - TT-RAM
-- Monitor type detection (mono, RGB or VGA)
+- Monitor type detection (mono, RGB, or VGA)
 - DMA controller
 - WD 1772 / AJAX Floppy disk controller
 - MFP, MFP #2
+- SCC
 - PSG
 - ST shifter
 - STe shifter
 - TT shifter
 - VIDEL
 - ACIAs, IKBD protocol, mouse
-- MegaST Real-Time Clock (set clock not tested)
+- MegaST(e) Real-Time Clock
 - NVRAM (including RTC)
 - Blitter
 - Microwire
-- SCC
 - IDE
 - SCSI
 - ACSI
+- DSP
 
 EmuTOS also supports the following Atari-compatible hardware:
 - CPU support for M68010, M68020, M68040, M68060, ColdFire V4e, and Apollo 68080
@@ -132,11 +133,9 @@ EmuTOS also supports the following Atari-compatible hardware:
 - SD/MMC
 - The Native Features interface to some degree
 
-Currently unsupported hardware features:
-- DSP
-
 EmuTOS is also available on some non-Atari hardware:
 - Amiga (floppy or ROM for any Amiga, including MapROM support)
+- Apple Lisa (experimental)
 - ColdFire Evaluation Boards (M5484LITE, M5485EVB)
 - Vampire v4 standalone board
 

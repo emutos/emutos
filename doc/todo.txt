@@ -1,11 +1,8 @@
 General
 
 BIOS/XBIOS
-- implement missing XBIOS calls (e.g. Falcon DSP functions)
 - reduce the number of 'extern' in .c files
-- check that RAM disks work
 - misc. TODOs in floppy.c
-- implement full XHDI 1.30
 
 BDOS (GEMDOS)
 - move mem-only routines out of proc.c into umem.c or iumem.c
