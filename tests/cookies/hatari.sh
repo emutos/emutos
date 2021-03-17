@@ -15,7 +15,7 @@ if ! command -v hatari >/dev/null 2>&1; then
 fi
 
 if [ -z "$EMUTOS" ]; then
-    export EMUTOS=../../etos512k.img
+    export EMUTOS=../../etos1024k.img
 fi
 
 export SDL_VIDEODRIVER=dummy
