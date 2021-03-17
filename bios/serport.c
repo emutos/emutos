@@ -27,6 +27,7 @@
 #include "vectors.h"
 #include "coldfire.h"
 #include "amiga.h"
+#include "ikbd.h"
 
 /*
  * defines
@@ -241,7 +242,13 @@ void mfp_rs232_rx_interrupt_handler(void)
 
     if (MFP_BASE->rsr & 0x80) {
         UBYTE data = MFP_BASE->udr;
+#if CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_POLLING_MODE
+        /* And append a new IOREC value into the IKBD buffer */
+        push_ascii_ikbdiorec(data);
+#else
+        /* And append a new IOREC value into the serial buffer */
         push_serial_iorec(data);
+#endif
     }
 
     /* clear the interrupt service bit */
