@@ -69,6 +69,7 @@ help:
 	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
 	@echo "all192  all 192 KB images"
 	@echo "all256  all 256 KB images"
+	@echo "all512  all 512 KB images"
 	@echo "allpak3 all PAK/3 images"
 	@echo "allprg  all emutos*.prg"
 	@echo "allflop all emutos*.st"
@@ -517,13 +518,14 @@ $(ROM_256): emutos.img mkrom
 # 512kB Image (for TT or Falcon; also usable for ST/STe under Hatari)
 #
 
-ROM_512 = etos512k.img
-SYMFILE = $(addsuffix .sym,$(basename $(ROM_512)))
+ROM_512 = etos512$(UNIQUE).img
 
 .PHONY: 512
-512: OPTFLAGS = $(SMALL_OPTFLAGS)
+NODEP += 512
+512: UNIQUE = $(COUNTRY)
 512: override DEF += -DTARGET_512
-512: $(ROM_512) $(SYMFILE)
+512:
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_512=$(ROM_512) $(ROM_512)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
@@ -985,6 +987,17 @@ allpak3:
 	  echo "sleep 1"; \
 	  sleep 1; \
 	  $(MAKE) pak3 UNIQUE=$$i || exit 1; \
+	done
+
+.PHONY: all512
+NODEP += all512
+all512:
+	@for i in $(COUNTRIES); \
+	do \
+	  echo; \
+	  echo "sleep 1"; \
+	  sleep 1; \
+	  $(MAKE) 512 UNIQUE=$$i || exit 1; \
 	done
 
 .PHONY: all256

@@ -1,46 +1,37 @@
-EmuTOS - 512 KB version
+EmuTOS - 512 KB versions
 
-This ROM is suitable for the following hardware:
+These ROMs are suitable for the following hardware:
 - TT
 - Falcon
 - emulators of the above
 
 Note: Extra hardware is autodetected.
 
-Some legacy programs may not work with a 512k image; for these one may
-need to use a smaller EmuTOS image.
+The desktop features are comparable to Atari TOS 3 or 4.
 
-etos512k.img - Multilanguage
-etos512k.sym - Symbol address information for Hatari debugger and profiler
+Each ROM contains a single language:
+
+etos512cz.img - Czech (PAL)
+etos512de.img - German (PAL)
+etos512es.img - Spanish (PAL)
+etos512fi.img - Finnish (PAL)
+etos512fr.img - French (PAL)
+etos512gr.img - Greek (PAL)
+etos512hu.img - Hungarian (PAL)
+etos512it.img - Italian (PAL)
+etos512nl.img - Dutch (PAL)
+etos512no.img - Norwegian (PAL)
+etos512pl.img - Polish (PAL)
+etos512ru.img - Russian (PAL)
+etos512se.img - Swedish (PAL)
+etos512sg.img - Swiss German (PAL)
+etos512tr.img - Turkish (PAL)
+etos512us.img - English (NTSC)
+etos512uk.img - English (PAL)
 
 The following optional files are also supplied:
 emuicon.rsc - contains additional icons for the desktop
 emuicon.def - definition file for the above
-
-Additional information on debugging EmuTOS and its software compatibility
-is included with Hatari:
-	https://hatari.tuxfamily.org/doc/emutos.txt
-
-The default language is English.  Other supported languages are:
-- Czech
-- German
-- Spanish
-- Finnish
-- French
-- Greek
-- Hungarian
-- Italian
-- Dutch
-- Norwegian
-- Polish
-- Russian
-- Swedish
-- Swiss German
-- Turkish
-They can be used by setting the NVRAM appropriately.  If you wish to use
-this version of the ROM on a machine without NVRAM, the default language
-can be changed by using the tos-lang-change tool included with the EmuTOS
-sources.
 
 Notes on possible points of confusion
 1. The emuicon.rsc file format differs from deskicon.rsc used by later
@@ -51,6 +42,6 @@ but the keyboard layout to Norwegian/Swedish.
 emulator supporting NatFeats (under Hatari, you need to enable this
 with the "--natfeats on" option).
 
-This ROM image has been built using:
-make 512
+These ROM images have been built using:
+make all512
 
