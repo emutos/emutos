@@ -1,0 +1,31 @@
+#
+# po/LINGUAS - languages file for 'bug'
+#
+# This file contains a mapping of languages to character sets.
+#
+# For multi-language flavours of EmuTOS, the translations for
+# all languages listed here will be included in langs.c by
+# 'bug make'.
+#
+# For single-language flavours of EmuTOS, 'bug translate' will
+# use this file to determine the appropriate character set.
+#
+# Each line consists of a two-character language specification
+# followed by the destination character set.
+#
+de atarist
+fr atarist
+es atarist
+it atarist
+fi atarist
+nl atarist
+
+cs latin2
+hu latin2
+pl latin2
+
+ru russian-atarist
+
+gr cp737
+
+tr cp1254

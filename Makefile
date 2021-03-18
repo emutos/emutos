@@ -118,17 +118,6 @@ UNIQUEARG = -u$(UNIQUE)
 endif
 
 #
-# Group-of-countries support: if GROUP is defined, then multilingual
-# versions of EmuTOS will be built with just the associated countries
-# (as defined by localise.ctl).
-#
-GROUP =
-GROUPARG =
-ifneq (,$(GROUP))
-GROUPARG = -g$(GROUP)
-endif
-
-#
 # Choose the features that should be included into EmuTOS
 #
 
@@ -879,20 +868,20 @@ lisaboot.img: obj/lisaboot.o obj/bootram.o
 obj/lisaboot.o: obj/ramtos.h
 
 #
-# localisation support: create bios/ctables.h include/i18nconf.h po/LINGUAS
+# localisation support: create bios/ctables.h include/i18nconf.h
 #
-# we group targets, since localise generates all three targets at the same time
+# we group targets, since localise generates both targets at the same time
 #
 
-GEN_SRC += bios/ctables.h include/i18nconf.h po/LINGUAS
-TOCLEAN += localise include/i18nconf.h bios/ctables.h po/LINGUAS
+GEN_SRC += bios/ctables.h include/i18nconf.h
+TOCLEAN += localise include/i18nconf.h bios/ctables.h
 
 NODEP += localise
 localise: tools/localise.c
 	$(NATIVECC) $< -o $@
 
-bios/ctables.h include/i18nconf.h po/LINGUAS &: obj/country obj/group localise.ctl localise
-	./localise $(GROUPARG) $(UNIQUEARG) localise.ctl bios/ctables.h include/i18nconf.h po/LINGUAS
+bios/ctables.h include/i18nconf.h &: obj/country localise.ctl localise
+	./localise $(UNIQUEARG) localise.ctl bios/ctables.h include/i18nconf.h
 
 #
 # NLS support
@@ -1103,26 +1092,6 @@ obj/country: always-execute-recipe
 	  echo "rm -f $$i $$j"; \
 	  rm -f $$i $$j; \
 	done
-
-#
-# obj/group contains the current value of $(GROUP).  to prevent
-# unnecessary rebuilds, it is only updated when $(GROUP) changes.
-#
-
-TOCLEAN += obj/group
-
-obj/group: always-execute-recipe
-	@echo $(GROUP) > lastgroup.tmp; \
-	if [ -e $@ ]; \
-	then \
-	  if cmp -s lastgroup.tmp $@; \
-	  then \
-	    rm lastgroup.tmp; \
-	    exit 0; \
-	  fi; \
-	fi; \
-	echo "echo $(GROUP) > $@"; \
-	mv lastgroup.tmp $@;
 
 #
 # OS header
