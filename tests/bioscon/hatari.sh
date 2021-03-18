@@ -8,6 +8,8 @@
 # option any later version.  See doc/license.txt for details.
 
 echo "Bioscon test:"
+echo "##disabled##"
+exit 0
 
 if ! command -v hatari >/dev/null 2>&1; then
     echo "ERROR: You must install hatari to run this test."
