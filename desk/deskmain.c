@@ -573,10 +573,10 @@ static void men_update(void)
     menu_ienable(tree, BLITITEM, FALSE); // Cannot disable blitter
     menu_icheck(tree, BLITITEM, TRUE);
 #else
-  //#if CONF_WITH_BLITTER
+    #if CONF_WITH_BLITTER
     menu_ienable(tree, BLITITEM, blitter_is_present);
     menu_icheck(tree, BLITITEM, G.g_blitter);
-  //#endif
+    #endif
 #endif
 
 #if CONF_WITH_CACHE_CONTROL
