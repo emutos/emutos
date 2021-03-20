@@ -870,7 +870,10 @@ obj/lisaboot.o: obj/ramtos.h
 #
 # localisation support: create bios/ctables.h include/i18nconf.h
 #
-# we group targets, since localise generates both targets at the same time
+# we would like to group targets, since localise generates both targets
+# at the same time.  however, this is not supported until gcc make 4.2.
+# so that we can use old versions of make, we just run localise twice
+# instead, creating a .tmp file each time as a byproduct.
 #
 
 GEN_SRC += bios/ctables.h include/i18nconf.h
@@ -880,8 +883,11 @@ NODEP += localise
 localise: tools/localise.c
 	$(NATIVECC) $< -o $@
 
-bios/ctables.h include/i18nconf.h &: obj/country localise.ctl localise
-	./localise $(UNIQUEARG) $(MULTIKEYBD) localise.ctl bios/ctables.h include/i18nconf.h
+bios/ctables.h: obj/country localise.ctl localise
+	./localise $(UNIQUEARG) $(MULTIKEYBD) localise.ctl bios/ctables.h localise1.tmp
+
+include/i18nconf.h: obj/country localise.ctl localise
+	./localise $(UNIQUEARG) $(MULTIKEYBD) localise.ctl localise2.tmp include/i18nconf.h
 
 #
 # NLS support
