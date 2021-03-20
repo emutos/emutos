@@ -34,6 +34,9 @@
  *          -u<unique>  is optional and specifies a unique country name; if set,
  *                      the generated files will be set up to produce a version
  *                      of EmuTOS that supports only country <unique>.
+ *          -k          is optional; if set, the generated files will be set up
+ *                      to produce a version of EmuTOS that supports multiple
+ *                      keyboards even if the -u option is specified
  *          <ctlfile>   is the name of the control file
  *          <tblfile>   is the name of the ctables.h file
  *          <i18nfile>  is the name of the i18nconf.h file
@@ -46,6 +49,9 @@
  *
  *  v1.1    roger burrows, march/2021
  *          remove 'group' & related stuff, no longer used
+ *
+ *  v1.2    roger burrows, march/2021
+ *          add -k option
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,7 +69,7 @@
  *  our own defines & structures
  */
 #define PROGRAM_NAME    "localise"
-#define VERSION         "v1.0"
+#define VERSION         "v1.2"
 
 /*
  * base language: the language used in the resources & message texts
@@ -112,6 +118,7 @@ const char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2021 by Roger B
 "This program is licensed under the GNU General Public License.\n"
 "Please see LICENSE.TXT for details.\n";
 
+int multikeybd = 0;
 int verbose = 0;
 
 char unique[MAX_STRLEN] = "";       /* input */
@@ -506,7 +513,7 @@ static void write_keyb_stuff(FILE *fp)
     /*
      * create #defines for indexes into keytables[]
      */
-    if (!unique_ptr)
+    if (multikeybd)
     {
         fprintf(fp, "/* Indexes of keyboard entries inside keytables[] */\n");
         for (i = 0; i < keytable_count; i++)
@@ -514,20 +521,25 @@ static void write_keyb_stuff(FILE *fp)
             copy2upr(uc_keytable, keytable[i]);
             fprintf(fp, "#define KEYB_%s %d\n", uc_keytable, i);
         }
-        fprintf(fp, "\n");
     }
+    else
+    {
+        copy2upr(uc_keytable, unique_ptr->keyboard);
+        fprintf(fp, "#define KEYB_%s 0\n", uc_keytable);
+    }
+    fprintf(fp, "\n");
 
     /*
      * create #includes for keyboard tables
      */
-    if (unique_ptr)
-    {
-        fprintf(fp, "#include \"keyb_%s.h\"\n", unique_ptr->keyboard);
-    }
-    else
+    if (multikeybd)
     {
         for (i = 0; i < keytable_count; i++)
             fprintf(fp, "#include \"keyb_%s.h\"\n", keytable[i]);
+    }
+    else
+    {
+        fprintf(fp, "#include \"keyb_%s.h\"\n", unique_ptr->keyboard);
     }
     fprintf(fp, "\n");
 
@@ -536,14 +548,14 @@ static void write_keyb_stuff(FILE *fp)
      */
     fprintf(fp, "static const struct keytbl *const keytables[] = {\n");
 
-    if (unique_ptr)
-    {
-        fprintf(fp, "    &keytbl_%s\n", unique_ptr->keyboard);
-    }
-    else
+    if (multikeybd)
     {
         for (i = 0; i < keytable_count; i++)
             fprintf(fp, "    &keytbl_%s,\n", keytable[i]);
+    }
+    else
+    {
+        fprintf(fp, "    &keytbl_%s\n", unique_ptr->keyboard);
     }
     fprintf(fp, "};\n\n");
 }
@@ -555,19 +567,27 @@ static void write_countries(FILE *fp)
     char uc_country[MAX_STRLEN], uc_keyboard[MAX_STRLEN], uc_charset[MAX_STRLEN];
 
     /*
-     * there is no countries[] array for a unique country
+     * create countries[]
      */
-    if (unique_ptr)
-        return;
-
     fprintf(fp, "static const struct country_record countries[] = {\n");
-    for (i = 0, entry = control; i < control_count; i++, entry++)
+    if (multikeybd)
     {
-        copy2upr(uc_country, entry->country);
-        copy2upr(uc_keyboard, entry->keyboard);
-        copy2upr(uc_charset, entry->charset);
+        for (i = 0, entry = control; i < control_count; i++, entry++)
+        {
+            copy2upr(uc_country, entry->country);
+            copy2upr(uc_keyboard, entry->keyboard);
+            copy2upr(uc_charset, unique_ptr?unique_ptr->charset:entry->charset);
+            fprintf(fp, "    { COUNTRY_%s, \"%s\", KEYB_%s, CHARSET_%s, %s },\n",
+                    uc_country, entry->language, uc_keyboard, uc_charset, entry->idt);
+        }
+    }
+    else
+    {
+        copy2upr(uc_country, unique_ptr->country);
+        copy2upr(uc_keyboard, unique_ptr->keyboard);
+        copy2upr(uc_charset, unique_ptr->charset);
         fprintf(fp, "    { COUNTRY_%s, \"%s\", KEYB_%s, CHARSET_%s, %s },\n",
-                uc_country, entry->language, uc_keyboard, uc_charset, entry->idt);
+                uc_country, unique_ptr->language, uc_keyboard, uc_charset, unique_ptr->idt);
     }
     fprintf(fp, "};\n\n");
 }
@@ -657,9 +677,12 @@ int main(int argc,char *argv[])
     int n;
     time_t t;
 
-    while((n=getopt(argc, argv, "u:v")) != -1)
+    while((n=getopt(argc, argv, "ku:v")) != -1)
     {
         switch(n) {
+        case 'k':
+            multikeybd++;
+            break;
         case 'u':
             if (optarg)
                 copy2lwr(unique, optarg);
@@ -683,9 +706,14 @@ int main(int argc,char *argv[])
     tbl_file = argv[optind++];
     i18n_file = argv[optind];
 
-    if (verbose) {
-        fprintf(stderr, "Unique: %s\n",
-                unique[0]?unique:"(none)");
+    /* we always create multiple keyboards if unique isn't specified */
+    if (!unique[0])
+        multikeybd++;
+
+    if (verbose)
+    {
+        fprintf(stderr, "Unique: %s\n", unique[0]?unique:"(none)");
+        fprintf(stderr, "Multiple keyboards: %s\n", multikeybd?"yes":"no");
         fprintf(stderr, "Input file: %s\n", ctl_file);
         fprintf(stderr, "Output files: %s, %s\n",
                 tbl_file, i18n_file);

@@ -514,7 +514,7 @@ NODEP += 512
 512: UNIQUE = $(COUNTRY)
 512: override DEF += -DTARGET_512
 512:
-	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_512=$(ROM_512) $(ROM_512)
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) MULTIKEYBD='-k' ROM_512=$(ROM_512) $(ROM_512)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
@@ -881,7 +881,7 @@ localise: tools/localise.c
 	$(NATIVECC) $< -o $@
 
 bios/ctables.h include/i18nconf.h &: obj/country localise.ctl localise
-	./localise $(UNIQUEARG) localise.ctl bios/ctables.h include/i18nconf.h
+	./localise $(UNIQUEARG) $(MULTIKEYBD) localise.ctl bios/ctables.h include/i18nconf.h
 
 #
 # NLS support
