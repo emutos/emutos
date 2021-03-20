@@ -13,7 +13,6 @@
  */
 
 #include "emutos.h"
-#include "gemerror.h"
 #include "tosvars.h"
 #include "chardev.h"
 #include "conout.h"
@@ -65,14 +64,12 @@ void chardev_init(void)
 int i;
 
     /* initialise bios device vectors */
-    for (i = 0; i < NUM_CHAR_VECS; i++)
+    for (i = 0; i < NUM_CHAR_VECS; i++) {
         bconstat_vec[i] = bconstat_init[i];
-    for (i = 0; i < NUM_CHAR_VECS; i++)
         bconin_vec[i] = bconin_init[i];
-    for (i = 0; i < NUM_CHAR_VECS; i++)
         bcostat_vec[i] = bcostat_init[i];
-    for (i = 0; i < NUM_CHAR_VECS; i++)
         bconout_vec[i] = bconout_init[i];
+    }
 
     /* setup serial output functions */
     aux_stat = just_rts;
