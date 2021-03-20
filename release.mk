@@ -75,9 +75,9 @@ NODEP += release-512k
 RELEASE_512K = emutos-512k-$(VERSION)
 release-512k:
 	$(MAKE) clean
-	$(MAKE) 512
+	$(MAKE) all512
 	mkdir $(RELEASE_DIR)/$(RELEASE_512K)
-	cp etos512k.img etos512k.sym $(RELEASE_DIR)/$(RELEASE_512K)
+	cp etos512*.img $(RELEASE_DIR)/$(RELEASE_512K)
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_512K)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_512K)/emuicon.rsc
 	cat doc/readme-512k.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_512K)/readme.txt

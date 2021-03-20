@@ -8,7 +8,7 @@ Other toolchains may also work.  However, you will not be able to use one
 based on GCC 2, for several reasons.  The most important of these is that
 the generated binaries are just too large.
 
-You will also need GNU make (tested with make 4.2.1).
+You will also need GNU make (tested with make 3.81 & 4.2.1).
 
 Building EmuTOS
 ===============
@@ -58,6 +58,7 @@ EmuTOS binaries
 192         etos192us.img, EmuTOS ROM padded to size 192 KB (starting at 0x00fc0000)
 256         etos256us.img, EmuTOS ROM padded to size 256 KB (starting at 0x00e00000)
 512         etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0x00e00000)
+1024        etos1024k.img, EmuTOS ROM padded to size 1024 KB (starting at 0x00e00000)
 aranym      emutos-aranym.img, suitable for ARAnyM
 firebee     emutosfb.s19, to be flashed on the FireBee
 firebee-prg emutos.prg, a RAM tos for the FireBee
@@ -67,12 +68,13 @@ amigaflop   emutos.adf, EmuTOS RAM as Amiga boot floppy
 amigaflopvampire emutos-vampire.adf, EmuTOS RAM as Amiga boot floppy optimized for Vampire V2
 amigavampire     emutos-vampire.rom, EmuTOS ROM for Amiga optimized for Vampire V2
 v4sa        emutos-vampire-v4sa.rom, EmuTOS ROM for Amiga Vampire V4 Standalone
-m548x-dbug  emutos-m548x-dbug.s19, EmuTOS-RAM for dBUG on ColdFire Evaluation Boards
-m548x-bas   emutos-m548x-bas.s19, EmuTOS-RAM for BaS_gcc on ColdFire Evaluation Boards
+lisaflop    emutos.dc42, EmuTOS RAM as Apple Lisa boot floppy
+m548x-dbug  emutos-m548x-dbug.s19, EmuTOS for dBUG on ColdFire Evaluation Boards
+m548x-bas   emutos-m548x-bas.s19, EmuTOS for BaS_gcc on ColdFire Evaluation Boards
 m548x-prg   emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc
 prg         emutos.prg, a RAM tos
-flop        emutos.st, a bootable floppy with RAM tos
-pak3        etospak3us.img, EmuTOS ROM suitable for PAK/3 systems
+flop        emutosus.st, a bootable floppy with RAM tos
+pak3        etospak3us.img, suitable for PAK/3 systems
 cart        etoscart.img, EmuTOS as a diagnostic cartridge
 
 Binary targets modifiers
@@ -87,11 +89,11 @@ DEF='-DSOMEDEFINE=value'
 Utility targets
 ---------------
 bugready    for translations: sets up files in preparation for 'bug update'
+version     display the EmuTOS version
 
 Debug targets
 -------------
 dsm         dsm.txt, an edited disassembly of emutos.img
-*.dsm       disassembly of any .c or almost any .img file
 
 Git-related targets
 -------------------
@@ -100,61 +102,16 @@ charset     check the charset of all the source files
 crlf        convert all end-of-lines to LF
 expand      expand tabs to spaces
 gitready    ensure the files have a proper format for Git (same as 'make crlf expand')
-checkindent try 'indent' without altering the files
-indent      indent all files - never done yet :-(
+help        displays a complete list of targets
 
 Release-related targets
 -------------------
 all192      all 192 KB images
 all256      all 256 KB images
-allpak3     all etospak3*.img
+allpak3     all PAK/3 images
 allprg      all emutos*.prg
 allflop     all emutos*.st
 release     build the release archives into release-archives
-
-
-STonX-specific notes
-=======================
-
-EmuTOS now no longer needs changes to STonX. It will run on a normal STonX.
-
-But, if you want to see debugging output in STonX, you need to do two
-things:
-
-1. implement a write_native function in gemdos.c of STonX:
-
-    /* Print string from emulated side */
-    void write_native(char * addr)
-    {
-        char buf[1024];
-        int n;
-
-        for(n = 0 ; n < 1023 ; n++) {  /* Fill string char by char */
-            if ( (buf[n]=LM_UB(MEM(addr++))) == 0) break;
-        }
-        buf[1023] = 0;
-        fprintf(stderr,"%s", buf);
-    }
-
-    void call_native(UL as, UL func)
-    {
-    #if 0
-        fprintf(stderr,"Calling native %d\n",func);
-    #endif
-        switch (func)
-        {
-        case 0: /* Get the address, where string begins*/
-            write_native((char *)LM_UL(MEM(as)));
-            break;
-        case 1:
-    ...
-
-(STonX release 0.8.0 and later already has this function)
-
-2. Switch on STonX debugging output by setting STONX_NATIVE_PRINT to 1
-   before building EmuTOS. Do this by creating a file called localconf.h
-   (in the same folder as the EmuTOS Makefile) with one line:
-   #define STONX_NATIVE_PRINT 1
 
 
 Good luck!

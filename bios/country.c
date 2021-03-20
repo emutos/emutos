@@ -207,7 +207,7 @@ const struct keytbl *get_keytbl(void)
 }
 
 /*
- * get_fonts - initialize country dependant font tables
+ * get_fonts - initialize country-dependent font tables
  */
 
 void get_fonts(const Fonthead **f6x6,

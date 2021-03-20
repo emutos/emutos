@@ -439,11 +439,6 @@ void gsx_start(void)
  */
 void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
 {
-    ptsin[0] = hx;
-    ptsin[1] = hy;
-    ptsin[2] = hx + hw - 1;
-    ptsin[3] = hy + hh - 1;
-
     gsx_attr(TRUE, mode, gl_tcolor);
     if (fis != gl_fis)
     {
@@ -455,6 +450,11 @@ void bb_fill(WORD mode, WORD fis, WORD patt, WORD hx, WORD hy, WORD hw, WORD hh)
         vsf_style(patt);
         gl_patt = patt;
     }
+
+    ptsin[0] = hx;
+    ptsin[1] = hy;
+    ptsin[2] = hx + hw - 1;
+    ptsin[3] = hy + hh - 1;
     vr_recfl(ptsin);
 }
 

@@ -36,7 +36,7 @@ MCS *mcs_ptr;
  * VDI handle n.  entry 0 is unused.
  */
 static Vwk *vwk_ptr[NUM_VDI_HANDLES+1];
-static Vwk phys_work;          /* attribute area for physical workstation */
+extern Vwk phys_work;       /* attribute area for physical workstation */
 
 
 /*
@@ -373,6 +373,29 @@ static void init_wk(Vwk * vwk)
 
 
 
+/*
+ * build a chain of Vwks
+ *
+ * this links all of the currently allocated Vwks together, as in
+ * Atari TOS.  some programs may depend on this.
+ */
+static void build_vwk_chain(void)
+{
+    Vwk *prev, **vwk;
+    WORD handle;
+
+    prev = &phys_work;
+    for (handle = VDI_PHYS_HANDLE+1, vwk = vwk_ptr+handle; handle <= LAST_VDI_HANDLE; handle++, vwk++) {
+        if (*vwk) {
+            prev->next_work = *vwk;
+            prev = *vwk;
+        }
+    }
+    prev->next_work = NULL;
+}
+
+
+
 void vdi_v_opnvwk(Vwk * vwk)
 {
     WORD handle;
@@ -407,6 +430,7 @@ void vdi_v_opnvwk(Vwk * vwk)
     vwk_ptr[handle] = vwk;
     vwk->handle = CONTRL[6] = handle;
     init_wk(vwk);
+    build_vwk_chain();
     CUR_WORK = vwk;
 }
 
@@ -422,6 +446,8 @@ void vdi_v_clsvwk(Vwk * vwk)
         return;
 
     vwk_ptr[handle] = NULL;         /* close it */
+
+    build_vwk_chain();              /* rebuild chain */
 
     /*
      * When we close a virtual workstation, Atari TOS and previous versions

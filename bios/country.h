@@ -1,5 +1,5 @@
 /*
- * country.h - _AKP, _IDT and country-dependant configuration
+ * country.h - _AKP, _IDT and country-dependent configuration
  *
  * Copyright (C) 2001-2019 The EmuTOS development team
  *

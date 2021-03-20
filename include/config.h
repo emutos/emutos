@@ -827,15 +827,6 @@
 #endif
 
 /*
- * Set CONF_MFP_RS232_USE_INTERRUPT to 1 to enable the use of
- * the MFP receive interrupt for MFP serial input. Use polling
- * if not enabled.
- */
-#ifndef CONF_MFP_RS232_USE_INTERRUPT
-# define CONF_MFP_RS232_USE_INTERRUPT 0
-#endif
-
-/*
  * Set CONF_WITH_TT_MFP to 1 to enable TT MFP support
  */
 #ifndef CONF_WITH_TT_MFP
@@ -1412,12 +1403,18 @@
 # define CONF_SERIAL_CONSOLE 0
 #endif
 
-/* When possible, it's better to handle the serial console input with
- * interrupts. This is a requirement for FreeMiNT's advanced keyboard
- * processor. Otherwise, polling mode is enough for EmuTOS itself.
+/*
+ * Set CONF_SERIAL_CONSOLE_POLLING_MODE to 1 if ikbdiorec is not filled
+ * on serial interrupt when CONF_SERIAL_CONSOLE is enabled. This is handy
+ * in early stages when porting EmuTOS to new hardware, as this works even if
+ * bconstat1()/bconin1() are implemented by polling. Interrupts are generally
+ * more complicated to set up.
+ * Pros: Polling mode is good enough for EmuTOS itself.
+ * Cons: FreeMiNT's advanced keyboard processor doesn't support polling mode.
  */
-#define CONF_SERIAL_CONSOLE_INTERRUPT_MODE (CONF_SERIAL_CONSOLE && defined(__mcoldfire__))
-#define CONF_SERIAL_CONSOLE_POLLING_MODE (CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_INTERRUPT_MODE)
+#ifndef CONF_SERIAL_CONSOLE_POLLING_MODE
+# define CONF_SERIAL_CONSOLE_POLLING_MODE 0
+#endif
 
 /*
  * Set CONF_SERIAL_CONSOLE_ANSI to 1 if the terminal connected to the
@@ -1872,12 +1869,6 @@
 # endif
 #endif
 
-#if !CONF_WITH_MFP_RS232
-# if CONF_MFP_RS232_USE_INTERRUPT
-#  error CONF_MFP_RS232_USE_INTERRUPT requires CONF_WITH_MFP_RS232.
-# endif
-#endif
-
 #if !CONF_WITH_ATARI_VIDEO
 # if CONF_WITH_STE_SHIFTER
 #  error CONF_WITH_STE_SHIFTER requires CONF_WITH_ATARI_VIDEO.
@@ -1893,6 +1884,12 @@
 #if !CONF_SERIAL_CONSOLE
 # if CONF_SERIAL_CONSOLE_ANSI
 #  error CONF_SERIAL_CONSOLE_ANSI requires CONF_SERIAL_CONSOLE.
+# endif
+#endif
+
+#if !CONF_SERIAL_CONSOLE
+# if CONF_SERIAL_CONSOLE_POLLING_MODE
+#  error CONF_SERIAL_CONSOLE_POLLING_MODE requires CONF_SERIAL_CONSOLE.
 # endif
 #endif
 

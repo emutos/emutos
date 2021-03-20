@@ -1,8 +1,6 @@
 Video problems:
 
 Atari Falcon / TOS v4 compatibility bugs:
-+ When Delmpaint exits, the desktop is not redrawn properly until a
-  mouse button is pressed.
 + There are many window management problems in Escape Paint (v0.72):
   windows are not completely redrawn when uncovered, windows cannot be
   moved, etc.
@@ -34,8 +32,6 @@ Problems that also occur in Atari TOS:
   In that case, the welcome screen is not displayed.
 
 Links to programs listed above:
-+ Delmpaint:
-  https://www.pouet.net/prod.php?which=29344
 + Escape Paint:
   https://www.pouet.net/prod.php?which=25328
 + FalcAMP:

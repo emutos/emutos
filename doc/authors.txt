@@ -31,19 +31,19 @@ The following is a list of 'recent' contributors - individuals involved in the
 EmuTOS project. In this project virtually everybody modifies every file;
 nevertheless here is an attempt at identifying who's guilty of what:
 
-Roger Burrows (RFB) <rfburrows at ymail.com>
+Roger Burrows (RFB) <roger.burrows at cantab.net>
 - Current project admin
 - Support for SD/MMC Cards on the FireBee
 - SCSI support
 - Improvements to IDE, CompactFlash, ACSI, and other mass-storage support
 - FAT16 partitions up to 2 GB (inspired by Didier Méquignon's BDOS fork)
 - Full support for Falcon video hardware
-- Real Falcon 030 support (cache, MMU, SCC, HD floppy)
+- Real Falcon 030 support (cache, MMU, SCC, HD floppy, DSP)
 - Real TT 030 support (video, MFP2)
 - Blitter support for horizontal lines/filled rectangles/raster graphics
 - Desktop and file selector improvements
 - EmuCON2
-- Tools: erd (EmuTOS Resource Decompiler) & draft (deletes items from desktop resource)
+- Tools: erd, draft, and localise
 - Various bug fixes and cleanups
 
 Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
@@ -56,6 +56,7 @@ Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
 - Initial IDE driver
 - Big improvements to FastRAM/Alt-RAM handling
 - Amiga support
+- Apple Lisa support
 - ColdFire Evaluation Boards support
 - Apollo 68080 support
 - Various bug fixes and cleanups
@@ -67,18 +68,18 @@ Thomas Huth (THH) <huth at tuxfamily.org>
 - Automated tests at build time
 
 Christian Zietz <czietz at gmx.net>
-- ROM tests on real ST/STe hardware
+- ROM tests on real ST/STe/Falcon hardware
 - Invaluable low-level investigation of real hardware
-- Fix floppy/ACSI bug
-- Fix memory detection to support STs as well as STes
+- Re-implemented automatic builds via GitHub Actions
+- Fixed floppy/ACSI bug
+- Fixed memory detection to support STs as well as STes
 - Support for extended MBR partitions
-- Add IDE 'twisted cable' support
-- IDE performance improvements
-- Improved IDE device detection
-- Fix cold boot problems caused by some ST MMUs
-- Fix screen corruption after a reset on some Mega(STe) systems
-- Add-on graphics support: Nova/ET4000, Nova/Mach32, Volksfarben/ET4000
-- Miscellaneous bug fixes
+- Many IDE improvements: 'twisted cable' support, performance, device detection
+- Fixed cold boot problems caused by some ST MMUs
+- Fixed screen corruption after a reset on some Mega(STe) systems
+- Add-on graphics support: Nova/ET4000, Nova/Mach32, Vofa/ET4000, Wittich/ET4000
+- Added Magnum Alt-RAM support
+- Various bug fixes and cleanups
 
 Petr Stehlik (PES) <pstehlik at sophics.cz>
 - BIOS disk interface, BDOS filesystem
@@ -121,6 +122,9 @@ EmuTOS multi-lingual:
     George Nakos
     Christos Tziotzis <ctziotzis at gmail.com>
 
+- Hungarian translation
+    Róbert Tercsi <tercsirobi at gmail.com>
+
 - Italian translation
     Lodovico Zanier <lvc958 at libero.it>
 
@@ -134,6 +138,9 @@ EmuTOS multi-lingual:
 
 - Russian translation
     Dima Sobolev <avtandil33 at gmail.com>
+
+- Turkish translation
+    Levent Karakaþ <levent at mektup.at>
 
 
 Thanks also to all mailing list contributors for their help, and
@@ -239,6 +246,7 @@ Thorsten Otto <admin at tho-otto.de>
 - Inspired the support for window/desktop background configuration
 - Found many bugs in desktop shortcut handling
 - Help with resource manipulation programs
+- Provided online previews of translated resources
 - Miscellaneous bug fixes
 - Lots of source code cleanup
 
@@ -266,3 +274,9 @@ Christian Quante
 Keli Hlodversson
 - Replaced form_alert() icons with more TOS-like ones
 - Created new image for EmuDesk "About" dialog
+
+Anders Granlund
+- improved IDE ghost interface detection
+
+Rob Gowin
+- Interrupt-driven serial I/O

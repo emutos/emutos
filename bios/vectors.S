@@ -567,7 +567,7 @@ timerc_end:
         // our caller with RTE.
         rte
 
-#if CONF_MFP_RS232_USE_INTERRUPT
+#if CONF_WITH_MFP_RS232
         .globl _mfp_rs232_rx_interrupt
 _mfp_rs232_rx_interrupt:
 #ifdef __mcoldfire__

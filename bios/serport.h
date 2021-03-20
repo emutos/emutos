@@ -79,13 +79,14 @@ LONG bcostat1(void);
 LONG bconout1(WORD,WORD);
 ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr);
 void init_serport(void);
+void push_serial_iorec(UBYTE data);
 
 #if CONF_WITH_SCC
 void scc_init(void);
 LONG bconoutB(WORD,WORD);
 #endif
 
-#if CONF_MFP_RS232_USE_INTERRUPT
+#if CONF_WITH_MFP_RS232
 void mfp_rs232_rx_interrupt_handler(void);
 #endif
 

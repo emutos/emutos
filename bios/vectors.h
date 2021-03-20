@@ -98,7 +98,7 @@ extern WORD trap_save_area[];
 extern void (*vector_5ms)(void);              /* 200 Hz system timer */
 #endif
 
-#if CONF_MFP_RS232_USE_INTERRUPT
+#if CONF_WITH_MFP_RS232
 void mfp_rs232_rx_interrupt(void);
 #endif
 

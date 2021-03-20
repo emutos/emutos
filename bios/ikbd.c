@@ -235,13 +235,10 @@ void push_ascii_ikbdiorec(UBYTE ascii)
 LONG bconstat2(void)
 {
 #if CONF_SERIAL_CONSOLE_POLLING_MODE
-    /*
-     * Note: If device 1 is the MFP, whether or not the MFP is actually
-     * polled or is interrupt-driven depends on
-     * CONF_MFP_RS232_USE_INTERRUPT.
-     */
+    /* Poll the serial port */
     return bconstat(1);
 #else
+    /* Check the IKBD IOREC */
     if (ikbdiorec.head == ikbdiorec.tail) {
         return 0;               /* iorec empty */
     } else {
@@ -254,11 +251,11 @@ LONG bconin2(void)
 {
     ULONG value;
 #if CONF_SERIAL_CONSOLE_POLLING_MODE
-    /* See note above about whether or not the MFP is actually polled
-       in the bconin(1) call. */
+    /* Poll the serial port */
     UBYTE ascii = (UBYTE)bconin(1);
     value = ikbdiorec_from_ascii(ascii);
 #else
+    /* Check the IKBD IOREC */
     WORD old_sr;
 
     while (!bconstat2()) {
@@ -1064,14 +1061,6 @@ static void ikbd_reset(void)
 
 void kbd_init(void)
 {
-#if CONF_SERIAL_CONSOLE_INTERRUPT_MODE
-# ifdef __mcoldfire__
-    coldfire_rs232_enable_interrupt();
-# else
-#  error FIXME: Enable interrupts on other hardware.
-# endif
-#endif /* CONF_SERIAL_CONSOLE_INTERRUPT_MODE */
-
 #if CONF_WITH_IKBD_ACIA
     /* initialize ikbd ACIA */
     ikbd_acia.ctrl = ACIA_RESET;        /* master reset */

@@ -156,7 +156,7 @@ void setup_timer(MFP *mfp, WORD timer, WORD control, WORD data)
     }
 }
 
-static const WORD timer_num[] = { 13, 8, 5, 4 };
+static const WORD timer_num[] = { MFP_TIMERA, MFP_TIMERB, MFP_200HZ, MFP_TIMERD };
 
 void xbtimer(WORD timer, WORD control, WORD data, LONG vector)
 {

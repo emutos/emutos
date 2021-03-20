@@ -20,36 +20,32 @@
  *      . keyboard (two-character abbreviation, case is ignored)
  *      . character set (two-character abbreviation, case is ignored)
  *      . IDT (date/time) info (string using #define'd strings, case is important)
- *      . group (1 or 2 characters, case is ignored).  note that a special
- *        value of * matches all values in the -g argument
  *  Input arguments (see below) are used to extract the relevant data.
  *
  *  The following files are created:
  *      . ctables.h, used by bios/country.c
  *      . i18nconf.h, used by multi-language support
- *      . LINGUAS, used by 'bug make'
  *
  *
- *  Syntax: localise [-v] [-u<unique>] [-g<group>] <country> <ctlfile> <tblfile> <i18nfile> <LINGfile>
+ *  Syntax: localise [-v] [-u<unique>] <ctlfile> <tblfile> <i18nfile>
  *
  *      where:
  *          -v          is optional; if set, the program is more talkative
  *          -u<unique>  is optional and specifies a unique country name; if set,
  *                      the generated files will be set up to produce a version
  *                      of EmuTOS that supports only country <unique>.
- *          -g<group>   is optional and specifies a group name; countries with
- *                      matching values in the control file will be included
- *                      (only when multi-country output is produced).
  *          <ctlfile>   is the name of the control file
  *          <tblfile>   is the name of the ctables.h file
  *          <i18nfile>  is the name of the i18nconf.h file
- *          <LINGfile>  is the name of the LINGUAS file
  *
  *
  *  version history
  *  ---------------
  *  v1.0    roger burrows, february/2021
  *          initial release
+ *
+ *  v1.1    roger burrows, march/2021
+ *          remove 'group' & related stuff, no longer used
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,7 +72,7 @@
 
 #define MAX_CTL_LINES   100             /* max number of non-comment control lines */
 #define MAX_LINELEN     255             /* (excluding terminator) for control file lines */
-#define NUM_CTL_FIELDS  6               /* fields per line */
+#define NUM_CTL_FIELDS  5               /* fields per line */
 #define MAX_FLDLEN      2               /* (excluding terminator) for all fields except idt */
 #define MAX_STRLEN      (MAX_FLDLEN+1)
 
@@ -88,7 +84,6 @@ typedef struct                      /* for input control file */
     char keyboard[MAX_STRLEN];
     char charset[MAX_STRLEN];
     char *idt;
-    char group[MAX_STRLEN];
 } CONTROL;
 
 /*
@@ -120,12 +115,10 @@ const char *copyright = PROGRAM_NAME " " VERSION " copyright (c) 2021 by Roger B
 int verbose = 0;
 
 char unique[MAX_STRLEN] = "";       /* input */
-char group[MAX_STRLEN] = "";
 char *ctl_file = NULL;
 
 char *tbl_file = NULL;              /* output files */
 char *i18n_file = NULL;
-char *LING_file = NULL;
 
 CONTROL control[MAX_CTL_LINES];
 int control_count = 0;              /* number of entries in above array */
@@ -148,25 +141,6 @@ char now[26];                       /* for current date/time */
 /*
  ***** general-purpose functions *****
  */
-
-/*
- * check if control record group matches group argument
- */
-static BOOL group_matches(CONTROL *entry)
-{
-    /* an empty group specification always matches */
-    if (!group[0])
-        return TRUE;
-
-    /* an asterisk in the control record always matches */
-    if (strcmp(entry->group, "*") == 0)
-        return TRUE;
-
-    if (strcmp(entry->group, group) == 0)
-        return TRUE;
-
-    return FALSE;
-}
 
 /*
  * convert a character set string to a flag bit
@@ -207,8 +181,7 @@ static int get_charsets(void)
     {
         for (i = 0, entry = control; i < control_count; i++, entry++)
         {
-            if (group_matches(entry))
-                needed_charsets |= decode_charset(entry->charset);
+            needed_charsets |= decode_charset(entry->charset);
         }
     }
 
@@ -216,47 +189,6 @@ static int get_charsets(void)
         fprintf(stderr, "unknown character set specification in control file\n");
 
     return needed_charsets;
-}
-
-/*
- * return bug-style destination charset name
- */
-static char *get_dest_charset(char *charset)
-{
-    char *p;
-
-    switch(decode_charset(charset))
-    {
-    default:
-        p = "atarist";
-        break;
-    case NEED_L2_CSET:
-        p = "latin2";
-        break;
-    case NEED_GR_CSET:
-        p = "cp737";
-        break;
-    case NEED_RU_CSET:
-        p = "russian-atarist";
-        break;
-    case NEED_TR_CSET:
-        p = "cp1254";
-        break;
-    }
-
-    return p;
-}
-
-/*
- * clear the 'ignore' flag in all control table entries
- */
-static void clear_ignore_flags(void)
-{
-    int i;
-    CONTROL *entry;
-
-    for (i = 0, entry = control; i < control_count; i++, entry++)
-        entry->ignore = FALSE;
 }
 
 /*
@@ -270,21 +202,6 @@ static void mark_matching_keyboard(char *keyboard)
     for (i = 0, entry = control; i < control_count; i++, entry++)
     {
         if (strcmp(keyboard, entry->keyboard) == 0)
-            entry->ignore = TRUE;
-    }
-}
-
-/*
- * set the 'ignore' flag in all entries with a matching language value
- */
-static void mark_matching_language(char *language)
-{
-    int i;
-    CONTROL *entry;
-
-    for (i = 0, entry = control; i < control_count; i++, entry++)
-    {
-        if (strcmp(language, entry->language) == 0)
             entry->ignore = TRUE;
     }
 }
@@ -364,7 +281,7 @@ static void usage(char *s)
 {
     if (*s)
         fprintf(stderr,"%s %s: %s\n", PROGRAM_NAME, VERSION, s);
-    fprintf(stderr,"usage: %s [-v] [-u<unique>] [-g<group>] <ctlfile> <tblfile> <i18nfile> <LINGfile>\n", PROGRAM_NAME);
+    fprintf(stderr,"usage: %s [-v] [-u<unique>] <ctlfile> <tblfile> <i18nfile>\n", PROGRAM_NAME);
 
     exit(1);
 }
@@ -401,8 +318,8 @@ static int read_control_file(char *path)
             continue;
 
         s[MAX_LINELEN] = '\0';      /* ensure nul termination */
-        n = sscanf(s, "%2s %2s %2s %2s %s %2s", entry.country, entry.language,
-                    entry.keyboard, entry.charset, idt, entry.group);
+        n = sscanf(s, "%2s %2s %2s %2s %s", entry.country, entry.language,
+                    entry.keyboard, entry.charset, idt);
 
         if (n <= 0)                 /* empty line, treat as comment */
             continue;
@@ -428,7 +345,6 @@ static int read_control_file(char *path)
         strcpy(p->keyboard, strlwr(entry.keyboard));
         strcpy(p->charset, strlwr(entry.charset));
         p->idt = xstrdup(idt);
-        strcpy(p->group, strlwr(entry.group));
 
         if (!p->idt)
         {
@@ -447,7 +363,6 @@ static int validate_control_file(void)
 {
     int i, rc = 0;
     CONTROL *entry;
-    BOOL found_group = group[0] ? FALSE : TRUE;
     BOOL found_unique = unique[0] ? FALSE : TRUE;
 
     for (i = 0, entry = control; i < control_count; i++, entry++)
@@ -462,8 +377,6 @@ static int validate_control_file(void)
             found_unique = TRUE;
             unique_ptr = entry;
         }
-        if (strcmp(group, entry->group) == 0)
-            found_group = TRUE;
         if (decode_charset(entry->charset) < 0)
         {
             fprintf(stderr, "invalid character set %s specified for country %s in control file\n",
@@ -477,11 +390,6 @@ static int validate_control_file(void)
         fprintf(stderr, "specified unique country %s not found in control file\n", unique);
         rc = -1;
     }
-    if (!found_group)
-    {
-        fprintf(stderr, "specified group %s not found in control file\n", group);
-        rc = -1;
-    }
 
     return rc;
 }
@@ -493,14 +401,11 @@ static void build_keytable(void)
 
     for (i = 0, entry = control; i < control_count; i++, entry++)
     {
-        if (group_matches(entry))
+        if (!entry->ignore)
         {
-            if (!entry->ignore)
-            {
-                strcpy(keytable[keytable_count++], entry->keyboard);
-                /* make sure we only include the keyboard once */
-                mark_matching_keyboard(entry->keyboard);
-            }
+            strcpy(keytable[keytable_count++], entry->keyboard);
+            /* make sure we only include the keyboard once */
+            mark_matching_keyboard(entry->keyboard);
         }
     }
 }
@@ -658,14 +563,11 @@ static void write_countries(FILE *fp)
     fprintf(fp, "static const struct country_record countries[] = {\n");
     for (i = 0, entry = control; i < control_count; i++, entry++)
     {
-        if (group_matches(entry))
-        {
-            copy2upr(uc_country, entry->country);
-            copy2upr(uc_keyboard, entry->keyboard);
-            copy2upr(uc_charset, entry->charset);
-            fprintf(fp, "    { COUNTRY_%s, \"%s\", KEYB_%s, CHARSET_%s, %s },\n",
-                    uc_country, entry->language, uc_keyboard, uc_charset, entry->idt);
-        }
+        copy2upr(uc_country, entry->country);
+        copy2upr(uc_keyboard, entry->keyboard);
+        copy2upr(uc_charset, entry->charset);
+        fprintf(fp, "    { COUNTRY_%s, \"%s\", KEYB_%s, CHARSET_%s, %s },\n",
+                uc_country, entry->language, uc_keyboard, uc_charset, entry->idt);
     }
     fprintf(fp, "};\n\n");
 }
@@ -750,83 +652,14 @@ static int write_i18n_file(char *path)
 }
 
 
-/*
- ***** output LINGUAS *****
- */
-static void write_LING_header(FILE *fp)
-{
-    fprintf(fp, "#\n");
-    fprintf(fp, "# %s - languages file for 'bug'\n", LING_file);
-    fprintf(fp, "#\n");
-    fprintf(fp, "# This file contains a mapping of languages to character sets.\n");
-    fprintf(fp, "#\n");
-    fprintf(fp, "# For multi-language flavours of EmuTOS, the translations for\n");
-    fprintf(fp, "# all languages listed here will be included in langs.c by\n");
-    fprintf(fp, "# 'bug make'.\n");
-    fprintf(fp, "#\n");
-    fprintf(fp, "# For single-language flavours of EmuTOS, 'bug translate' will\n");
-    fprintf(fp, "# use this file to determine the appropriate character set.\n");
-    fprintf(fp, "#\n");
-    fprintf(fp, "# Each line consists of a two-character language specification\n");
-    fprintf(fp, "# followed by the destination character set.\n");
-    fprintf(fp, "#\n");
-    fprintf(fp, "# This file was automatically generated by %s %s\n",
-                PROGRAM_NAME, VERSION);
-    fprintf(fp, "# on %s - do not alter!\n", now);
-    fprintf(fp, "#\n");
-}
-
-static int write_LING_file(char *path)
-{
-    int i;
-    CONTROL *entry;
-    FILE *fp;
-
-    fp = fopen(path, "w");
-    if (!fp)
-        return -1;
-
-    write_LING_header(fp);
-
-    clear_ignore_flags();   /* reset all ignore flags in table */
-
-    for (i = 0, entry = control; i < control_count; i++, entry++)
-    {
-        /* LINGUAS never includes the 'base' language */
-        if (strcmp(entry->language, BASE_LANGUAGE) == 0)
-            continue;
-
-        if (group_matches(entry))
-        {
-            if (entry->ignore)
-                continue;
-
-            fprintf(fp, "%s %s\n", entry->language, get_dest_charset(entry->charset));
-
-            /* make sure we only include the language once */
-            mark_matching_language(entry->language);
-        }
-    }
-
-    fclose(fp);
-
-    return 0;
-}
-
-
-
 int main(int argc,char *argv[])
 {
     int n;
     time_t t;
 
-    while((n=getopt(argc, argv, "g:u:v")) != -1)
+    while((n=getopt(argc, argv, "u:v")) != -1)
     {
         switch(n) {
-        case 'g':
-            if (optarg)
-                copy2lwr(group, optarg);
-            break;
         case 'u':
             if (optarg)
                 copy2lwr(unique, optarg);
@@ -843,20 +676,19 @@ int main(int argc,char *argv[])
     if (verbose)
         fputs(copyright, stderr);       /* announce us ... */
 
-    if (argc-optind != 4)
+    if (argc-optind != 3)
         usage("incorrect number of arguments");
 
     ctl_file = argv[optind++];
     tbl_file = argv[optind++];
-    i18n_file = argv[optind++];
-    LING_file = argv[optind];
+    i18n_file = argv[optind];
 
     if (verbose) {
-        fprintf(stderr, "Unique: %s / Group: %s\n",
-                unique[0]?unique:"(none)", group[0]?group:"(none)");
+        fprintf(stderr, "Unique: %s\n",
+                unique[0]?unique:"(none)");
         fprintf(stderr, "Input file: %s\n", ctl_file);
-        fprintf(stderr, "Output files: %s, %s, %s\n",
-                tbl_file, i18n_file, LING_file);
+        fprintf(stderr, "Output files: %s, %s\n",
+                tbl_file, i18n_file);
     }
 
     if (read_control_file(ctl_file) < 0)
@@ -878,8 +710,6 @@ int main(int argc,char *argv[])
     if (write_tbl_file(tbl_file) < 0)
         exit(1);
     if (write_i18n_file(i18n_file) < 0)
-        exit(1);
-    if (write_LING_file(LING_file) < 0)
         exit(1);
 
     if (verbose)

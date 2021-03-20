@@ -69,6 +69,7 @@ help:
 	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
 	@echo "all192  all 192 KB images"
 	@echo "all256  all 256 KB images"
+	@echo "all512  all 512 KB images"
 	@echo "allpak3 all PAK/3 images"
 	@echo "allprg  all emutos*.prg"
 	@echo "allflop all emutos*.st"
@@ -114,17 +115,6 @@ UNIQUEARG =
 ifneq (,$(UNIQUE))
 COUNTRY = $(UNIQUE)
 UNIQUEARG = -u$(UNIQUE)
-endif
-
-#
-# Group-of-countries support: if GROUP is defined, then multilingual
-# versions of EmuTOS will be built with just the associated countries
-# (as defined by localise.ctl).
-#
-GROUP =
-GROUPARG =
-ifneq (,$(GROUP))
-GROUPARG = -g$(GROUP)
 endif
 
 #
@@ -517,13 +507,14 @@ $(ROM_256): emutos.img mkrom
 # 512kB Image (for TT or Falcon; also usable for ST/STe under Hatari)
 #
 
-ROM_512 = etos512k.img
-SYMFILE = $(addsuffix .sym,$(basename $(ROM_512)))
+ROM_512 = etos512$(UNIQUE).img
 
 .PHONY: 512
-512: OPTFLAGS = $(SMALL_OPTFLAGS)
+NODEP += 512
+512: UNIQUE = $(COUNTRY)
 512: override DEF += -DTARGET_512
-512: $(ROM_512) $(SYMFILE)
+512:
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_512=$(ROM_512) $(ROM_512)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
@@ -877,20 +868,20 @@ lisaboot.img: obj/lisaboot.o obj/bootram.o
 obj/lisaboot.o: obj/ramtos.h
 
 #
-# localisation support: create bios/ctables.h include/i18nconf.h po/LINGUAS
+# localisation support: create bios/ctables.h include/i18nconf.h
 #
-# we group targets, since localise generates all three targets at the same time
+# we group targets, since localise generates both targets at the same time
 #
 
-GEN_SRC += bios/ctables.h include/i18nconf.h po/LINGUAS
-TOCLEAN += localise include/i18nconf.h bios/ctables.h po/LINGUAS
+GEN_SRC += bios/ctables.h include/i18nconf.h
+TOCLEAN += localise include/i18nconf.h bios/ctables.h
 
 NODEP += localise
 localise: tools/localise.c
 	$(NATIVECC) $< -o $@
 
-bios/ctables.h include/i18nconf.h po/LINGUAS &: obj/country obj/group localise.ctl localise
-	./localise $(GROUPARG) $(UNIQUEARG) localise.ctl bios/ctables.h include/i18nconf.h po/LINGUAS
+bios/ctables.h include/i18nconf.h &: obj/country localise.ctl localise
+	./localise $(UNIQUEARG) localise.ctl bios/ctables.h include/i18nconf.h
 
 #
 # NLS support
@@ -985,6 +976,17 @@ allpak3:
 	  echo "sleep 1"; \
 	  sleep 1; \
 	  $(MAKE) pak3 UNIQUE=$$i || exit 1; \
+	done
+
+.PHONY: all512
+NODEP += all512
+all512:
+	@for i in $(COUNTRIES); \
+	do \
+	  echo; \
+	  echo "sleep 1"; \
+	  sleep 1; \
+	  $(MAKE) 512 UNIQUE=$$i || exit 1; \
 	done
 
 .PHONY: all256
@@ -1090,26 +1092,6 @@ obj/country: always-execute-recipe
 	  echo "rm -f $$i $$j"; \
 	  rm -f $$i $$j; \
 	done
-
-#
-# obj/group contains the current value of $(GROUP).  to prevent
-# unnecessary rebuilds, it is only updated when $(GROUP) changes.
-#
-
-TOCLEAN += obj/group
-
-obj/group: always-execute-recipe
-	@echo $(GROUP) > lastgroup.tmp; \
-	if [ -e $@ ]; \
-	then \
-	  if cmp -s lastgroup.tmp $@; \
-	  then \
-	    rm lastgroup.tmp; \
-	    exit 0; \
-	  fi; \
-	fi; \
-	echo "echo $(GROUP) > $@"; \
-	mv lastgroup.tmp $@;
 
 #
 # OS header

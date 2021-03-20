@@ -27,6 +27,7 @@
 #include "vectors.h"
 #include "coldfire.h"
 #include "amiga.h"
+#include "ikbd.h"
 
 /*
  * defines
@@ -121,16 +122,6 @@ static const MAPTAB maptable_mfp_tt =
  */
 LONG bconstat1(void)
 {
-#if CONF_WITH_COLDFIRE_RS232
-# if CONF_SERIAL_CONSOLE_INTERRUPT_MODE
-    /* Input from the serial port will be read on interrupt,
-     * so we can't directly read the data. */
-    return 0;
-# else
-    return coldfire_rs232_can_read() ? -1 : 0;
-# endif
-#elif CONF_WITH_MFP_RS232
-# if CONF_MFP_RS232_USE_INTERRUPT
     /* Character available in the serial input buffer? */
     if (iorec1.in.head == iorec1.in.tail) {
         return 0;   /* iorec empty */
@@ -138,31 +129,18 @@ LONG bconstat1(void)
     else {
         return -1;  /* not empty => input available */
     }
-# else
-    /* FIXME: We ought to use Iorec() for this... */
-    if (MFP_BASE->rsr & 0x80)
-        return -1;
-    else
-        return 0;
-# endif
-#else
-    return 0;
-#endif
 }
 
 LONG bconin1(void)
 {
+    WORD old_sr;
+    LONG value;
+
     /* Wait for character at the serial line */
     while(!bconstat1())
         ;
 
-#if CONF_WITH_COLDFIRE_RS232
-    return coldfire_rs232_read_byte();
-#elif CONF_WITH_MFP_RS232
-# if CONF_MFP_RS232_USE_INTERRUPT
     /* Return character... */
-    WORD old_sr;
-    LONG value;
 
     /* disable interrupts */
     old_sr = set_sr(0x2700);
@@ -176,14 +154,6 @@ LONG bconin1(void)
     /* restore interrupts */
     set_sr(old_sr);
     return value;
-# else
-    /* FIXME: We ought to use Iorec() for this... */
-    return MFP_BASE->udr;
-# endif
-#else
-    /* The above loop will never return */
-    return 0;
-#endif
 }
 
 LONG bcostat1(void)
@@ -219,6 +189,22 @@ LONG bconout1(WORD dev, WORD b)
 #endif
 }
 
+void push_serial_iorec(UBYTE data)
+{
+    WORD tail;
+
+    tail = iorec1.in.tail + 1;
+    if (tail >= iorec1.in.size) {
+        tail = 0;
+    }
+    if (tail == iorec1.in.head) {
+        /* iorec full, do nothing */
+    } else {
+        *((UBYTE *)(iorec1.in.buf + tail)) = data;
+        iorec1.in.tail = tail;
+    }
+}
+
 /*
  * MFP Rsconf() routines
  */
@@ -247,24 +233,22 @@ static const struct mfp_rs232_table mfp_rs232_init[] = {
     { /*    50 */  2, 96 },
 };
 
-#if CONF_MFP_RS232_USE_INTERRUPT
 void mfp_rs232_rx_interrupt_handler(void)
 {
-    WORD tail;
     WORD old_sr;
 
     /* disable interrupts */
     old_sr = set_sr(0x2700);
 
-    tail = iorec1.in.tail + 1;
-    if (tail >= iorec1.in.size) {
-        tail = 0;
-    }
-    if (tail == iorec1.in.head) {
-        /* iorec full, do nothing */
-    } else {
-        *((UBYTE *)(iorec1.in.buf + tail)) = MFP_BASE->udr;
-        iorec1.in.tail = tail;
+    if (MFP_BASE->rsr & 0x80) {
+        UBYTE data = MFP_BASE->udr;
+#if CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_POLLING_MODE
+        /* And append a new IOREC value into the IKBD buffer */
+        push_ascii_ikbdiorec(data);
+#else
+        /* And append a new IOREC value into the serial buffer */
+        push_serial_iorec(data);
+#endif
     }
 
     /* clear the interrupt service bit */
@@ -273,7 +257,6 @@ void mfp_rs232_rx_interrupt_handler(void)
     /* restore interrupts */
     set_sr(old_sr);
 }
-#endif  /* CONF_MFP_RS232_INTERRUPT_MODE */
 
 #endif  /* CONF_WITH_MFP_RS232 */
 
@@ -801,9 +784,13 @@ void init_serport(void)
     (*rsconfptr)(B9600, 0, 0x88, 1, 1, 0);
 #endif
 
-#if CONF_MFP_RS232_USE_INTERRUPT
-    /* Set up a handler for MFP vector 12, the receive buffer full interrupt */
-    mfpint(0xc, (LONG) mfp_rs232_rx_interrupt);
+#if CONF_WITH_MFP_RS232
+    /* Set up a handler for MFP receive buffer full interrupt */
+    mfpint(MFP_RBF, (LONG) mfp_rs232_rx_interrupt);
+#endif
+
+#ifdef __mcoldfire__
+    coldfire_rs232_enable_interrupt();
 #endif
 }
 

@@ -10,28 +10,27 @@
 #
 # each line corresponds to one country code; the sequence of
 # data is as follows:
-#   <country> <language> <keyboard> <font> <IDT defines> <group>
+#   <country> <language> <keyboard> <font> <IDT defines>
 #
 # notes:
 # . fields are separated by white space
-# . <group> is used to split multi-language ROMs (* => all groups)
 #
-us us us st IDT_12H|IDT_MMDDYY|'/'  *
+us us us st IDT_12H|IDT_MMDDYY|'/'
 
-de de de st IDT_24H|IDT_DDMMYY|'.'  A
-fr fr fr st IDT_24H|IDT_DDMMYY|'/'  A
-uk us uk st IDT_12H|IDT_DDMMYY|'/'  A
-es es es st IDT_24H|IDT_DDMMYY|'/'  A
-it it it st IDT_24H|IDT_DDMMYY|'/'  A
-se us se st IDT_24H|IDT_DDMMYY|'/'  A
-sg de sg st IDT_24H|IDT_DDMMYY|'.'  A
-fi fi se st IDT_24H|IDT_DDMMYY|'.'  A
-no us no st IDT_24H|IDT_DDMMYY|'/'  A
-nl nl nl st IDT_24H|IDT_DDMMYY|'-'  A
+de de de st IDT_24H|IDT_DDMMYY|'.'
+fr fr fr st IDT_24H|IDT_DDMMYY|'/'
+uk us uk st IDT_12H|IDT_DDMMYY|'/'
+es es es st IDT_24H|IDT_DDMMYY|'/'
+it it it st IDT_24H|IDT_DDMMYY|'/'
+se us se st IDT_24H|IDT_DDMMYY|'/'
+sg de sg st IDT_24H|IDT_DDMMYY|'.'
+fi fi se st IDT_24H|IDT_DDMMYY|'.'
+no us no st IDT_24H|IDT_DDMMYY|'/'
+nl nl nl st IDT_24H|IDT_DDMMYY|'-'
 
-cz cs cz l2 IDT_24H|IDT_DDMMYY|'.'  B
-hu hu hu l2 IDT_24H|IDT_DDMMYY|'/'  B
-pl pl pl l2 IDT_24H|IDT_DDMMYY|'/'  B
-ru ru ru ru IDT_24H|IDT_DDMMYY|'/'  B
-gr gr gr gr IDT_24H|IDT_DDMMYY|'/'  B
-tr tr tr tr IDT_24H|IDT_DDMMYY|'.'  B
+cz cs cz l2 IDT_24H|IDT_DDMMYY|'.'
+hu hu hu l2 IDT_24H|IDT_DDMMYY|'/'
+pl pl pl l2 IDT_24H|IDT_DDMMYY|'/'
+ru ru ru ru IDT_24H|IDT_DDMMYY|'/'
+gr gr gr gr IDT_24H|IDT_DDMMYY|'/'
+tr tr tr tr IDT_24H|IDT_DDMMYY|'.'
