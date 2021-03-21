@@ -18,4 +18,10 @@ Changelog:
 	  * On STf (MPS_STF=1), don't include blitter code.
 	  * On STe (MPS_STE=1), always use blitter and don't include software blitter emulation.
 	  This is controlled by the MPS_BLITTER_ALWAYS_ON compile switch.
-	  
+
+2020-Mar-21 VB:
+	* Reduce size by not compiling support for non-present hardware:
+	  * On STf (MPS_STF=1), don't include support for DMA sound (set existing CONF_WITH_DMASOUND to 0).
+	  * On STe (MPS_STE=1), don't include support for Falcon sound (MPS_STE_SOUND_ONLY).
+
+
