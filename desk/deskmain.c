@@ -712,8 +712,8 @@ static WORD do_filemenu(WORD item)
         break;
 #endif
     case DELTITEM:
-        if (curr)
-            fun_del(curr);
+        if (pw || curr)
+            fun_del(pw, curr);
         break;
 
 #if CONF_WITH_FORMAT

@@ -1331,11 +1331,10 @@ static WORD delete_ffd(char *path, WORD icontype)
 /*
  *  This routine is called when the 'Delete' menu item is selected
  */
-void fun_del(WORD sobj)
+void fun_del(WNODE *pw, WORD sobj)
 {
     char path[MAXPATHLEN];
     ANODE *pa;
-    WNODE *pw;
     WORD item_found = 0;
 
     /*
@@ -1375,9 +1374,7 @@ void fun_del(WORD sobj)
     /*
      * otherwise, process path associated with selected window icon, if any
      */
-    pw = win_find(G.g_cwin);
-
-    if (pw)
+    if (pw)     /* precautionary, should never be NULL */
     {
         if (fun_op(OP_DELETE, -1, &pw->w_pnode, NULL))
             fun_rebld(pw->w_pnode.p_spec);

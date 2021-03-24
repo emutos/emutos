@@ -41,7 +41,7 @@ void fun_rebld_marked(void);
 void fun_rebld(char *path);
 WORD fun_mkdir(WNODE *pw_node);
 WORD fun_op(WORD op, WORD icontype_src, PNODE *pspath, char *pdest);
-void fun_del(WORD sobj);
+void fun_del(WNODE *pw, WORD sobj);
 BOOL wants_to_delete_files(void);
 
 /*
