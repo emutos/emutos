@@ -1342,7 +1342,7 @@ void fun_del(WORD sobj)
      * if the item selected is on the desktop, there may be other desktop
      * items that have been selected; make sure we process all of them
      */
-    if ( (app_afind_by_id(sobj)) )
+    if (G.g_cwin == DESKWH)
     {
         if (wants_to_delete_files() == FALSE)   /* i.e. remove icons or cancel */
             return;
@@ -1368,10 +1368,8 @@ void fun_del(WORD sobj)
                 refresh_drive(path[0]);
         }
         if (item_found)
-        {
             desk_clear(DESKWH);
-            return;
-        }
+        return;
     }
 
     /*
