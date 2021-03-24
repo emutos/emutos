@@ -645,8 +645,8 @@ static WORD do_filemenu(WORD item)
     switch(item)
     {
     case OPENITEM:
-        if (curr)
-            done = do_open(curr);
+        if (pw || curr)
+            done = do_open(pw, curr);
         break;
     case SHOWITEM:
         if (curr)

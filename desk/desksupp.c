@@ -1182,7 +1182,7 @@ static void printer_alert(ANODE *pa)
 /*
  *  Open an icon
  */
-WORD do_open(WORD curr)
+WORD do_open(WNODE *pwin, WORD curr)
 {
     ANODE *pa;
     WNODE *pw;
@@ -1191,7 +1191,23 @@ WORD do_open(WORD curr)
     char pathname[MAXPATHLEN];
     char filename[LEN_ZFNAME];
 
-    pa = i_find(G.g_cwin, curr, &pf, &isapp);
+    /*
+     * if the icon is on the desktop, we get the ANODE from the item#;
+     * otherwise, we must go via the filenodes, because the icon may
+     * not be currently visible
+     */
+    if (G.g_cwin == DESKWH)
+    {
+        pa = i_find(DESKWH, curr, &pf, &isapp);
+    }
+    else
+    {
+        pf = pn_selected(pwin); /* get first selected file */
+        if (!pf)
+            return FALSE;
+        pa = pf->f_pa;
+        isapp = pf->f_isap;
+    }
     if (!pa)
         return FALSE;
 

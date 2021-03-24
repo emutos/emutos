@@ -308,3 +308,21 @@ void pn_clear(WNODE *pw)
     for (pf = pw->w_pnode.p_flist; pf; pf = pf->f_next)
         pf->f_selected = FALSE;
 }
+
+
+/*
+ *  Return the FNODE associated with the first selected file in the PNODE
+ *  within the specified WNODE
+ *
+ *  returns NULL if no selected files
+ */
+FNODE *pn_selected(WNODE *pw)
+{
+    FNODE *pf;
+
+    for (pf = pw->w_pnode.p_flist; pf; pf = pf->f_next)
+        if (pf->f_selected)
+            break;
+
+    return pf;
+}
