@@ -825,12 +825,7 @@ static WORD do_optnmenu(WORD item)
         }
         break;
     case IAPPITEM:
-        curr = 0;
-        while( (curr = win_isel(G.g_screen, G.g_croot, curr)) )
-        {
-            if (ins_app(curr) < 0)  /* user cancelled */
-                break;
-        }
+        ins_app();
         break;
     case IICNITEM:
         rebld = ins_icon(curr);

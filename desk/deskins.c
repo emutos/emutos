@@ -445,9 +445,14 @@ static WORD get_funkey(OBJECT *tree,ANODE *pa,BOOL installed)
 
 
 /*
- * install application
+ * install one application
+ *
+ * returns:
+ *      1   application installed/removed
+ *      0   nothing changed
+ *      -1  user cancelled
  */
-WORD ins_app(WORD curr)
+static WORD ins_one_app(WORD curr)
 {
     ANODE *pa;
     FNODE *pf;
@@ -675,6 +680,22 @@ WORD ins_app(WORD curr)
     end_dialog(tree);
 
     return change;
+}
+
+
+/*
+ * install one or more applications
+ */
+void ins_app(void)
+{
+    WORD curr;
+
+    curr = 0;
+    while( (curr = win_isel(G.g_screen, G.g_croot, curr)) )
+    {
+        if (ins_one_app(curr) < 0)  /* user cancelled */
+            break;
+    }
 }
 
 
