@@ -825,7 +825,12 @@ static WORD do_optnmenu(WORD item)
         }
         break;
     case IAPPITEM:
-        ins_app();
+        rebld = ins_app();
+        if (rebld < 0)
+        {
+            win_bdall();    /* to refresh f_pa/f_isap in the FNODEs */
+            win_shwall();
+        }
         break;
     case IICNITEM:
         rebld = ins_icon(curr);

@@ -685,17 +685,26 @@ static WORD ins_one_app(WORD curr)
 
 /*
  * install one or more applications
+ *
+ * returns:
+ *  0       no need to rebuild display
+ *  <0      need to rebuild windows
  */
-void ins_app(void)
+WORD ins_app(void)
 {
-    WORD curr;
+    WORD curr, rc, change = 0;
 
     curr = 0;
     while( (curr = win_isel(G.g_screen, G.g_croot, curr)) )
     {
-        if (ins_one_app(curr) < 0)  /* user cancelled */
+        rc = ins_one_app(curr);
+        if (rc < 0)     /* user cancelled */
             break;
+        if (rc > 0)
+            change++;
     }
+
+    return change ? -1 : 0;
 }
 
 
