@@ -1019,7 +1019,7 @@ static void kbd_arrow(WORD type)
     WNODE *pw;
 
     wind_get(DESKWH, WF_TOP, &wh, &dummy, &dummy, &dummy);
-    if (!wh)
+    if (wh == DESKWH)
         return;
 
     pw = win_find(wh);

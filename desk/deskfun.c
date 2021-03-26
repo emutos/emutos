@@ -1261,7 +1261,7 @@ BOOL fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WOR
 {
     exit_desktop = FALSE;   /* may be set to TRUE by fun_file2desk() */
 
-    if (wh)
+    if (wh != DESKWH)
     {
         if (dest_wh)    /* dragging from window to window, */
         {               /* e.g. copy/move files/folders    */

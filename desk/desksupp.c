@@ -128,8 +128,8 @@ void desk_clear(WORD wh)
 
     /*
      * if 'root' is still DROOT, then either the 'window' is the desktop
-     * (wh==0), or something is wrong with the window setup.  to handle
-     * the latter case, we force the handle to 0 anyway for safety.
+     * (wh==DESKWH), or something is wrong with the window setup.  to handle
+     * the latter case, we force the handle to the desktop anyway for safety.
      */
     if (root == DROOT)
         wh = DESKWH;
@@ -171,7 +171,7 @@ void desk_verify(WORD wh, WORD changed)
     WNODE *pw;
     GRECT clip;
 
-    if (wh)
+    if (wh != DESKWH)
     {
         /* get current size */
         pw = win_find(wh);
@@ -1703,7 +1703,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, BOOL *pisapp)
     pf = (FNODE *) NULL;
     isapp = FALSE;
 
-    if (!wh)        /* On desktop? */
+    if (wh == DESKWH)       /* On desktop? */
     {
         pa = app_afind_by_id(item);
         if (pa)
