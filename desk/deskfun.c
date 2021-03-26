@@ -551,7 +551,7 @@ static BOOL search_icon(WORD win, WORD curr, char *searchwild)
 /*
  *  Perform the desktop Search function
  */
-void fun_search(WORD curr, WNODE *pw)
+void fun_search(WNODE *pw, WORD curr)
 {
     char searchname[LEN_ZFNAME], searchwild[LEN_ZFNAME];
 

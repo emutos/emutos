@@ -21,7 +21,7 @@ WORD fun_alert(WORD defbut, WORD stnum);
 WORD fun_alert_merge(WORD defbut, WORD stnum, ...);
 
 #if CONF_WITH_SEARCH
-void fun_search(WORD curr, WNODE *pw);
+void fun_search(WNODE *pw, WORD curr);
 #endif
 
 #if CONF_WITH_SELECTALL
