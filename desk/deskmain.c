@@ -481,32 +481,44 @@ static void men_update(void)
     /*
      * process all selected icons, counting types of icons: applications,
      * desktop icons, trash/printer icons, and selected icons.
+     *
+     * we handle the desktop "window" and real windows separately, since
+     * in a real window there can be selected items that are not visible.
      */
     napp = ndesk = nsel = ntrash = 0;
-    for (item = 0; (item=win_isel(G.g_screen, G.g_croot, item)) != 0; nsel++)
+
+    if (G.g_cwin == DESKWH)
     {
-        appl = i_find(G.g_cwin, item, NULL, &isapp);
-        if (!appl)
-            continue;
-        if (isapp)          /* count applications selected */
-            napp++;
-        switch(appl->a_type)
+        for (item = 0; (item=win_isel(G.g_screen, G.g_croot, item)) != 0; nsel++)
         {
+            appl = i_find(G.g_cwin, item, NULL, &isapp);
+            if (!appl)
+                continue;
+            if (isapp)          /* count applications selected */
+                napp++;
+            switch(appl->a_type)
+            {
 #if CONF_WITH_PRINTER_ICON
-        case AT_ISPRNT:                 /* Printer */
+            case AT_ISPRNT:                 /* Printer */
 #endif
-        case AT_ISTRSH:                 /* Trash */
-            ntrash++;
-            FALLTHROUGH;
-        case AT_ISDISK:
-            ndesk++;        /* count desktop icons selected */
-            break;
-        }
+            case AT_ISTRSH:                 /* Trash */
+                ntrash++;
+                FALLTHROUGH;
+            case AT_ISDISK:
+                ndesk++;        /* count desktop icons selected */
+                break;
+            }
 #if CONF_WITH_DESKTOP_SHORTCUTS
-        /* allow "Remove icon" for icons on the desktop */
-        if (appl->a_flags & AF_ISDESK)
-            ndesk++;
+            /* allow "Remove icon" for icons on the desktop */
+            if (appl->a_flags & AF_ISDESK)
+                ndesk++;
 #endif
+        }
+    }
+    else    /* real window */
+    {
+        WNODE *pw = win_find(G.g_cwin);
+        pn_count(pw, &nsel, &napp);
     }
     nwin = win_count();     /* number of open windows */
 

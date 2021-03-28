@@ -88,5 +88,6 @@ PNODE *pn_open(char *pathname, WNODE *pw);
 FNODE *pn_sort(PNODE *pn);
 WORD pn_active(PNODE *thepath, BOOL include_folders);
 FNODE *pn_selected(WNODE *pw);
+void pn_count(WNODE *pw, WORD *nsel, WORD *napp);
 
 #endif  /* _DESKFPD_H */

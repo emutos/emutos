@@ -326,3 +326,27 @@ FNODE *pn_selected(WNODE *pw)
 
     return pf;
 }
+
+
+/*
+ *  Count the number of selected FNODES and (of those) the number of
+ *  application FNODEs
+ */
+void pn_count(WNODE *pw, WORD *psel, WORD *papp)
+{
+    WORD sel = 0, app = 0;
+    FNODE *pf;
+
+    for (pf = pw->w_pnode.p_flist; pf; pf = pf->f_next)
+    {
+        if (pf->f_selected)
+        {
+            sel++;
+            if (pf->f_isap)
+                app++;
+        }
+    }
+
+    *psel = sel;
+    *papp = app;
+}
