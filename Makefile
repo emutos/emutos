@@ -1186,8 +1186,7 @@ TOCLEAN += *.sym
 	$(SHELL) tools/map2sym.sh emutos.map >$@
 
 #
-# indent - indents the files except when there are warnings
-# checkindent - check for indent warnings, but do not alter files.
+# checkindent - check for indent warnings, but do not alter files
 #
 
 INDENTFILES = bdos/*.c bios/*.c util/*.c tools/*.c desk/*.c aes/*.c vdi/*.c
@@ -1209,29 +1208,6 @@ checkindent:
 		false; \
 	else \
 		echo done.; \
-	fi
-
-.PHONY: indent
-indent:
-	@err=0 ; \
-	for i in $(INDENTFILES) ; do \
-		$(INDENT) <$$i 2>err.tmp | expand >indent.tmp; \
-		if ! test -s err.tmp ; then \
-			if ! cmp -s indent.tmp $$i ; then \
-				echo indenting $$i; \
-				mv $$i $$i~; \
-				mv indent.tmp $$i; \
-			fi \
-		else \
-			err=$$(expr $$err + 1); \
-			echo in $$i:; \
-			cat err.tmp; \
-		fi \
-	done ; \
-	rm -f err.tmp indent.tmp; \
-	if [ $$err -ne 0 ] ; then \
-		echo $$err 'file(s)' untouched because of warnings; \
-		false; \
 	fi
 
 
