@@ -32,8 +32,7 @@
 /*
  * defines
  */
-#define RS232_BUFSIZE 4         /* save space if buffers unused */
-/* TODO: Set to 256 when serial interrupts are enabled. */
+#define RS232_BUFSIZE   256     /* like Atari TOS */
 
 #if CONF_WITH_SCC
 #define RESET_RECOVERY_DELAY    delay_loop(reset_recovery_loops)
