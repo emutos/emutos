@@ -1,7 +1,7 @@
 /*
  * iorec.h - Input Output RECords related things
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -18,12 +18,12 @@
 typedef struct iorec IOREC;
 
 struct iorec {
-  UBYTE *buf;           /* input buffer */
-  WORD size;            /* buffer size */
-  WORD head;            /* head index */
-  volatile WORD tail;   /* tail index */
-  WORD low;             /* low water mark */
-  WORD high;            /* high water mark */
+    UBYTE *buf;         /* input buffer */
+    WORD size;          /* buffer size */
+    WORD head;          /* head index */
+    volatile WORD tail; /* tail index */
+    WORD low;           /* low water mark */
+    WORD high;          /* high water mark */
 };
 
 extern IOREC ikbdiorec, midiiorec;
