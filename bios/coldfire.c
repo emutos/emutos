@@ -127,6 +127,12 @@ const char* m548x_machine_name(void)
         case MCF_SIU_JTAGID_MCF5485:
             return "M5485EVB";
 
+        case MCF_SIU_JTAGID_MCF5474:
+            return "M5474LITE";
+
+        case MCF_SIU_JTAGID_MCF5475:
+            return "M5475EVB";
+
         default:
             return "M548????";
     }
@@ -258,6 +264,16 @@ void setvalue_mcf(void)
         case MCF_SIU_JTAGID_MCF5485:
             strcpy(cookie_mcf.device_name, "MCF5485");
             /* If a MCF5485 we guess it is a EVB board */
+            cookie_mcf.sysbus_frequency = 133;
+            break;
+        case MCF_SIU_JTAGID_MCF5474:
+            strcpy(cookie_mcf.device_name, "MCF5474");
+            /* If a MCF5474 we guess it is a LITE board */
+            cookie_mcf.sysbus_frequency = 100;
+            break;
+        case MCF_SIU_JTAGID_MCF5475:
+            strcpy(cookie_mcf.device_name, "MCF5475");
+            /* If a MCF5475 we guess it is a EVB board */
             cookie_mcf.sysbus_frequency = 133;
             break;
         default:
