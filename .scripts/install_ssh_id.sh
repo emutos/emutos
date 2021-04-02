@@ -8,23 +8,24 @@
 # manually authorized on the remote server.
 
 # Our private key is the critical security component, it must remain secret.
-# We store it in the SSH_ID environment variable in Travis CI project settings.
+# We store it as SSH_ID repository secret in GitHub's project settings. It
+# is passed to this script as an environment variable by GitHub Actions.
 # As environment variables can only contain text, our key files are transformed
 # like this: tar, xz, base64. Then then can be decoded here. This is safe as
-# Travis CI never shows the contents of secure variables.
+# GitHub Actions never shows the contents of secure variables.
 
 # To generate the contents of the SSH_ID variable:
 # Be sure to be in an empty, temporary directory.
 #
 # mkdir .ssh
-# ssh-keygen -t rsa -b 4096 -C travis-ci.org/emutos/emutos -N '' -f .ssh/id_rsa
+# ssh-keygen -t rsa -b 4096 -N '' -f .ssh/id_rsa
 # tar Jcvf id_emutos_emutos.tar.xz .ssh
 # base64 -w 0 id_emutos_emutos.tar.xz
 #
 # Select the resulting encoded text (several lines) to copy it to the clipboard.
-# Then go to the Travis CI project settings:
-# https://travis-ci.org/emutos/emutos/settings
-# Create a new environment variable named SSH_ID, and paste the value.
+# Then go to the GitHub project settings:
+# https://github.com/emutos/emutos/settings/secrets/actions
+# Create a new repository secret named SSH_ID, and paste the value.
 # The script below will recreate the key files from that variable contents.
 
 if [ -z ${SSH_ID+x} ]
