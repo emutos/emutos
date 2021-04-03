@@ -21,7 +21,7 @@ WORD fun_alert(WORD defbut, WORD stnum);
 WORD fun_alert_merge(WORD defbut, WORD stnum, ...);
 
 #if CONF_WITH_SEARCH
-void fun_search(WORD curr, WNODE *pw);
+void fun_search(WNODE *pw, WORD curr);
 #endif
 
 #if CONF_WITH_SELECTALL
@@ -41,7 +41,7 @@ void fun_rebld_marked(void);
 void fun_rebld(char *path);
 WORD fun_mkdir(WNODE *pw_node);
 WORD fun_op(WORD op, WORD icontype_src, PNODE *pspath, char *pdest);
-void fun_del(WORD sobj);
+void fun_del(WNODE *pw, WORD sobj);
 BOOL wants_to_delete_files(void);
 
 /*

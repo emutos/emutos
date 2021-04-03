@@ -514,7 +514,7 @@ NODEP += 512
 512: UNIQUE = $(COUNTRY)
 512: override DEF += -DTARGET_512
 512:
-	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_512=$(ROM_512) $(ROM_512)
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) MULTIKEYBD='-k' ROM_512=$(ROM_512) $(ROM_512)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
@@ -870,7 +870,10 @@ obj/lisaboot.o: obj/ramtos.h
 #
 # localisation support: create bios/ctables.h include/i18nconf.h
 #
-# we group targets, since localise generates both targets at the same time
+# we would like to group targets, since localise generates both targets
+# at the same time.  however, this is not supported until gcc make 4.2.
+# so that we can use old versions of make, we just run localise twice
+# instead, creating a .tmp file each time as a byproduct.
 #
 
 GEN_SRC += bios/ctables.h include/i18nconf.h
@@ -880,8 +883,11 @@ NODEP += localise
 localise: tools/localise.c
 	$(NATIVECC) $< -o $@
 
-bios/ctables.h include/i18nconf.h &: obj/country localise.ctl localise
-	./localise $(UNIQUEARG) localise.ctl bios/ctables.h include/i18nconf.h
+bios/ctables.h: obj/country localise.ctl localise
+	./localise $(UNIQUEARG) $(MULTIKEYBD) localise.ctl bios/ctables.h localise1.tmp
+
+include/i18nconf.h: obj/country localise.ctl localise
+	./localise $(UNIQUEARG) $(MULTIKEYBD) localise.ctl localise2.tmp include/i18nconf.h
 
 #
 # NLS support
@@ -1180,8 +1186,7 @@ TOCLEAN += *.sym
 	$(SHELL) tools/map2sym.sh emutos.map >$@
 
 #
-# indent - indents the files except when there are warnings
-# checkindent - check for indent warnings, but do not alter files.
+# checkindent - check for indent warnings, but do not alter files
 #
 
 INDENTFILES = bdos/*.c bios/*.c util/*.c tools/*.c desk/*.c aes/*.c vdi/*.c
@@ -1203,29 +1208,6 @@ checkindent:
 		false; \
 	else \
 		echo done.; \
-	fi
-
-.PHONY: indent
-indent:
-	@err=0 ; \
-	for i in $(INDENTFILES) ; do \
-		$(INDENT) <$$i 2>err.tmp | expand >indent.tmp; \
-		if ! test -s err.tmp ; then \
-			if ! cmp -s indent.tmp $$i ; then \
-				echo indenting $$i; \
-				mv $$i $$i~; \
-				mv indent.tmp $$i; \
-			fi \
-		else \
-			err=$$(expr $$err + 1); \
-			echo in $$i:; \
-			cat err.tmp; \
-		fi \
-	done ; \
-	rm -f err.tmp indent.tmp; \
-	if [ $$err -ne 0 ] ; then \
-		echo $$err 'file(s)' untouched because of warnings; \
-		false; \
 	fi
 
 

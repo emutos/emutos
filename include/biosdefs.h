@@ -193,4 +193,15 @@ typedef void (*ETV_TIMER_T)(int ms); /* Type of BDOS Event Timer */
 #define MFP_RING              14
 #define MFP_MONODETECT        15
 
+/* Bitmasks for Offgibit()/Ongibit() */
+/* Taken from MiNTLib's include/mint/ostruct.h */
+#define GI_FLOPPYSIDE   0x01
+#define GI_FLOPPYA      0x02
+#define GI_FLOPPYB      0x04
+#define GI_RTS          0x08
+#define GI_DTR          0x10
+#define GI_STROBE       0x20
+#define GI_GPO          0x40
+#define GI_SCCPORT      0x80
+
 #endif /* BIOSDEFS_H */

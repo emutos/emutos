@@ -128,8 +128,8 @@ void desk_clear(WORD wh)
 
     /*
      * if 'root' is still DROOT, then either the 'window' is the desktop
-     * (wh==0), or something is wrong with the window setup.  to handle
-     * the latter case, we force the handle to 0 anyway for safety.
+     * (wh==DESKWH), or something is wrong with the window setup.  to handle
+     * the latter case, we force the handle to the desktop anyway for safety.
      */
     if (root == DROOT)
         wh = DESKWH;
@@ -171,7 +171,7 @@ void desk_verify(WORD wh, WORD changed)
     WNODE *pw;
     GRECT clip;
 
-    if (wh)
+    if (wh != DESKWH)
     {
         /* get current size */
         pw = win_find(wh);
@@ -258,11 +258,11 @@ void do_xyfix(WORD *px, WORD *py)
 /*
  * open a window, normally corresponding to a disk drive icon on the desktop
  *
- * if curr == 0, there is no 'source' screen object from which the new
+ * if curr <= 0, there is no 'source' screen object from which the new
  * object is coming, so we do not do the zoom effect & we do not try to
  * reset the object state.
  *
- * if curr != 0, there *is* a source object: we always do the zoom effect,
+ * if curr > 0, there *is* a source object: we always do the zoom effect,
  * and change the object state, but we only redraw the object when we are
  * opening a new window.  otherwise, we must be showing the new data in
  * an existing window: the FNODE for the 'source' object has already been
@@ -1182,7 +1182,7 @@ static void printer_alert(ANODE *pa)
 /*
  *  Open an icon
  */
-WORD do_open(WORD curr)
+WORD do_open(WNODE *pwin, WORD curr)
 {
     ANODE *pa;
     WNODE *pw;
@@ -1191,7 +1191,23 @@ WORD do_open(WORD curr)
     char pathname[MAXPATHLEN];
     char filename[LEN_ZFNAME];
 
-    pa = i_find(G.g_cwin, curr, &pf, &isapp);
+    /*
+     * if the icon is on the desktop, we get the ANODE from the item#;
+     * otherwise, we must go via the filenodes, because the icon may
+     * not be currently visible
+     */
+    if (G.g_cwin == DESKWH)
+    {
+        pa = i_find(DESKWH, curr, &pf, &isapp);
+    }
+    else
+    {
+        pf = pn_selected(pwin); /* get first selected file */
+        if (!pf)
+            return FALSE;
+        pa = pf->f_pa;
+        isapp = pf->f_isap;
+    }
     if (!pa)
         return FALSE;
 
@@ -1687,7 +1703,7 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, BOOL *pisapp)
     pf = (FNODE *) NULL;
     isapp = FALSE;
 
-    if (!wh)        /* On desktop? */
+    if (wh == DESKWH)       /* On desktop? */
     {
         pa = app_afind_by_id(item);
         if (pa)

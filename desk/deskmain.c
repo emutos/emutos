@@ -485,32 +485,44 @@ static void men_update(void)
     /*
      * process all selected icons, counting types of icons: applications,
      * desktop icons, trash/printer icons, and selected icons.
+     *
+     * we handle the desktop "window" and real windows separately, since
+     * in a real window there can be selected items that are not visible.
      */
     napp = ndesk = nsel = ntrash = 0;
-    for (item = 0; (item=win_isel(G.g_screen, G.g_croot, item)) != 0; nsel++)
+
+    if (G.g_cwin == DESKWH)
     {
-        appl = i_find(G.g_cwin, item, NULL, &isapp);
-        if (!appl)
-            continue;
-        if (isapp)          /* count applications selected */
-            napp++;
-        switch(appl->a_type)
+        for (item = 0; (item=win_isel(G.g_screen, G.g_croot, item)) != 0; nsel++)
         {
+            appl = i_find(G.g_cwin, item, NULL, &isapp);
+            if (!appl)
+                continue;
+            if (isapp)          /* count applications selected */
+                napp++;
+            switch(appl->a_type)
+            {
 #if CONF_WITH_PRINTER_ICON
-        case AT_ISPRNT:                 /* Printer */
+            case AT_ISPRNT:                 /* Printer */
 #endif
-        case AT_ISTRSH:                 /* Trash */
-            ntrash++;
-            FALLTHROUGH;
-        case AT_ISDISK:
-            ndesk++;        /* count desktop icons selected */
-            break;
-        }
+            case AT_ISTRSH:                 /* Trash */
+                ntrash++;
+                FALLTHROUGH;
+            case AT_ISDISK:
+                ndesk++;        /* count desktop icons selected */
+                break;
+            }
 #if CONF_WITH_DESKTOP_SHORTCUTS
-        /* allow "Remove icon" for icons on the desktop */
-        if (appl->a_flags & AF_ISDESK)
-            ndesk++;
+            /* allow "Remove icon" for icons on the desktop */
+            if (appl->a_flags & AF_ISDESK)
+                ndesk++;
 #endif
+        }
+    }
+    else    /* real window */
+    {
+        WNODE *pw = win_find(G.g_cwin);
+        pn_count(pw, &nsel, &napp);
     }
     nwin = win_count();     /* number of open windows */
 
@@ -649,8 +661,8 @@ static WORD do_filemenu(WORD item)
     switch(item)
     {
     case OPENITEM:
-        if (curr)
-            done = do_open(curr);
+        if (pw || curr)
+            done = do_open(pw, curr);
         break;
     case SHOWITEM:
         if (curr)
@@ -673,8 +685,8 @@ static WORD do_filemenu(WORD item)
 
 #if CONF_WITH_SEARCH
     case SRCHITEM:
-        if (curr || pw)
-            fun_search(curr, pw);
+        if (pw || curr)
+            fun_search(pw, curr);
         if (curr)
             desk_clear(DESKWH);     /* deselect desktop icon(s) */
         break;
@@ -716,8 +728,8 @@ static WORD do_filemenu(WORD item)
         break;
 #endif
     case DELTITEM:
-        if (curr)
-            fun_del(curr);
+        if (pw || curr)
+            fun_del(pw, curr);
         break;
 
 #if CONF_WITH_FORMAT
@@ -829,11 +841,11 @@ static WORD do_optnmenu(WORD item)
         }
         break;
     case IAPPITEM:
-        curr = 0;
-        while( (curr = win_isel(G.g_screen, G.g_croot, curr)) )
+        rebld = ins_app();
+        if (rebld < 0)
         {
-            if (ins_app(curr) < 0)  /* user cancelled */
-                break;
+            win_bdall();    /* to refresh f_pa/f_isap in the FNODEs */
+            win_shwall();
         }
         break;
     case IICNITEM:
@@ -1023,7 +1035,7 @@ static void kbd_arrow(WORD type)
     WNODE *pw;
 
     wind_get(DESKWH, WF_TOP, &wh, &dummy, &dummy, &dummy);
-    if (!wh)
+    if (wh == DESKWH)
         return;
 
     pw = win_find(wh);

@@ -90,9 +90,9 @@ static LONG prnout(WORD c)
      * according to the spec, the strobe line must be pulsed low
      * for a minimum of 500ns, so we do it for 1 microsecond
      */
-    offgibit(~0x20);
+    offgibit(~GI_STROBE);
     DELAY_1US;
-    ongibit(0x20);
+    ongibit(GI_STROBE);
 
     /*
      * at this point, we should wait for ACK to go low, but
@@ -109,7 +109,7 @@ void parport_init(void)
 {
 #if CONF_WITH_PRINTER_PORT
     /* set Strobe high */
-    ongibit(0x20);
+    ongibit(GI_STROBE);
 
     /* initialize delay */
     delay1us = loopcount_1_msec / 1000;

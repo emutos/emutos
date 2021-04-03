@@ -1,7 +1,7 @@
 /*
  * iorec.h - Input Output RECords related things
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -18,21 +18,15 @@
 typedef struct iorec IOREC;
 
 struct iorec {
-  UBYTE *buf;           /* input buffer */
-  WORD size;            /* buffer size */
-  WORD head;            /* head index */
-  volatile WORD tail;   /* tail index */
-  WORD low;             /* low water mark */
-  WORD high;            /* high water mark */
+    UBYTE *buf;         /* input buffer */
+    WORD size;          /* buffer size */
+    WORD head;          /* head index */
+    volatile WORD tail; /* tail index */
+    WORD low;           /* low water mark */
+    WORD high;          /* high water mark */
 };
 
-/* The volatile keyword below is an artificial workaround
-   for the GCC bug 45052 present in GCC 4.5.x.
-   Without that, bconin2() contains an infinite loop
-   when USE_STOP_INSN_TO_FREE_HOST_CPU=0.
-   This bug will be fixed in GCC 4.5.2.
-*/
-extern volatile IOREC ikbdiorec, midiiorec;
+extern IOREC ikbdiorec, midiiorec;
 
 /*==== Functions ==========================================================*/
 

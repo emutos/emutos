@@ -32,8 +32,7 @@
 /*
  * defines
  */
-#define RS232_BUFSIZE 4         /* save space if buffers unused */
-/* TODO: Set to 256 when serial interrupts are enabled. */
+#define RS232_BUFSIZE   256     /* like Atari TOS */
 
 #if CONF_WITH_SCC
 #define RESET_RECOVERY_DELAY    delay_loop(reset_recovery_loops)
@@ -233,13 +232,12 @@ static const struct mfp_rs232_table mfp_rs232_init[] = {
     { /*    50 */  2, 96 },
 };
 
+/*
+ * the following routine is called by the assembler interrupt handler.
+ * it runs at interrupt level 6 & is therefore never interrupted.
+ */
 void mfp_rs232_rx_interrupt_handler(void)
 {
-    WORD old_sr;
-
-    /* disable interrupts */
-    old_sr = set_sr(0x2700);
-
     if (MFP_BASE->rsr & 0x80) {
         UBYTE data = MFP_BASE->udr;
 #if CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_POLLING_MODE
@@ -253,9 +251,6 @@ void mfp_rs232_rx_interrupt_handler(void)
 
     /* clear the interrupt service bit */
     MFP_BASE->isra = 0xef;
-
-    /* restore interrupts */
-    set_sr(old_sr);
 }
 
 #endif  /* CONF_WITH_MFP_RS232 */

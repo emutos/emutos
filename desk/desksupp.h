@@ -31,7 +31,7 @@ WORD do_diropen(WNODE *pw, WORD new_win, WORD curr_icon,
 WORD do_aopen(ANODE *pa, BOOL isapp, WORD curr, char *pathname, char *pname, char *tail);
 WORD do_dopen(WORD curr);
 void do_fopen(WNODE *pw, WORD curr, char *pathname, WORD allow_new_win);
-WORD do_open(WORD curr);
+WORD do_open(WNODE *pw, WORD curr);
 WORD do_info(WORD curr);
 void do_format(void);
 void malloc_fail_alert(void);

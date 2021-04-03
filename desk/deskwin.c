@@ -199,7 +199,7 @@ WNODE *win_find(WORD wh)
 {
     WNODE *pw;
 
-    if (wh == 0)            /* the desktop */
+    if (wh == DESKWH)       /* the desktop */
         return &G.g_wdesktop;
 
     for (pw = G.g_wfirst; pw; pw = pw->w_next)
@@ -808,7 +808,7 @@ void win_shwall(void)
 
     for (pw = G.g_wfirst; pw; pw = pw->w_next)
     {
-        if ((wh=pw->w_id) != 0)     /* yes, assignment! */
+        if ((wh=pw->w_id) != DESKWH)    /* yes, assignment! */
         {
             wind_get_grect(wh, WF_WXYWH, &clip);
             fun_msg(WM_REDRAW, wh, clip.g_x, clip.g_y, clip.g_w, clip.g_h);

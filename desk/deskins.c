@@ -59,8 +59,8 @@ static void anode_dump(char *msg)
 
     kprintf("%s:\n",msg);
     for (pa = G.g_ahead; pa; pa = pa->a_next)
-        kprintf("  flags=0x%04x,type=%d,aicon=%d,dicon=%d,appl=%s,data=%s\n",
-                pa->a_flags,pa->a_type,pa->a_aicon,pa->a_dicon,pa->a_pappl,pa->a_pdata);
+        kprintf("  pa=%s,flags=0x%04x,type=%d,aicon=%d,dicon=%d,appl=%s,data=%s\n",
+                pa,pa->a_flags,pa->a_type,pa->a_aicon,pa->a_dicon,pa->a_pappl,pa->a_pdata);
 }
 #endif
 
@@ -445,97 +445,19 @@ static WORD get_funkey(OBJECT *tree,ANODE *pa,BOOL installed)
 
 
 /*
- * install application
+ * handle install application dialog
+ *
+ * returns:
+ *      1   application installed/removed
+ *      0   nothing changed
+ *      -1  user cancelled
  */
-WORD ins_app(WORD curr)
+static WORD ins_app_dialog(ANODE *pa, char *pathname, char *pfname, BOOL installed)
 {
-    ANODE *pa;
-    FNODE *pf;
-    WNODE *pw;
     OBJECT *tree;
-    WORD change = 0;    /* -ve means cancel, 0 means no change, +ve means change */
     WORD field, exitobj, funkey;
-    BOOL installed, viewer, isapp;
-    char *pfname, *p, *q;
+    WORD change = 0;    /* -ve means cancel, 0 means no change, +ve means change */
     char name[LEN_ZFNAME];
-    char pathname[MAXPATHLEN];
-
-    /*
-     * is this a valid anode (-ve handle => include check for default viewer) ?
-     * if so, see if this is the default viewer
-     */
-    pa = i_find(-G.g_cwin, curr, &pf, &isapp);
-    if (!pa)
-        return 0;
-    viewer = (pa->a_flags & AF_VIEWER) ? TRUE : FALSE;
-
-#if CONF_WITH_DESKTOP_SHORTCUTS
-    /*
-     * here we handle the case of installing an application identified by
-     * a desktop shortcut.  we need to determine if this application is
-     * already installed, i.e. if there already exists a non-shortcut ANODE
-     * for this application.
-     *
-     * if so, we change the ANODE pointer to point to it, and continue as
-     * though the user has selected the application in a desktop window.
-     *
-     * if not, we handle first-time installation later below.
-     */
-    if (G.g_cwin == DESKWH) /* we're on the desktop, so this is a shortcut icon */
-    {
-        ANODE *temppa;
-
-        strcpy(pathname, pa->a_pappl);  /* get path for app_afind_by_name() */
-        p = filename_start(pathname);
-        *p = '\0';
-        temppa = app_afind_by_name(AT_ISFILE,AF_ISDESK|AF_WINDOW, pathname, filename_start(pa->a_pappl), &isapp);
-        if (temppa)
-        {
-            if (strcmp(temppa->a_pappl, pa->a_pappl) == 0)
-            {
-                pa = temppa;
-                KDEBUG(("Found installed app anode for desktop shortcut\n"));
-            }
-        }
-    }
-#endif
-
-    installed = is_installed(pa) || viewer; /* the viewer is always installed */
-
-    /*
-     * first, get full path & name of application
-     */
-    if (installed)
-    {
-        p = pa->a_pappl;
-        q = filename_start(p);
-        pfname = q;
-    }
-    else
-    {
-        if (!isapp)     /* selected item appears to be a data file */
-            return 0;
-#if CONF_WITH_DESKTOP_SHORTCUTS
-        /*
-         * handle install application for a desktop shortcut when there
-         * is no existing 'install application' anode
-         */
-        if (pa->a_flags & AF_ISDESK)
-        {
-            p = pa->a_pappl;
-            q = filename_start(p);
-            pfname = q;
-        }
-        else
-#endif
-        {
-            pw = win_find(G.g_cwin);
-            p = pw->w_pnode.p_spec;
-            q = filename_start(p);
-            pfname = pf->f_name;
-        }
-    }
-    strlcpy(pathname,p,q-p+1);  /* copy pathname including trailing backslash */
 
     /*
      * deselect all objects
@@ -675,6 +597,162 @@ WORD ins_app(WORD curr)
     end_dialog(tree);
 
     return change;
+}
+
+
+/*
+ * install one application
+ *
+ * returns:
+ *      1   application installed/removed
+ *      0   nothing changed
+ *      -1  user cancelled
+ */
+static WORD ins_one_app(WORD curr, FNODE *pf)
+{
+    ANODE *pa;
+    WNODE *pw;
+    BOOL installed, isapp;
+    char *pfname, *p, *q;
+    char pathname[MAXPATHLEN];
+
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    /*
+     * here we handle the case of installing an application identified by
+     * a desktop shortcut.  we need to determine if this application is
+     * already installed, i.e. if there already exists a non-shortcut ANODE
+     * for this application.
+     *
+     * if so, we change the ANODE pointer to point to it, and continue as
+     * though the user has selected the application in a desktop window.
+     *
+     * if not, we handle first-time installation later below.
+     */
+    if (G.g_cwin == DESKWH) /* we're on the desktop, so this is a shortcut icon */
+    {
+        ANODE *temppa;
+
+        pa = app_afind_by_id(curr);
+        if (!pa)        /* "can't happen" */
+            return 0;
+        strcpy(pathname, pa->a_pappl);  /* get path for app_afind_by_name() */
+        p = filename_start(pathname);
+        *p = '\0';
+        temppa = app_afind_by_name(AT_ISFILE,AF_ISDESK|AF_WINDOW, pathname, filename_start(pa->a_pappl), &isapp);
+        if (temppa)
+        {
+            if (strcmp(temppa->a_pappl, pa->a_pappl) == 0)
+            {
+                pa = temppa;
+                KDEBUG(("Found installed app anode for desktop shortcut\n"));
+            }
+        }
+    }
+    else
+#endif
+    {
+        pw = win_find(G.g_cwin);
+#if CONF_WITH_VIEWER_SUPPORT
+        /*
+         * if there is a default viewer, and the selected file is it,
+         * we use its anode; otherwise we search for a matching anode,
+         * ignoring the viewer.
+         */
+        pa = app_afind_viewer();
+        strcpy(pathname, pw->w_pnode.p_spec);       /* full name of file */
+        strcpy(filename_start(pathname), pf->f_name);
+        if (pa && (strcmp(pathname, pa->a_pappl) == 0))
+            ;
+        else
+#endif
+            pa = app_afind_by_name(AT_ISFILE, AF_ISDESK|AF_WINDOW|AF_VIEWER,
+                                    pw->w_pnode.p_spec, pf->f_name, &isapp);
+        if (!pa)
+            return 0;
+    }
+
+    installed = is_installed(pa);
+
+    /*
+     * first, get full path & name of application
+     */
+    if (installed)
+    {
+        p = pa->a_pappl;
+        q = filename_start(p);
+        pfname = q;
+    }
+    else
+    {
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        /*
+         * handle install application for a desktop shortcut when there
+         * is no existing 'install application' anode
+         */
+        if (pa->a_flags & AF_ISDESK)
+        {
+            p = pa->a_pappl;
+            q = filename_start(p);
+            pfname = q;
+        }
+        else
+#endif
+        {
+            pw = win_find(G.g_cwin);
+            p = pw->w_pnode.p_spec;
+            q = filename_start(p);
+            pfname = pf->f_name;
+        }
+    }
+    strlcpy(pathname,p,q-p+1);  /* copy pathname including trailing backslash */
+
+    return ins_app_dialog(pa, pathname, pfname, installed);
+}
+
+
+
+/*
+ * install one or more applications
+ *
+ * returns:
+ *  0       no need to rebuild display
+ *  <0      need to rebuild windows
+ */
+WORD ins_app(void)
+{
+    WORD rc, change = 0;
+    WORD curr = 0;
+    FNODE *pf = NULL;
+
+#if CONF_WITH_DESKTOP_SHORTCUTS
+    if (G.g_cwin == DESKWH)
+    {
+        while( (curr = win_isel(G.g_screen, G.g_croot, curr)) )
+        {
+            rc = ins_one_app(curr, pf);
+            if (rc < 0)     /* user cancelled */
+                break;
+            /* we don't track changes since we don't rebuild the desktop */
+        }
+    }
+    else
+#endif
+    {
+        WNODE *pw = win_find(G.g_cwin);
+        for (pf = pw->w_pnode.p_flist; pf; pf = pf->f_next)
+        {
+            if (pf->f_selected)
+            {
+                rc = ins_one_app(curr, pf);
+                if (rc < 0)     /* user cancelled */
+                    break;
+                if (rc > 0)
+                    change++;
+            }
+        }
+    }
+
+    return change ? -1 : 0;
 }
 
 

@@ -551,7 +551,7 @@ static BOOL search_icon(WORD win, WORD curr, char *searchwild)
 /*
  *  Perform the desktop Search function
  */
-void fun_search(WORD curr, WNODE *pw)
+void fun_search(WNODE *pw, WORD curr)
 {
     char searchname[LEN_ZFNAME], searchwild[LEN_ZFNAME];
 
@@ -1261,7 +1261,7 @@ BOOL fun_drag(WORD wh, WORD dest_wh, WORD sobj, WORD dobj, WORD mx, WORD my, WOR
 {
     exit_desktop = FALSE;   /* may be set to TRUE by fun_file2desk() */
 
-    if (wh)
+    if (wh != DESKWH)
     {
         if (dest_wh)    /* dragging from window to window, */
         {               /* e.g. copy/move files/folders    */
@@ -1331,18 +1331,17 @@ static WORD delete_ffd(char *path, WORD icontype)
 /*
  *  This routine is called when the 'Delete' menu item is selected
  */
-void fun_del(WORD sobj)
+void fun_del(WNODE *pw, WORD sobj)
 {
     char path[MAXPATHLEN];
     ANODE *pa;
-    WNODE *pw;
     WORD item_found = 0;
 
     /*
      * if the item selected is on the desktop, there may be other desktop
      * items that have been selected; make sure we process all of them
      */
-    if ( (app_afind_by_id(sobj)) )
+    if (G.g_cwin == DESKWH)
     {
         if (wants_to_delete_files() == FALSE)   /* i.e. remove icons or cancel */
             return;
@@ -1368,18 +1367,14 @@ void fun_del(WORD sobj)
                 refresh_drive(path[0]);
         }
         if (item_found)
-        {
             desk_clear(DESKWH);
-            return;
-        }
+        return;
     }
 
     /*
      * otherwise, process path associated with selected window icon, if any
      */
-    pw = win_find(G.g_cwin);
-
-    if (pw)
+    if (pw)     /* precautionary, should never be NULL */
     {
         if (fun_op(OP_DELETE, -1, &pw->w_pnode, NULL))
             fun_rebld(pw->w_pnode.p_spec);

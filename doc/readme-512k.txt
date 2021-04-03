@@ -9,7 +9,7 @@ Note: Extra hardware is autodetected.
 
 The desktop features are comparable to Atari TOS 3 or 4.
 
-Each ROM contains a single language:
+Each ROM contains a single language for display:
 
 etos512cz.img - Czech (PAL)
 etos512de.img - German (PAL)
@@ -28,6 +28,9 @@ etos512sg.img - Swiss German (PAL)
 etos512tr.img - Turkish (PAL)
 etos512us.img - English (NTSC)
 etos512uk.img - English (PAL)
+
+However, note that these ROMs will use the standard values from NVRAM
+for keyboard, date/time etc.
 
 The following optional files are also supplied:
 emuicon.rsc - contains additional icons for the desktop
