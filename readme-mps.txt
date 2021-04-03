@@ -25,3 +25,16 @@ Changelog:
 	  * On STe (MPS_STE=1), don't include support for Falcon sound (MPS_STE_SOUND_ONLY).
 
 
+Wishlist:
+	* BUG: Fix Dark theme: EmuCOn is inreadable if launched from boot
+	* Make ST-MEDIUM the default resolution on colour screens
+	* Allow EmuCON to run batch files (simple list of commands to execute in sequence)
+	* Allow support for <bootdrive>:\AUTO.BAT that will use emucon to run programs at startup
+	  (so it is possible to run programs with command line parameters at startup)
+	* Preserve windows when switching resolutions (create dummy EMUDESK.INF in memory
+	  and use it when changing resolutions rather than loading it from disk)
+	* Add option to install a RAM-disc of configurable size
+	* Share viewer file viewer between EmuCON and EmuDesk
+	* Write better file viewer that can be controlled with mouse and allow to go back up in the file
+	* Write minimal text editor and embed (will have to be very small!)
+	* Create interface for devices (like FreeMiNT's XDD interface)
