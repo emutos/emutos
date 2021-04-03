@@ -171,18 +171,6 @@ Vwk * get_vwk_by_handle(WORD handle)
     return vwk_ptr[handle];
 }
 
-#if MPS_LINES_LUT
-UWORD lineslut[400];
-void lineslut_setup(void);
-void lineslut_setup(void) {
-    UWORD i, offset;
-
-    for (i = offset = 0; i<V_REZ_VT ; i++) {
-        lineslut[i] = offset;
-	offset += BYTES_LIN;
-    }
-}
-#endif
 
 /*
  * update resolution-dependent VDI/lineA variables
@@ -192,10 +180,6 @@ void lineslut_setup(void) {
 void update_rez_dependent(void)
 {
     BYTES_LIN = v_lin_wr = V_REZ_HZ / 8 * v_planes;
-
-#if MPS_LINES_LUT
-    lineslut_setup();
-#endif
 
 #if EXTENDED_PALETTE
     mcs_ptr = (v_planes <= 4) ? &mouse_cursor_save : &ext_mouse_cursor_save;
