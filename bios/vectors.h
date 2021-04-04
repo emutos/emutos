@@ -1,7 +1,7 @@
 /*
  * vectors.h - exception vectors, interrupt routines and system hooks
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -98,8 +98,10 @@ extern WORD trap_save_area[];
 extern void (*vector_5ms)(void);              /* 200 Hz system timer */
 #endif
 
+/* interrupt handlers in vectors.S */
 #if CONF_WITH_MFP_RS232
 void mfp_rs232_rx_interrupt(void);
+void mfp_rs232_tx_interrupt(void);
 #endif
 
 /* protect d2/a2 when calling external user-supplied code */

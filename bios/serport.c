@@ -155,15 +155,26 @@ LONG bconin1(void)
     return value;
 }
 
+static WORD incr_tail(IOREC *iorec)
+{
+    WORD tail;
+
+    tail = iorec->tail + 1;
+    if (tail >= iorec->size)
+        tail = 0;
+
+    return tail;
+}
+
 LONG bcostat1(void)
 {
 #if CONF_WITH_COLDFIRE_RS232
     return coldfire_rs232_can_write() ? -1 : 0;
 #elif CONF_WITH_MFP_RS232
-    if (MFP_BASE->tsr & 0x80)
-        return -1;
-    else
-        return 0;
+    IOREC *out = &iorec1.out;
+
+    /* set the status according to buffer availability */
+    return (out->head == incr_tail(out)) ? 0L : -1L;
 #else
     return -1;
 #endif
@@ -179,8 +190,28 @@ LONG bconout1(WORD dev, WORD b)
     coldfire_rs232_write_byte(b);
     return 1;
 #elif CONF_WITH_MFP_RS232
-    /* Output to RS232 interface */
-    MFP_BASE->udr = (char)b;
+    WORD old_sr, tail;
+    IOREC *out = &iorec1.out;
+
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
+
+    /*
+     * if the buffer is empty & the port is empty, output directly.
+     * otherwise queue the data.
+     */
+    if ((out->head == out->tail) && (MFP_BASE->tsr & 0x80)) {
+        MFP_BASE->udr = (UBYTE)b;
+    } else {
+        *(out->buf + out->tail) = (UBYTE)b;
+        tail = incr_tail(out);
+        if (tail != out->head) {        /* buffer not full,  */
+            out->tail = tail;           /*  so ok to advance */
+        }
+    }
+
+    /* restore interrupts */
+    set_sr(old_sr);
     return 1L;
 #else
     /* The above loop will never return */
@@ -233,8 +264,8 @@ static const struct mfp_rs232_table mfp_rs232_init[] = {
 };
 
 /*
- * the following routine is called by the assembler interrupt handler.
- * it runs at interrupt level 6 & is therefore never interrupted.
+ * the following routines are called by assembler interrupt handlers.
+ * they run at interrupt level 6 and are therefore never interrupted.
  */
 void mfp_rs232_rx_interrupt_handler(void)
 {
@@ -251,6 +282,23 @@ void mfp_rs232_rx_interrupt_handler(void)
 
     /* clear the interrupt service bit */
     MFP_BASE->isra = 0xef;
+}
+
+void mfp_rs232_tx_interrupt_handler(void)
+{
+    IOREC *out = &iorec1.out;
+
+    /*
+     * if there's any queued output data, send it
+     */
+    if (out->head != out->tail) {
+        MFP_BASE->udr = *(out->buf + out->head);
+        if (++out->head >= out->size)
+            out->head = 0;
+    }
+
+    /* clear the interrupt service bit (bit 2) */
+    MFP_BASE->isra = 0xfb;
 }
 
 #endif  /* CONF_WITH_MFP_RS232 */
@@ -780,8 +828,9 @@ void init_serport(void)
 #endif
 
 #if CONF_WITH_MFP_RS232
-    /* Set up a handler for MFP receive buffer full interrupt */
+    /* Set up handlers for MFP USART buffer interrupts */
     mfpint(MFP_RBF, (LONG) mfp_rs232_rx_interrupt);
+    mfpint(MFP_TBE,(LONG)mfp_rs232_tx_interrupt);
 #endif
 
 #ifdef __mcoldfire__

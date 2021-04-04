@@ -1,7 +1,7 @@
 /*
  * serport.h - header for serport.c
  *
- * Copyright (C) 2013 The EmuTOS development team
+ * Copyright (C) 2013-2021 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -88,6 +88,7 @@ LONG bconoutB(WORD,WORD);
 
 #if CONF_WITH_MFP_RS232
 void mfp_rs232_rx_interrupt_handler(void);
+void mfp_rs232_tx_interrupt_handler(void);
 #endif
 
 #if BCONMAP_AVAILABLE
