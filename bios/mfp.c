@@ -2,7 +2,7 @@
  * mfp.c - handling of the Multi-Function Peripheral MFP 68901
  *
  * Copyright (C) 2001 Martin Doering
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -50,6 +50,42 @@ static void reset_mfp_regs(MFP *mfp)
     mfp->tsr = 0x00;
 }
 
+static void disable_mfp_interrupt(MFP *mfp, WORD num)
+{
+    UBYTE mask;
+
+    num &= 0x0F;
+    if (num >= 8) {
+        mask = ~(1<<(num-8));
+        mfp->imra &= mask;
+        mfp->iera &= mask;
+        mfp->ipra = mask;   /* note: IPRA/ISRA ignore '1' bits */
+        mfp->isra = mask;
+    } else {
+        mask = ~(1<<num);
+        mfp->imrb &= mask;
+        mfp->ierb &= mask;
+        mfp->iprb = mask;   /* note: IPRB/ISRB ignore '1' bits */
+        mfp->isrb = mask;
+    }
+}
+
+static void enable_mfp_interrupt(MFP *mfp, WORD num)
+{
+    UBYTE mask;
+
+    num &= 0x0F;
+    if (num >= 8) {
+        mask = 1 << (num - 8);
+        mfp->iera |= mask;
+        mfp->imra |= mask;
+    } else {
+        mask = 1 << num;
+        mfp->ierb |= mask;
+        mfp->imrb |= mask;
+    }
+}
+
 #endif
 
 
@@ -91,40 +127,12 @@ void mfpint(WORD num, LONG vector)
 
 void jdisint(WORD num)
 {
-    MFP *mfp=MFP_BASE;   /* set base address of MFP */
-    UBYTE mask;
-
-    num &= 0x0F;
-    if(num >= 8) {
-        mask = ~(1<<(num-8));
-        mfp->imra &= mask;
-        mfp->iera &= mask;
-        mfp->ipra = mask;   /* note: IPRA/ISRA ignore '1' bits */
-        mfp->isra = mask;
-    } else {
-        mask = ~(1<<num);
-        mfp->imrb &= mask;
-        mfp->ierb &= mask;
-        mfp->iprb = mask;   /* note: IPRA/ISRA ignore '1' bits */
-        mfp->isrb = mask;
-    }
+    disable_mfp_interrupt(MFP_BASE, num);
 }
 
 void jenabint(WORD num)
 {
-    MFP *mfp=MFP_BASE;   /* set base address of MFP */
-    UBYTE i;
-
-    num &= 0x0F;
-    if(num >= 8) {
-        i = 1 << (num - 8);
-        mfp->iera |= i;
-        mfp->imra |= i;
-    } else {
-        i = 1 << num;
-        mfp->ierb |= i;
-        mfp->imrb |= i;
-    }
+    enable_mfp_interrupt(MFP_BASE, num);
 }
 
 /* setup the timer, but do not activate the interrupt */
