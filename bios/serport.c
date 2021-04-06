@@ -221,17 +221,15 @@ LONG bconout1(WORD dev, WORD b)
 
 void push_serial_iorec(UBYTE data)
 {
+    IOREC *in = &iorec1.in;
     WORD tail;
 
-    tail = iorec1.in.tail + 1;
-    if (tail >= iorec1.in.size) {
-        tail = 0;
-    }
-    if (tail == iorec1.in.head) {
+    tail = incr_tail(in);
+    if (tail == in->head) {
         /* iorec full, do nothing */
     } else {
-        *((UBYTE *)(iorec1.in.buf + tail)) = data;
-        iorec1.in.tail = tail;
+        *((UBYTE *)(in->buf + tail)) = data;
+        in->tail = tail;
     }
 }
 
