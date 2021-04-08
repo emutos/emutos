@@ -104,6 +104,11 @@ void mfp_rs232_rx_interrupt(void);
 void mfp_rs232_tx_interrupt(void);
 #endif
 
+#if CONF_WITH_TT_MFP
+void mfp_tt_rx_interrupt(void);
+void mfp_tt_tx_interrupt(void);
+#endif
+
 /* protect d2/a2 when calling external user-supplied code */
 
 LONG protect_v(LONG (*func)(void));

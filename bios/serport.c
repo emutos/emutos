@@ -358,42 +358,112 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 static LONG bconstatTT(void)
 {
     /* Character available in the serial input buffer? */
-    /* FIXME: We ought to use Iorec() for this... */
-    if (TT_MFP_BASE->rsr & 0x80)
-        return -1L;
+    if (iorecTT.in.head == iorecTT.in.tail)
+        return 0L;  /* iorec buffer empty */
 
-    return 0L;
+    return -1L;     /* not empty => input available */
 }
 
 static LONG bconinTT(void)
 {
+    WORD old_sr;
+    LONG value;
+
     /* Wait for character at the serial line */
     while(!bconstatTT())
         ;
 
-    /* Return character...
-     * FIXME: We ought to use Iorec() for this... */
-    return (LONG)TT_MFP_BASE->udr;
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
+
+    iorecTT.in.head++;
+    if (iorecTT.in.head >= iorecTT.in.size) {
+        iorecTT.in.head = 0;
+    }
+    value = *(UBYTE *)(iorecTT.in.buf + iorecTT.in.head);
+
+    /* restore interrupts */
+    set_sr(old_sr);
+    return value;
 }
 
 static LONG bcostatTT(void)
 {
-    if (TT_MFP_BASE->tsr & 0x80)
-        return -1L;
+    IOREC *out = &iorecTT.out;
 
-    return 0L;
+    /* set the status according to buffer availability */
+    return (out->head == incr_tail(out)) ? 0L : -1L;
 }
 
 static LONG bconoutTT(WORD dev, WORD b)
 {
+    WORD old_sr, tail;
+    IOREC *out = &iorecTT.out;
+
     /* Wait for transmit buffer to become empty */
     while(!bcostatTT())
         ;
 
-    /* Output to RS232 interface */
-    TT_MFP_BASE->udr = (UBYTE)b;
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
 
+    /*
+     * if the buffer is empty & the port is empty, output directly.
+     * otherwise queue the data.
+     */
+    if ((out->head == out->tail) && (TT_MFP_BASE->tsr & 0x80)) {
+        TT_MFP_BASE->udr = (UBYTE)b;
+    } else {
+        *(out->buf + out->tail) = (UBYTE)b;
+        tail = incr_tail(out);
+        if (tail != out->head) {        /* buffer not full,  */
+            out->tail = tail;           /*  so ok to advance */
+        }
+    }
+
+    /* restore interrupts */
+    set_sr(old_sr);
     return 1L;
+}
+
+/*
+ * the following routines are called by assembler interrupt handlers.
+ * they run at interrupt level 6 and are therefore never interrupted.
+ */
+void mfp_tt_rx_interrupt_handler(void)
+{
+    IOREC *in = &iorecTT.in;
+    WORD tail;
+
+    if (TT_MFP_BASE->rsr & 0x80) {
+        UBYTE data = TT_MFP_BASE->udr;
+        tail = incr_tail(in);
+        if (tail != in->head) {
+            /* space available in iorec buffer */
+            *((UBYTE *)(in->buf + tail)) = data;
+            in->tail = tail;
+        }
+    }
+
+    /* clear the interrupt service bit (bit 4) */
+    TT_MFP_BASE->isra = 0xef;
+}
+
+void mfp_tt_tx_interrupt_handler(void)
+{
+    IOREC *out = &iorecTT.out;
+
+    /*
+     * if there's any queued output data, send it
+     */
+    if (out->head != out->tail) {
+        TT_MFP_BASE->udr = *(out->buf + out->head);
+        if (++out->head >= out->size)
+            out->head = 0;
+    }
+
+    /* clear the interrupt service bit (bit 2) */
+    TT_MFP_BASE->isra = 0xfb;
 }
 
 /*
@@ -816,8 +886,11 @@ void init_serport(void)
     memcpy(&iorecTT,&iorec_init,sizeof(EXT_IOREC));
     iorecTT.in.buf = ibufTT;
     iorecTT.out.buf = obufTT;
-    if (has_tt_mfp)
+    if (has_tt_mfp) {
         rsconfTT(B9600, 0, 0x88, 1, 1, 0);  /* set default initial values for TT MFP */
+        tt_mfpint(MFP_RBF, (LONG)mfp_tt_rx_interrupt);  /* for MFP USART buffer interrupts */
+        tt_mfpint(MFP_TBE, (LONG)mfp_tt_tx_interrupt);
+    }
 #endif  /* CONF_WITH_TT_MFP */
 
 #if BCONMAP_AVAILABLE

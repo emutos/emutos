@@ -611,6 +611,50 @@ _mfp_rs232_tx_interrupt:
 
 #endif
 
+#if CONF_WITH_TT_MFP
+
+// ==== TT MFP USART interrupt handlers ============================================
+
+        .globl _mfp_tt_rx_interrupt
+        .globl _mfp_tt_tx_interrupt
+
+_mfp_tt_rx_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        jbsr    _mfp_tt_rx_interrupt_handler
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+_mfp_tt_tx_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        jbsr    _mfp_tt_tx_interrupt_handler
+
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+#endif
+
 
 // ==== Critical error handler functions =====================================
 

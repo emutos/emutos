@@ -99,6 +99,14 @@ void tt_mfp_init(void)
     mfp->vr = 0x58;         /* vectors 0x50 to 0x5F, software end of interrupt */
 }
 
+void tt_mfpint(WORD num, LONG vector)
+{
+    num &= 0x0F;
+    disable_mfp_interrupt(TT_MFP_BASE, num);
+    *(LONG *)((0x50L + num)*4) = vector;
+    enable_mfp_interrupt(TT_MFP_BASE, num);
+}
+
 #endif
 
 

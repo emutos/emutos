@@ -91,6 +91,11 @@ void mfp_rs232_rx_interrupt_handler(void);
 void mfp_rs232_tx_interrupt_handler(void);
 #endif
 
+#if CONF_WITH_TT_MFP
+void mfp_tt_rx_interrupt_handler(void);
+void mfp_tt_tx_interrupt_handler(void);
+#endif
+
 #if BCONMAP_AVAILABLE
 /*
  * Bconmap() stuff
