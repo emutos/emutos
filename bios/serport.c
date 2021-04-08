@@ -143,6 +143,17 @@ static const struct mfp_rs232_table mfp_rs232_init[] = {
 #endif
 
 
+static WORD incr_tail(IOREC *iorec)
+{
+    WORD tail;
+
+    tail = iorec->tail + 1;
+    if (tail >= iorec->size)
+        tail = 0;
+
+    return tail;
+}
+
 #if CONF_WITH_MFP || CONF_WITH_TT_MFP
 /*
  * routines shared by both MFPs
@@ -180,19 +191,53 @@ static ULONG rsconf_mfp(MFP *mfp, EXT_IOREC *iorec, WORD baud, WORD ctrl, WORD u
 
     return old;
 }
+
+static void put_iorecbuf(MFP *mfp, IOREC *out, WORD b)
+{
+    WORD old_sr, tail;
+
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
+
+    /*
+     * if the buffer is empty & the port is empty, output directly.
+     * otherwise queue the data.
+     */
+    if ((out->head == out->tail) && (mfp->tsr & 0x80)) {
+        mfp->udr = (UBYTE)b;
+    } else {
+        *(out->buf + out->tail) = (UBYTE)b;
+        tail = incr_tail(out);
+        if (tail != out->head) {        /* buffer not full,  */
+            out->tail = tail;           /*  so ok to advance */
+        }
+    }
+
+    /* restore interrupts */
+    set_sr(old_sr);
+}
 #endif
 
-static WORD incr_tail(IOREC *iorec)
+
+static LONG get_iorecbuf(IOREC *in)
 {
-    WORD tail;
+    WORD old_sr;
+    LONG value;
+    
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
 
-    tail = iorec->tail + 1;
-    if (tail >= iorec->size)
-        tail = 0;
+    in->head++;
+    if (in->head >= in->size) {
+        in->head = 0;
+    }
+    value = *(UBYTE *)(in->buf + in->head);
 
-    return tail;
+    /* restore interrupts */
+    set_sr(old_sr);
+
+    return value;
 }
-
 
 /*
  * MFP serial port i/o routines
@@ -210,27 +255,12 @@ LONG bconstat1(void)
 
 LONG bconin1(void)
 {
-    WORD old_sr;
-    LONG value;
-
     /* Wait for character at the serial line */
     while(!bconstat1())
         ;
 
     /* Return character... */
-
-    /* disable interrupts */
-    old_sr = set_sr(0x2700);
-
-    iorec1.in.head++;
-    if (iorec1.in.head >= iorec1.in.size) {
-        iorec1.in.head = 0;
-    }
-    value = *(UBYTE *)(iorec1.in.buf + iorec1.in.head);
-
-    /* restore interrupts */
-    set_sr(old_sr);
-    return value;
+    return get_iorecbuf(&iorec1.in);
 }
 
 LONG bcostat1(void)
@@ -257,28 +287,7 @@ LONG bconout1(WORD dev, WORD b)
     coldfire_rs232_write_byte(b);
     return 1;
 #elif CONF_WITH_MFP_RS232
-    WORD old_sr, tail;
-    IOREC *out = &iorec1.out;
-
-    /* disable interrupts */
-    old_sr = set_sr(0x2700);
-
-    /*
-     * if the buffer is empty & the port is empty, output directly.
-     * otherwise queue the data.
-     */
-    if ((out->head == out->tail) && (MFP_BASE->tsr & 0x80)) {
-        MFP_BASE->udr = (UBYTE)b;
-    } else {
-        *(out->buf + out->tail) = (UBYTE)b;
-        tail = incr_tail(out);
-        if (tail != out->head) {        /* buffer not full,  */
-            out->tail = tail;           /*  so ok to advance */
-        }
-    }
-
-    /* restore interrupts */
-    set_sr(old_sr);
+    put_iorecbuf(MFP_BASE, &iorec1.out, b);
     return 1L;
 #else
     /* The above loop will never return */
@@ -366,25 +375,12 @@ static LONG bconstatTT(void)
 
 static LONG bconinTT(void)
 {
-    WORD old_sr;
-    LONG value;
-
     /* Wait for character at the serial line */
     while(!bconstatTT())
         ;
 
-    /* disable interrupts */
-    old_sr = set_sr(0x2700);
-
-    iorecTT.in.head++;
-    if (iorecTT.in.head >= iorecTT.in.size) {
-        iorecTT.in.head = 0;
-    }
-    value = *(UBYTE *)(iorecTT.in.buf + iorecTT.in.head);
-
-    /* restore interrupts */
-    set_sr(old_sr);
-    return value;
+    /* return data byte */
+    return get_iorecbuf(&iorecTT.in);
 }
 
 static LONG bcostatTT(void)
@@ -397,32 +393,11 @@ static LONG bcostatTT(void)
 
 static LONG bconoutTT(WORD dev, WORD b)
 {
-    WORD old_sr, tail;
-    IOREC *out = &iorecTT.out;
-
     /* Wait for transmit buffer to become empty */
     while(!bcostatTT())
         ;
 
-    /* disable interrupts */
-    old_sr = set_sr(0x2700);
-
-    /*
-     * if the buffer is empty & the port is empty, output directly.
-     * otherwise queue the data.
-     */
-    if ((out->head == out->tail) && (TT_MFP_BASE->tsr & 0x80)) {
-        TT_MFP_BASE->udr = (UBYTE)b;
-    } else {
-        *(out->buf + out->tail) = (UBYTE)b;
-        tail = incr_tail(out);
-        if (tail != out->head) {        /* buffer not full,  */
-            out->tail = tail;           /*  so ok to advance */
-        }
-    }
-
-    /* restore interrupts */
-    set_sr(old_sr);
+    put_iorecbuf(TT_MFP_BASE, &iorecTT.out, b);
     return 1L;
 }
 
