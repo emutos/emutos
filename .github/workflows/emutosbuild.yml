@@ -8,7 +8,7 @@ on:
 jobs:
   build:
 
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
 
     # Prevent forks from running this job.
     # Note that this is merely for convenience, to avoid forks from being
@@ -25,13 +25,10 @@ jobs:
       env:
         SSH_ID: ${{ secrets.SSH_ID }}
       run: .scripts/install_ssh_id.sh
-    # Note: Current version of LFTP in Ubuntu 18.04 has a bug that causes it to crash.
-    # See https://bugs.launchpad.net/ubuntu/+source/lftp/+bug/1904601
     - name: Install packages
       run: |
         sudo add-apt-repository ppa:vriviere/ppa && sudo apt-get update
-        sudo apt-get install cross-mint-essential dos2unix hatari aranym mtools lftp=4.8.1-1ubuntu0.1
-        dpkg -l lftp
+        sudo apt-get install cross-mint-essential dos2unix hatari aranym mtools lftp
     - name: Display package versions
       run: |
         git --version
