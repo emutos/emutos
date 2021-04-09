@@ -65,13 +65,14 @@ check_cookie "_SND" "0x00000003"
 echo "OK"
 
 echo -n "- Checking TT ... "
-echo "##disabled##"
-# run_hatari --machine tt --cpulevel 3
-# check_cookie "_CPU" "0x0000001e"
-# check_cookie "_VDO" "0x00020000"
-# check_cookie "_MCH" "0x00020000"
-# check_cookie "_SND" "0x00000003"
-# echo "OK"
+# Emulate monochrome monitor to avoid a bug in Hatari 2.1.0
+# which is used for GitHub Action builds.
+run_hatari --machine tt --cpulevel 3 --monitor mono
+check_cookie "_CPU" "0x0000001e"
+check_cookie "_VDO" "0x00020000"
+check_cookie "_MCH" "0x00020000"
+check_cookie "_SND" "0x00000003"
+echo "OK"
 
 echo -n "- Checking Falcon ... "
 run_hatari --machine falcon --cpulevel 4
