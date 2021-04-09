@@ -42,6 +42,8 @@ jobs:
         tar --version
         unix2dos --version
         lftp --version
+        hatari --version || true
+        aranym --version
     - name: Build binaries
       run: |
         export VERSION=$(date -u +%Y%m%d-%H%M%S)-$(git rev-parse --short ${GITHUB_SHA})
