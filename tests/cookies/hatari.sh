@@ -65,12 +65,13 @@ check_cookie "_SND" "0x00000003"
 echo "OK"
 
 echo -n "- Checking TT ... "
-run_hatari --machine tt --cpulevel 3
-check_cookie "_CPU" "0x0000001e"
-check_cookie "_VDO" "0x00020000"
-check_cookie "_MCH" "0x00020000"
-check_cookie "_SND" "0x00000003"
-echo "OK"
+echo "##disabled##"
+# run_hatari --machine tt --cpulevel 3
+# check_cookie "_CPU" "0x0000001e"
+# check_cookie "_VDO" "0x00020000"
+# check_cookie "_MCH" "0x00020000"
+# check_cookie "_SND" "0x00000003"
+# echo "OK"
 
 echo -n "- Checking Falcon ... "
 run_hatari --machine falcon --cpulevel 4
