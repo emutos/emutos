@@ -13,6 +13,7 @@
  */
 
 #include "emutos.h"
+#include "string.h"
 #include "mfp.h"
 #include "tosvars.h"
 #include "vectors.h"
@@ -23,31 +24,7 @@
 
 static void reset_mfp_regs(MFP *mfp)
 {
-    mfp->gpip = 0x00;
-    mfp->aer = 0x00;
-    mfp->ddr = 0x00;
-
-    mfp->iera = 0x00;
-    mfp->ierb = 0x00;
-    mfp->ipra = 0x00;
-    mfp->iprb = 0x00;
-    mfp->isra = 0x00;
-    mfp->isrb = 0x00;
-    mfp->imra = 0x00;
-    mfp->imrb = 0x00;
-    mfp->vr = 0x00;
-
-    mfp->tacr = 0x00;
-    mfp->tbcr = 0x00;
-    mfp->tcdcr = 0x00;
-
-    mfp->tadr = 0x00;
-    mfp->tbdr = 0x00;
-    mfp->tcdr = 0x00;
-    mfp->tddr = 0x00;
-
-    mfp->rsr = 0x00;
-    mfp->tsr = 0x00;
+    bzero(mfp, sizeof(MFP));
 }
 
 static void disable_mfp_interrupt(MFP *mfp, WORD num)
