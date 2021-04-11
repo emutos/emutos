@@ -1,7 +1,7 @@
 /*
  * linea.S - linea graphics stuff
  *
- * Copyright (C) 2002-2020 by Authors:
+ * Copyright (C) 2002-2021 by Authors:
  *
  * Authors:
  *  THH  Thomas Huth
@@ -162,6 +162,11 @@ _linea_0:
         lea     linea_vecs,a2   // get pointer to table of the Line-A routines
         rts
 
+hide_mouse:
+        jsr     _linea_hide_mouse
+        move.l  linea_save,d0   /* saved at start of interrupt handler */
+        rts
+
 undraw_sprite:
         move.l  a2,-(sp)        /* save area ptr */
         jsr     _cur_replace
@@ -189,6 +194,9 @@ linea_blit:
  * - they don't use the passed VDI workstation pointer
  * - parameters for line-A go in the same Intin/Ptsin/Control arrays
  * These functions are show, hide and transform (mouse) cursor.
+ * However, as a compatibility feature for poorly-written programs,
+ * hide mouse has an assembler wrapper that preserves d0, since Atari
+ * TOS does that (probably inadvertently), and some programs rely on it.
  *
  * A couple of functions have line-A specific C-implementations.
  * They are put_pix, get_pix.
@@ -229,7 +237,7 @@ linea_vecs:
         .dc.l   linea_blit      /* $7 - area blit */
         .dc.l   _text_blt       /* $8 - text blitting */
         .dc.l   _linea_show_mouse      /* $9 - show mouse */
-        .dc.l   _linea_hide_mouse      /* $A - hide cursor */
+        .dc.l   hide_mouse      /* $A - hide mouse cursor */
         .dc.l   _linea_transform_mouse /* $B - transform mouse */
         .dc.l   undraw_sprite   /* $C - undraw sprite */
         .dc.l   draw_sprite     /* $D - draw sprite */

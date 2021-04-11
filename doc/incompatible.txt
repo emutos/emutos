@@ -60,8 +60,8 @@ Note: STOS programs can sometimes be identified by the presence of *.MBK
 files (STOS memory bank files).
 
 
-Category: STAC program
-----------------------
+Category: program created by ST Adventure Creator (STAC)
+--------------------------------------------------------
 Error 1: crash during startup.
 
 Bug analysis:
@@ -73,19 +73,6 @@ access basepage information.  This crash can also happen under TOS 2.
 
 Workaround:
 Boot with a bare system (press Ctrl at the Welcome page).
-
-Error 2: crash during startup.
-
-Bug analysis:
-When loading its data file, a STAC program first does an Fsfirst(), then
-hides the mouse cursor via Line-A *before* checking the value returned
-by Fsfirst() in d0.  The "Hide Mouse" function in Atari TOS does not
-change the value of d0, but EmuTOS may do so (the Hide Mouse function
-is documented by Atari as "Returns: Nothing").  This may cause the
-program to assume the file doesn't exist and this later leads to a crash.
-
-Workaround:
-None.
 
 
 Category: old game using fixed addresses
