@@ -163,8 +163,9 @@ _linea_0:
         rts
 
 hide_mouse:
+        move.l  d0,-(sp)
         jsr     _linea_hide_mouse
-        move.l  linea_save,d0   /* saved at start of interrupt handler */
+        move.l  (sp)+,d0
         rts
 
 undraw_sprite:
