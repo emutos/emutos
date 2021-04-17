@@ -20,7 +20,7 @@ typedef struct iorec IOREC;
 struct iorec {
     UBYTE *buf;         /* input buffer */
     WORD size;          /* buffer size */
-    WORD head;          /* head index */
+    volatile WORD head; /* head index */
     volatile WORD tail; /* tail index */
     WORD low;           /* low water mark */
     WORD high;          /* high water mark */
