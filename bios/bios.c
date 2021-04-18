@@ -370,7 +370,7 @@ static void bios_init(void)
         }
     }
 
-    /* Initialize the system 200 Hz timer */
+    /* Initialize the system 200 Hz timer (timer C on Atari hardware) */
     KDEBUG(("init_system_timer()\n"));
     init_system_timer();
 
@@ -386,8 +386,9 @@ static void bios_init(void)
         boot_status |= SCC_AVAILABLE;   /* track progress */
 #endif
 
-    /* The sound init must be done before allowing MFC interrupts,
-     * because of dosound stuff in the timer C interrupt routine.
+    /*
+     * The sound init must be done before allowing system timer interrupts,
+     * because of dosound stuff in the system timer interrupt routine.
      */
 #if CONF_WITH_DMASOUND
     KDEBUG(("dmasound_init()\n"));
@@ -396,9 +397,9 @@ static void bios_init(void)
     KDEBUG(("snd_init()\n"));
     snd_init();         /* Reset Soundchip, deselect floppies */
 
-    /* Init the two ACIA devices (MIDI and KBD). The three actions below can
-     * be done in any order provided they happen before allowing MFP
-     * interrupts.
+    /*
+     * Initialise the two ACIA devices (MIDI and KBD), then initialise
+     * the associated IORECs & vectors
      */
     KDEBUG(("kbd_init()\n"));
     kbd_init();         /* init keyboard, disable mouse and joystick */
@@ -409,8 +410,8 @@ static void bios_init(void)
     KDEBUG(("after init_acia_vecs()\n"));
     boot_status |= MIDI_AVAILABLE;  /* track progress */
 
-    /* Now we can enable the interrupts.
-     * We need a timer for DMA timeouts in floppy and harddisk initialisation.
+    /*
+     * Now we can enable interrupts, so that timers are available.
      * The VBL processing will be enabled later with the vblsem semaphore.
      */
 #if CONF_WITH_ATARI_VIDEO
@@ -426,7 +427,7 @@ static void bios_init(void)
 
     /* Initialize the DSP.  Since we currently use the system timer
      * in dsp_execboot(), which is called from dsp_init(), the latter
-     * must be called *after* interrupts are enabled.
+     * must be called *after* system timer interrupts are enabled.
      */
 #if CONF_WITH_DSP
     KDEBUG(("dsp_init()\n"));
