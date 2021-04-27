@@ -180,7 +180,7 @@ WORD timer_c_sieve;
 
 void init_system_timer(void)
 {
-    timer_c_sieve = 0x1111;
+    timer_c_sieve = 0x0000;     /* initially disabled */
     timer_ms = 20;
 
 #if !CONF_WITH_MFP

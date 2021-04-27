@@ -370,9 +370,31 @@ static void bios_init(void)
         }
     }
 
-    /* Initialize the system 200 Hz timer (timer C on Atari hardware) */
+    /*
+     * Initialize the system 200 Hz timer (timer C on Atari hardware).
+     * Note that init_system_timer() no longer enables the 50 Hz processing
+     * that is called from the system timer interrupt.  This allows us to
+     * enable interrupts earlier (so that the interrupt-driven serial port
+     * routines work), even though we haven't yet initialised the sound &
+     * keyboard repeat stuff.
+     */
     KDEBUG(("init_system_timer()\n"));
     init_system_timer();
+
+    /*
+     * Now we can enable interrupts.  Although VBL & timer interrupts will
+     * occur:
+     *  . VBL processing will not be enabled until later, when the vblsem
+     *    semaphore is set
+     *  . 50 Hz processing (sound playback & keyboard repeat) will not be
+     *    enabled until later, when timer_c_sieve is set
+     */
+#if CONF_WITH_ATARI_VIDEO
+    /* Keep the HBL disabled */
+    set_sr(0x2300);
+#else
+    set_sr(0x2000);
+#endif
 
     /* Initialize the RS-232 port(s) */
     KDEBUG(("chardev_init()\n"));
@@ -387,8 +409,7 @@ static void bios_init(void)
 #endif
 
     /*
-     * The sound init must be done before allowing system timer interrupts,
-     * because of dosound stuff in the system timer interrupt routine.
+     * Initialise sound processing
      */
 #if CONF_WITH_DMASOUND
     KDEBUG(("dmasound_init()\n"));
@@ -410,16 +431,8 @@ static void bios_init(void)
     KDEBUG(("after init_acia_vecs()\n"));
     boot_status |= MIDI_AVAILABLE;  /* track progress */
 
-    /*
-     * Now we can enable interrupts, so that timers are available.
-     * The VBL processing will be enabled later with the vblsem semaphore.
-     */
-#if CONF_WITH_ATARI_VIDEO
-    /* Keep the HBL disabled */
-    set_sr(0x2300);
-#else
-    set_sr(0x2000);
-#endif
+    /* Enable 50 Hz processing */
+    timer_c_sieve = 0x1111;
 
     KDEBUG(("calibrate_delay()\n"));
     calibrate_delay();  /* determine values for delay() function */
