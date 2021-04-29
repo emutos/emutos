@@ -721,7 +721,6 @@ static WORD inf_which(OBJECT *tree, WORD baseobj, WORD numobj)
 WORD inf_pref(void)
 {
     OBJECT *tree1 = desk_rs_trees[ADSETPRE];
-//    OBJECT *tree2 = desk_rs_trees[ADSETPR2];
     WORD oldtime, olddate;
     WORD button;
 
@@ -731,7 +730,6 @@ WORD inf_pref(void)
 
     /* first, deselect all objects */
     deselect_all(tree1);
-//    deselect_all(tree2);
 
     /* select buttons corresponding to current state */
     if (G.g_cdelepref)
@@ -782,16 +780,6 @@ WORD inf_pref(void)
     /* allow user to select preferences */
     inf_show(tree1, ROOT);
     button = inf_what(tree1, SPOK);
-
-//    /*
-//     * handle dialog 2 if necessary
-//     */
-//    if (button < 0)         /* user selected More */
-//    {
-//        /* allow user to select preferences */
-//        inf_show(tree2, ROOT);
-//        button = inf_what(tree2, SPOK2);
-//    }
 
     if (button)
     {

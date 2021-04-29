@@ -3,7 +3,7 @@
  *
  * This file exists to centralise the handling of serial port hardware.
  *
- * Copyright (C) 2013-2019 The EmuTOS development team
+ * Copyright (C) 2013-2021 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -116,97 +116,6 @@ static const MAPTAB maptable_mfp_tt =
     { bconstatTT, bconinTT, bcostatTT, bconoutTT, rsconfTT, &iorecTT };
 #endif  /* CONF_WITH_TT_MFP */
 
-/*
- * MFP serial port i/o routines
- */
-LONG bconstat1(void)
-{
-    /* Character available in the serial input buffer? */
-    if (iorec1.in.head == iorec1.in.tail) {
-        return 0;   /* iorec empty */
-    }
-    else {
-        return -1;  /* not empty => input available */
-    }
-}
-
-LONG bconin1(void)
-{
-    WORD old_sr;
-    LONG value;
-
-    /* Wait for character at the serial line */
-    while(!bconstat1())
-        ;
-
-    /* Return character... */
-
-    /* disable interrupts */
-    old_sr = set_sr(0x2700);
-
-    iorec1.in.head++;
-    if (iorec1.in.head >= iorec1.in.size) {
-        iorec1.in.head = 0;
-    }
-    value = *(UBYTE *)(iorec1.in.buf + iorec1.in.head);
-
-    /* restore interrupts */
-    set_sr(old_sr);
-    return value;
-}
-
-LONG bcostat1(void)
-{
-#if CONF_WITH_COLDFIRE_RS232
-    return coldfire_rs232_can_write() ? -1 : 0;
-#elif CONF_WITH_MFP_RS232
-    if (MFP_BASE->tsr & 0x80)
-        return -1;
-    else
-        return 0;
-#else
-    return -1;
-#endif
-}
-
-LONG bconout1(WORD dev, WORD b)
-{
-    /* Wait for transmit buffer to become empty */
-    while(!bcostat1())
-        ;
-
-#if CONF_WITH_COLDFIRE_RS232
-    coldfire_rs232_write_byte(b);
-    return 1;
-#elif CONF_WITH_MFP_RS232
-    /* Output to RS232 interface */
-    MFP_BASE->udr = (char)b;
-    return 1L;
-#else
-    /* The above loop will never return */
-    return 0L;
-#endif
-}
-
-void push_serial_iorec(UBYTE data)
-{
-    WORD tail;
-
-    tail = iorec1.in.tail + 1;
-    if (tail >= iorec1.in.size) {
-        tail = 0;
-    }
-    if (tail == iorec1.in.head) {
-        /* iorec full, do nothing */
-    } else {
-        *((UBYTE *)(iorec1.in.buf + tail)) = data;
-        iorec1.in.tail = tail;
-    }
-}
-
-/*
- * MFP Rsconf() routines
- */
 #if CONF_WITH_MFP_RS232
 struct mfp_rs232_table {
     UBYTE control;
@@ -231,31 +140,24 @@ static const struct mfp_rs232_table mfp_rs232_init[] = {
     { /*    75 */  2, 64 },
     { /*    50 */  2, 96 },
 };
-
-/*
- * the following routine is called by the assembler interrupt handler.
- * it runs at interrupt level 6 & is therefore never interrupted.
- */
-void mfp_rs232_rx_interrupt_handler(void)
-{
-    if (MFP_BASE->rsr & 0x80) {
-        UBYTE data = MFP_BASE->udr;
-#if CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_POLLING_MODE
-        /* And append a new IOREC value into the IKBD buffer */
-        push_ascii_ikbdiorec(data);
-#else
-        /* And append a new IOREC value into the serial buffer */
-        push_serial_iorec(data);
 #endif
-    }
 
-    /* clear the interrupt service bit */
-    MFP_BASE->isra = 0xef;
+
+static WORD incr_tail(IOREC *iorec)
+{
+    WORD tail;
+
+    tail = iorec->tail + 1;
+    if (tail >= iorec->size)
+        tail = 0;
+
+    return tail;
 }
 
-#endif  /* CONF_WITH_MFP_RS232 */
-
 #if CONF_WITH_MFP || CONF_WITH_TT_MFP
+/*
+ * routines shared by both MFPs
+ */
 static ULONG rsconf_mfp(MFP *mfp, EXT_IOREC *iorec, WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
     const struct mfp_rs232_table *init;
@@ -289,7 +191,164 @@ static ULONG rsconf_mfp(MFP *mfp, EXT_IOREC *iorec, WORD baud, WORD ctrl, WORD u
 
     return old;
 }
+
+static void put_iorecbuf(MFP *mfp, IOREC *out, WORD b)
+{
+    WORD old_sr, tail;
+
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
+
+    /*
+     * if the buffer is empty & the port is empty, output directly.
+     * otherwise queue the data.
+     */
+    if ((out->head == out->tail) && (mfp->tsr & 0x80)) {
+        mfp->udr = (UBYTE)b;
+    } else {
+        *(out->buf + out->tail) = (UBYTE)b;
+        tail = incr_tail(out);
+        if (tail != out->head) {        /* buffer not full,  */
+            out->tail = tail;           /*  so ok to advance */
+        }
+    }
+
+    /* restore interrupts */
+    set_sr(old_sr);
+}
 #endif
+
+
+static LONG get_iorecbuf(IOREC *in)
+{
+    WORD old_sr;
+    LONG value;
+    
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
+
+    in->head++;
+    if (in->head >= in->size) {
+        in->head = 0;
+    }
+    value = *(UBYTE *)(in->buf + in->head);
+
+    /* restore interrupts */
+    set_sr(old_sr);
+
+    return value;
+}
+
+/*
+ * MFP serial port i/o routines
+ */
+LONG bconstat1(void)
+{
+    /* Character available in the serial input buffer? */
+    if (iorec1.in.head == iorec1.in.tail) {
+        return 0;   /* iorec empty */
+    }
+    else {
+        return -1;  /* not empty => input available */
+    }
+}
+
+LONG bconin1(void)
+{
+    /* Wait for character at the serial line */
+    while(!bconstat1())
+        ;
+
+    /* Return character... */
+    return get_iorecbuf(&iorec1.in);
+}
+
+LONG bcostat1(void)
+{
+#if CONF_WITH_COLDFIRE_RS232
+    return coldfire_rs232_can_write() ? -1 : 0;
+#elif CONF_WITH_MFP_RS232
+    IOREC *out = &iorec1.out;
+
+    /* set the status according to buffer availability */
+    return (out->head == incr_tail(out)) ? 0L : -1L;
+#else
+    return -1;
+#endif
+}
+
+LONG bconout1(WORD dev, WORD b)
+{
+    /* Wait for transmit buffer to become empty */
+    while(!bcostat1())
+        ;
+
+#if CONF_WITH_COLDFIRE_RS232
+    coldfire_rs232_write_byte(b);
+    return 1;
+#elif CONF_WITH_MFP_RS232
+    put_iorecbuf(MFP_BASE, &iorec1.out, b);
+    return 1L;
+#else
+    /* The above loop will never return */
+    return 0L;
+#endif
+}
+
+void push_serial_iorec(UBYTE data)
+{
+    IOREC *in = &iorec1.in;
+    WORD tail;
+
+    tail = incr_tail(in);
+    if (tail == in->head) {
+        /* iorec full, do nothing */
+    } else {
+        *((UBYTE *)(in->buf + tail)) = data;
+        in->tail = tail;
+    }
+}
+
+#if CONF_WITH_MFP_RS232
+/*
+ * the following routines are called by assembler interrupt handlers.
+ * they run at interrupt level 6 and are therefore never interrupted.
+ */
+void mfp_rs232_rx_interrupt_handler(void)
+{
+    if (MFP_BASE->rsr & 0x80) {
+        UBYTE data = MFP_BASE->udr;
+#if CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_POLLING_MODE
+        /* And append a new IOREC value into the IKBD buffer */
+        push_ascii_ikbdiorec(data);
+#else
+        /* And append a new IOREC value into the serial buffer */
+        push_serial_iorec(data);
+#endif
+    }
+
+    /* clear the interrupt service bit */
+    MFP_BASE->isra = 0xef;
+}
+
+void mfp_rs232_tx_interrupt_handler(void)
+{
+    IOREC *out = &iorec1.out;
+
+    /*
+     * if there's any queued output data, send it
+     */
+    if (out->head != out->tail) {
+        MFP_BASE->udr = *(out->buf + out->head);
+        if (++out->head >= out->size)
+            out->head = 0;
+    }
+
+    /* clear the interrupt service bit (bit 2) */
+    MFP_BASE->isra = 0xfb;
+}
+
+#endif  /* CONF_WITH_MFP_RS232 */
 
 ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
@@ -299,6 +358,98 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
     return 0UL;
 #endif  /* CONF_WITH_MFP_RS232 */
 }
+
+
+#if CONF_WITH_TT_MFP
+/*
+ * TT MFP i/o routines
+ */
+static LONG bconstatTT(void)
+{
+    /* Character available in the serial input buffer? */
+    if (iorecTT.in.head == iorecTT.in.tail)
+        return 0L;  /* iorec buffer empty */
+
+    return -1L;     /* not empty => input available */
+}
+
+static LONG bconinTT(void)
+{
+    /* Wait for character at the serial line */
+    while(!bconstatTT())
+        ;
+
+    /* return data byte */
+    return get_iorecbuf(&iorecTT.in);
+}
+
+static LONG bcostatTT(void)
+{
+    IOREC *out = &iorecTT.out;
+
+    /* set the status according to buffer availability */
+    return (out->head == incr_tail(out)) ? 0L : -1L;
+}
+
+static LONG bconoutTT(WORD dev, WORD b)
+{
+    /* Wait for transmit buffer to become empty */
+    while(!bcostatTT())
+        ;
+
+    put_iorecbuf(TT_MFP_BASE, &iorecTT.out, b);
+    return 1L;
+}
+
+/*
+ * the following routines are called by assembler interrupt handlers.
+ * they run at interrupt level 6 and are therefore never interrupted.
+ */
+void mfp_tt_rx_interrupt_handler(void)
+{
+    IOREC *in = &iorecTT.in;
+    WORD tail;
+
+    if (TT_MFP_BASE->rsr & 0x80) {
+        UBYTE data = TT_MFP_BASE->udr;
+        tail = incr_tail(in);
+        if (tail != in->head) {
+            /* space available in iorec buffer */
+            *((UBYTE *)(in->buf + tail)) = data;
+            in->tail = tail;
+        }
+    }
+
+    /* clear the interrupt service bit (bit 4) */
+    TT_MFP_BASE->isra = 0xef;
+}
+
+void mfp_tt_tx_interrupt_handler(void)
+{
+    IOREC *out = &iorecTT.out;
+
+    /*
+     * if there's any queued output data, send it
+     */
+    if (out->head != out->tail) {
+        TT_MFP_BASE->udr = *(out->buf + out->head);
+        if (++out->head >= out->size)
+            out->head = 0;
+    }
+
+    /* clear the interrupt service bit (bit 2) */
+    TT_MFP_BASE->isra = 0xfb;
+}
+
+/*
+ * TT Rsconf() routine
+ */
+static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+{
+    return rsconf_mfp(TT_MFP_BASE,&iorecTT,baud,ctrl,ucr,rsr,tsr,scr);
+}
+#endif  /* CONF_WITH_TT_MFP */
+
 
 #if CONF_WITH_SCC
 /*
@@ -618,59 +769,6 @@ void scc_init(void)
 }
 #endif  /* CONF_WITH_SCC */
 
-#if CONF_WITH_TT_MFP
-/*
- * TT MFP i/o routines
- */
-static LONG bconstatTT(void)
-{
-    /* Character available in the serial input buffer? */
-    /* FIXME: We ought to use Iorec() for this... */
-    if (TT_MFP_BASE->rsr & 0x80)
-        return -1L;
-
-    return 0L;
-}
-
-static LONG bconinTT(void)
-{
-    /* Wait for character at the serial line */
-    while(!bconstatTT())
-        ;
-
-    /* Return character...
-     * FIXME: We ought to use Iorec() for this... */
-    return (LONG)TT_MFP_BASE->udr;
-}
-
-static LONG bcostatTT(void)
-{
-    if (TT_MFP_BASE->tsr & 0x80)
-        return -1L;
-
-    return 0L;
-}
-
-static LONG bconoutTT(WORD dev, WORD b)
-{
-    /* Wait for transmit buffer to become empty */
-    while(!bcostatTT())
-        ;
-
-    /* Output to RS232 interface */
-    TT_MFP_BASE->udr = (UBYTE)b;
-
-    return 1L;
-}
-
-/*
- * TT Rsconf() routine
- */
-static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
-{
-    return rsconf_mfp(TT_MFP_BASE,&iorecTT,baud,ctrl,ucr,rsr,tsr,scr);
-}
-#endif  /* CONF_WITH_TT_MFP */
 
 #if BCONMAP_AVAILABLE
 static ULONG rsconf_dummy(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
@@ -735,6 +833,7 @@ static void init_bconmap(void)
 }
 #endif      /* BCONMAP_AVAILABLE */
 
+
 /*
  * initialise the serial port(s)
  */
@@ -762,8 +861,11 @@ void init_serport(void)
     memcpy(&iorecTT,&iorec_init,sizeof(EXT_IOREC));
     iorecTT.in.buf = ibufTT;
     iorecTT.out.buf = obufTT;
-    if (has_tt_mfp)
+    if (has_tt_mfp) {
         rsconfTT(B9600, 0, 0x88, 1, 1, 0);  /* set default initial values for TT MFP */
+        tt_mfpint(MFP_RBF, (LONG)mfp_tt_rx_interrupt);  /* for MFP USART buffer interrupts */
+        tt_mfpint(MFP_TBE, (LONG)mfp_tt_tx_interrupt);
+    }
 #endif  /* CONF_WITH_TT_MFP */
 
 #if BCONMAP_AVAILABLE
@@ -780,8 +882,9 @@ void init_serport(void)
 #endif
 
 #if CONF_WITH_MFP_RS232
-    /* Set up a handler for MFP receive buffer full interrupt */
+    /* Set up handlers for MFP USART buffer interrupts */
     mfpint(MFP_RBF, (LONG) mfp_rs232_rx_interrupt);
+    mfpint(MFP_TBE,(LONG)mfp_rs232_tx_interrupt);
 #endif
 
 #ifdef __mcoldfire__

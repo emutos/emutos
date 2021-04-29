@@ -60,6 +60,22 @@
 #define IFR2   (*(volatile UBYTE*)(VIA2BASE + 0x68)) /* Interrupt Flag register */
 #define IER2   (*(volatile UBYTE*)(VIA2BASE + 0x70)) /* Interrupt Enable register */
 
+/* bit masks unique to SY6522 Interrupt Flag Register */
+#define IFR_IRQ     0x80    /* an interrupt has occurred on an active channel */
+
+/* bit masks unique to SY6522 Interrupt Enable Register */
+#define IER_ENABLE  0x80    /* enable interrupts corresponding to bit(s) set below */
+#define IER_DISABLE 0x00    /* disable interrupts corresponding to bit(s) set below */
+
+/* bit masks for SY6522 Interrupt Flag Register AND Interrupt Enable Register */
+#define INT_TIMER1  0x40    /* Timer 1 */
+#define INT_TIMER2  0x20    /* Timer 2 */
+#define INT_CB1     0x10    /* Peripheral B control line 1 */
+#define INT_CB2     0x08    /* Peripheral B control line 2 */
+#define INT_SHIFT   0x04    /* Shift register */
+#define INT_CA1     0x02    /* Peripheral A control line 1 */
+#define INT_CA2     0x01    /* Peripheral A control line 2 */
+
 /******************************************************************************/
 /* Variables                                                                  */
 /******************************************************************************/
@@ -142,7 +158,7 @@ static void lisa_write_cops(UBYTE b)
 /* Return TRUE if there is a pending byte from COPS */
 static BOOL lisa_cops_can_read(void)
 {
-    return !!(IFR1 & 0x02); /* Check CA1 pin: BSY */
+    return !!(IFR1 & INT_CA1);  /* Check CA1 pin: BSY */
 }
 
 /* Read a byte from COPS */
@@ -287,7 +303,7 @@ void lisa_init_system_timer(void)
     ACR2 = (ACR2 & ~0xc0) | 0x40; /* Timer 1 in free-running mode */
     T1CL2 = LOBYTE(divisor); /* Must be set *before* T1CH2 */
     T1CH2 = HIBYTE(divisor); /* Start the timer */
-    IER2 = 0x80 | 0x40; /* Enable Timer 1 interrupt */
+    IER2 = IER_ENABLE | INT_TIMER1; /* Enable Timer 1 interrupt */
 
     /* VEC_LEVEL1 has already been initialized by lisa_screen_init() */
 }
@@ -299,7 +315,7 @@ void lisa_init_system_timer(void)
 /* VIA1 interrupt */
 static void lisa_int_via1(UBYTE ifr1)
 {
-    if (IER1 & ifr1 & 0x02)
+    if (IER1 & ifr1 & INT_CA1)
     {
         /* COPS input */
         UBYTE data = ORA1;
@@ -312,7 +328,7 @@ void lisa_int_2_c(void)
 {
     UBYTE ifr1 = IFR1;
 
-    if (ifr1 & 0x80)
+    if (ifr1 & IFR_IRQ)
     {
         /* VIA1 interrupt */
         lisa_int_via1(ifr1);
@@ -322,7 +338,7 @@ void lisa_int_2_c(void)
 /* VIA2 interrupt */
 static void lisa_int_via2(UBYTE ifr2)
 {
-    if (IER2 & ifr2 & 0x40)
+    if (IER2 & ifr2 & INT_TIMER1)
     {
         /* Timer 1 */
         lisa_call_5ms();
@@ -335,7 +351,7 @@ void lisa_int_1_c(void)
 {
     UBYTE ifr2 = IFR2;
 
-    if (ifr2 & 0x80)
+    if (ifr2 & IFR_IRQ)
     {
         /* VIA2 interrupt */
         lisa_int_via2(ifr2);

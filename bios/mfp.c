@@ -2,7 +2,7 @@
  * mfp.c - handling of the Multi-Function Peripheral MFP 68901
  *
  * Copyright (C) 2001 Martin Doering
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -13,6 +13,7 @@
  */
 
 #include "emutos.h"
+#include "string.h"
 #include "mfp.h"
 #include "tosvars.h"
 #include "vectors.h"
@@ -23,31 +24,43 @@
 
 static void reset_mfp_regs(MFP *mfp)
 {
-    mfp->gpip = 0x00;
-    mfp->aer = 0x00;
-    mfp->ddr = 0x00;
+    bzero(mfp, sizeof(MFP));
+}
 
-    mfp->iera = 0x00;
-    mfp->ierb = 0x00;
-    mfp->ipra = 0x00;
-    mfp->iprb = 0x00;
-    mfp->isra = 0x00;
-    mfp->isrb = 0x00;
-    mfp->imra = 0x00;
-    mfp->imrb = 0x00;
-    mfp->vr = 0x00;
+static void disable_mfp_interrupt(MFP *mfp, WORD num)
+{
+    UBYTE mask;
 
-    mfp->tacr = 0x00;
-    mfp->tbcr = 0x00;
-    mfp->tcdcr = 0x00;
+    num &= 0x0F;
+    if (num >= 8) {
+        mask = ~(1<<(num-8));
+        mfp->imra &= mask;
+        mfp->iera &= mask;
+        mfp->ipra = mask;   /* note: IPRA/ISRA ignore '1' bits */
+        mfp->isra = mask;
+    } else {
+        mask = ~(1<<num);
+        mfp->imrb &= mask;
+        mfp->ierb &= mask;
+        mfp->iprb = mask;   /* note: IPRB/ISRB ignore '1' bits */
+        mfp->isrb = mask;
+    }
+}
 
-    mfp->tadr = 0x00;
-    mfp->tbdr = 0x00;
-    mfp->tcdr = 0x00;
-    mfp->tddr = 0x00;
+static void enable_mfp_interrupt(MFP *mfp, WORD num)
+{
+    UBYTE mask;
 
-    mfp->rsr = 0x00;
-    mfp->tsr = 0x00;
+    num &= 0x0F;
+    if (num >= 8) {
+        mask = 1 << (num - 8);
+        mfp->iera |= mask;
+        mfp->imra |= mask;
+    } else {
+        mask = 1 << num;
+        mfp->ierb |= mask;
+        mfp->imrb |= mask;
+    }
 }
 
 #endif
@@ -61,6 +74,14 @@ void tt_mfp_init(void)
 
     reset_mfp_regs(mfp);    /* reset the MFP registers */
     mfp->vr = 0x58;         /* vectors 0x50 to 0x5F, software end of interrupt */
+}
+
+void tt_mfpint(WORD num, LONG vector)
+{
+    num &= 0x0F;
+    disable_mfp_interrupt(TT_MFP_BASE, num);
+    *(LONG *)((0x50L + num)*4) = vector;
+    enable_mfp_interrupt(TT_MFP_BASE, num);
 }
 
 #endif
@@ -91,40 +112,12 @@ void mfpint(WORD num, LONG vector)
 
 void jdisint(WORD num)
 {
-    MFP *mfp=MFP_BASE;   /* set base address of MFP */
-    UBYTE mask;
-
-    num &= 0x0F;
-    if(num >= 8) {
-        mask = ~(1<<(num-8));
-        mfp->imra &= mask;
-        mfp->iera &= mask;
-        mfp->ipra = mask;   /* note: IPRA/ISRA ignore '1' bits */
-        mfp->isra = mask;
-    } else {
-        mask = ~(1<<num);
-        mfp->imrb &= mask;
-        mfp->ierb &= mask;
-        mfp->iprb = mask;   /* note: IPRA/ISRA ignore '1' bits */
-        mfp->isrb = mask;
-    }
+    disable_mfp_interrupt(MFP_BASE, num);
 }
 
 void jenabint(WORD num)
 {
-    MFP *mfp=MFP_BASE;   /* set base address of MFP */
-    UBYTE i;
-
-    num &= 0x0F;
-    if(num >= 8) {
-        i = 1 << (num - 8);
-        mfp->iera |= i;
-        mfp->imra |= i;
-    } else {
-        i = 1 << num;
-        mfp->ierb |= i;
-        mfp->imrb |= i;
-    }
+    enable_mfp_interrupt(MFP_BASE, num);
 }
 
 /* setup the timer, but do not activate the interrupt */
@@ -187,7 +180,7 @@ WORD timer_c_sieve;
 
 void init_system_timer(void)
 {
-    timer_c_sieve = 0x1111;
+    timer_c_sieve = 0x0000;     /* initially disabled */
     timer_ms = 20;
 
 #if !CONF_WITH_MFP

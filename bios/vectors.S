@@ -1,7 +1,7 @@
 /*
  * vectors.S - exception vectors
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -568,7 +568,12 @@ timerc_end:
         rte
 
 #if CONF_WITH_MFP_RS232
+
+// ==== MFP USART interrupt handlers ============================================
+
         .globl _mfp_rs232_rx_interrupt
+        .globl _mfp_rs232_tx_interrupt
+
 _mfp_rs232_rx_interrupt:
 #ifdef __mcoldfire__
         lea     -16(sp),sp
@@ -585,7 +590,71 @@ _mfp_rs232_rx_interrupt:
         movem.l (sp)+,d0-d1/a0-a1
 #endif
         rte
+
+_mfp_rs232_tx_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
 #endif
+
+        jbsr    _mfp_rs232_tx_interrupt_handler
+
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+#endif
+
+#if CONF_WITH_TT_MFP
+
+// ==== TT MFP USART interrupt handlers ============================================
+
+        .globl _mfp_tt_rx_interrupt
+        .globl _mfp_tt_tx_interrupt
+
+_mfp_tt_rx_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        jbsr    _mfp_tt_rx_interrupt_handler
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+_mfp_tt_tx_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        jbsr    _mfp_tt_tx_interrupt_handler
+
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+#endif
+
 
 // ==== Critical error handler functions =====================================
 
