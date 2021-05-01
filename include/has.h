@@ -89,6 +89,14 @@ extern int has_megartc;   /* in clock.c */
   #define HAS_MEGARTC 0
 #endif
 
+#if CONF_WITH_ULTRASATAN_CLOCK
+extern int has_ultrasatan_clock; /* in disk.c */
+extern int ultrasatan_id; /* in disk.c */
+  #define HAS_ULTRASATAN_CLOCK has_ultrasatan_clock
+#else
+  #define HAS_ULTRASATAN_CLOCK 0
+#endif /* CONF_WITH_ULTRASATAN_CLOCK */
+
 #if CONF_WITH_NVRAM
 extern int has_nvram;     /* in nvram.c */
   #define HAS_NVRAM has_nvram
@@ -97,7 +105,7 @@ extern int has_nvram;     /* in nvram.c */
 #endif
 
 /* convenience macro: TRUE iff any kind of real time clock */
-#define HAS_RTC (HAS_NVRAM || HAS_MEGARTC || HAS_ICDRTC || HAS_MONSTER_RTC)
+#define HAS_RTC (HAS_NVRAM || HAS_MEGARTC || HAS_ICDRTC || HAS_MONSTER_RTC || HAS_ULTRASATAN_CLOCK)
 
 #if CONF_WITH_BLITTER
 extern int has_blitter;
