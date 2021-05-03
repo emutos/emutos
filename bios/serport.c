@@ -86,7 +86,7 @@ static UBYTE ibuf1[RS232_BUFSIZE], obuf1[RS232_BUFSIZE];
 static const EXT_IOREC iorec_init = {
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
-    B9600, FLOW_CTRL_NONE, 0x88, 0xff, 0xea };
+    DEFAULT_BAUDRATE, FLOW_CTRL_NONE, 0x88, 0xff, 0xea };
 
 #if BCONMAP_AVAILABLE
 static MAPTAB maptable[4];
@@ -862,7 +862,7 @@ void init_serport(void)
     iorecTT.in.buf = ibufTT;
     iorecTT.out.buf = obufTT;
     if (has_tt_mfp) {
-        rsconfTT(B9600, 0, 0x88, 1, 1, 0);  /* set default initial values for TT MFP */
+        rsconfTT(DEFAULT_BAUDRATE, 0, 0x88, 1, 1, 0);  /* set default initial values for TT MFP */
         tt_mfpint(MFP_RBF, (LONG)mfp_tt_rx_interrupt);  /* for MFP USART buffer interrupts */
         tt_mfpint(MFP_TBE, (LONG)mfp_tt_tx_interrupt);
     }
@@ -878,7 +878,7 @@ void init_serport(void)
 #endif
 
 #if !CONF_SERIAL_IKBD
-    (*rsconfptr)(B9600, 0, 0x88, 1, 1, 0);
+    (*rsconfptr)(DEFAULT_BAUDRATE, 0, 0x88, 1, 1, 0);
 #endif
 
 #if CONF_WITH_MFP_RS232

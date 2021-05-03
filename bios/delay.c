@@ -100,7 +100,7 @@ void calibrate_delay(void)
      * serial port stuff (in case we're using it)
      */
     jdisint(MFP_TIMERD);
-    rsconf1(B9600, 0, 0x88, 1, 1, 0);   /* just like init_serport() */
+    rsconf1(DEFAULT_BAUDRATE, 0, 0x88, 1, 1, 0);   /* just like init_serport() */
 
     /*
      * intcount is the number of interrupts that occur during 'loopcount'

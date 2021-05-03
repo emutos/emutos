@@ -1455,6 +1455,13 @@
 # define CONF_SERIAL_IKBD 0
 #endif
 
+/* 
+ * Set the default baud rate for serial ports.
+ */
+#ifndef DEFAULT_BAUDRATE
+# define DEFAULT_BAUDRATE B9600
+#endif
+
 /*
  * Define the AES version here. This must be done at the end of the
  * "Software Section", since the value depends on features that are set
