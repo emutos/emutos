@@ -123,6 +123,7 @@ This is the currently supported original Atari hardware:
 EmuTOS also supports the following Atari-compatible hardware:
 - CPU support for M68010, M68020, M68040, M68060, ColdFire V4e, and Apollo 68080
 - ICD AdSCSI Plus ST Real-Time Clock
+- UltraSatan Real-Time Clock
 - MonSTer expansion card
 - Magnum ST/STe expansion cards
 - Storm ST expansion card (RAM and RTC)
