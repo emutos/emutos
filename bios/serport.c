@@ -154,7 +154,7 @@ static WORD incr_tail(IOREC *iorec)
     return tail;
 }
 
-#if CONF_WITH_MFP || CONF_WITH_TT_MFP
+#if CONF_WITH_MFP_RS232 || CONF_WITH_TT_MFP
 /*
  * routines shared by both MFPs
  */
