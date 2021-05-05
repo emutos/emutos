@@ -94,6 +94,7 @@ WORD argc, rc;
 
     linewrap = 0;
     dta = (DTA *)Fgetdta();
+    redir_name[0] = '\0';
     redir_handle = -1L;
 
     if (init_cmdedit() < 0)
