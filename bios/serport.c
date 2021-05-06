@@ -746,7 +746,7 @@ void scc_init(void)
 
     /* calculate delay times for SCC access: note that SCC PCLK is 8MHz */
     reset_recovery_loops = loopcount_1_msec / 1000; /* 8 cycles = 1 usec */
-    recovery_loops = loopcount_1_msec / 2000;       /* 4 cycles = 0.5 usec */
+    recovery_loops = reset_recovery_loops / 2;      /* 4 cycles = 0.5 usec */
 
     /* issue hardware reset */
     scc->portA.ctl = 0x09;
