@@ -390,6 +390,22 @@ int toupper(int c)
         return(c);
 }
 
+int strncmp(const char *a, const char *b, size_t n)
+{
+    unsigned char s1, s2;
+
+    while(n-- > 0) {
+        s1 = (unsigned char)*a++;
+        s2 = (unsigned char)*b++;
+        if (s1 != s2)
+            return s1 - s2;
+        if (s1 == '\0')
+            break;
+    }
+
+    return 0;
+}
+
 int strncasecmp(const char *a, const char *b, size_t n)
 {
     unsigned char s1, s2;

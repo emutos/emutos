@@ -206,6 +206,7 @@ extern WORD nflops_copy;
 extern DTA *dta;
 extern LONG redir_handle;
 extern char user_path[MAXPATHLEN];     /* from PATH command */
+extern char *environment;              /* from cmdasm.S */
 
 /*
  *  function prototypes

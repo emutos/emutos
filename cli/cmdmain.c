@@ -23,6 +23,7 @@
  */
 #include "cmd.h"
 #include "version.h"
+#include "string.h"
 
 /*
  *  global variables
@@ -55,6 +56,7 @@ PRIVATE void create_redir(const char *name);
 PRIVATE WORD execute(WORD argc,char **argv,char *redir);
 PRIVATE WORD get_nflops(void);
 PRIVATE void strip_quotes(int argc,char **argv);
+PRIVATE void getenv(char **ppath, const char *psrch);
 
 int cmdmain(void);      /* called only from cmdasm.S */
 
@@ -99,6 +101,21 @@ WORD argc, rc;
 
     if (init_cmdedit() < 0)
         messagenl(_("warning: no history buffers"));
+
+    {
+        /* Setup path from the PATH environment variable */
+        char *largv[2];
+        getenv(&largv[1],"PATH=");
+        if (largv[1]) {
+            if (!largv[1][0])   /* skip NUL after PATH= */
+                largv[1]++;
+            if (largv[1][0]) {
+                /* path ${PATH$} */
+                largv[0] = "path";
+                execute(2,largv,redir_name);
+            }
+        }
+    }
 
     while(1) {
         init_screen();      /* init variables for screen size */
@@ -199,6 +216,36 @@ int i;
                 ;
             *(p-1) = '\0';
         }
+    }
+}
+
+/*
+ *  Find a variable in the process's environment.
+ *  psrch: variable name followed by '=', e.g. "PATH="
+ *  ppath: returned address of the first character after the found
+ *         variable, or NULL if variable was not found.
+ *  Note:  the implementation is the same as that of the AES sh_envrn
+ *         which we can't use because EmuCON is not a GEM app.
+ */
+PRIVATE void getenv(char **ppath, const char *psrch)
+{
+    /* The implementation is the same as that of the AES sh_envrn */
+    char *p;
+    WORD len;
+
+    len = strlen(psrch);
+    *ppath = NULL;
+
+    /*
+     * scan environment string until double nul
+     */
+    for (p = environment; *p; ) {
+        if (strncmp(p, psrch, len) == 0) {
+            *ppath = p + len;
+            break;
+        }
+        while(*p++) /* skip to end of current env variable */
+            ;
     }
 }
 
