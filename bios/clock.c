@@ -517,7 +517,7 @@ void detect_monster_rtc(void)
      * return all zeros. So we try to read the DAY register.
      * If it's zero, there's either no RTC or it's not
      * initialized. So we try to write to the DAY register
-     * and read back it's value. If still zero, then no
+     * and read back its value. If still zero, then no
      * RTC is present.
      */
 
