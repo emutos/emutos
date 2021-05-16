@@ -51,6 +51,7 @@ extern LONG jmp_xbios(WORD, ...);
 #define jmp_xbios_llww(a,b,c,d,e)   jmp_xbios((WORD)a,(LONG)b,(LONG)c,(WORD)d,(WORD)e)
 #define jmp_xbios_ww(a,b,c)     jmp_xbios((WORD)(a),(WORD)(b),(WORD)(c))
 
+#define Cconws(a)           jmp_gemdos_p(0x09,a)
 #define Dsetdrv(a)          jmp_gemdos_w(0x0e,a)
 #define Dgetdrv()           jmp_gemdos_v(0x19)
 #define Fgetdta()           jmp_gemdos_v(0x2f)
@@ -130,8 +131,8 @@ extern LONG jmp_xbios(WORD, ...);
 #define TT_MEDIUM       4
 #define TT_HIGH         6
 #define TT_LOW          7
-#define BLACK           0x0000          /* for Setcolor() */
-
+#define RGB_BLACK       0x0000          /* for Setcolor() */
+#define RGB_GREEN       0x00F0
 /*
  *  typedefs
  */
