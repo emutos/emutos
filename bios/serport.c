@@ -86,7 +86,7 @@ static UBYTE ibuf1[RS232_BUFSIZE], obuf1[RS232_BUFSIZE];
 static const EXT_IOREC iorec_init = {
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
     { NULL, RS232_BUFSIZE, 0, 0, RS232_BUFSIZE/4, 3*RS232_BUFSIZE/4 },
-    B9600, FLOW_CTRL_NONE, 0x88, 0xff, 0xea };
+    DEFAULT_BAUDRATE, FLOW_CTRL_NONE, 0x88, 0xff, 0xea };
 
 #if BCONMAP_AVAILABLE
 static MAPTAB maptable[4];
@@ -154,7 +154,7 @@ static WORD incr_tail(IOREC *iorec)
     return tail;
 }
 
-#if CONF_WITH_MFP || CONF_WITH_TT_MFP
+#if CONF_WITH_MFP_RS232 || CONF_WITH_TT_MFP
 /*
  * routines shared by both MFPs
  */
@@ -191,7 +191,9 @@ static ULONG rsconf_mfp(MFP *mfp, EXT_IOREC *iorec, WORD baud, WORD ctrl, WORD u
 
     return old;
 }
+#endif
 
+#if (CONF_WITH_MFP_RS232 && !RS232_DEBUG_PRINT) || CONF_WITH_TT_MFP
 static void put_iorecbuf(MFP *mfp, IOREC *out, WORD b)
 {
     WORD old_sr, tail;
@@ -263,15 +265,25 @@ LONG bconin1(void)
     return get_iorecbuf(&iorec1.in);
 }
 
+/*
+ * For serial output via the MFP, bcostat1()/bconout1() normally use
+ * interrupts.  However, when debug output is via the serial port this
+ * can cause complications (e.g. when panic() disables interrupts).
+ * Therefore we avoid using interrupts in that situation.
+ */
 LONG bcostat1(void)
 {
 #if CONF_WITH_COLDFIRE_RS232
     return coldfire_rs232_can_write() ? -1 : 0;
 #elif CONF_WITH_MFP_RS232
+# if RS232_DEBUG_PRINT
+    return (MFP_BASE->tsr & 0x80) ? -1 : 0;
+# else
     IOREC *out = &iorec1.out;
 
     /* set the status according to buffer availability */
     return (out->head == incr_tail(out)) ? 0L : -1L;
+# endif
 #else
     return -1;
 #endif
@@ -287,8 +299,13 @@ LONG bconout1(WORD dev, WORD b)
     coldfire_rs232_write_byte(b);
     return 1;
 #elif CONF_WITH_MFP_RS232
+# if RS232_DEBUG_PRINT
+    MFP_BASE->udr = (char)b;
+    return 1L;
+# else
     put_iorecbuf(MFP_BASE, &iorec1.out, b);
     return 1L;
+# endif
 #else
     /* The above loop will never return */
     return 0L;
@@ -729,7 +746,7 @@ void scc_init(void)
 
     /* calculate delay times for SCC access: note that SCC PCLK is 8MHz */
     reset_recovery_loops = loopcount_1_msec / 1000; /* 8 cycles = 1 usec */
-    recovery_loops = loopcount_1_msec / 2000;       /* 4 cycles = 0.5 usec */
+    recovery_loops = reset_recovery_loops / 2;      /* 4 cycles = 0.5 usec */
 
     /* issue hardware reset */
     scc->portA.ctl = 0x09;
@@ -862,7 +879,7 @@ void init_serport(void)
     iorecTT.in.buf = ibufTT;
     iorecTT.out.buf = obufTT;
     if (has_tt_mfp) {
-        rsconfTT(B9600, 0, 0x88, 1, 1, 0);  /* set default initial values for TT MFP */
+        rsconfTT(DEFAULT_BAUDRATE, 0, 0x88, 1, 1, 0);  /* set default initial values for TT MFP */
         tt_mfpint(MFP_RBF, (LONG)mfp_tt_rx_interrupt);  /* for MFP USART buffer interrupts */
         tt_mfpint(MFP_TBE, (LONG)mfp_tt_tx_interrupt);
     }
@@ -878,13 +895,15 @@ void init_serport(void)
 #endif
 
 #if !CONF_SERIAL_IKBD
-    (*rsconfptr)(B9600, 0, 0x88, 1, 1, 0);
+    (*rsconfptr)(DEFAULT_BAUDRATE, 0, 0x88, 1, 1, 0);
 #endif
 
 #if CONF_WITH_MFP_RS232
     /* Set up handlers for MFP USART buffer interrupts */
     mfpint(MFP_RBF, (LONG) mfp_rs232_rx_interrupt);
+# if !RS232_DEBUG_PRINT
     mfpint(MFP_TBE,(LONG)mfp_rs232_tx_interrupt);
+# endif
 #endif
 
 #ifdef __mcoldfire__

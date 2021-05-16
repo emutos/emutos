@@ -182,6 +182,9 @@
 # ifndef CONF_WITH_ICDRTC
 #  define CONF_WITH_ICDRTC 0    /* useless on FireBee as it has NVRAM clock */
 # endif
+# ifndef CONF_WITH_ULTRASATAN_CLOCK
+#  define CONF_WITH_ULTRASATAN_CLOCK 0    /* useless on FireBee as it has NVRAM clock */
+# endif
 # ifndef CONF_WITH_MONSTER
 #  define CONF_WITH_MONSTER 0
 # endif
@@ -282,6 +285,9 @@
 # endif
 # ifndef CONF_WITH_ICDRTC
 #  define CONF_WITH_ICDRTC 0
+# endif
+# ifndef CONF_WITH_ULTRASATAN_CLOCK
+#  define CONF_WITH_ULTRASATAN_CLOCK 0
 # endif
 # ifndef CONF_WITH_XHDI
 #  define CONF_WITH_XHDI 0
@@ -451,6 +457,9 @@
 # endif
 # ifndef CONF_WITH_ICDRTC
 #  define CONF_WITH_ICDRTC 0
+# endif
+# ifndef CONF_WITH_ULTRASATAN_CLOCK
+#  define CONF_WITH_ULTRASATAN_CLOCK 0
 # endif
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
@@ -1008,6 +1017,15 @@
 # endif
 
 /*
+ * Set CONF_WITH_ULTRASATAN_CLOCK to 1 to enable ULTRASATAN clock support
+ * Based on CONF_WITH_ACSI value
+ */
+#ifndef CONF_WITH_ULTRASATAN_CLOCK
+# define CONF_WITH_ULTRASATAN_CLOCK CONF_WITH_ACSI
+#endif
+
+
+/*
  * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
  */
 #ifndef CONF_WITH_DMASOUND
@@ -1435,6 +1453,13 @@
  */
 #ifndef CONF_SERIAL_IKBD
 # define CONF_SERIAL_IKBD 0
+#endif
+
+/* 
+ * Set the default baud rate for serial ports.
+ */
+#ifndef DEFAULT_BAUDRATE
+# define DEFAULT_BAUDRATE B9600
 #endif
 
 /*
@@ -1896,6 +1921,9 @@
 #if !CONF_WITH_ACSI
 # if CONF_WITH_ICDRTC
 #  error CONF_WITH_ICDRTC requires CONF_WITH_ACSI.
+# endif
+# if CONF_WITH_ULTRASATAN_CLOCK
+#  error CONF_WITH_ULTRASATAN_CLOCK requires CONF_WITH_ACSI.
 # endif
 #endif
 

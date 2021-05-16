@@ -56,6 +56,7 @@ PRIVATE void create_redir(const char *name);
 PRIVATE WORD execute(WORD argc,char **argv,char *redir);
 PRIVATE WORD get_nflops(void);
 PRIVATE void strip_quotes(int argc,char **argv);
+PRIVATE void getenv(char **ppath, const char *psrch);
 
 int cmdmain(void);      /* called only from cmdasm.S */
 
@@ -95,20 +96,24 @@ WORD argc, rc;
 
     linewrap = 0;
     dta = (DTA *)Fgetdta();
+    redir_name[0] = '\0';
     redir_handle = -1L;
 
     if (init_cmdedit() < 0)
         messagenl(_("warning: no history buffers"));
 
     {
-        /* Setup path from the PATH environment variable
-         * (should be correctly formatted, no TOS quirk) */
+        /* Setup path from the PATH environment variable */
         char *largv[2];
-        shellutl_getenv(environment,"PATH=",&largv[1]);
-        if (largv[1] && largv[1][0]) {
-            /* path ${PATH$} */
-            largv[0] = "path";
-            execute(2,largv,redir_name);
+		shellutl_getenv(environment,"PATH=",&largv[1]);
+        if (largv[1]) {
+            if (!largv[1][0])   /* skip NULL after PATH= */
+                largv[1]++;
+            if (largv[1][0]) {
+                /* path ${PATH} */
+                largv[0] = "path";
+                execute(2,largv,redir_name);
+            }
         }
     }
 

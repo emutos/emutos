@@ -44,6 +44,12 @@ static LONG acsi_capacity(WORD dev, ULONG *info);
 static LONG acsi_testunit(WORD dev);
 static LONG acsi_inquiry(WORD dev, UBYTE *buf);
 
+#if CONF_WITH_ULTRASATAN_CLOCK
+static LONG ultrasatan_get_running_firmware(WORD dev);
+static LONG ultrasatan_get_clock(WORD dev);
+static LONG ultrasatan_set_clock(WORD dev);
+#endif /* CONF_WITH_ULTRASATAN_CLOCK */
+
 /* the following exists to allow the data and control registers to
  * be written together as well as separately.  this avoids the
  * "DMA chip anomaly" (see "Atari ACSI/DMA Integration Guide" p.14).
@@ -206,6 +212,17 @@ LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
     case GET_MEDIACHANGE:
         rc = MEDIANOCHANGE;
         break;
+#if CONF_WITH_ULTRASATAN_CLOCK
+    case ULTRASATAN_GET_FIRMWARE_VERSION:
+        rc = ultrasatan_get_running_firmware(dev);
+        break;
+    case ULTRASATAN_GET_CLOCK:
+        rc = ultrasatan_get_clock(dev);
+        break;
+    case ULTRASATAN_SET_CLOCK:
+        rc = ultrasatan_set_clock(dev);
+        break;
+#endif /* CONF_WITH_ULTRASATAN_CLOCK */
     }
 
     return rc;
@@ -430,5 +447,61 @@ static void hdc_start_dma(UWORD control)
     ACSIDMA->s.control = control;
     delay();
 }
+
+#if CONF_WITH_ULTRASATAN_CLOCK
+
+static LONG ultrasatan_get_running_firmware(WORD dev)
+{
+    UBYTE cdb[10] = " USCurntFW";
+    int status;
+
+    acsi_begin();
+
+    /* load DMA base address -> internal disk buffer */
+    set_dma_addr(dskbufp);
+    status = send_command(cdb,10,RW_READ,dev,1,1);
+
+    acsi_end();
+
+    invalidate_data_cache(dskbufp,32);
+
+    return status;
+}
+
+static LONG ultrasatan_get_clock(WORD dev)
+{
+    UBYTE cdb[10] = " USRdClRTC";
+    int status;
+
+    acsi_begin();
+
+    /* load DMA base address -> internal disk buffer */
+    set_dma_addr(dskbufp);
+    status = send_command(cdb,10,RW_READ,dev,1,0);
+
+    acsi_end();
+
+    invalidate_data_cache(dskbufp,9);
+
+    return status;
+}
+
+static LONG ultrasatan_set_clock(WORD dev)
+{
+    UBYTE cdb[10] = " USWrClRTC";
+    int status;
+
+    acsi_begin();
+
+    /* load DMA base address -> internal disk buffer */
+    set_dma_addr(dskbufp);
+    status = send_command(cdb,10,RW_WRITE,dev,1,0);
+
+    acsi_end();
+
+    return status;
+}
+
+#endif /* CONF_WITH_ULTRASATAN_CLOCK */
 
 #endif /* CONF_WITH_ACSI */

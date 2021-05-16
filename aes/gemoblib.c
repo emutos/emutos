@@ -698,35 +698,38 @@ void ob_change(OBJECT *tree, WORD obj, UWORD new_state, WORD redraw)
     objptr = tree + obj;
     objptr->ob_state = new_state;
 
-    if (redraw)
+    /* if no redraw, we're done */
+    if (!redraw)
+        return;
+
+    ob_offset(tree, obj, &t.g_x, &t.g_y);
+
+    gsx_moff();
+
+    if (th < 0)
+        th = 0;
+
+    switch(obtype)
     {
-        ob_offset(tree, obj, &t.g_x, &t.g_y);
-
-        gsx_moff();
-
-        th = (th < 0) ? 0 : th;
-
-        if (obtype == G_USERDEF)
+    case G_USERDEF: /* just call the user's drawing routine */
+        ob_user(tree, obj, &t, spec, curr_state, new_state);
+        redraw = FALSE;
+        break;
+    case G_ICON:    /* never use XOR for icons */
+        break;
+    default:        /* others: use XOR iff SELECTED state has changed */
+        if ((new_state ^ curr_state) & SELECTED)
         {
-            ob_user(tree, obj, &t, spec, curr_state, new_state);
+            bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, t.g_x+th, t.g_y+th,
+                    t.g_w-(2*th), t.g_h-(2*th));
             redraw = FALSE;
         }
-        else
-        {
-            if ((obtype != G_ICON) &&
-               ((new_state ^ curr_state) & SELECTED) )
-            {
-                bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, t.g_x+th, t.g_y+th,
-                        t.g_w-(2*th), t.g_h-(2*th));
-                redraw = FALSE;
-            }
-        }
-
-        if (redraw)
-            just_draw(tree, obj, t.g_x, t.g_y);
-
-        gsx_mon();
     }
+
+    if (redraw)
+        just_draw(tree, obj, t.g_x, t.g_y);
+
+    gsx_mon();
 }
 
 

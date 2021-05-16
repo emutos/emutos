@@ -36,7 +36,12 @@ _coma_start:
         trap    #1
         lea     12(sp),sp
 
-        move.l  44(a5),_environment
+#ifdef __mcoldfire__
+        move.l 44(a5),d0
+        move.l  d0,_environment
+#else
+        move.l 44(a5),_environment
+#endif
 
         jsr     _cmdmain
 
