@@ -271,9 +271,16 @@ static void get_row(WORD ch)
 static void get_column(WORD ch)
 {
     int row, col;
+    char ansi[20];
+
+    MAYBE_UNUSED(ansi);
 
     col = ch - POSITION_BIAS;           /* Remove space bias */
     row = save_row;
+#if CONF_SERIAL_CONSOLE_ANSI
+    sprintf(ansi, "\033[%d;%dH", row + 1, col + 1);
+    bconout_str(1, ansi);
+#endif
     move_cursor(col,row);
     con_state = normal_ascii;           /* Next char is not special */
 }
@@ -554,6 +561,9 @@ static void reverse_linefeed(void)
  */
 static void insert_line(void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[L");
+#endif
     cursor_off();               /* hide cursor */
     scroll_down(v_cur_cy);      /* scroll down 1 line & blank current line */
     move_cursor(0, v_cur_cy);   /* move cursor to beginning of line */
@@ -566,6 +576,9 @@ static void insert_line(void)
  */
 static void delete_line(void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[M");
+#endif
     cursor_off();               /* hide cursor */
     scroll_up(v_cur_cy);        /* scroll up 1 line & blank bottom line */
     move_cursor(0, v_cur_cy);   /* move cursor to beginning of line */
@@ -783,6 +796,9 @@ static void erase_from_bol(void)
  */
 static void line_wrap_on(void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[7h");
+#endif
     v_stat_0 |= M_CEOL;    /* set the eol handling bit */
 }
 
@@ -792,6 +808,9 @@ static void line_wrap_on(void)
  */
 static void line_wrap_off(void)
 {
+#if CONF_SERIAL_CONSOLE_ANSI
+    bconout_str(1, "\033[7l");
+#endif
     v_stat_0 &= ~M_CEOL;    /* clear the eol handling bit */
 }
 
