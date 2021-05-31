@@ -403,11 +403,16 @@ static int ide_interface_exists(WORD ifnum, LONG timeout)
 {
     volatile struct IDE *regular_iface = ifinfo[ifnum].base_address;
     volatile struct IDE *twisted_iface = (volatile struct IDE *)(((ULONG)ifinfo[ifnum].base_address)-1);
-    enum ide_if_status  regular_iface_status = IDE_IF_NOTCHECKED;
-    enum ide_if_status  twisted_iface_status = IDE_IF_NOTCHECKED;
+    enum ide_if_status regular_iface_status = IDE_IF_NOTCHECKED;
+    enum ide_if_status twisted_iface_status = IDE_IF_NOTPRESENT;
+    BOOL allow_twisted = check_read_byte((long)&twisted_iface->control);
 
     IDE_WRITE_CONTROL(regular_iface,IDE_CONTROL_nIEN);/* no interrupts please */
-    IDE_WRITE_CONTROL(twisted_iface,IDE_CONTROL_nIEN);/* no interrupts please */
+    if (allow_twisted) {
+        /* Registers for potential "twisted" interface are accessible. */
+        IDE_WRITE_CONTROL(twisted_iface,IDE_CONTROL_nIEN);/* no interrupts please */
+        twisted_iface_status = IDE_IF_NOTCHECKED;
+    }
 
     DELAY_400NS;
     do {
@@ -430,7 +435,7 @@ static int ide_interface_exists(WORD ifnum, LONG timeout)
         }
 
         /* Check BSY on twisted interface. */
-        if ((IDE_READ_ALT_STATUS(twisted_iface) & IDE_STATUS_BSY) == 0) {
+        if (allow_twisted && ((IDE_READ_ALT_STATUS(twisted_iface) & IDE_STATUS_BSY) == 0)) {
             /* Check it exists by setting and reading back magic number. */
             KDEBUG(("checking ide interface %d with twisted cable\n", ifnum));
             set_interface_magic(twisted_iface, ifnum);
