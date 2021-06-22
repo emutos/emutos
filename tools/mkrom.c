@@ -1043,6 +1043,9 @@ int main(int argc, char* argv[])
         fprintf(stderr, "  # Amiga boot floppy\n");
         fprintf(stderr, "  %s amiga-floppy <bootfile> <sourcerom> <destination>\n", g_argv0);
         fprintf(stderr, "\n");
+        fprintf(stderr, "  # Apple Lisa boot floppy\n");
+        fprintf(stderr, "  %s lisa-floppy <bootfile> <source> <destination>\n", g_argv0);
+        fprintf(stderr, "\n");
         fprintf(stderr, "  # PAK/3 image\n");
         fprintf(stderr, "  %s pak3 <sourcerom> <destination>\n", g_argv0);
         return 1;
