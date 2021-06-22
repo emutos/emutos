@@ -861,7 +861,7 @@ lisaflop:
 	@printf "$(LOCALCONFINFO)"
 
 $(EMUTOS_DC42): lisaboot.img emutos.img mkrom
-	./mkrom lisa-floppy lisaboot.img emutos.img $@
+	./mkrom lisa-boot-floppy lisaboot.img emutos.img $@
 
 lisaboot.img: obj/lisaboot.o obj/bootram.o
 	$(LD) $+ $(PCREL_LDFLAGS) -o $@

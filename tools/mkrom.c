@@ -37,7 +37,7 @@ typedef enum
     CMD_AMIGA,
     CMD_AMIGA_KICKDISK,
     CMD_AMIGA_FLOPPY,
-    CMD_LISA_FLOPPY
+    CMD_LISA_BOOT_FLOPPY
 } CMD_TYPE;
 
 /* Global variables */
@@ -840,9 +840,9 @@ static int write_tags(FILE* file, const char* filename,
 }
 
 /* Apple Lisa boot floppy. Single sided, GCR format. */
-static int cmd_lisa_floppy(FILE* bootfile, const char* bootfilename,
-                           FILE* ramtosfile, const char* ramtosfilename,
-                           FILE* outfile, const char* outfilename)
+static int cmd_lisa_boot_floppy(FILE* bootfile, const char* bootfilename,
+                                FILE* ramtosfile, const char* ramtosfilename,
+                                FILE* outfile, const char* outfilename)
 {
     int ret; /* boolean return value: 0 == error, 1 == OK */
     size_t written; /* Number of bytes written this time */
@@ -1017,9 +1017,9 @@ int main(int argc, char* argv[])
         outfilename = argv[4];
         outmode = "w+b"; /* Computing the checksum requires read/write */
     }
-    else if (argc == 5 && !strcmp(argv[1], "lisa-floppy"))
+    else if (argc == 5 && !strcmp(argv[1], "lisa-boot-floppy"))
     {
-        op = CMD_LISA_FLOPPY;
+        op = CMD_LISA_BOOT_FLOPPY;
         bootfilename = argv[2];
         infilename = argv[3];
         outfilename = argv[4];
@@ -1044,7 +1044,7 @@ int main(int argc, char* argv[])
         fprintf(stderr, "  %s amiga-floppy <bootfile.img> <source.img> <destination.adf>\n", g_argv0);
         fprintf(stderr, "\n");
         fprintf(stderr, "  # Apple Lisa boot floppy\n");
-        fprintf(stderr, "  %s lisa-floppy <bootfile.img> <source.img> <destination.dc42>\n", g_argv0);
+        fprintf(stderr, "  %s lisa-boot-floppy <bootfile.img> <source.img> <destination.dc42>\n", g_argv0);
         fprintf(stderr, "\n");
         fprintf(stderr, "  # PAK/3 image\n");
         fprintf(stderr, "  %s pak3 <source.img> <destination.img>\n", g_argv0);
@@ -1104,8 +1104,8 @@ int main(int argc, char* argv[])
             ret = cmd_amiga_floppy(bootfile, bootfilename, infile, infilename, outfile, outfilename);
         break;
 
-        case CMD_LISA_FLOPPY:
-            ret = cmd_lisa_floppy(bootfile, bootfilename, infile, infilename, outfile, outfilename);
+        case CMD_LISA_BOOT_FLOPPY:
+            ret = cmd_lisa_boot_floppy(bootfile, bootfilename, infile, infilename, outfile, outfilename);
         break;
 
         default:
