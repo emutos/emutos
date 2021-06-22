@@ -1032,22 +1032,22 @@ int main(int argc, char* argv[])
         fprintf(stderr, "  %s pad <size> <source> <destination>\n", g_argv0);
         fprintf(stderr, "\n");
         fprintf(stderr, "  # Steem Engine cartridge image\n");
-        fprintf(stderr, "  %s stc <source> <destination>\n", g_argv0);
+        fprintf(stderr, "  %s stc <source.img> <destination.stc>\n", g_argv0);
         fprintf(stderr, "\n");
         fprintf(stderr, "  # Amiga ROM image\n");
-        fprintf(stderr, "  %s amiga <source> <destination>\n", g_argv0);
+        fprintf(stderr, "  %s amiga <source.img> <destination.rom>\n", g_argv0);
         fprintf(stderr, "\n");
         fprintf(stderr, "  # Amiga 1000 Kickstart disk\n");
-        fprintf(stderr, "  %s amiga-kickdisk <sourcerom> <destination>\n", g_argv0);
+        fprintf(stderr, "  %s amiga-kickdisk <source.rom> <destination.adf>\n", g_argv0);
         fprintf(stderr, "\n");
         fprintf(stderr, "  # Amiga boot floppy\n");
-        fprintf(stderr, "  %s amiga-floppy <bootfile> <sourcerom> <destination>\n", g_argv0);
+        fprintf(stderr, "  %s amiga-floppy <bootfile.img> <source.img> <destination.adf>\n", g_argv0);
         fprintf(stderr, "\n");
         fprintf(stderr, "  # Apple Lisa boot floppy\n");
-        fprintf(stderr, "  %s lisa-floppy <bootfile> <source> <destination>\n", g_argv0);
+        fprintf(stderr, "  %s lisa-floppy <bootfile.img> <source.img> <destination.dc42>\n", g_argv0);
         fprintf(stderr, "\n");
         fprintf(stderr, "  # PAK/3 image\n");
-        fprintf(stderr, "  %s pak3 <sourcerom> <destination>\n", g_argv0);
+        fprintf(stderr, "  %s pak3 <source.img> <destination.img>\n", g_argv0);
         return 1;
     }
 
