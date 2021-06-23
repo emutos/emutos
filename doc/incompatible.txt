@@ -311,7 +311,7 @@ Program: Reservoir Gods programs on the Falcon
 ----------------------------------------------
 This applies to (at least): Bugger, Bunion, Fractal Playground, SkyFall, Sworm
 
-Error: panic 
+Error: panic
 
 Bug analysis:
 Programs use an undocumented TOS4 vector for keyboard input instead of

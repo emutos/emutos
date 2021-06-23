@@ -809,7 +809,7 @@ void biosmain(void)
          */
         Pexec(PE_LOADGO, "COMMAND.PRG", "", NULL);
     } else if (exec_os) {
-        /* 
+        /*
          * start the default (ROM) shell
          * like Atari TOS, we pass the default environment
          */

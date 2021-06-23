@@ -1455,7 +1455,7 @@
 # define CONF_SERIAL_IKBD 0
 #endif
 
-/* 
+/*
  * Set the default baud rate for serial ports.
  */
 #ifndef DEFAULT_BAUDRATE

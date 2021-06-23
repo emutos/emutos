@@ -54,7 +54,7 @@ msgstr "HDD átlépése: <Alternate> lenyomva"
 
 #: bios/initinfo.c
 msgid "Press key 'X' to boot from X:"
-msgstr "X: meghajtóról indítás: <X>" 
+msgstr "X: meghajtóról indítás: <X>"
 
 #: bios/initinfo.c
 msgid "Press <Esc> to run an early console"
@@ -1475,7 +1475,7 @@ msgstr "A parancsok listájához írja be: HELP"
 msgid "warning: no history buffers"
 msgstr "figyelem: nincs elõzmény-buffer"
 
-# 
+#
 #: cli/cmdparse.c
 msgid "more than one redirection"
 msgstr "többszörös átirányítás"

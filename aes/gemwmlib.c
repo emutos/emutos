@@ -125,7 +125,7 @@ static TEDINFO gl_ainfo;
  * te_color defines for topped/untopped window names
  *
  * for both, border colour = 1, text colour = 1
- */ 
+ */
 #define TOPPED_COLOR    0x11a1      /* opaque, fill pattern 2, fill colour 1 */
 #define UNTOPPED_COLOR  0x1100      /* transparent, hollow, fill colour 0 */
 
