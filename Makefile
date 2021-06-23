@@ -863,7 +863,7 @@ lisaflop:
 $(EMUTOS_DC42): lisaboot.img emutos.img mkrom
 	./mkrom lisa-boot-floppy lisaboot.img emutos.img $@
 
-lisaboot.img: obj/lisaboot.o obj/bootram.o
+lisaboot.img: obj/lisaboot.o obj/lisautil.o obj/bootram.o
 	$(LD) $+ $(PCREL_LDFLAGS) -o $@
 
 obj/lisaboot.o: obj/ramtos.h
