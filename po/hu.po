@@ -1538,3 +1538,4 @@ msgstr "paraméterek száma nem megfelelõ"
 #: cli/cmdutil.c
 msgid "error code %ld"
 msgstr "%ld hibakód"
+
