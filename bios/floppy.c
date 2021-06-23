@@ -32,6 +32,7 @@
 #include "cookie.h"
 #include "intmath.h"
 #include "amiga.h"
+#include "lisa.h"
 
 
 /*==== Introduction =======================================================*/
@@ -319,6 +320,8 @@ void flop_hdv_init(void)
     nflops = 0;
 #ifdef MACHINE_AMIGA
     amiga_floppy_init();
+#elif defined(MACHINE_LISA)
+    lisa_floppy_init();
 #endif
     flop_init(0);
     flop_init(1);
@@ -402,6 +405,14 @@ static void flop_detect_drive(WORD dev)
     return;
 #endif
 
+#ifdef MACHINE_LISA
+    if (lisa_flop_detect_drive(dev)) {
+        flop_add_drive(dev);
+        units[dev].last_access = hz_200;
+    }
+    return;
+#endif
+
 #if CONF_WITH_FDC
     floplock(dev);
 
@@ -448,6 +459,8 @@ LONG flop_mediach(WORD dev)
 
 #ifdef MACHINE_AMIGA
     return amiga_flop_mediach(dev);
+#elif defined(MACHINE_LISA)
+    return lisa_flop_mediach(dev);
 #endif
 
     fi = &finfo[dev];
@@ -1072,6 +1085,9 @@ static WORD flopio(UBYTE *userbuf, WORD rw, WORD dev,
 
 #ifdef MACHINE_AMIGA
     err = amiga_floprw(userbuf, rw, dev, sect, track, side, count);
+    units[dev].last_access = hz_200;
+#elif defined(MACHINE_LISA)
+    err = lisa_floprw(userbuf, rw, dev, sect, track, side, count);
     units[dev].last_access = hz_200;
 #elif CONF_WITH_FDC
     floplock(dev);
