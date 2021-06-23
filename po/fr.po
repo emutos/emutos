@@ -654,24 +654,8 @@ msgid "Confirm overwrites:"
 msgstr "Confirmer écrasement:"
 
 #: desk/desk_rsc.c
-msgid "More preferences"
-msgstr "Plus de préférences"
-
-#: desk/desk_rsc.c
 msgid "Double-click speed:"
 msgstr "Vitesse double-clic :"
-
-#: desk/desk_rsc.c
-msgid "To drop down menus:"
-msgstr "Ouverture des menus:"
-
-#: desk/desk_rsc.c
-msgid "Click"
-msgstr "Clic"
-
-#: desk/desk_rsc.c
-msgid "No click"
-msgstr "Auto"
 
 #: desk/desk_rsc.c
 msgid "Time format:"

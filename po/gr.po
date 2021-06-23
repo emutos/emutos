@@ -664,24 +664,8 @@ msgid "Confirm overwrites:"
 msgstr "„§ ™œ™˜åà© "
 
 #: desk/desk_rsc.c
-msgid "More preferences"
-msgstr "œ¨ ©©æ«œ¨œª §¨¦« £ã©œ ª"
-
-#: desk/desk_rsc.c
 msgid "Double-click speed:"
 msgstr "’˜®ç««˜ › §¢¦ç ¡¢å¡:"
-
-#: desk/desk_rsc.c
-msgid "To drop down menus:"
-msgstr "‚ ˜ «¦ £œ¤¦ç:"
-
-#: desk/desk_rsc.c
-msgid "Click"
-msgstr "‰¢å¡"
-
-#: desk/desk_rsc.c
-msgid "No click"
-msgstr "•à¨åª ¡¢å¡"
 
 #: desk/desk_rsc.c
 msgid "Time format:"

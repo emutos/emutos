@@ -651,24 +651,8 @@ msgid "Confirm overwrites:"
 msgstr "Üzerine yazma onayý:"
 
 #: desk/desk_rsc.c
-msgid "More preferences"
-msgstr "Daha fazla ayar"
-
-#: desk/desk_rsc.c
 msgid "Double-click speed:"
 msgstr "Çift-týklama hýzý:"
-
-#: desk/desk_rsc.c
-msgid "To drop down menus:"
-msgstr "Menüler için:"
-
-#: desk/desk_rsc.c
-msgid "Click"
-msgstr "Týkla"
-
-#: desk/desk_rsc.c
-msgid "No click"
-msgstr "Týklama"
 
 #: desk/desk_rsc.c
 msgid "Time format:"

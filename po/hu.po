@@ -643,24 +643,8 @@ msgid "Confirm overwrites:"
 msgstr "Felülírás megerõsítése:"
 
 #: desk/desk_rsc.c
-msgid "More preferences"
-msgstr "További beállítások"
-
-#: desk/desk_rsc.c
 msgid "Double-click speed:"
 msgstr "Dupla katt. sebessége:"
-
-#: desk/desk_rsc.c
-msgid "To drop down menus:"
-msgstr "Kattintás a menükön:"
-
-#: desk/desk_rsc.c
-msgid "Click"
-msgstr "Igen"
-
-#: desk/desk_rsc.c
-msgid "No click"
-msgstr "Nem"
 
 #: desk/desk_rsc.c
 msgid "Time format:"

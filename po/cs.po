@@ -650,24 +650,8 @@ msgid "Confirm overwrites:"
 msgstr "Potvrzovat pøepsání:"
 
 #: desk/desk_rsc.c
-msgid "More preferences"
-msgstr "Více nastavení"
-
-#: desk/desk_rsc.c
 msgid "Double-click speed:"
 msgstr "Rychlost dvojkliku:"
-
-#: desk/desk_rsc.c
-msgid "To drop down menus:"
-msgstr "Rozbalení nabídky:"
-
-#: desk/desk_rsc.c
-msgid "Click"
-msgstr "Klik"
-
-#: desk/desk_rsc.c
-msgid "No click"
-msgstr "Ukázat"
 
 #: desk/desk_rsc.c
 msgid "Time format:"

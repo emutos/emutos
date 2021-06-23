@@ -651,24 +651,8 @@ msgid "Confirm overwrites:"
 msgstr "Подтверждать перезапись:"
 
 #: desk/desk_rsc.c
-msgid "More preferences"
-msgstr "Больше настроек"
-
-#: desk/desk_rsc.c
 msgid "Double-click speed:"
 msgstr "Скорость дв. нажатия:"
-
-#: desk/desk_rsc.c
-msgid "To drop down menus:"
-msgstr "К выпадающим меню:"
-
-#: desk/desk_rsc.c
-msgid "Click"
-msgstr "Нажатие"
-
-#: desk/desk_rsc.c
-msgid "No click"
-msgstr "Ненажатие"
 
 #: desk/desk_rsc.c
 msgid "Time format:"

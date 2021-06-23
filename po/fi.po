@@ -650,24 +650,8 @@ msgid "Confirm overwrites:"
 msgstr "Vahvista ylikirjoitus:"
 
 #: desk/desk_rsc.c
-msgid "More preferences"
-msgstr "Lisäasetukset"
-
-#: desk/desk_rsc.c
 msgid "Double-click speed:"
 msgstr "Tuplaklikkausnopeus:"
-
-#: desk/desk_rsc.c
-msgid "To drop down menus:"
-msgstr "Menujen aukaisu:"
-
-#: desk/desk_rsc.c
-msgid "Click"
-msgstr "Klikkaa"
-
-#: desk/desk_rsc.c
-msgid "No click"
-msgstr "Siirry"
 
 #: desk/desk_rsc.c
 msgid "Time format:"
