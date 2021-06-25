@@ -258,6 +258,23 @@ parameter block (MPB). The heuristic it uses to find the memory
 address of that variable only works with Atari TOS.
 
 
+Program: MidiDraw v1.00
+-----------------------
+Error: Crashes with "Illegal instruction" message.
+
+Bug analysis:
+The program relies on undocumented internal TOS variables.  It expects
+the word at offset 0x12 from the beginning of the system's keyboard/MIDI
+interrupt handler to contain the address of a private system variable.
+This is true on TOS 1.00 only.  MidiDraw installs its own keyboard/MIDI
+interrupt handler which uses that saved address to generate a subroutine
+address; under EmuTOS this gives an address of zero.  When the interrupt
+handler branches to that address, it causes an illegal instruction
+interrupt.
+NOTE: the program also crashes on all versions of Atari TOS except 1.00,
+although the actual details of the crash are slightly different.
+
+
 Program: OMIKRON.BASIC V3.01 (interpreter)
 ------------------------------------------
 Error: Panic (bus error) during start
