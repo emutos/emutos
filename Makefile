@@ -31,7 +31,7 @@ MAKEFLAGS = --no-print-directory
 
 NODEP =
 
-# This must be the *first* rule of this Makefile. Don't move!
+# "all" must be the *first* rule of this Makefile. Don't move!
 # Variable assignments are allowed before this, but *not* rules.
 # Note: The first rule is used when make is invoked without argument.
 # So "make" is actually a synonym of "make all", actually "make help".
