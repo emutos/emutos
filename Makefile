@@ -37,7 +37,7 @@ NODEP =
 # So "make" is actually a synonym of "make all", actually "make help".
 .PHONY: all
 NODEP += all
-all:	help
+all: help
 
 .PHONY: help
 NODEP += help
