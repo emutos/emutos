@@ -81,6 +81,9 @@ Christian Zietz <czietz at gmx.net>
 - Added Magnum Alt-RAM support
 - Various bug fixes and cleanups
 
+Charles Curley <charlescurley at charlescurley.com>
+- EmuTOS User Manual
+
 Petr Stehlik (PES) <pstehlik at sophics.cz>
 - BIOS disk interface, BDOS filesystem
 - Falcon and ARAnyM support
