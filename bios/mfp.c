@@ -189,13 +189,11 @@ void init_system_timer(void)
 
 #if CONF_COLDFIRE_TIMER_C
     coldfire_init_system_timer();
+#elif defined(MACHINE_LISA)
+    lisa_init_system_timer();
 #elif CONF_WITH_MFP
     /* Timer C: ctrl = divide 64, data = 192 */
     xbtimer(2, 0x50, 192, (LONG)int_timerc);
-#endif
-
-#ifdef MACHINE_LISA
-    lisa_init_system_timer();
 #endif
 
     /* The timer will really be enabled when sr is set to 0x2500 or lower. */
