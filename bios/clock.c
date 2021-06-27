@@ -1275,7 +1275,7 @@ LONG gettime(void)
     {
         return lisa_getdt();
     }
-#endif /* MACHINE_AMIGA */
+#endif /* MACHINE_LISA */
 #if CONF_WITH_NVRAM
     else if (has_nvram)
     {
