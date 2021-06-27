@@ -129,7 +129,6 @@ static int get_charset_index(void)
 
 #endif
 
-
 /*
  * initialise the _AKP cookie
  *

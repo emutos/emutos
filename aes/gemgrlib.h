@@ -9,6 +9,7 @@
 
 #ifndef GEMGRLIB_H
 #define GEMGRLIB_H
+
 #include "gsxdefs.h"
 
 void gr_stepcalc(WORD orgw, WORD orgh, GRECT *pt, WORD *pcx, WORD *pcy,

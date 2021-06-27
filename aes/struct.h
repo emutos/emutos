@@ -17,6 +17,7 @@
 
 #ifndef GEMSTRUCT_H
 #define GEMSTRUCT_H
+
 #include "aesdefs.h"
 
 typedef struct aespd   AESPD;           /* process descriptor           */
@@ -166,4 +167,5 @@ struct fpd                  /* fork process descriptor */
         FCODE   f_code;
         LONG    f_data;
 } ;
+
 #endif /* GEMSTRUCT_H */
