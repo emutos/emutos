@@ -377,7 +377,6 @@ NODEP += release
 release: clean release-clean release-mkdir \
   release-src release-1024k release-512k release-256k release-192k release-cartridge \
   release-aranym release-firebee release-amiga-rom release-amiga-floppy \
-  release-lisa \
   release-m548x-dbug release-m548x-bas release-prg release-floppy \
   release-pak3 release-emucon
 	$(MAKE) clean
