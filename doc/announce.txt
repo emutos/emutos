@@ -136,7 +136,7 @@ EmuTOS also supports the following Atari-compatible hardware:
 
 EmuTOS is also available on some non-Atari hardware:
 - Amiga (floppy or ROM for any Amiga, including MapROM support)
-- Apple Lisa (experimental)
+- Apple Lisa (experimental - no binaries provided yet)
 - ColdFire Evaluation Boards (M5484LITE, M5485EVB)
 - Vampire v4 standalone board
 
