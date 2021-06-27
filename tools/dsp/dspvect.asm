@@ -1,7 +1,7 @@
 ;
 ; dspvect.asm - source for DSP vector table
 ;
-; Copyright (C) 2020 The EmuTOS Development Team
+; Copyright (C) 2020-2021 The EmuTOS Development Team
 ;
 ; Authors:
 ;         Thorsten Otto
