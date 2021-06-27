@@ -30,4 +30,4 @@ FONTOBJ = $(FONTOBJ_ALL:%=obj/%)
 TOCLEAN += obj/*.a
 
 obj/libfont.a: $(FONTOBJ)
-	$(AR) $(ARFLAGS) obj/libfont.a $(FONTOBJ)
+	$(AR) $(ARFLAGS) $@ $^
