@@ -283,3 +283,4 @@ Anders Granlund
 
 Rob Gowin
 - Interrupt-driven serial I/O
+- Improved ANSI serial console
