@@ -19,18 +19,19 @@ To build, first do:
 
 This will display the list of all possible targets.
 
-To build the standard etos512k.img, do
+To build a multilanguage ROM, e.g. etos1024k.img, do
 
-    make 512
+    make 1024
 
 To build EmuTOS for a different default country (changes the language and the
 keyboard), do
 
-    make 512 COUNTRY=en
+    make 1024 COUNTRY=en
 or
-    make 512 COUNTRY=fr
+    make 1024 COUNTRY=fr
 or
-    make 512 COUNTRY=de
+    make 1024 COUNTRY=de
+etc
 
 NOTE: by specifying COUNTRY=xx, all countries are included in the binary,
 but a flag in the TOS header will indicate country 'xx'. If, however, the
@@ -39,7 +40,7 @@ ARAnyM), the country number in the NVRAM will override that setting of the
 country in the TOS header.
 
 To build EmuTOS for a single country only, you must use UNIQUE instead of
-COUNTRY. This is mainly useful for the 192 and 256 KB targets. Example:
+COUNTRY. This is used for the 192K/256K/512K targets. Example:
 
     make 256 UNIQUE=fr
 
