@@ -23,7 +23,7 @@ To be clear:
 - Atari programs using the hardware (games, demos...) will not work
 
 AmigaOS is only used to load EmuTOS into RAM. Then EmuTOS completely takes
-over the machine, and AmigaOS is no more available until reboot.
+over the machine, and AmigaOS is no longer available until reboot.
 
 These floppies are the easiest way to test EmuTOS on real hardware.
 Floppy emulators such as HxC and Gotek are supported, and even recommended.

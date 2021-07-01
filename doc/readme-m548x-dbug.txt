@@ -15,8 +15,8 @@ https://www.nxp.com/products/no-longer-manufactured/mcf5484-lite-evaluation-kit:
 
 Prerequisites:
 On your EVB, you need Freescale's dBUG command-line tool. By default, at startup
-the EVB boots straight to the dBUG prompt. If you lost the dBUG tool, you can
-download it there and flash it on your EVB:
+the EVB boots straight to the dBUG prompt. If you have lost the dBUG tool, you can
+download it at this URL and flash it on your EVB:
 https://www.nxp.com/files-static/32bit/software/app_software/M547X-8XEVB-DBBIN.zip
 
 Requirements:
@@ -65,8 +65,8 @@ Only text I/O through an RS/232 terminal or PS/2 keyboard
 
 - Support for ColdFire TOS programs only. 680x0 programs will not work.
 
-- No Atari hardware emulated. Clean programs using only the OS will work,
-the ones trying direct access to the Atari hardware will not work.
+- No Atari hardware emulated. Clean programs using only the OS will work;
+any that attempt direct access to the Atari hardware will not work.
 
 This ROM image has been built using:
 make m548x-dbug
