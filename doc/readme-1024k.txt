@@ -7,8 +7,8 @@ hardware restrictions.  It is suitable for the following emulators:
 This ROM image is the optimal one for Hatari, with any combination of
 emulated hardware.  But note that, if you want to use it on an emulated
 TT or Falcon, it requires a "recent" version of Hatari, specifically:
-- after v2.3.1 (if using an official Hatari release)
-- after commit 21669ea (if building from the repository)
+- a release newer than v2.3.1 (if using an official Hatari release)
+- built from commit 21669ea or newer (if building from the repository)
 
 Some legacy programs may not work with a 1024k image; for these one may
 need to use a smaller EmuTOS image.
