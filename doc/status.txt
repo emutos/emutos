@@ -10,17 +10,17 @@ a ROM version of EmuTOS.
   system              |  ok?  | who |   date      |  details
   --------------------+-------+-----+-------------+----------------
   Emulators           |       |     |             |
-  ARAnyM 0.9.16       |  yes  | VRI | 13 Oct 2019 |
-  Hatari v2.2.1       |  yes  | RFB | 16 Aug 2020 |
+  ARAnyM 1.1.0        |  yes  | VRI |  2 Jul 2021 |
+  Hatari v2.3.1       |  yes  | VRI |  2 Jul 2021 |
   PaCifiST v0.48      |  yes  | LVL | winter 2001 |
   SainT v2.40         |  yes  | RFB | 29 Aug 2020 | 192k ROM only
-  STeem SSE 4.0.2     |  yes  | RFB | 29 Aug 2020 | (Win 64 DD)
+  Steem SSE 4.1.0 R7  |  yes  | VRI |  2 Jul 2021 | (Win 64 D3D)
   STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   STonX DOS           |  yes  | (7) | 16 Oct 2019 | 192k ROM
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon v0.5        |   no  | RFB | 29 Aug 2020 |
-  WinUAE 4.2.1        |  yes  | VRI | 13 Oct 2019 |
+  WinUAE 4.4.0        |  yes  | VRI |  2 Jul 2021 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
   STf & STfm          |  yes  | CZ  | 16 Aug 2020 |
@@ -38,8 +38,8 @@ a ROM version of EmuTOS.
   Amiga 500 + Vampire |  yes  | VRI | 13 Oct 2019 | GOLD2.11
   Amiga 600 + Vampire |  yes  | (4) |    Mar 2017 |
   Amiga 1000          |  yes  | (2) |    Jul 2012 |
-  FireBee             |  yes  | RFB | 26 Aug 2020 | also tested with PRG
-  M5484LITE           |  yes  | (3) | 30 Aug 2020 |
+  FireBee             |  yes  | VRI |  2 Jul 2021 |
+  M5484LITE           |  yes  | VRI |  2 Jul 2021 |
   Vampire V4          |  yes  | CZ  | 24 Aug 2020 |
   Apple Lisa          |  yes  | (8) |  4 Feb 2021 |
 
