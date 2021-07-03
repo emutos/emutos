@@ -25,7 +25,7 @@ a ROM version of EmuTOS.
   Atari & compatibles |       |     |             |
   STf & STfm          |  yes  | CZ  | 03 Jul 2021 |
   Mega ST             |  yes  | (6) |  7 Dec 2018 | tested with PRG
-  STe                 |  yes  | CZ  | 16 Aug 2020 |
+  STe                 |  yes  | CZ  | 03 Jul 2021 |
   Mega STe            |  yes  | CZ  | 31 Aug 2020 |
   TT030               |  yes  | CZ  | 03 Jul 2021 |
   Falcon030           |  yes  | CZ  | 03 Jul 2021 |
