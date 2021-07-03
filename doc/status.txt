@@ -23,12 +23,12 @@ a ROM version of EmuTOS.
   WinUAE 4.4.0        |  yes  | VRI |  2 Jul 2021 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
-  STf & STfm          |  yes  | CZ  | 16 Aug 2020 |
+  STf & STfm          |  yes  | CZ  | 03 Jul 2021 |
   Mega ST             |  yes  | (6) |  7 Dec 2018 | tested with PRG
   STe                 |  yes  | CZ  | 16 Aug 2020 |
   Mega STe            |  yes  | CZ  | 31 Aug 2020 |
-  TT030               |  yes  | CZ  | 16 Aug 2020 |
-  Falcon030           |  yes  | (5) | 25 Aug 2020 |
+  TT030               |  yes  | CZ  | 03 Jul 2021 |
+  Falcon030           |  yes  | CZ  | 03 Jul 2021 |
   Falcon030           |  yes  | (6) | 19 Aug 2020 | tested with PRG
   Falcon030 + CT60    |  yes  | RFB | 26 Aug 2020 | tested with PRG
   Suska III-C (2K15B) |  yes  | (3) | 23 Apr 2016 |
