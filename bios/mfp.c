@@ -24,7 +24,9 @@
 
 static void reset_mfp_regs(MFP *mfp)
 {
-    bzero(mfp, sizeof(MFP));
+    /* see mfp.h for why we cannot just bzero() the entire MFP */
+    bzero(mfp, MFP_ZERO_LEN);
+    mfp->tsr = 0;
 }
 
 static void disable_mfp_interrupt(MFP *mfp, WORD num)
