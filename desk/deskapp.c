@@ -1405,6 +1405,9 @@ ANODE *app_afind_by_id(WORD obid)
 {
     ANODE *pa;
 
+    if (obid < WOBS_START)      /* validate obid */
+        return NULL;
+
     for (pa = G.g_ahead; pa; pa = pa->a_next)
     {
         if (pa->a_obid == obid)
