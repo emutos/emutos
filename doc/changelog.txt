@@ -1,3 +1,9 @@
+CHANGES BETWEEN RELEASE 1.1 AND RELEASE 1.1.1
+
+The only significant change was to fix a bug in EmuTOS 1.1:
+double-clicking on the desktop background caused a crash in EmuDesk.
+
+
 CHANGES BETWEEN RELEASE 1.0 AND RELEASE 1.1
 
 Major changes:
