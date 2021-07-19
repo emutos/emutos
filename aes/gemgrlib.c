@@ -36,6 +36,7 @@
 #include "rectfunc.h"
 
 #include "intmath.h"
+#include "asm.h"
 
 /*
  *  Routine to watch the mouse while the button is down and it stays
@@ -371,7 +372,7 @@ WORD gr_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert)
     }
 
     if (divis)
-        return mul_div(divnd, 1000, divis);
+        return mul_div_round(divnd, 1000, divis);
     else
         return 0;
 }

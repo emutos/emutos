@@ -41,6 +41,7 @@
 
 #include "string.h"
 #include "intmath.h"
+#include "asm.h"
 
 /*
  *  defines
@@ -404,8 +405,8 @@ static void w_bldvbar(UWORD kind, BOOL istop, WINDOW *pw, WORD x, WORD y, WORD w
 
             if (pw->w_vslsiz == -1)
                 size = gl_hbox;
-            else size = max(gl_hbox, mul_div(h, pw->w_vslsiz, 1000));
-            posn = mul_div(h-size, pw->w_vslide, 1000);
+            else size = max(gl_hbox, mul_div_round(h, pw->w_vslsiz, 1000));
+            posn = mul_div_round(h-size, pw->w_vslide, 1000);
             w_adjust(W_VSLIDE, W_VELEV, 0, posn, gl_wbox, size);
         }
     }
@@ -445,8 +446,8 @@ static void w_bldhbar(UWORD kind, BOOL istop, WINDOW *pw, WORD x, WORD y, WORD w
 
             if (pw->w_hslsiz == -1)
                 size = gl_wbox;
-            else size = max(gl_wbox, mul_div(w, pw->w_hslsiz, 1000));
-            posn = mul_div(w-size, pw->w_hslide, 1000);
+            else size = max(gl_wbox, mul_div_round(w, pw->w_hslsiz, 1000));
+            posn = mul_div_round(w-size, pw->w_hslide, 1000);
             w_adjust(W_HSLIDE, W_HELEV, posn, 0, size, gl_hbox);
         }
     }

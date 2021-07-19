@@ -31,6 +31,7 @@
 #include "gemobed.h"
 #include "string.h"
 #include "intmath.h"
+#include "asm.h"
 
 #define NM_NAMES (F9NAME-F1NAME+1)
 #define NAME_OFFSET F1NAME
@@ -295,9 +296,9 @@ static void fs_format(OBJECT *tree, WORD currtop, WORD count)
     th = h = obj->ob_height;
     if (count > NM_NAMES)
     {
-        h = mul_div(NM_NAMES, h, count);
+        h = mul_div_round(NM_NAMES, h, count);
         h = max(gl_hbox, h);            /* min size elevator */
-        y = mul_div(currtop, th-h, count-NM_NAMES);
+        y = mul_div_round(currtop, th-h, count-NM_NAMES);
     }
     obj = treeptr + FSVELEV;
     obj->ob_y = y;
@@ -691,7 +692,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
             fm_own(TRUE);
             value = gr_slidebox(tree, FSVSLID, FSVELEV, TRUE);
             fm_own(FALSE);
-            value = curr - mul_div(value, count-NM_NAMES, 1000);
+            value = curr - mul_div_round(value, count-NM_NAMES, 1000);
             if (value >= 0)
                 touchob = FUPAROW;
             else
