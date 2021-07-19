@@ -481,6 +481,7 @@ void w_bldactive(WORD w_handle)
     WORD    kind;
     WORD    havevbar;
     WORD    havehbar;
+    WORD    sizer_x, sizer_y;
     GRECT   t;
     WORD    tempw;
     WINDOW  *pw;
@@ -568,17 +569,27 @@ void w_bldactive(WORD w_handle)
     /* do data area */
     w_adjust(W_BOX, W_DATA, t.g_x, t.g_y, t.g_w, t.g_h);
 
-    /* do work area */
-    t.g_w -= 2;
-    t.g_h -= 2;
+    /* determine whether we should display sizer & vertical/horizontal bars */
     havevbar = kind & (UPARROW | DNARROW | VSLIDE | SIZER);
     havehbar = kind & (LFARROW | RTARROW | HSLIDE | SIZER);
+
+    /* remember sizer area (if needed) */
+    sizer_x = -1;           /* assume no sizer */
+    if (havevbar && havehbar)
+    {
+        sizer_x = t.g_w - gl_wbox;
+        sizer_y = t.g_h - gl_hbox;
+    }
+
+    /* do work area */
+    t.g_x = t.g_y = 1;      /* allow a 1-pixel border */
+    t.g_w -= 2;
+    t.g_h -= 2;
     if (havevbar)
         t.g_w -= (gl_wbox - 1);
     if (havehbar)
         t.g_h -= (gl_hbox - 1);
 
-    t.g_x = t.g_y = 1;
     w_adjust(W_DATA, W_WORK, t.g_x, t.g_y, t.g_w, t.g_h);
 
     /* do vertical bar area */
@@ -596,10 +607,10 @@ void w_bldactive(WORD w_handle)
     }
 
     /* do sizer area */
-    if (havevbar && havehbar)
+    if (sizer_x >= 0)
     {
         w_setcolor(pw, W_SIZER, istop);
-        w_adjust(W_DATA, W_SIZER, t.g_x, t.g_y, gl_wbox, gl_hbox);
+        w_adjust(W_DATA, W_SIZER, sizer_x, sizer_y, gl_wbox, gl_hbox);
         /* we only display the sizer indicator if we're topped */
         W_ACTIVE[W_SIZER].ob_spec &= 0x00ffffffL;   /* remove gadget char */
         if (istop && (kind & SIZER))
