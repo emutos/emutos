@@ -72,8 +72,6 @@ static void convert_data(FILE *fp, char *p)
 {
     int i, j;
 
-    fprintf(fp, "   ");
-
     /* convert rest of file to binary */
     for ( ; *p; p++)
     {
@@ -87,17 +85,20 @@ static void convert_data(FILE *fp, char *p)
         }
         for (i = 0; *p != '\n'; i++)
         {
+            if (!(i & 1))
+                fprintf(fp, "  ");
             for (j = 0; j < DSP_WORD_LEN; j++, p += 2)
                 fprintf(fp, " 0x%02x,", hex(p));
             if (i & 1)
-                fprintf(fp, "\n   ");
+                fprintf(fp, "\n");
             p = skipspaces(p);
             if (*p == '\r')
                 p++;
         }
     }
-    if (j == 1)
-        fprintf(fp,"\n");
+
+    if (i & 1)
+        fprintf(fp, "\n");
 }
 
 static void quit(void)
