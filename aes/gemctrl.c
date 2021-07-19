@@ -155,13 +155,13 @@ static void perform_untop(WORD wh)
 
 static void hctl_window(WORD w_handle, WORD mx, WORD my)
 {
-    GRECT   t, f, pt;
+    GRECT   t, f;
     WINDOW  *pwin = &D.w_win[w_handle];
     WORD    x, y, w, h;
     WORD    wm, hm;
+    WORD    elev_x, elev_y;
     WORD    kind;
     WORD    cpt, message;
-    OBJECT  *tree;
 
     message = 0;
     x = y = w = h = 0;
@@ -172,7 +172,6 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
          * went down on active window so handle control points
          */
         w_bldactive(w_handle);
-        tree = gl_awind;
         cpt = ob_find(gl_awind, 0, 10, mx, my);
         w_getsize(WS_CURR, w_handle, &t);
         r_get(&t, &x, &y, &w, &h);
@@ -224,22 +223,19 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
             break;
         case W_HSLIDE:
         case W_VSLIDE:
-            ob_actxywh(tree, cpt + 1, &pt);
-            if (inside(mx, my, &pt))
-            {
-                cpt = (cpt==W_HSLIDE) ? W_HELEV : W_VELEV;
-                goto doelev;
-            }
-
-            /* fix up cpt for index into gl_wa[] */
+            /*
+             * because of the way W_ACTIVE is arranged, adding 1 to cpt
+             * converts W_HSLIDE->W_HELEV, W_VSLIDE->W_VELEV
+             */
+            ob_offset(gl_awind, cpt+1, &elev_x, &elev_y);
             if (cpt == W_HSLIDE)
             {
-                if ( !(mx < pt.g_x) )
+                if ( !(mx < elev_x) )
                     cpt += 1;
             }
             else
             {
-                if ( !(my < pt.g_y) )
+                if ( !(my < elev_y) )
                     cpt += 1;
             }
             FALLTHROUGH;
@@ -252,7 +248,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
             break;
         case W_HELEV:
         case W_VELEV:
-doelev:     message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
+            message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
             x = gr_slidebox(gl_awind, cpt - 1, cpt, (cpt == W_VELEV));
             /* slide is 1 less than elev    */
             break;
