@@ -110,6 +110,31 @@ static const LONG gl_waspec[NUM_ELEM] =
     0x00011101L     /* W_HELEV      */
 };
 
+#if CONF_WITH_3D_OBJECTS
+static const WORD gl_3dflags[NUM_ELEM] =
+{
+    FL3DNONE,       /* W_BOX        */
+    FL3DNONE,       /* W_TITLE      */
+    FL3DACT,        /* W_CLOSER     */
+    FL3DNONE,       /* W_NAME - may be altered by w_bldactive() */
+    FL3DACT,        /* W_FULLER     */
+    FL3DNONE,       /* W_INFO       */
+    FL3DNONE,       /* W_DATA       */
+    FL3DNONE,       /* W_WORK       */
+    FL3DACT,        /* W_SIZER      */
+    FL3DNONE,       /* W_VBAR       */
+    FL3DACT,        /* W_UPARROW    */
+    FL3DACT,        /* W_DNARROW    */
+    FL3DNONE,       /* W_VSLIDE     */
+    FL3DACT,        /* W_VELEV      */
+    FL3DNONE,       /* W_HBAR       */
+    FL3DACT,        /* W_LFARROW    */
+    FL3DACT,        /* W_RTARROW    */
+    FL3DNONE,       /* W_HSLIDE     */
+    FL3DACT         /* W_HELEV      */
+};
+#endif
+
 #if CONF_WITH_WINDOW_COLOURS
 /*
  * default TEDINFO colour words for window gadgets
@@ -546,6 +571,16 @@ void w_bldactive(WORD w_handle)
             gl_aname.te_color = istop ? TOPPED_COLOR : UNTOPPED_COLOR;
 #endif
         }
+#if CONF_WITH_3D_OBJECTS
+        if (kind & NAME)
+        {
+            W_ACTIVE[W_NAME].ob_flags = FL3DACT;
+        }
+        else
+        {
+            W_ACTIVE[W_NAME].ob_flags = FL3DNONE;
+        }
+#endif
         t.g_x = 0;
         t.g_y += (gl_hbox - 1);
         t.g_h -= (gl_hbox - 1);
@@ -1025,6 +1060,9 @@ void wm_init(void)
     {
         W_ACTIVE[i].ob_type = gl_watype[i];
         W_ACTIVE[i].ob_spec = gl_waspec[i];
+#if CONF_WITH_3D_OBJECTS
+        W_ACTIVE[i].ob_flags = gl_3dflags[i];
+#endif
     }
     W_ACTIVE[ROOT].ob_state = SHADOWED;
 

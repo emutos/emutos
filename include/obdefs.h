@@ -89,6 +89,12 @@
 #define TOUCHEXIT   0x0040
 #define HIDETREE    0x0080
 #define INDIRECT    0x0100
+#define FL3DOBJ     0x0200          /* bit flag for 3D indicator OR activator */
+#define FL3DMASK    0x0600
+#define  FL3DNONE   0x0000          /* no 3D effect */
+#define  FL3DIND    0x0200          /* 3D indicator */
+#define  FL3DACT    0x0600          /* 3D activator */
+#define  FL3DBAK    0x0400          /* 3D backgound */
 
 #define NORMAL      0x0000      /* Object states */
 #define SELECTED    0x0001
