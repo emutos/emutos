@@ -165,106 +165,116 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
     WORD    elev_x, elev_y;
     WORD    kind;
     WORD    cpt, message;
+    WORD    gadget, normal, selected;
+    BOOL    need_normal = FALSE;
 
-    message = 0;
-    x = y = w = h = 0;
-
-    if (w_handle == gl_wtop)
-    {
-        /*
-         * went down on active window so handle control points
-         */
-        w_bldactive(w_handle);
-        cpt = ob_find(gl_awind, W_BOX, MAX_DEPTH, mx, my);
-        w_getsize(WS_CURR, w_handle, &t);
-        r_get(&t, &x, &y, &w, &h);
-        kind = pwin->w_kind;
-        switch(cpt)
-        {
-        case W_CLOSER:
-#if CONF_WITH_PCGEM
-            if ( kind & HOTCLOSE )
-            {
-                message = WM_CLOSED;
-                break;
-            }
-            FALLTHROUGH;
-#endif
-        case W_FULLER:
-            if ( gr_watchbox(gl_awind, cpt, SELECTED, NORMAL) )
-            {
-                message = (cpt == W_CLOSER) ? WM_CLOSED : WM_FULLED;
-                ob_change(gl_awind, cpt, NORMAL, TRUE);
-            }
-            break;
-        case W_NAME:
-            if ( kind & MOVER )
-            {
-                /* prevent the mover gadget from being moved completely offscreen */
-                r_set(&f, 0, gl_hbox, gl_rscreen.g_w + w - gl_wbox - 6, MAX_COORDINATE);
-                gr_dragbox(w, h, x, y, &f, &x, &y);
-                message = WM_MOVED;
-            }
-            break;
-        case W_SIZER:
-            if (kind & SIZER)
-            {
-                w_getsize(WS_WORK, w_handle, &t);
-                t.g_x -= x;
-                t.g_y -= y;
-                t.g_w -= w;
-                t.g_h -= h;
-                wm = gl_wchar;
-                hm = gl_hchar;
-                if (kind & (TGADGETS | HGADGETS))
-                    wm = gl_wbox * 4;
-                if (kind & VGADGETS)
-                    hm = gl_hbox * 6;
-                gr_rubwind(x, y, wm, hm, &t, &w, &h);
-                message = WM_SIZED;
-            }
-            break;
-        case W_HSLIDE:
-        case W_VSLIDE:
-            /*
-             * because of the way W_ACTIVE is arranged, adding 1 to cpt
-             * converts W_HSLIDE->W_HELEV, W_VSLIDE->W_VELEV
-             */
-            ob_offset(gl_awind, cpt+1, &elev_x, &elev_y);
-            if (cpt == W_HSLIDE)
-            {
-                if ( !(mx < elev_x) )
-                    cpt += 1;
-            }
-            else
-            {
-                if ( !(my < elev_y) )
-                    cpt += 1;
-            }
-            FALLTHROUGH;
-        case W_UPARROW:
-        case W_DNARROW:
-        case W_LFARROW:
-        case W_RTARROW:
-            handle_arrow_msg(w_handle, cpt);
-            return;
-            break;
-        case W_HELEV:
-        case W_VELEV:
-            message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
-            x = gr_slidebox(gl_awind, cpt - 1, cpt, (cpt == W_VELEV));
-            /* slide is 1 less than elev    */
-            break;
-        }
-    }
-    else
+    if (w_handle != gl_wtop)
     {
         perform_untop(gl_wtop);
         /*
-         * went down on inactive window so tell ap. to bring it to top
+         * went down on inactive window so tell owner to bring it to top
          */
-        message = WM_TOPPED;
+        ct_msgup(WM_TOPPED, pwin->w_owner, w_handle, 0, 0, 0, 0);
+        return;
     }
+
+    message = 0;
+
+    /*
+     * went down on active window so handle control points
+     */
+    w_bldactive(w_handle);
+    gadget = cpt = ob_find(gl_awind, W_BOX, MAX_DEPTH, mx, my);
+    normal = NORMAL;
+    selected = SELECTED;
+    w_getsize(WS_CURR, w_handle, &t);
+    r_get(&t, &x, &y, &w, &h);
+    kind = pwin->w_kind;
+
+    switch(cpt)
+    {
+    case W_CLOSER:
+#if CONF_WITH_PCGEM
+        if (kind & HOTCLOSE)
+        {
+            message = WM_CLOSED;
+            break;
+        }
+        FALLTHROUGH;
+#endif
+    case W_FULLER:
+        if (gr_watchbox(gl_awind, gadget, selected, normal))
+        {
+            message = (cpt == W_CLOSER) ? WM_CLOSED : WM_FULLED;
+            need_normal = TRUE;
+        }
+        break;
+    case W_NAME:
+        if (kind & MOVER)
+        {
+            /* prevent the mover gadget from being moved completely offscreen */
+            r_set(&f, 0, gl_hbox, gl_rscreen.g_w+w-gl_wbox-6, MAX_COORDINATE);
+            gr_dragbox(w, h, x, y, &f, &x, &y);
+            message = WM_MOVED;
+        }
+        break;
+    case W_SIZER:
+        if (kind & SIZER)
+        {
+            w_getsize(WS_WORK, w_handle, &t);
+            t.g_x -= x;
+            t.g_y -= y;
+            t.g_w -= w;
+            t.g_h -= h;
+            wm = gl_wchar;
+            hm = gl_hchar;
+            if (kind & (TGADGETS | HGADGETS))
+                wm = gl_wbox * 4;
+            if (kind & VGADGETS)
+                hm = gl_hbox * 6;
+            gr_rubwind(x, y, wm, hm, &t, &w, &h);
+            message = WM_SIZED;
+        }
+        break;
+    case W_HSLIDE:
+    case W_VSLIDE:
+        /*
+         * because of the way W_ACTIVE is arranged, adding 1 to cpt
+         * converts W_HSLIDE->W_HELEV, W_VSLIDE->W_VELEV
+         */
+        ob_offset(gl_awind, cpt+1, &elev_x, &elev_y);
+        if (cpt == W_HSLIDE)
+        {
+            if ( !(mx < elev_x) )
+                cpt += 1;
+        }
+        else
+        {
+            if ( !(my < elev_y) )
+                cpt += 1;
+        }
+        FALLTHROUGH;
+    case W_UPARROW:
+    case W_DNARROW:
+    case W_LFARROW:
+    case W_RTARROW:
+        handle_arrow_msg(w_handle, cpt);
+        return;
+        break;
+    case W_HELEV:
+    case W_VELEV:
+        message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
+        /*
+         * as noted above, subtracting 1 from cpt converts
+         * W_HELEV->W_HSLIDE, W_VELEV->W_VSLIDE
+         */
+        x = gr_slidebox(gl_awind, cpt-1, cpt, (cpt == W_VELEV));
+        break;
+    }
+
+    if (need_normal)
+        ob_change(gl_awind, gadget, normal, TRUE);
+
     ct_msgup(message, pwin->w_owner, w_handle, x, y, w, h);
 }
 
