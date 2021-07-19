@@ -236,7 +236,7 @@ char *q = dest;
      *  look for start of next component
      */
     for (p = *pp; *p; p++)
-        if (*p != ';')
+        if ((*p != ';') && (*p != ','))
             break;
     if (!*p) {          /* end of buffer */
         *pp = p;
@@ -244,7 +244,7 @@ char *q = dest;
     }
 
     while(*p) {
-        if (*p == ';')
+        if ((*p == ';') || (*p == ','))
             break;
         *q++ = *p++;
     }
