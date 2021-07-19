@@ -70,19 +70,6 @@ typedef struct
         volatile UBYTE  udr;    /* USART data register               */
 } MFP;
 
-/*
- * The cheapest way to initialise the MFP is to write zeros to it
- * with bzero().  However, there are two complications:
- * 1. we must avoid writing anything to the UDR, since it would be
- *    sent as soon as the baud rate clock (Timer D) is enabled.
- * 2. the length to zero must be a multiple of 4, because our bzero()
- *    implementation writes any 'extra' bytes a byte at a time, and
- *    byte accesses to the even bytes in the MFP cause a bus error.
- * Since the MFP's length is a multiple of 4, with the UDR at the
- * very end, we set the length to be zeroed as 4 bytes less than
- * the MFP length.  This obliges us to zero the TSR separately.
- */
-#define MFP_ZERO_LEN    (sizeof(MFP)-4)
 #endif
 
 

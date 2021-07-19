@@ -24,9 +24,16 @@
 
 static void reset_mfp_regs(MFP *mfp)
 {
-    /* see mfp.h for why we cannot just bzero() the entire MFP */
-    bzero(mfp, MFP_ZERO_LEN);
-    mfp->tsr = 0;
+    volatile UBYTE *p;
+    /*
+     * The following writes zeroes to everything except the UDR (anything
+     * written to the UDR would be sent as soon as the baud rate clock
+     * (Timer D) was enabled).  We avoid writing to the even addresses,
+     * because some buggy emulators (I'm looking at you, STonXDOS)
+     * generate bus errors there.
+     */
+    for (p = &mfp->gpip; p <= &mfp->tsr; p += 2)
+        *p = 0;
 }
 
 static void disable_mfp_interrupt(MFP *mfp, WORD num)
