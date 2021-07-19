@@ -39,6 +39,9 @@
 
 #define THEDESK 3       /* MUST be the same value as DESKMENU in desk/desk_rsc.h */
 
+#define TGADGETS    (NAME | CLOSER | FULLER | MOVER)
+#define VGADGETS    (UPARROW | DNARROW | VSLIDE)
+#define HGADGETS    (LFARROW | RTARROW | HSLIDE)
 
 /*
  * Global variables
@@ -213,10 +216,10 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
                 t.g_h -= h;
                 wm = gl_wchar;
                 hm = gl_hchar;
-                if (kind & (LFARROW | RTARROW | HSLIDE))
-                    wm = gl_wbox * 7;
-                if (kind & (UPARROW | DNARROW | VSLIDE))
-                    hm = gl_hbox * 7;
+                if (kind & (TGADGETS | HGADGETS))
+                    wm = gl_wbox * 4;
+                if (kind & VGADGETS)
+                    hm = gl_hbox * 6;
                 gr_rubwind(x, y, wm, hm, &t, &w, &h);
                 message = WM_SIZED;
             }
