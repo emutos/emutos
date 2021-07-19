@@ -172,7 +172,7 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
          * went down on active window so handle control points
          */
         w_bldactive(w_handle);
-        cpt = ob_find(gl_awind, 0, 10, mx, my);
+        cpt = ob_find(gl_awind, W_BOX, MAX_DEPTH, mx, my);
         w_getsize(WS_CURR, w_handle, &t);
         r_get(&t, &x, &y, &w, &h);
         kind = pwin->w_kind;
