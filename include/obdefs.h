@@ -119,6 +119,17 @@
 #define FILLPAT_MASK    0x00000070L /* obspec colour word masks */
 #define FILLCOL_MASK    0x0000000fL
 
+#define LK3DIND     1           /* ob_which values used with objc_sysvar() */
+#define LK3DACT     2
+#define INDBUTCOL   3
+#define ACTBUTCOL   4
+#define BACKGRCOL   5
+#define AD3DVALUE   6
+
+#define ADJ3DSTD    2           /* standard pixel adjustment for 3D objects */
+#define ADJ3DOUT    3           /* pixel adjustment for 3D OUTLINED objects */
+#define ADJ3DSHA    2           /* pixel adjustment for 3D SHADOWED objects */
+
 typedef struct
 {
         WORD    ob_next;        /* -> object's next sibling     */

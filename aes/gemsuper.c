@@ -233,6 +233,11 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         gsx_sclip((GRECT *)&OB_XCLIP);
         ob_change((OBJECT *)OB_TREE, OB_DRAWOB, OB_NEWSTATE, OB_REDRAW);
         break;
+#if CONF_WITH_3D_OBJECTS
+    case OBJC_SYSVAR:
+        ret = ob_sysvar(OB_MODE, OB_WHICH, OB_I1, OB_I2, &OB_O1, &OB_O2);
+        break;
+#endif
 
     /* Form Manager */
     case FORM_DO:

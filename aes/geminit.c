@@ -47,6 +47,7 @@
 #include "gemaplib.h"
 #include "geminput.h"
 #include "gemmnlib.h"
+#include "gemoblib.h"
 #include "geminit.h"
 #include "optimize.h"
 #include "aesdefs.h"
@@ -683,6 +684,10 @@ void run_accs_and_desktop(void)
     D.g_scrap[0] = dos_gdrv() + 'A';/* set up scrap dir path */
 
     gsx_init();                     /* do gsx open work station */
+
+#if CONF_WITH_3D_OBJECTS
+    init_3d();                      /* initialise 3D-related variables */
+#endif
 
     sh_put(CP_SHELL_INIT,sizeof(CP_SHELL_INIT)-1);  /* see description at top */
 

@@ -1267,6 +1267,14 @@
 #endif
 
 /*
+ * Set CONF_WITH_3D_OBJECTS to 1 to enable support for 3D objects,
+ * as in Atari TOS 4
+ */
+#ifndef CONF_WITH_3D_OBJECTS
+# define CONF_WITH_3D_OBJECTS 0
+#endif
+
+/*
  * Set CONF_WITH_BIOS_EXTENSIONS to 1 to support various BIOS extension
  * functions
  */

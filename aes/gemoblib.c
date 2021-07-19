@@ -38,6 +38,18 @@
                                                 /* in GSXBIND.C         */
 #define g_vsf_color( x )          gsx_1code(SET_FILL_COLOR, x)
 
+#if CONF_WITH_3D_OBJECTS
+/*
+ * 3D globals set and returned by objc_sysvar()
+ */
+static WORD indtxtmove;         /* 1 => indicators move text */
+static WORD indcolchange;       /* 1 => indicators change colour */
+static WORD acttxtmove;         /* 1 => activators move text */
+static WORD actcolchange;       /* 1 => activators change colour */
+static WORD indbutcol;          /* indicator button colour */
+static WORD actbutcol;          /* activator button colour */
+static WORD backgrcol;          /* background colour */
+#endif
 
 /*
  *  Routine to find the x,y offset of a particular object relative
@@ -731,6 +743,110 @@ void ob_change(OBJECT *tree, WORD obj, UWORD new_state, WORD redraw)
 
     gsx_mon();
 }
+
+
+#if CONF_WITH_3D_OBJECTS
+/*
+ *  Initialise variables related to 3D objects
+ */
+void init_3d(void)
+{
+    indtxtmove = 0;         /* indicators: don't move text */
+    indcolchange = 1;       /* ... but change colour       */
+
+    acttxtmove = 1;         /* activators: move text       */
+    actcolchange = 0;       /* ... but don't change colour */
+
+    /* initialise button colours according to size of palette */
+    if (gl_ws.ws_ncolors <= LWHITE)
+    {
+        actbutcol = indbutcol = backgrcol = WHITE;
+    }
+    else
+    {
+        actbutcol = indbutcol = backgrcol = LWHITE;
+    }
+}
+
+
+/*
+ *  Implements objc_sysvar(): set/get variables to control 3D object display
+ */
+WORD ob_sysvar(WORD mode, WORD which, WORD in1, WORD in2, WORD *out1, WORD *out2)
+{
+    /*
+     * handle setting the variables
+     */
+    if (mode)
+    {
+        switch(which) {
+        case LK3DIND:
+            if (in1 != -1)
+                indtxtmove = in1;
+            if (in2 != -1)
+                indcolchange = in2;
+            break;
+        case LK3DACT:
+            if (in1 != -1)
+                acttxtmove = in1;
+            if (in2 != -1)
+                actcolchange = in2;
+            break;
+        case INDBUTCOL:
+            if (in1 >= gl_ws.ws_ncolors)
+                return 0;
+            indbutcol = in1;
+            break;
+        case ACTBUTCOL:
+            if (in1 >= gl_ws.ws_ncolors)
+                return 0;
+            actbutcol = in1;
+            break;
+        case BACKGRCOL:
+            if (in1 >= gl_ws.ws_ncolors)
+                return 0;
+            backgrcol = in1;
+            break;
+        default:
+            return 0;
+            break;
+        }
+        return 1;
+    }
+
+    /*
+     * handle getting the variables
+     */
+    switch(which) {
+    case LK3DIND:
+        *out1 = indtxtmove;
+        *out2 = indcolchange;
+        break;
+    case LK3DACT:
+        *out1 = acttxtmove;
+        *out2 = actcolchange;
+        break;
+    case INDBUTCOL:
+        *out1 = indbutcol;
+        break;
+    case ACTBUTCOL:
+        *out1 = actbutcol;
+        break;
+    case BACKGRCOL:
+        *out1 = backgrcol;
+        break;
+    case AD3DVALUE:
+        *out1 = ADJ3DSTD;
+        *out2 = ADJ3DSTD;
+        break;
+    default:
+        return 0;
+        break;
+    }
+
+    return 1;
+}
+#endif
 
 
 UWORD ob_fs(OBJECT *tree, WORD obj, WORD *pflag)
