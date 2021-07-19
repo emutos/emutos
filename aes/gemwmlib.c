@@ -277,16 +277,6 @@ static void w_adjust( WORD parent, WORD obj, WORD x, WORD y,  WORD w, WORD h)
 }
 
 
-static void w_hvassign(BOOL isvert, WORD parent, WORD obj, WORD vx, WORD vy,
-                       WORD hx, WORD hy, WORD w, WORD h)
-{
-    if (isvert)
-        w_adjust(parent, obj, vx, vy, gl_wbox, h);
-    else
-        w_adjust(parent, obj, hx, hy, w, gl_hbox);
-}
-
-
 /*
  *  Walk the list and draw the parts of the window tree owned by this window
  */
@@ -381,103 +371,83 @@ static void w_setcolor(WINDOW *pw, WORD gadget, BOOL istop)
 }
 
 
-static void w_barcalc(BOOL isvert, WORD space, WORD sl_value, WORD sl_size,
-                      WORD min_sld, GRECT *ptv, GRECT *pth)
+static void w_bldvbar(UWORD kind, BOOL istop, WINDOW *pw, WORD x, WORD y, WORD w, WORD h)
 {
-    if (sl_size == -1)
-        sl_size = min_sld;
-    else
-        sl_size = max(min_sld, mul_div(sl_size, space, 1000));
-
-    sl_value = mul_div(space - sl_size, sl_value, 1000);
-
-    if (isvert)
-        r_set(ptv, 0, sl_value, gl_wbox, sl_size);
-    else
-        r_set(pth, sl_value, 0, sl_size, gl_hbox);
-}
-
-
-static void w_bldbar(UWORD kind, BOOL istop, WORD w_bar, WINDOW *pw,
-                     WORD x, WORD y, WORD w, WORD h)
-{
-    BOOL    isvert;
-    WORD    obj;
-    UWORD   upcmp, dncmp, slcmp;
-    WORD    w_up, w_dn, w_slide, w_elev;
-    WORD    sl_value, sl_size, min_sld, space;
-
-    isvert = (w_bar == W_VBAR);
-    if (isvert)
-    {
-        upcmp = UPARROW;
-        dncmp = DNARROW;
-        slcmp = VSLIDE;
-        w_up = W_UPARROW;
-        w_dn = W_DNARROW;
-        w_slide = W_VSLIDE;
-        w_elev = W_VELEV;
-        sl_value = pw->w_vslide;
-        sl_size = pw->w_vslsiz;
-        min_sld = gl_hbox;
-    }
-    else
-    {
-        upcmp = LFARROW;
-        dncmp = RTARROW;
-        slcmp = HSLIDE;
-        w_up = W_LFARROW;
-        w_dn = W_RTARROW;
-        w_slide = W_HSLIDE;
-        w_elev = W_HELEV;
-        sl_value = pw->w_hslide;
-        sl_size = pw->w_hslsiz;
-        min_sld = gl_wbox;
-    }
+    WORD size, posn;
 
     /* set window widget colours according to topped/untopped status */
-    w_setcolor(pw, w_bar, istop);
-    w_setcolor(pw, w_up, istop);
-    w_setcolor(pw, w_dn, istop);
-    w_setcolor(pw, w_slide, istop);
-    w_setcolor(pw, w_elev, istop);
+    w_setcolor(pw, W_VBAR, istop);
+    w_setcolor(pw, W_UPARROW, istop);
+    w_setcolor(pw, W_DNARROW, istop);
+    w_setcolor(pw, W_VSLIDE, istop);
+    w_setcolor(pw, W_VELEV, istop);
 
-    w_hvassign(isvert, W_DATA, w_bar, x, y, x, y, w, h);
+    w_adjust(W_DATA, W_VBAR, x, y, gl_wbox, h);
     x = y = 0;
     if (istop)
     {
-        if (kind & upcmp)
+        if (kind & UPARROW)
         {
-            w_adjust(w_bar, w_up, x, y, gl_wbox, gl_hbox);
-            if (isvert)
-            {
-                y += (gl_hbox - 1);
-                h -= (gl_hbox - 1);
-            }
-            else
-            {
-                x += (gl_wbox - 1);
-                w -= (gl_wbox - 1);
-            }
+            w_adjust(W_VBAR, W_UPARROW, x, y, gl_wbox, gl_hbox);
+            y += (gl_hbox - 1);
+            h -= (gl_hbox - 1);
         }
-        if (kind & dncmp)
+        if (kind & DNARROW)
         {
             w -= (gl_wbox - 1);
             h -= (gl_hbox - 1);
-            w_hvassign(isvert, w_bar, w_dn, x, y + h - 1,
-                        x + w - 1, y, gl_wbox, gl_hbox);
+            w_adjust(W_VBAR, W_DNARROW, x, y + h - 1, gl_wbox, gl_hbox);
         }
-        if ( kind & slcmp )
+        if (kind & VSLIDE)
         {
-            w_hvassign(isvert, w_bar, w_slide, x, y, x, y, w, h);
-            space = (isvert) ? h : w;
+            w_adjust(W_VBAR, W_VSLIDE, x, y, gl_wbox, h);
 
-            w_barcalc(isvert, space, sl_value, sl_size, min_sld,
-                  (GRECT *)&W_ACTIVE[W_VELEV].ob_x, (GRECT *)&W_ACTIVE[W_HELEV].ob_x);
+            if (pw->w_vslsiz == -1)
+                size = gl_hbox;
+            else size = max(gl_hbox, mul_div(h, pw->w_vslsiz, 1000));
+            posn = mul_div(h-size, pw->w_vslide, 1000);
+            w_adjust(W_VSLIDE, W_VELEV, 0, posn, gl_wbox, size);
+        }
+    }
+}
 
-            obj = (isvert) ? W_VELEV : W_HELEV;
-            W_ACTIVE[obj].ob_head = W_ACTIVE[obj].ob_tail = NIL;
-            w_obadd(&W_ACTIVE[ROOT], w_slide, obj);
+
+static void w_bldhbar(UWORD kind, BOOL istop, WINDOW *pw, WORD x, WORD y, WORD w, WORD h)
+{
+    WORD size, posn;
+
+    /* set window widget colours according to topped/untopped status */
+    w_setcolor(pw, W_HBAR, istop);
+    w_setcolor(pw, W_LFARROW, istop);
+    w_setcolor(pw, W_RTARROW, istop);
+    w_setcolor(pw, W_HSLIDE, istop);
+    w_setcolor(pw, W_HELEV, istop);
+
+    w_adjust(W_DATA, W_HBAR, x, y, w, gl_hbox);
+    x = y = 0;
+    if (istop)
+    {
+        if (kind & LFARROW)
+        {
+            w_adjust(W_HBAR, W_LFARROW, x, y, gl_wbox, gl_hbox);
+            x += (gl_wbox - 1);
+            w -= (gl_wbox - 1);
+        }
+        if (kind & RTARROW)
+        {
+            w -= (gl_wbox - 1);
+            h -= (gl_hbox - 1);
+            w_adjust(W_HBAR, W_RTARROW, x + w - 1, y, gl_wbox, gl_hbox);
+        }
+        if (kind & HSLIDE)
+        {
+            w_adjust(W_HBAR, W_HSLIDE, x, y, w, gl_hbox);
+
+            if (pw->w_hslsiz == -1)
+                size = gl_wbox;
+            else size = max(gl_wbox, mul_div(w, pw->w_hslsiz, 1000));
+            posn = mul_div(w-size, pw->w_hslide, 1000);
+            w_adjust(W_HSLIDE, W_HELEV, posn, 0, size, gl_hbox);
         }
     }
 }
@@ -615,14 +585,14 @@ void w_bldactive(WORD w_handle)
     if (havevbar)
     {
         t.g_x += t.g_w;
-        w_bldbar(kind, istop, W_VBAR, pw, t.g_x, 0, t.g_w+2, t.g_h+2);
+        w_bldvbar(kind, istop, pw, t.g_x, 0, t.g_w+2, t.g_h+2);
     }
 
     /* do horizontal bar area */
     if (havehbar)
     {
         t.g_y += t.g_h;
-        w_bldbar(kind, istop, W_HBAR, pw, 0, t.g_y, t.g_w+2, t.g_h+2);
+        w_bldhbar(kind, istop, pw, 0, t.g_y, t.g_w+2, t.g_h+2);
     }
 
     /* do sizer area */
