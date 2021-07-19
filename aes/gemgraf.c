@@ -33,12 +33,6 @@
 #include "gsx2.h"
 #include "rectfunc.h"
 
-#define vsf_interior(x)     gsx_1code(SET_FILL_INTERIOR, x)
-#define vsl_type(x)         gsx_1code(SET_LINE_TYPE, x)
-#define vsf_style(x)        gsx_1code(SET_FILL_STYLE, x)
-#define vsf_color(x)        gsx_1code(SET_FILL_COLOR, x)
-#define vsl_udsty(x)        gsx_1code(SET_UD_LINE_STYLE, x)
-
 
 GLOBAL WORD     gl_width;
 GLOBAL WORD     gl_height;

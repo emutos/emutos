@@ -35,8 +35,6 @@
 
 #include "string.h"
 
-                                                /* in GSXBIND.C         */
-#define g_vsf_color( x )          gsx_1code(SET_FILL_COLOR, x)
 
 #if CONF_WITH_3D_OBJECTS
 /*
@@ -398,7 +396,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
 
         if ((state & SHADOWED) && th)
         {
-            g_vsf_color(bcol);
+            vsf_color(bcol);
             bb_fill(MD_REPLACE, FIS_SOLID, 0, t.g_x, t.g_y+t.g_h+th,
                     t.g_w + th, 2*th);
             bb_fill(MD_REPLACE, FIS_SOLID, 0, t.g_x+t.g_w+th, t.g_y,
@@ -421,7 +419,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
 
         if (state & DISABLED)
         {
-            g_vsf_color(WHITE);
+            vsf_color(WHITE);
             bb_fill(MD_TRANS, FIS_PATTERN, IP_4PATT, t.g_x, t.g_y,
                     t.g_w, t.g_h);
         }
