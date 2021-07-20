@@ -225,7 +225,7 @@ static LONG get_iorecbuf(IOREC *in)
 {
     WORD old_sr;
     LONG value;
-    
+
     /* disable interrupts */
     old_sr = set_sr(0x2700);
 
