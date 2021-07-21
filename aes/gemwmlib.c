@@ -310,6 +310,28 @@ static void do_walk(WORD wh, OBJECT *tree, WORD obj, WORD depth, GRECT *pc)
 }
 
 
+static WORD w_top(void)
+{
+    return (gl_wtop != NIL) ? gl_wtop : DESKWH;
+}
+
+
+void w_setactive(void)
+{
+    GRECT   d;
+    WORD    wh;
+    AESPD   *ppd;
+
+    wh = w_top();
+    w_getsize(WS_WORK, wh, &d);
+    ppd = D.w_win[wh].w_owner;
+
+    /* BUGFIX 2.1: don't chg own if null */
+    if (ppd != NULL)
+        ct_chgown(ppd, &d);
+}
+
+
 /*
  *  Draw the desktop background pattern underneath the current set of windows
  */
@@ -451,28 +473,6 @@ static void w_bldhbar(UWORD kind, BOOL istop, WINDOW *pw, WORD x, WORD y, WORD w
             w_adjust(W_HSLIDE, W_HELEV, posn, 0, size, gl_hbox);
         }
     }
-}
-
-
-static WORD w_top(void)
-{
-    return (gl_wtop != NIL) ? gl_wtop : DESKWH;
-}
-
-
-void w_setactive(void)
-{
-    GRECT   d;
-    WORD    wh;
-    AESPD   *ppd;
-
-    wh = w_top();
-    w_getsize(WS_WORK, wh, &d);
-    ppd = D.w_win[wh].w_owner;
-
-    /* BUGFIX 2.1: don't chg own if null */
-    if (ppd != NULL)
-        ct_chgown(ppd, &d);
 }
 
 
