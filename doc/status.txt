@@ -12,12 +12,12 @@ a ROM version of EmuTOS.
   Emulators           |       |     |             |
   ARAnyM 1.1.0        |  yes  | VRI |  2 Jul 2021 |
   Hatari v2.3.1       |  yes  | VRI |  2 Jul 2021 |
-  PaCifiST v0.48      |  yes  | LVL | winter 2001 |
+  PaCifiST v0.48      |   no  | (7) | 21 Jul 2021 | see (B)
   SainT v2.40         |  yes  | RFB | 29 Aug 2020 | 192k ROM only
   Steem SSE 4.1.0 R7  |  yes  | VRI |  2 Jul 2021 | (Win 64 D3D)
   STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
-  STonX DOS           |   no  | (7) | 11 Jul 2021 | see (A)
+  STonX DOS           |  yes  | CZ  | 22 Jul 2021 | see (A)
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon v0.5        |   no  | RFB | 29 Aug 2020 |
   WinUAE 4.4.0        |  yes  | VRI |  2 Jul 2021 |
@@ -43,7 +43,9 @@ a ROM version of EmuTOS.
   Apple Lisa          |  yes  | (8) |  4 Feb 2021 |
 
 Remarks:
-  (A) Last version tested OK under StonX DOS: EmuTOS 1.0, 192k ROMs
+  (A) StonX DOS: EmuTOS 1.1 and 1.1.1 are known to be incompatible.
+      Newer snapshots are ok again.
+  (B) Last version tested OK under PaCifiST: EmuTOS 0.8.7, 192k ROMs
 
 Abbreviations for testers:
     CZ:  Christian Zietz
