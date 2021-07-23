@@ -1267,27 +1267,11 @@
 #endif
 
 /*
- * Set CONF_WITH_3D_OBJECTS to 1 to enable support for 3D objects,
- * as in Atari TOS 4
- */
-#ifndef CONF_WITH_3D_OBJECTS
-# define CONF_WITH_3D_OBJECTS 0
-#endif
-
-/*
  * Set CONF_WITH_BIOS_EXTENSIONS to 1 to support various BIOS extension
  * functions
  */
 #ifndef CONF_WITH_BIOS_EXTENSIONS
 # define CONF_WITH_BIOS_EXTENSIONS 1
-#endif
-
-/*
- * Set CONF_WITH_COLOUR_ICONS to 1 to enable support for colour icons,
- * as in Atari TOS 4
- */
-#ifndef CONF_WITH_COLOUR_ICONS
-# define CONF_WITH_COLOUR_ICONS 1
 #endif
 
 /*
@@ -1363,6 +1347,14 @@
 #endif
 
 /*
+ * Set CONF_WITH_COLOUR_ICONS to 1 to enable support for colour icons,
+ * as in Atari TOS 4
+ */
+#ifndef CONF_WITH_COLOUR_ICONS
+# define CONF_WITH_COLOUR_ICONS 1
+#endif
+
+/*
  * Set CONF_WITH_GRAF_MOUSE_EXTENSION to 1 to include AES support for
  * graf_mouse() modes M_SAVE, M_RESTORE, M_PREVIOUS.
  */
@@ -1377,6 +1369,14 @@
  */
 #ifndef CONF_WITH_WINDOW_COLOURS
 # define CONF_WITH_WINDOW_COLOURS 1
+#endif
+
+/*
+ * Set CONF_WITH_3D_OBJECTS to 1 to enable support for 3D objects,
+ * as in Atari TOS 4
+ */
+#ifndef CONF_WITH_3D_OBJECTS
+# define CONF_WITH_3D_OBJECTS 0
 #endif
 
 /*
