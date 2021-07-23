@@ -301,6 +301,9 @@
 # ifndef CONF_WITH_WINDOW_COLOURS
 #  define CONF_WITH_WINDOW_COLOURS 0
 # endif
+# ifndef CONF_WITH_3D_OBJECTS
+#  define CONF_WITH_3D_OBJECTS 0
+# endif
 # ifndef CONF_WITH_WINDOW_ICONS
 #  define CONF_WITH_WINDOW_ICONS 0
 # endif
@@ -1376,7 +1379,7 @@
  * as in Atari TOS 4
  */
 #ifndef CONF_WITH_3D_OBJECTS
-# define CONF_WITH_3D_OBJECTS 0
+# define CONF_WITH_3D_OBJECTS 1
 #endif
 
 /*
