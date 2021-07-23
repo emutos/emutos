@@ -1082,7 +1082,7 @@ static WORD fun_file2win(PNODE *pn_src, char  *spec, ANODE *an_dest, FNODE *fn_d
 
     p = filename_start(pathname);
 
-    if (an_dest && an_dest->a_type == AT_ISFOLD)
+    if (an_dest && (an_dest->a_type == AT_ISFOLD))
     {
         strcpy(p, fn_dest->f_name);
         strcat(p, "\\*.*");

@@ -1236,7 +1236,7 @@ WORD hndl_msg(void)
 
     done = change = menu = shrunk = FALSE;
 
-    if ( G.g_rmsg[0] == WM_CLOSED && ig_close )
+    if ((G.g_rmsg[0] == WM_CLOSED) && ig_close)
     {
         ig_close = FALSE;
         return done;

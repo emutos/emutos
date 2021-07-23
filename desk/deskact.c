@@ -381,7 +381,7 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
     oy = tree[root].ob_y + tree[obj].ob_y;
 
     view = (root == DROOT) ? V_ICON : G.g_iview;
-    switch( view )
+    switch(view)
     {
     case V_TEXT:
         r_set(&t, ox, oy, LEN_FNODE * gl_wchar, gl_hchar);
