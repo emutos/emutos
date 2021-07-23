@@ -46,7 +46,233 @@ static WORD acttxtmove;         /* 1 => activators move text */
 static WORD actcolchange;       /* 1 => activators change colour */
 static WORD indbutcol;          /* indicator button colour */
 static WORD actbutcol;          /* activator button colour */
-static WORD backgrcol;          /* background colour */
+WORD backgrcol;                 /* background colour - used by fm_alert() */
+
+/*
+ *  4-colour table used by xor_color():
+ *
+ *  Pixel value  VDI pen#   Colour       Pixel XOR    Complementary colour
+ *       00         0       white            11       black
+ *       01         2       red              10       green
+ *       10         3       green            01       red
+ *       11         1       black            00       white
+ */
+static const UBYTE vdi4comp[] = { BLACK, WHITE, GREEN, RED };
+
+/*
+ *  16-colour table used by xor_color():
+ *
+ *  Pixel value  VDI pen#   Colour       Pixel XOR    Complementary colour
+ *      0000        0       white           1111      black
+ *      0001        2       red             1110      light cyan
+ *      0010        3       green           1101      light magenta
+ *      0011        6       yellow          1100      light blue
+ *      0100        4       blue            1011      light yellow
+ *      0101        7       magenta         1010      light green
+ *      0110        5       cyan            1001      light red
+ *      0111        8       low white       1000      grey
+ *      1000        9       grey            0111      low white
+ *      1001       10       light red       0110      cyan
+ *      1010       11       light green     0101      magenta
+ *      1011       14       light yellow    0100      blue
+ *      1100       12       light blue      0011      yellow
+ *      1101       15       light magenta   0010      green
+ *      1110       13       light cyan      0001      red
+ *      1111        1       black           0000      white
+ */
+static const UBYTE vdi16comp[] = {
+    BLACK, WHITE, LCYAN, LMAGENTA, LYELLOW, LRED, LBLUE, LGREEN,
+    LBLACK, LWHITE, CYAN, MAGENTA, YELLOW, RED, BLUE, GREEN
+};
+
+/*
+ * Return the complementary (XOR) colour for a specified colour.  For
+ * colours beyond the maximum colour number for the current resolution,
+ * or beyond 15, returns WHITE.
+ */
+static WORD xor_color(WORD color)
+{
+    if ((color >= 16) || (color > gl_ws.ws_ncolors))
+        return WHITE;
+
+    if (gl_ws.ws_ncolors < 4)
+        return vdi4comp[color];
+
+    return vdi16comp[color];
+}
+
+/*
+ * Return TRUE iff it's ok to toggle an object's SELECTED state via XOR
+ */
+static BOOL xor_is_ok(WORD obtype, WORD obflags, LONG obspec)
+{
+    WORD colour_word;
+
+    if ((obtype == G_IBOX) || (obtype == G_STRING) || (obtype == G_TITLE))
+        return TRUE;
+
+    if ((obtype == G_IMAGE) || (obflags & FL3DOBJ))
+        return FALSE;
+
+    if (gl_ws.ws_ncolors <= 16)
+        return TRUE;
+
+    /*
+     * for other objects, it's ok as long as they are black & white
+     */
+    switch(obtype)
+    {
+    case G_BOXTEXT:
+    case G_FBOXTEXT:
+    case G_TEXT:
+    case G_FTEXT:
+        colour_word = ((TEDINFO *)obspec)->te_color;
+        break;
+    case G_BOX:
+    case G_BOXCHAR:
+        colour_word = LOWORD(obspec);
+        break;
+    default:    /* G_USERDEF, G_ICON, G_CICON */
+        return TRUE;
+    }
+
+    /* check internal colour */
+    if ((colour_word & 0x000f) > BLACK)
+        return FALSE;
+
+    /* check text colour */
+    if (((colour_word>>8) & 0x000f) > BLACK)
+        return FALSE;
+
+    return TRUE;
+}
+
+/*
+ * Draw outline for 3D background object
+ */
+static void draw_3d_outline(GRECT *pt)
+{
+    WORD pts[6], i;
+
+    gsx_moff();
+
+    gsx_attr(FALSE, MD_REPLACE, LBLACK);
+    /*
+     * draw 3 nested lines from bottom left to bottom right to top right:
+     *                [4,5]
+     *                  |
+     *      [0,1] --- [2,3]
+     */
+    pts[0] = pt->g_x - 3;
+    pts[1] = pt->g_y + pt->g_h + 2;
+    pts[2] = pts[0] + pt->g_w + 5;
+    pts[3] = pts[1];
+    pts[4] = pts[2];
+    pts[5] = pt->g_y - 3;
+    v_pline(3, pts);
+
+    for (i = 0; i < 2; i++)
+    {
+        pts[0]++;
+        pts[1]--;
+        pts[2]--;
+        pts[3]--;
+        pts[4]--;
+        pts[5]++;
+        v_pline(3, pts);
+    }
+
+    gsx_attr(FALSE, MD_REPLACE, WHITE);
+    /*
+     * draw 3 nested lines from bottom left to top left to top right:
+     *      [2,3] --- [4,5]
+     *        |
+     *      [0,1]
+     */
+    pts[0] = pt->g_x - 3;
+    pts[1] = pt->g_y + pt->g_h + 2;
+    pts[2] = pts[0];
+    pts[3] = pt->g_y - 3;
+    pts[4] = pts[2] + pt->g_w + 6;
+    pts[5] = pts[3];
+    v_pline(3, pts);
+
+    for (i = 0; i < 2; i++)
+    {
+        pts[0]++;
+        pts[1]--;
+        pts[2]++;
+        pts[3]++;
+        pts[4]--;
+        pts[5]++;
+        v_pline(3, pts);
+    }
+
+    gsx_mon();
+}
+
+/*
+ * Draw highlights & shadows around a rectangle to give a 3D appearance:
+ * raised if not selected, depressed if selected.
+ */
+static void add_3d_effect(GRECT *pt, WORD obstate, WORD th, WORD color)
+{
+    WORD pts[6], draw_color;
+    GRECT r;
+
+    gsx_moff();
+    vsl_type(7);        /* user-defined line type */
+    vsl_udsty(0xffff);  /* solid */
+
+    rc_copy(pt, &r);    /* make a local copy as a precaution */
+
+    /* for inside border, reduce apparent object size */
+    if (th > 0)
+    {
+        r.g_x += th;
+        r.g_y += th;
+        r.g_w -= 2 * th;
+        r.g_h -= 2 * th;
+    }
+
+    /*
+     * draw a line from bottom left to top left to top right:
+     *      [2,3] --- [4,5]
+     *        |
+     *      [0,1]
+     * note that we stop short by 1 pixel at both ends of the line
+     */
+    pts[0] = pts[2] = r.g_x;
+    pts[3] = pts[5] = r.g_y;
+    pts[1] = pts[3] + r.g_h - 2;
+    pts[4] = pts[2] + r.g_w - 2;
+
+    draw_color = (obstate & SELECTED) ? BLACK : WHITE;
+    gsx_attr(FALSE, MD_REPLACE, draw_color);
+    v_pline(3,pts);
+
+    /*
+     * draw a line from bottom left to bottom right to top right:
+     *                [4,5]
+     *                  |
+     *      [0,1] --- [2,3]
+     * note that we stop short by 1 pixel at both ends of the line
+     */
+    pts[0]++;
+    pts[1]++;
+    pts[3] = pts[1];
+    pts[4]++;
+    pts[2] = pts[4];
+    pts[5]++;
+
+    draw_color = (obstate & SELECTED) ? LWHITE : LBLACK;
+    if ((draw_color == color) || (gl_ws.ws_ncolors < draw_color))
+        draw_color = (obstate & SELECTED) ? WHITE : BLACK;
+    gsx_attr(FALSE, MD_REPLACE, draw_color);
+    v_pline(3,pts);
+
+    gsx_mon();
+}
 #endif
 
 /*
@@ -85,11 +311,34 @@ void ob_relxywh(OBJECT *tree, WORD obj, GRECT *pt)
  */
 void ob_actxywh(OBJECT *tree, WORD obj, GRECT *pt)
 {
+#if CONF_WITH_3D_OBJECTS
+    LONG spec;
+    WORD state, type, flags, border, adjust;
+
+    ob_offset(tree, obj, &pt->g_x, &pt->g_y);
+    ob_sst(tree, obj, &spec, &state, &type, &flags, pt, &border);
+
+    /* if 3D object, adjust position & size */
+    if (flags & FL3DOBJ)
+    {
+        adjust = -ADJ3DSTD;
+        if (state & OUTLINED)
+            adjust -= ADJ3DOUT;
+        gr_inside(pt, adjust);
+        if ((state & SHADOWED) && (border < 0))
+        {
+            adjust = border * ADJ3DSHA;
+            pt->g_w -= adjust;
+            pt->g_h -= adjust;
+        }
+    }
+#else
     OBJECT *objptr = tree + obj;
 
     ob_offset(tree, obj, &pt->g_x, &pt->g_y);
     pt->g_w = objptr->ob_width;
     pt->g_h = objptr->ob_height;
+#endif
 }
 
 
@@ -213,6 +462,10 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
     BITBLK bi;
     ICONBLK ib;
     CICON *cicon;
+#if CONF_WITH_3D_OBJECTS
+    WORD effect_th;
+    BOOL movetext, changecol;
+#endif
 
     ch = ob_sst(tree, obj, &spec, &state, &obtype, &flags, &t, &th);
 
@@ -221,6 +474,37 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
 
     t.g_x = sx;
     t.g_y = sy;
+
+#if CONF_WITH_3D_OBJECTS
+    effect_th = th;         /* save for add_3d_effect() at the end */
+
+    /*
+     * for 3D objects, adjust object size.  for all objects, set
+     * movetext/changecol booleans.
+     */
+    if (flags & FL3DOBJ)
+    {
+        t.g_x -= ADJ3DSTD;
+        t.g_y -= ADJ3DSTD;
+        t.g_w += 2 * ADJ3DSTD;
+        t.g_h += 2 * ADJ3DSTD;
+        if ((flags & FL3DMASK) == FL3DACT)
+        {
+            movetext = acttxtmove;
+            changecol = actcolchange;
+        }
+        else
+        {
+            movetext = indtxtmove;
+            changecol = indcolchange;
+        }
+    }
+    else
+    {
+        movetext = FALSE;
+        changecol = !xor_is_ok(obtype, flags, spec);
+    }
+#endif
 
     /*
      * do trivial reject with full extent including outline, shadow,
@@ -237,6 +521,10 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
         if (!(gsx_chkclip(&c)))
             return;
     }
+
+#if CONF_WITH_3D_OBJECTS
+    rc_copy(&t, &c);    /* save for add_3d_effect() at the end */
+#endif
 
     /*
      * handle all non-string types
@@ -259,6 +547,39 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
         case G_FTEXT:
             memcpy(&edblk, (TEDINFO *)spec, sizeof(TEDINFO));
             gr_crack(edblk.te_color, &bcol,&tcol, &ipat, &icol, &tmode);
+#if CONF_WITH_3D_OBJECTS
+            /*
+             * handle drawing the background of all text objects in colour
+             *
+             * when drawing in replace mode, the VDI always sets the text
+             * background to white, so to draw a coloured background on
+             * text objects, we need to:
+             *  1) set the pattern to solid
+             *  2) set the colour to the 3D background colour
+             *  3) change a text mode of replace to transparent
+             * additionally, for TEXT/FTEXT objects we need to:
+             *  4) change them to BOXTEXT/FBOXTEXT with border thickness zero
+             */
+            if ((flags & FL3DMASK) && (ipat == IP_HOLLOW) && (icol == WHITE))
+            {
+                ipat = IP_SOLID;
+                icol = backgrcol;
+                if (tmode == MD_REPLACE)
+                {
+                    tmode = MD_TRANS;
+                    if (obtype == G_TEXT)
+                    {
+                        obtype = G_BOXTEXT;
+                        tmpth = th = 0;
+                    }
+                    else if (obtype == G_FTEXT)
+                    {
+                        obtype = G_FBOXTEXT;
+                        tmpth = th = 0;
+                    }
+                }
+            }
+#endif
             break;
         }
 
@@ -272,13 +593,49 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
         case G_BOXCHAR:
         case G_IBOX:
             gr_crack((UWORD)spec, &bcol, &tcol, &ipat, &icol, &tmode);
+#if CONF_WITH_3D_OBJECTS
+            /*
+             * handle BOX/BOXCHAR colours
+             */
+            if ((obtype != G_IBOX) && (ipat == IP_HOLLOW) && (icol == WHITE))
+            {
+                switch(flags & FL3DMASK)
+                {
+                case FL3DIND:
+                    ipat = IP_SOLID;
+                    icol = indbutcol;
+                    break;
+                case FL3DACT:
+                    ipat = IP_SOLID;
+                    icol = actbutcol;
+                    break;
+                case FL3DBAK:
+                    ipat = IP_SOLID;
+                    icol = backgrcol;
+                    break;
+                }
+            }
+#endif
             FALLTHROUGH;
         case G_BUTTON:
             if (obtype == G_BUTTON)
             {
                 bcol = BLACK;
-                ipat = IP_HOLLOW;
-                icol = WHITE;
+#if CONF_WITH_3D_OBJECTS
+                /*
+                 * handle BUTTON colours
+                 */
+                if (flags & FL3DOBJ)
+                {
+                    ipat = IP_SOLID;
+                    icol = ((flags&FL3DMASK)==FL3DACT) ? actbutcol : indbutcol;
+                }
+                else
+#endif
+                {
+                    ipat = IP_HOLLOW;
+                    icol = WHITE;
+                }
             }
             FALLTHROUGH;
         case G_BOXTEXT:
@@ -293,11 +650,42 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
             if (obtype != G_IBOX)
             {
                 gr_inside(&t, tmpth);
+#if CONF_WITH_3D_OBJECTS
+                /*
+                 * handle BOX, BOXCHAR, BUTTON, BOXTEXT, FBOXTEXT selection
+                 *
+                 * if we must change colour when selected, and we are
+                 * selected:
+                 *  1) for a hollow box, make it solid & black
+                 *  2) otherwise, set an explicit colour
+                 */
+                if (changecol && (state & SELECTED))
+                {
+                    if (ipat == IP_HOLLOW)
+                    {
+                        ipat = IP_SOLID;
+                        icol = BLACK;
+                    }
+                    else
+                        icol = xor_color(icol);
+                }
+#endif
                 gr_rect(icol, ipat, &t);
                 gr_inside(&t, -tmpth);
             }
             break;
         }
+
+#if CONF_WITH_3D_OBJECTS
+        /*
+         * handle text colour change for SELECTED objects
+         */
+        if (changecol && (state & SELECTED))
+        {
+            tmode = MD_TRANS;
+            tcol = xor_color(tcol);
+        }
+#endif
 
         gsx_attr(TRUE, tmode, tcol);
 
@@ -325,11 +713,43 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
         case G_TEXT:
         case G_BOXTEXT:
             gr_inside(&t, tmpth);
+#if CONF_WITH_3D_OBJECTS
+            /*
+             * for TEXT/BOXTEXT/BOXCHAR/FTEXT/FBOXTEXT objects,
+             * shift text position as required
+             */
+            if (movetext && !(state & SELECTED))
+            {
+                t.g_x--;
+                t.g_y--;
+            }
+#endif
             gr_gtext(edblk.te_just, edblk.te_font, edblk.te_ptext, &t);
+#if CONF_WITH_3D_OBJECTS
+            /*
+             * restore shifted text position
+             */
+            if (movetext && !(state & SELECTED))
+            {
+                t.g_x++;
+                t.g_y++;
+            }
+#endif
             gr_inside(&t, -tmpth);
             break;
         case G_IMAGE:
             bi = *((BITBLK *)spec);
+#if CONF_WITH_3D_OBJECTS
+            /*
+             * if a G_IMAGE is selected, we can XOR the background (since
+             * that is always black), then set the colour for the image
+             */
+            if (state & SELECTED)
+            {
+                bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, t.g_x, t.g_y, t.g_w, t.g_h);
+                bi.bi_color = xor_color(bi.bi_color);
+            }
+#endif
             gsx_blt((void *)bi.bi_pdata, bi.bi_x, bi.bi_y,
                     t.g_x, t.g_y, bi.bi_wb * 8,
                     bi.bi_hl, MD_TRANS, bi.bi_color, WHITE);
@@ -366,12 +786,31 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
         len = expand_string(intin, (char *)spec);
         if (len)
         {
-            gsx_attr(TRUE, MD_TRANS, BLACK);
+            tcol = BLACK;
+#if CONF_WITH_3D_OBJECTS
+            /*
+             * switch text colour if necessary for selected BUTTON objects
+             */
+            if ((obtype == G_BUTTON) && changecol && (state & SELECTED))
+                tcol = WHITE;
+#endif
+            gsx_attr(TRUE, MD_TRANS, tcol);
+            tmpx = t.g_x;
             tmpy = t.g_y + ((t.g_h-gl_hchar)/2);
             if (obtype == G_BUTTON)
-                tmpx = t.g_x + ((t.g_w-(len*gl_wchar))/2);
-            else
-                tmpx = t.g_x;
+            {
+                tmpx += ((t.g_w-(len*gl_wchar))/2);
+#if CONF_WITH_3D_OBJECTS
+                /*
+                 * for a BUTTON object, shift text position as required
+                 */
+                if (movetext && !(state & SELECTED))
+                {
+                    tmpx--;
+                    tmpy--;
+                }
+#endif
+            }
             gsx_tblt(IBM, tmpx, tmpy, len);
         }
     }
@@ -383,10 +822,22 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
     {
         if (state & OUTLINED)
         {
-            gsx_attr(FALSE, MD_REPLACE, BLACK);
-            gr_box(t.g_x-3, t.g_y-3, t.g_w+6, t.g_h+6, 1);
-            gsx_attr(FALSE, MD_REPLACE, WHITE);
-            gr_box(t.g_x-2, t.g_y-2, t.g_w+4, t.g_h+4, 2);
+#if CONF_WITH_3D_OBJECTS
+            /*
+             * handle OUTLINED for 3D backgrounds
+             */
+            if ((flags & FL3DMASK) == FL3DBAK)
+            {
+                draw_3d_outline(&t);
+            }
+            else
+#endif
+            {
+                gsx_attr(FALSE, MD_REPLACE, BLACK);
+                gr_box(t.g_x-3, t.g_y-3, t.g_w+6, t.g_h+6, 1);
+                gsx_attr(FALSE, MD_REPLACE, WHITE);
+                gr_box(t.g_x-2, t.g_y-2, t.g_w+4, t.g_h+4, 2);
+            }
         }
 
         if (th > 0)
@@ -419,16 +870,40 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
 
         if (state & DISABLED)
         {
-            vsf_color(WHITE);
+            bcol = WHITE;
+#if CONF_WITH_3D_OBJECTS
+            /*
+             * handle DISABLED for 3D backgrounds
+             */
+            if ((flags & FL3DMASK) == FL3DBAK)
+                bcol = backgrcol;
+#endif
+            vsf_color(bcol);
             bb_fill(MD_TRANS, FIS_PATTERN, IP_4PATT, t.g_x, t.g_y,
                     t.g_w, t.g_h);
         }
 
         if (state & SELECTED)
         {
-            bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, t.g_x,t.g_y, t.g_w, t.g_h);
+#if CONF_WITH_3D_OBJECTS
+            /*
+             * handle SELECTED for non-3D objects
+             */
+            if (!(flags & FL3DOBJ) && !changecol)
+#endif
+            {
+                bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, t.g_x, t.g_y, t.g_w, t.g_h);
+            }
         }
     }
+
+#if CONF_WITH_3D_OBJECTS
+    /*
+     * do 3D effect for activators, indicators
+     */
+    if (flags & FL3DOBJ)
+        add_3d_effect(&c, state, effect_th, icol);
+#endif
 } /* just_draw */
 
 
@@ -516,11 +991,25 @@ WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
         /*
          * if inside this obj, might be inside a child, so check
          */
+        objptr = tree + currobj;
+
+#if CONF_WITH_3D_OBJECTS
+        if (objptr->ob_state & SHADOWED)
+        {
+            ob_relxywh(tree, currobj, &t);
+            t.g_x += o.g_x;
+            t.g_y += o.g_y;
+        }
+        else
+        {
+            ob_actxywh(tree, currobj, &t);
+        }
+#else
         ob_relxywh(tree, currobj, &t);
         t.g_x += o.g_x;
         t.g_y += o.g_y;
+#endif
 
-        objptr = tree + currobj;
         flags = objptr->ob_flags;
         if ( (inside(mx, my, &t)) && (!(flags & HIDETREE)) )
         {
@@ -727,13 +1216,32 @@ void ob_change(OBJECT *tree, WORD obj, UWORD new_state, WORD redraw)
         break;
     case G_ICON:    /* never use XOR for icons */
         break;
-    default:        /* others: use XOR iff SELECTED state has changed */
+    default:        /* others: handle change of SELECTED state */
+#if CONF_WITH_3D_OBJECTS
+        /*
+         * if we can toggle selection via XOR, we use XOR and don't redraw.
+         * if we have a G_IMAGE object that we're deselecting, we use XOR
+         * but force a redraw (xor_is_ok() returns FALSE for G_IMAGE).
+         */
+        if ((new_state ^ curr_state) & SELECTED)
+        {
+            BOOL ok = xor_is_ok(obtype,flags, spec);
+            if (ok || ((obtype == G_IMAGE) && !(new_state & SELECTED)))
+            {
+                bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, t.g_x+th, t.g_y+th,
+                        t.g_w-(2*th), t.g_h-(2*th));
+                redraw = !ok;
+            }
+        }
+#else
+        /* no 3D support: always use XOR if SELECTED state has changed */
         if ((new_state ^ curr_state) & SELECTED)
         {
             bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, t.g_x+th, t.g_y+th,
                     t.g_w-(2*th), t.g_h-(2*th));
             redraw = FALSE;
         }
+#endif
     }
 
     if (redraw)
