@@ -184,12 +184,15 @@ int timeout_gpip(LONG delay)
 
 #endif /* CONF_WITH_MFP */
 
-/* "sieve", to get only the fourth interrupt */
+/*
+ * "sieve", to get only the fourth interrupt.  because this is
+ * a global variable, it is automatically initialised to zero.
+ */
 WORD timer_c_sieve;
 
 void init_system_timer(void)
 {
-    timer_c_sieve = 0x0000;     /* initially disabled */
+    /* The system timer is initially disabled since the sieve is zero (see note above) */
     timer_ms = 20;
 
 #if !CONF_WITH_MFP
