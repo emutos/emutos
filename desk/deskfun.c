@@ -666,7 +666,7 @@ WORD fun_mkdir(WNODE *pw_node)
 {
     PNODE *pp_node;
     OBJECT *tree;
-    WORD  len;
+    WORD  len, rc;
     char  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
     char  path[MAXPATHLEN];
 
@@ -691,7 +691,10 @@ WORD fun_mkdir(WNODE *pw_node)
             break;
 
         ptmp = add_fname(path, unew_name);
-        if (dos_mkdir(path) == 0)   /* mkdir succeeded */
+        desk_busy_on();
+        rc = dos_mkdir(path);
+        desk_busy_off();
+        if (rc == 0)        /* mkdir succeeded */
         {
             fun_rebld(pw_node->w_pnode.p_spec);
             break;
