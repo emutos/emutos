@@ -67,7 +67,9 @@ typedef struct {
 #define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = (LONG)(ptext))
 
 
+#define CR      0x0d
 #define ESC     0x1b
+
 
 /* architectural */
 #define MIN_DESKMENU_WIDTH  20  /* in characters, compatible with Atari TOS */
@@ -1189,6 +1191,11 @@ static WORD hndl_kbd(WORD thechar)
     WORD title = -1, item;
 
     ascii = LOBYTE(thechar);
+    if (ascii == CR)    /* deselect icons */
+    {
+        desk_clear_all();
+        return FALSE;
+    }
     if (ascii == ESC)   /* refresh window */
     {
         pw = win_ontop();
