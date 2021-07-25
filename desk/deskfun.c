@@ -396,6 +396,7 @@ static BOOL search_display(WORD curr, char *pathname, char *searchwild)
         search_window = win_alloc(curr);
         if (!search_window)
         {
+            desk_busy_off();
             fun_alert(1, STNOWIND);
             return FALSE;
         }
@@ -418,10 +419,14 @@ static BOOL search_display(WORD curr, char *pathname, char *searchwild)
     mark_matching_fnodes(search_window, searchwild);
 
     /*
-     *  we marked one or more FNODEs, ask if user wants to continue
+     * we marked one or more FNODEs, ask if user wants to continue.
+     * note that we don't need to call desk_busy_off() here, since
+     * do_diropen() always does that before returning.
      */
     if (fun_alert(1, STCNSRCH) != 1)
         return FALSE;   /* user cancelled */
+
+    desk_busy_on();
 
     return TRUE;
 }
@@ -570,12 +575,14 @@ void fun_search(WNODE *pw, WORD curr)
         WORD root = G.g_croot;  /*  will be changed by search_icon() */
         GRECT gr;
 
+        desk_busy_on();
         search_window = NULL;
         for ( ; curr; curr = win_isel(G.g_screen, root, curr))
         {
             if (!search_icon(win, curr, searchwild))
-                return;         /* user cancelled search */
+                return;         /* user cancelled search (busy has been turned off) */
         }
+        desk_busy_off();
         if (fnodes_found)
         {
             fun_alert(1, STNOMORE); /* no more files */
