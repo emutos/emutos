@@ -1746,9 +1746,20 @@ ANODE *i_find(WORD wh, WORD item, FNODE **ppf, BOOL *pisapp)
  */
 WORD set_default_path(char *path)
 {
-    dos_sdrv(path[0]-'A');
+    WORD rc;
 
-    return (WORD)dos_chdir(path);
+    /*
+     * show we're busy, because this can involve disk i/o
+     * (for example, if the media has changed)
+     */
+    desk_busy_on();
+
+    dos_sdrv(path[0]-'A');
+    rc = (WORD)dos_chdir(path);
+
+    desk_busy_off();
+
+    return rc;
 }
 
 
