@@ -216,9 +216,8 @@ static char *fmt_size(ULONG size, BOOL wide, char *psize)
 }
 
 
-static WORD format_fnode(LONG pfnode, char *pfmt)
+static WORD format_fnode(FNODE *pf, char *pfmt)
 {
-    FNODE *pf;
     char *pdst, *psrc;
     WORD i;
     BOOL wide;
@@ -229,7 +228,6 @@ static WORD format_fnode(LONG pfnode, char *pfmt)
      */
     wide = USE_WIDE_FORMAT();
 
-    pf = (FNODE *)pfnode;
     pdst = pfmt;
 
     /*
@@ -309,7 +307,7 @@ static WORD format_fnode(LONG pfnode, char *pfmt)
 
 
 static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
-            WORD w, WORD h, LONG fnode)
+            WORD w, WORD h, FNODE *fnode)
 {
     WORD len;
     char temp[LEN_FNODE];
@@ -337,7 +335,7 @@ WORD dr_code(PARMBLK *pparms)
     gsx_gclip(&oc);
     gsx_sclip((GRECT *)&pparms->pb_xc);
     state = dr_fnode(pparms->pb_prevstate, pparms->pb_currstate,
-                    pparms->pb_x, pparms->pb_y, pparms->pb_w, pparms->pb_h, pparms->pb_parm);
+            pparms->pb_x, pparms->pb_y, pparms->pb_w, pparms->pb_h, (FNODE *)pparms->pb_parm);
     gsx_sclip(&oc);
 
     return state;
