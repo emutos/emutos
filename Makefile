@@ -374,6 +374,10 @@ MAKE_SYMADDR = $(shell $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,$(1),$(2)))
 # $(2) = map file name
 SHELL_SYMADDR = $$($(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,$(1),$(2)))
 
+# VMA: Virtual Memory Address
+# This is the address where the ROM is mapped at run time.
+VMA = $(call MAKE_SYMADDR,__text,emutos.map)
+
 # The following reference values have been gathered from major TOS versions
 MEMBOT_TOS100 = 0x0000a100
 MEMBOT_TOS102 = 0x0000ca00
@@ -1168,7 +1172,6 @@ check_target_exists:
 
 .PHONY: dsm
 NODEP += dsm
-dsm: VMA = $(shell sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' emutos.map)
 dsm: check_target_exists
 	$(OBJDUMP) --target=binary --architecture=m68k --adjust-vma=$(VMA) -D emutos.img \
 	  | sed -e '/^ *[0-9a-f]*:/!d;s/^    /0000/;s/^   /000/;s/^  /00/;s/^ /0/;s/:	/: /' > $(DSM_TMP_CODE)
