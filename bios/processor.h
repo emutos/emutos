@@ -93,8 +93,8 @@ void processor_init(void);
  * invalidate_instruction_cache() are declared in include/biosext.h
  */
 void instruction_cache_kludge(void *start,long size);
-extern LONG mcpu;
-extern LONG fputype;
+extern ULONG mcpu;
+extern ULONG fputype;
 extern WORD longframe;
 
 #if CONF_WITH_APOLLO_68080

@@ -53,8 +53,8 @@ struct charset_fonts {
  *
  */
 
-long cookie_idt;
-long cookie_akp;
+ULONG cookie_idt;
+ULONG cookie_akp;
 
 /* Get the default country code according to OS header. */
 static int get_default_country(void)

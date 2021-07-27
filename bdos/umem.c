@@ -486,7 +486,7 @@ long total_alt_ram(void)
  */
 void umem_init(void)
 {
-    LONG cookie_mch;
+    ULONG cookie_mch;
     MAYBE_UNUSED(cookie_mch);
 
     /* get the MPB */
