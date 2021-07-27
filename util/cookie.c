@@ -98,10 +98,10 @@ LONG get_idt_cookie(void)
  */
 UBYTE *get_frb_cookie(void)
 {
-    UBYTE *frbvalue;
+    LONG frbvalue;
 
-    if (cookie_get(COOKIE_FRB, (LONG *)&frbvalue))
-        return frbvalue;
+    if (cookie_get(COOKIE_FRB, &frbvalue))
+        return (UBYTE *)frbvalue;
 
     return NULL;
 }
