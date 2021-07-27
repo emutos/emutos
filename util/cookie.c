@@ -58,7 +58,7 @@ void cookie_add(ULONG tag, ULONG value)
  *
  * returns TRUE if found, FALSE if not
  *
- * if found, and the second argument is non-NULL, copies the cookie value
+ * if found, copies the cookie value
  * into the variable pointed to by the second arg
  */
 BOOL cookie_get(ULONG tag, ULONG *pvalue)
@@ -69,8 +69,7 @@ BOOL cookie_get(ULONG tag, ULONG *pvalue)
     {
         if (jar->tag == tag)
         {
-            if (pvalue)
-                *pvalue = jar->value;
+            *pvalue = jar->value;
             return TRUE;
         }
     }
