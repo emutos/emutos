@@ -378,6 +378,14 @@ SHELL_SYMADDR = $$($(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,$(1),$(2)))
 # This is the address where the ROM is mapped at run time.
 VMA = $(call MAKE_SYMADDR,__text,emutos.map)
 
+# LMA: Load Memory Address
+# This is the physical address where the ROM is stored.
+# On some machines (i.e. FireBee), the ROM is stored at some address (LMA),
+# then mapped to another address (VMA) at run time.
+# On most machines, LMA and VMA are equal.
+# LMA is important on systems where the ROM can be dynamically updated.
+LMA = $(VMA)
+
 # The following reference values have been gathered from major TOS versions
 MEMBOT_TOS100 = 0x0000a100
 MEMBOT_TOS102 = 0x0000ca00
@@ -673,7 +681,6 @@ amigakd: amiga
 
 TOCLEAN += *.s19
 SRECFILE = emutos.s19
-LMA = $(error LMA must be set)
 
 $(SRECFILE): emutos.img
 	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) $< $(SRECFILE)
@@ -720,7 +727,7 @@ m548x-dbug: override DEF += -DMACHINE_M548X
 m548x-dbug: CPUFLAGS = $(CPUFLAGS_M548X)
 m548x-dbug:
 	@echo "# Building M548x dBUG EmuTOS in $(SREC_M548X_DBUG)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0x00e00000 SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
