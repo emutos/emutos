@@ -386,6 +386,14 @@ VMA = $(call MAKE_SYMADDR,__text,emutos.map)
 # LMA is important on systems where the ROM can be dynamically updated.
 LMA = $(VMA)
 
+# Entry point address to boot the ROM.
+# This is used when the pseudo-ROM is loaded into RAM by some kind of debugger,
+# i.e. dBUG on ColdFire Evaluation Boards.
+# Specifying the entry point is generally useless, as such debugger uses
+# the start of the ROM as default entry point, and TOS-like ROMs already have
+# a branch to _main there.
+ENTRY = $(call MAKE_SYMADDR,_main,emutos.map)
+
 # The following reference values have been gathered from major TOS versions
 MEMBOT_TOS100 = 0x0000a100
 MEMBOT_TOS102 = 0x0000ca00
@@ -683,7 +691,7 @@ TOCLEAN += *.s19
 SRECFILE = emutos.s19
 
 $(SRECFILE): emutos.img
-	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) $< $(SRECFILE)
+	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) --change-start $(ENTRY) $< $(SRECFILE)
 
 CPUFLAGS_FIREBEE = -mcpu=5474
 SREC_FIREBEE = emutosfb.s19
