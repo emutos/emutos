@@ -690,8 +690,14 @@ amigakd: amiga
 TOCLEAN += *.s19
 SRECFILE = emutos.s19
 
+# Length of an S-Record data field on a single line, in bytes (optional).
+# Increasing the default value may speed up the transfer,
+# specially through a slow serial port when data is displayed on the screen.
+SREC_LEN =
+SREC_LEN_OPTION = $(if $(SREC_LEN),--srec-len=$(SREC_LEN))
+
 $(SRECFILE): emutos.img
-	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) --change-start $(ENTRY) $< $(SRECFILE)
+	$(OBJCOPY) -I binary -O srec $(SREC_LEN_OPTION) --change-addresses $(LMA) --change-start $(ENTRY) $< $(SRECFILE)
 
 CPUFLAGS_FIREBEE = -mcpu=5474
 SREC_FIREBEE = emutosfb.s19
