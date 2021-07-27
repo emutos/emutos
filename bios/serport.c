@@ -193,7 +193,7 @@ static ULONG rsconf_mfp(MFP *mfp, EXT_IOREC *iorec, WORD baud, WORD ctrl, WORD u
 }
 #endif
 
-#if (CONF_WITH_MFP_RS232 && !RS232_DEBUG_PRINT) || CONF_WITH_TT_MFP
+#if (!CONF_WITH_COLDFIRE_RS232 && CONF_WITH_MFP_RS232 && !RS232_DEBUG_PRINT) || CONF_WITH_TT_MFP
 static void put_iorecbuf(MFP *mfp, IOREC *out, WORD b)
 {
     WORD old_sr, tail;
@@ -225,7 +225,7 @@ static LONG get_iorecbuf(IOREC *in)
 {
     WORD old_sr;
     LONG value;
-    
+
     /* disable interrupts */
     old_sr = set_sr(0x2700);
 

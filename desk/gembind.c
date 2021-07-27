@@ -5,7 +5,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2019 The EmuTOS development team
+*                 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -240,7 +240,7 @@ WORD evnt_multi(UWORD flags, UWORD bclk, UWORD bmsk, UWORD bst,
                 UWORD m1flags, UWORD m1x, UWORD m1y, UWORD m1w, UWORD m1h,
                 UWORD m2flags, UWORD m2x, UWORD m2y, UWORD m2w, UWORD m2h,
                 WORD *mepbuff, UWORD tlc, UWORD thc, UWORD *pmx, UWORD *pmy,
-                UWORD *pmb, UWORD *pks, UWORD *pkr, UWORD *pbr )
+                UWORD *pmb, UWORD *pks, UWORD *pkr, UWORD *pbr)
 {
     MU_FLAGS = flags;
 

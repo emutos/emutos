@@ -1,7 +1,7 @@
 /*
  * country.c - _AKP, _IDT and country-dependent configuration
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -53,8 +53,8 @@ struct charset_fonts {
  *
  */
 
-long cookie_idt;
-long cookie_akp;
+ULONG cookie_idt;
+ULONG cookie_akp;
 
 /* Get the default country code according to OS header. */
 static int get_default_country(void)
@@ -128,7 +128,6 @@ static int get_charset_index(void)
 }
 
 #endif
-
 
 /*
  * initialise the _AKP cookie

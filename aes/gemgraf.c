@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2020 The EmuTOS development team
+*                 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -32,12 +32,6 @@
 #include "optimopt.h"
 #include "gsx2.h"
 #include "rectfunc.h"
-
-#define vsf_interior(x)     gsx_1code(SET_FILL_INTERIOR, x)
-#define vsl_type(x)         gsx_1code(SET_LINE_TYPE, x)
-#define vsf_style(x)        gsx_1code(SET_FILL_STYLE, x)
-#define vsf_color(x)        gsx_1code(SET_FILL_COLOR, x)
-#define vsl_udsty(x)        gsx_1code(SET_UD_LINE_STYLE, x)
 
 
 GLOBAL WORD     gl_width;

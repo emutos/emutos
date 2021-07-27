@@ -31,13 +31,13 @@ MAKEFLAGS = --no-print-directory
 
 NODEP =
 
-# This must be the *first* rule of this Makefile. Don't move!
+# "all" must be the *first* rule of this Makefile. Don't move!
 # Variable assignments are allowed before this, but *not* rules.
 # Note: The first rule is used when make is invoked without argument.
 # So "make" is actually a synonym of "make all", actually "make help".
 .PHONY: all
 NODEP += all
-all:	help
+all: help
 
 .PHONY: help
 NODEP += help
@@ -202,7 +202,7 @@ ARFLAGS = rc
 
 # Linker with relocation information and binary output (image)
 LD = $(CC) $(MULTILIBFLAGS) -nostartfiles -nostdlib
-LIBS = -L obj -lgcc -lfont
+LIBS = -lgcc
 LDFLAGS = -Wl,-T,obj/emutospp.ld
 PCREL_LDFLAGS = -Wl,--oformat=binary,-Ttext=0,--entry=0
 
@@ -296,7 +296,7 @@ bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
 #
 
 util_src = cookie.c doprintf.c intmath.c langs.c memmove.S memset.S miscasm.S \
-           nls.c nlsasm.S setjmp.S string.c shellutl.c
+           nls.c nlsasm.S setjmp.S string.c shellutl.c lisautil.S
 
 # The functions in the following modules are used by the AES and EmuDesk
 ifeq ($(WITH_AES),1)
@@ -374,6 +374,26 @@ MAKE_SYMADDR = $(shell $(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,$(1),$(2)))
 # $(2) = map file name
 SHELL_SYMADDR = $$($(call FUNCTION_SHELL_GET_SYMBOL_ADDRESS,$(1),$(2)))
 
+# VMA: Virtual Memory Address
+# This is the address where the ROM is mapped at run time.
+VMA = $(call MAKE_SYMADDR,__text,emutos.map)
+
+# LMA: Load Memory Address
+# This is the physical address where the ROM is stored.
+# On some machines (i.e. FireBee), the ROM is stored at some address (LMA),
+# then mapped to another address (VMA) at run time.
+# On most machines, LMA and VMA are equal.
+# LMA is important on systems where the ROM can be dynamically updated.
+LMA = $(VMA)
+
+# Entry point address to boot the ROM.
+# This is used when the pseudo-ROM is loaded into RAM by some kind of debugger,
+# i.e. dBUG on ColdFire Evaluation Boards.
+# Specifying the entry point is generally useless, as such debugger uses
+# the start of the ROM as default entry point, and TOS-like ROMs already have
+# a branch to _main there.
+ENTRY = $(call MAKE_SYMADDR,_main,emutos.map)
+
 # The following reference values have been gathered from major TOS versions
 MEMBOT_TOS100 = 0x0000a100
 MEMBOT_TOS102 = 0x0000ca00
@@ -418,7 +438,7 @@ include country.mk
 
 SRC = $(foreach d,$(dirs),$(addprefix $(d)/,$($(d)_src))) $(end_src)
 
-CORE_OBJ = $(foreach d,$(core_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src)))) $(FONTOBJ_COMMON) obj/version.o
+CORE_OBJ = $(foreach d,$(core_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src)))) $(FONTOBJ_COMMON) obj/libfont.a obj/version.o
 OPTIONAL_OBJ = $(foreach d,$(optional_dirs),$(patsubst %.c,obj/%.o,$(patsubst %.S,obj/%.o,$($(d)_src))))
 END_OBJ = $(patsubst %,obj/%.o,$(basename $(notdir $(end_src))))
 OBJECTS = $(CORE_OBJ) $(OPTIONAL_OBJ) $(END_OBJ)
@@ -439,7 +459,7 @@ obj/emutospp.ld: emutos.ld include/config.h tosvars.ld
 
 TOCLEAN += *.img *.map
 
-emutos.img: $(OBJECTS) obj/emutospp.ld obj/libfont.a Makefile
+emutos.img: $(OBJECTS) obj/emutospp.ld Makefile
 	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(END_OBJ) $(LDFLAGS) -Wl,-Map=emutos.map -o emutos.img
 	@if [ $$(($$(awk '/^\.data /{print $$3}' emutos.map))) -gt 0 ]; then \
 	  echo "### Warning: The DATA segment is not empty."; \
@@ -669,10 +689,15 @@ amigakd: amiga
 
 TOCLEAN += *.s19
 SRECFILE = emutos.s19
-LMA = $(error LMA must be set)
+
+# Length of an S-Record data field on a single line, in bytes (optional).
+# Increasing the default value may speed up the transfer,
+# specially through a slow serial port when data is displayed on the screen.
+SREC_LEN =
+SREC_LEN_OPTION = $(if $(SREC_LEN),--srec-len=$(SREC_LEN))
 
 $(SRECFILE): emutos.img
-	$(OBJCOPY) -I binary -O srec --change-addresses $(LMA) $< $(SRECFILE)
+	$(OBJCOPY) -I binary -O srec $(SREC_LEN_OPTION) --change-addresses $(LMA) --change-start $(ENTRY) $< $(SRECFILE)
 
 CPUFLAGS_FIREBEE = -mcpu=5474
 SREC_FIREBEE = emutosfb.s19
@@ -716,7 +741,7 @@ m548x-dbug: override DEF += -DMACHINE_M548X
 m548x-dbug: CPUFLAGS = $(CPUFLAGS_M548X)
 m548x-dbug:
 	@echo "# Building M548x dBUG EmuTOS in $(SREC_M548X_DBUG)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0x00e00000 SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) SRECFILE=$(SREC_M548X_DBUG) $(SREC_M548X_DBUG)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
@@ -861,9 +886,9 @@ lisaflop:
 	@printf "$(LOCALCONFINFO)"
 
 $(EMUTOS_DC42): lisaboot.img emutos.img mkrom
-	./mkrom lisa-floppy lisaboot.img emutos.img $@
+	./mkrom lisa-boot-floppy lisaboot.img emutos.img $@
 
-lisaboot.img: obj/lisaboot.o obj/bootram.o
+lisaboot.img: obj/lisaboot.o obj/lisautil.o obj/bootram.o
 	$(LD) $+ $(PCREL_LDFLAGS) -o $@
 
 obj/lisaboot.o: obj/ramtos.h
@@ -1168,7 +1193,6 @@ check_target_exists:
 
 .PHONY: dsm
 NODEP += dsm
-dsm: VMA = $(shell sed -e '/^\.text/!d;s/[^0]*//;s/ .*//;q' emutos.map)
 dsm: check_target_exists
 	$(OBJDUMP) --target=binary --architecture=m68k --adjust-vma=$(VMA) -D emutos.img \
 	  | sed -e '/^ *[0-9a-f]*:/!d;s/^    /0000/;s/^   /000/;s/^  /00/;s/^ /0/;s/:	/: /' > $(DSM_TMP_CODE)
@@ -1368,6 +1392,6 @@ makefile.dep: $(GEN_SRC)
 # being used. Be sure to keep this block at the end of the Makefile.
 ifneq (,$(MAKECMDGOALS))
 ifeq (,$(filter $(NODEP), $(MAKECMDGOALS)))
--include makefile.dep
+include makefile.dep
 endif
 endif

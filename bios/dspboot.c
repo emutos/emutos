@@ -1,7 +1,7 @@
 /*
  * DSP binary file generated from dspboot.lod
  *
- * Copyright (c) 2020 by The EmuTOS Development Team
+ * Copyright (c) 2020-2021 by The EmuTOS Development Team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -47,4 +47,3 @@
     0x06, 0xd1, 0x00, 0x00, 0x00, 0x50,
     0x0a, 0xa9, 0x80, 0x00, 0x00, 0x4e,
     0x08, 0x58, 0x6b, 0x0c, 0x00, 0x51,
-   

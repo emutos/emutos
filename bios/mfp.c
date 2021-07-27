@@ -24,7 +24,16 @@
 
 static void reset_mfp_regs(MFP *mfp)
 {
-    bzero(mfp, sizeof(MFP));
+    volatile UBYTE *p;
+    /*
+     * The following writes zeroes to everything except the UDR (anything
+     * written to the UDR would be sent as soon as the baud rate clock
+     * (Timer D) was enabled).  We avoid writing to the even addresses,
+     * because some buggy emulators (I'm looking at you, STonXDOS)
+     * generate bus errors there.
+     */
+    for (p = &mfp->gpip; p <= &mfp->tsr; p += 2)
+        *p = 0;
 }
 
 static void disable_mfp_interrupt(MFP *mfp, WORD num)
@@ -175,12 +184,15 @@ int timeout_gpip(LONG delay)
 
 #endif /* CONF_WITH_MFP */
 
-/* "sieve", to get only the fourth interrupt */
+/*
+ * "sieve", to get only the fourth interrupt.  because this is
+ * a global variable, it is automatically initialised to zero.
+ */
 WORD timer_c_sieve;
 
 void init_system_timer(void)
 {
-    timer_c_sieve = 0x0000;     /* initially disabled */
+    /* The system timer is initially disabled since the sieve is zero (see note above) */
     timer_ms = 20;
 
 #if !CONF_WITH_MFP
@@ -189,13 +201,11 @@ void init_system_timer(void)
 
 #if CONF_COLDFIRE_TIMER_C
     coldfire_init_system_timer();
+#elif defined(MACHINE_LISA)
+    lisa_init_system_timer();
 #elif CONF_WITH_MFP
     /* Timer C: ctrl = divide 64, data = 192 */
     xbtimer(2, 0x50, 192, (LONG)int_timerc);
-#endif
-
-#ifdef MACHINE_LISA
-    lisa_init_system_timer();
 #endif
 
     /* The timer will really be enabled when sr is set to 0x2500 or lower. */

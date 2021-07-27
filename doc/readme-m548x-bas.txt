@@ -14,8 +14,8 @@ https://www.nxp.com/products/no-longer-manufactured/mcf5485-evaluation-board:M54
 https://www.nxp.com/products/no-longer-manufactured/mcf5484-lite-evaluation-kit:M5484LITE
 
 Prerequisites:
-Your EVB needs to boot to BaS_gcc. It is a pre-OS similar to the one found on
-the FireBee. You can download it there, but you will have to build it yourself:
+Your EVB needs to boot to BaS_gcc; this is a pre-OS similar to the one found on
+the FireBee. You can download it at this URL, but you will have to build it yourself:
 https://github.com/firebee-org/BaS_gcc
 Then you can flash the file m5484lite/bas.s19. Beware, after that, your EVB will
 boot straight to BaS_gcc, and dBUG will not be available anymore.
@@ -36,8 +36,8 @@ https://support.logicpd.com/
 
 How to flash EmuTOS:
 You just have to flash emutos-m548x-bas.s19 with your favorite flash tool.
-Beware: The start address specified in this file is set regarding to the BaS
-address space, which is different than dBUG's one. If you use Freescale's
+Beware: The start address specified in this file is set with respect to the
+BaS address space, which is different from dBUG's. If you use Freescale's
 CF Flasher on Windows, you need to go to the Target Config dialog and set the
 Flash Base Address to 0xE0000000 before flashing.
 
@@ -61,8 +61,8 @@ Only text I/O through an RS/232 terminal or PS/2 keyboard
 
 - Support for ColdFire TOS programs only. 680x0 programs will not work.
 
-- No Atari hardware emulated. Clean programs using only the OS will work,
-the ones trying direct access to the Atari hardware will not work.
+- No Atari hardware emulated. Clean programs using only the OS will work;
+any that attempt direct access to the Atari hardware will not work.
 
 This ROM image has been built using:
 make m548x-bas

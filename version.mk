@@ -20,8 +20,8 @@
 # and are used to create the VERSION string for official releases.
 #
 MAJOR_VERSION = 1
-MINOR_VERSION = 0
-FIX_VERSION = 0
+MINOR_VERSION = 1
+FIX_VERSION = 1
 
 empty =
 space = $(empty) $(empty)

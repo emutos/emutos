@@ -1,5 +1,5 @@
 #!/bin/sh
-# Copyright (C) 2019 The EmuTOS development team
+# Copyright (C) 2019-2021 The EmuTOS development team
 #
 # Authors:
 #  THH   Thomas Huth

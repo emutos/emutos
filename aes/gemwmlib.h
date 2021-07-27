@@ -1,7 +1,7 @@
 /*
  * gemwmlib.h - header for EmuTOS AES Window Library functions
  *
- * Copyright (C) 2002-2020 The EmuTOS development team
+ * Copyright (C) 2002-2021 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -40,5 +40,9 @@ void wm_update(WORD beg_update);
 void wm_calc(WORD wtype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
              WORD *px, WORD *py, WORD *pw, WORD *ph);
 void wm_new(void);
+
+#if CONF_WITH_3D_OBJECTS
+void w_redraw_desktop(GRECT *pt);
+#endif
 
 #endif

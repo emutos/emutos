@@ -1,7 +1,7 @@
 /*
  * clock.c - BIOS time and date routines
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
@@ -1275,7 +1275,7 @@ LONG gettime(void)
     {
         return lisa_getdt();
     }
-#endif /* MACHINE_AMIGA */
+#endif /* MACHINE_LISA */
 #if CONF_WITH_NVRAM
     else if (has_nvram)
     {

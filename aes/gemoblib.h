@@ -23,5 +23,11 @@ void ob_relxywh(OBJECT *tree, WORD obj, GRECT *pt);
 void ob_setxywh(OBJECT *tree, WORD obj, GRECT *pt);
 void ob_offset(OBJECT *tree, WORD obj, WORD *pxoff, WORD *pyoff);
 
+#if CONF_WITH_3D_OBJECTS
+extern WORD backgrcol;
+
+void init_3d(void);
+WORD ob_sysvar(WORD mode, WORD which, WORD in1, WORD in2, WORD *out1, WORD *out2);
+#endif
 
 #endif

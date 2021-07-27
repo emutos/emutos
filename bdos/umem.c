@@ -2,7 +2,7 @@
  * umem.c - user memory management interface routines
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2020 The EmuTOS development team
+ *               2002-2021 The EmuTOS development team
  *
  * Authors:
  *  KTB   Karl T. Braun (kral)
@@ -486,7 +486,7 @@ long total_alt_ram(void)
  */
 void umem_init(void)
 {
-    LONG cookie_mch;
+    ULONG cookie_mch;
     MAYBE_UNUSED(cookie_mch);
 
     /* get the MPB */

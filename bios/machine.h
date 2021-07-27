@@ -37,17 +37,17 @@
  * some useful cookies.
  */
 
-extern long cookie_mch;
-extern long cookie_vdo;
-extern long cookie_snd;
+extern ULONG cookie_mch;
+extern ULONG cookie_vdo;
+extern ULONG cookie_snd;
 #if CONF_WITH_FDC
-extern long cookie_fdc;
+extern ULONG cookie_fdc;
 #endif
 #if CONF_WITH_DIP_SWITCHES
-extern long cookie_swi;
+extern ULONG cookie_swi;
 #endif
-extern long cookie_akp;
-extern long cookie_idt;
+extern ULONG cookie_akp;
+extern ULONG cookie_idt;
 
 /*
  * these are != 0 if the feature is present

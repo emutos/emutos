@@ -1,7 +1,7 @@
 /*
  * aesdefs.h - Public definitions for AES system calls
  *
- * Copyright (C) 2019 The EmuTOS development team
+ * Copyright (C) 2019-2021 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -54,6 +54,7 @@
 #define OBJC_ORDER      45
 #define OBJC_EDIT       46
 #define OBJC_CHANGE     47
+#define OBJC_SYSVAR     48      /* AES 3.40 function */
 
 /* Form Manager */
 #define FORM_DO         50
@@ -330,7 +331,7 @@
 /*
  * object library parameters
  */
-#define OB_TREE     addr_in[0]              /* all ob procedures */
+#define OB_TREE     addr_in[0]              /* all ob procedures (except ob_sysvar) */
 
 #define OB_DELOB    int_in[0]               /* ob_delete */
 
@@ -360,6 +361,13 @@
 
 #define OB_NEWSTATE int_in[6]               /* ob_change */
 #define OB_REDRAW   int_in[7]
+
+#define OB_MODE     int_in[0]               /* ob_sysvar */
+#define OB_WHICH    int_in[1]
+#define OB_I1       int_in[2]
+#define OB_I2       int_in[3]
+#define OB_O1       int_out[1]
+#define OB_O2       int_out[2]
 
 
 /*

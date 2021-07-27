@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2019 The EmuTOS development team
+*                 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -47,6 +47,11 @@
 #define INTER_WSPACE 0
 #define INTER_HSPACE 0
 
+#if CONF_WITH_3D_OBJECTS
+#define BUTTON_FLAGS    (SELECTABLE | EXIT | FL3DACT)
+#else
+#define BUTTON_FLAGS    (SELECTABLE | EXIT)
+#endif
 
 
 /*
@@ -265,7 +270,7 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
     /* add button objects with 1 space between them  */
     for (i = 0, obj = tree+BUTOFF; i < numbut; i++, obj++)
     {
-        obj->ob_flags = SELECTABLE | EXIT;
+        obj->ob_flags = BUTTON_FLAGS;
         obj->ob_state = NORMAL;
         ob_setxywh(tree, BUTOFF+i, &bt);
         bt.g_x += mlenbut + 2;
@@ -284,9 +289,17 @@ WORD fm_alert(WORD defbut, char *palstr)
     OBJECT *tree;
     GRECT d, t;
     OBJECT *obj;
+#if CONF_WITH_3D_OBJECTS
+    WORD color;
+#endif
 
     /* init tree pointer    */
     tree = rs_trees[DIALERT];
+
+#if CONF_WITH_3D_OBJECTS
+    color = (backgrcol < gl_ws.ws_ncolors) ? backgrcol : WHITE;
+    tree[ROOT].ob_spec = (tree[ROOT].ob_spec & 0xffffff80L) | 0x70L | (color & 0x000f);
+#endif
 
     set_mouse_to_arrow();
 

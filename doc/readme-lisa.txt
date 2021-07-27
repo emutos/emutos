@@ -50,7 +50,7 @@ Supported Atari features:
 - XBIOS hardware clock (read-only)
 
 Unsupported Atari features:
-- Floppy disk
+- Floppy disk (in progress)
 - Hard drive
 - Color video modes
 - Sound

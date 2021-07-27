@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2020 The EmuTOS development team
+*                 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -381,7 +381,7 @@ static WORD act_chkobj(OBJECT *tree, WORD root, WORD obj, WORD mx, WORD my, WORD
     oy = tree[root].ob_y + tree[obj].ob_y;
 
     view = (root == DROOT) ? V_ICON : G.g_iview;
-    switch( view )
+    switch(view)
     {
     case V_TEXT:
         r_set(&t, ox, oy, LEN_FNODE * gl_wchar, gl_hchar);

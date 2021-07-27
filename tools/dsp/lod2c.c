@@ -1,7 +1,7 @@
 /*
  * lod2c: convert simple .LOD files to C array initialization string
  *
- * Copyright (C) 2020 The EmuTOS Development Team
+ * Copyright (C) 2020-2021 The EmuTOS Development Team
  *
  * Authors:
  *  RFB   Roger Burrows
@@ -72,8 +72,6 @@ static void convert_data(FILE *fp, char *p)
 {
     int i, j;
 
-    fprintf(fp, "   ");
-
     /* convert rest of file to binary */
     for ( ; *p; p++)
     {
@@ -87,17 +85,20 @@ static void convert_data(FILE *fp, char *p)
         }
         for (i = 0; *p != '\n'; i++)
         {
+            if (!(i & 1))
+                fprintf(fp, "  ");
             for (j = 0; j < DSP_WORD_LEN; j++, p += 2)
                 fprintf(fp, " 0x%02x,", hex(p));
             if (i & 1)
-                fprintf(fp, "\n   ");
+                fprintf(fp, "\n");
             p = skipspaces(p);
             if (*p == '\r')
                 p++;
         }
     }
-    if (j == 1)
-        fprintf(fp,"\n");
+
+    if (i & 1)
+        fprintf(fp, "\n");
 }
 
 static void quit(void)
@@ -123,7 +124,7 @@ static void write_intro(char *filename)
     fprintf(outfp, "/*\n");
     fprintf(outfp, " * DSP binary file generated from %s\n", filename);
     fprintf(outfp, " *\n");
-    fprintf(outfp, " * Copyright (c) 2020 by The EmuTOS Development Team\n");
+    fprintf(outfp, " * Copyright (c) 2020-2021 by The EmuTOS Development Team\n");
     fprintf(outfp, " *\n");
     fprintf(outfp, " * This file is distributed under the GPL, version 2 or at your\n");
     fprintf(outfp, " * option any later version.  See doc/license.txt for details.\n");

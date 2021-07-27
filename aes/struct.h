@@ -2,7 +2,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2020 The EmuTOS development team
+*                 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -17,6 +17,7 @@
 
 #ifndef GEMSTRUCT_H
 #define GEMSTRUCT_H
+
 #include "aesdefs.h"
 
 typedef struct aespd   AESPD;           /* process descriptor           */
@@ -166,4 +167,5 @@ struct fpd                  /* fork process descriptor */
         FCODE   f_code;
         LONG    f_data;
 } ;
+
 #endif /* GEMSTRUCT_H */

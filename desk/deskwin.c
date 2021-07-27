@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2020 The EmuTOS development team
+*                 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -146,7 +146,7 @@ void win_free(WNODE *thewin)
     G.g_wcnt--;
     thewin->w_id = 0;
     objc_order(G.g_screen, thewin->w_root, 1);
-    obj_wfree( thewin->w_root, 0, 0, 0, 0 );
+    obj_wfree(thewin->w_root, 0, 0, 0, 0);
 }
 
 
@@ -170,11 +170,11 @@ WNODE *win_alloc(WORD obid)
         G.g_wcnt++;
         pw = &G.g_wlist[wob-2];
         pw->w_flags = 0x0;
-        pw->w_obid = obid;    /* if -ve, the complement of the drive letter */
+        pw->w_obid = obid;  /* if -ve, the complement of the drive letter */
         pw->w_root = wob;
         pw->w_cvcol = 0;
         pw->w_cvrow = 0x0;
-        pw->w_pncol = (pt->g_w  - gl_wchar) / G.g_iwspc;
+        pw->w_pncol = (pt->g_w - gl_wchar) / G.g_iwspc;
         pw->w_pnrow = (pt->g_h - gl_hchar) / G.g_ihspc;
         pw->w_vncol = 0;
         pw->w_vnrow = 0x0;
@@ -829,7 +829,7 @@ WORD win_isel(OBJECT olist[], WORD root, WORD curr)
 
     while(curr > root)
     {
-        if ( olist[curr].ob_state & SELECTED )
+        if (olist[curr].ob_state & SELECTED)
             return curr;
         curr = olist[curr].ob_next;
     }

@@ -301,6 +301,9 @@
 # ifndef CONF_WITH_WINDOW_COLOURS
 #  define CONF_WITH_WINDOW_COLOURS 0
 # endif
+# ifndef CONF_WITH_3D_OBJECTS
+#  define CONF_WITH_3D_OBJECTS 0
+# endif
 # ifndef CONF_WITH_WINDOW_ICONS
 #  define CONF_WITH_WINDOW_ICONS 0
 # endif
@@ -1275,14 +1278,6 @@
 #endif
 
 /*
- * Set CONF_WITH_COLOUR_ICONS to 1 to enable support for colour icons,
- * as in Atari TOS 4
- */
-#ifndef CONF_WITH_COLOUR_ICONS
-# define CONF_WITH_COLOUR_ICONS 1
-#endif
-
-/*
  * Set CONF_WITH_EXTENDED_MOUSE to 1 to enable extended mouse support.
  * This includes new Eiffel scancodes for mouse buttons 3, 4, 5, and
  * the wheel.
@@ -1355,6 +1350,14 @@
 #endif
 
 /*
+ * Set CONF_WITH_COLOUR_ICONS to 1 to enable support for colour icons,
+ * as in Atari TOS 4
+ */
+#ifndef CONF_WITH_COLOUR_ICONS
+# define CONF_WITH_COLOUR_ICONS 1
+#endif
+
+/*
  * Set CONF_WITH_GRAF_MOUSE_EXTENSION to 1 to include AES support for
  * graf_mouse() modes M_SAVE, M_RESTORE, M_PREVIOUS.
  */
@@ -1369,6 +1372,14 @@
  */
 #ifndef CONF_WITH_WINDOW_COLOURS
 # define CONF_WITH_WINDOW_COLOURS 1
+#endif
+
+/*
+ * Set CONF_WITH_3D_OBJECTS to 1 to enable support for 3D objects,
+ * as in Atari TOS 4
+ */
+#ifndef CONF_WITH_3D_OBJECTS
+# define CONF_WITH_3D_OBJECTS 1
 #endif
 
 /*
@@ -1392,15 +1403,9 @@
  * Set CONF_WITH_68030_PMMU to install a PMMU tree on a 68030 CPU.
  * This provides improved performance by allowing the data cache to
  * be enabled.
- * If CONF_WITH_68030_PMMU is enabled, then PMMUTREE_ADDRESS_68030
- * specifies where in low memory the tree is built.  Unless you
- * really understand the implications, don't change this value!
  */
 #ifndef CONF_WITH_68030_PMMU
 # define CONF_WITH_68030_PMMU 1
-#endif
-#if CONF_WITH_68030_PMMU
-# define PMMUTREE_ADDRESS_68030 0x700
 #endif
 
 /*
@@ -1455,7 +1460,7 @@
 # define CONF_SERIAL_IKBD 0
 #endif
 
-/* 
+/*
  * Set the default baud rate for serial ports.
  */
 #ifndef DEFAULT_BAUDRATE
@@ -1469,12 +1474,19 @@
  *      0x0120      AES 1.20, used by TOS v1.02
  *      0x0140      AES 1.40, used by TOS v1.04 & v1.62
  *      0x0320      AES 3.20, used by TOS v2.06 & v3.06
+ *      0x0330      AES 3.30, indicates the availability of wind_set(WF_COLOR/WF_DCOLOR)
  *      0x0340      AES 3.40, used by TOS v4.04
  * Do not change this arbitrarily, as each value implies the presence or
- * absence of certain AES functions ...
+ * absence of certain AES functions ... but note that we currently define
+ * AES 3.30/3.40 even though we do not (yet) support certain menu_xxx()
+ * functions that were introduced in AES 3.30.
  */
 #ifndef AES_VERSION
-# if CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
+# if CONF_WITH_3D_OBJECTS && CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
+#  define AES_VERSION 0x0340
+# elif CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
+#  define AES_VERSION 0x0330
+# elif CONF_WITH_GRAF_MOUSE_EXTENSION
 #  define AES_VERSION 0x0320
 # else
 #  define AES_VERSION 0x0140

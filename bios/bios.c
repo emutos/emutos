@@ -2,7 +2,7 @@
  *  bios.c - C portion of BIOS initialization and front end
  *
  * Copyright (C) 2001 Lineo, Inc.
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  SCC     Steve C. Cavender
@@ -816,7 +816,7 @@ void biosmain(void)
          */
         Pexec(PE_LOADGO, "COMMAND.PRG", "", NULL);
     } else if (exec_os) {
-        /* 
+        /*
          * start the default (ROM) shell
          * like Atari TOS, we pass the default environment
          */

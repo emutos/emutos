@@ -1,7 +1,7 @@
 #
 # country.mk - country-related items
 #
-# Copyright (C) 2002-2020 The EmuTOS development team
+# Copyright (C) 2002-2021 The EmuTOS development team
 #
 # This file is distributed under the GPL, version 2 or at your
 # option any later version.  See doc/license.txt for details.
@@ -30,4 +30,4 @@ FONTOBJ = $(FONTOBJ_ALL:%=obj/%)
 TOCLEAN += obj/*.a
 
 obj/libfont.a: $(FONTOBJ)
-	$(AR) $(ARFLAGS) obj/libfont.a $(FONTOBJ)
+	$(AR) $(ARFLAGS) $@ $^

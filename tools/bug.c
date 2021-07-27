@@ -2,7 +2,7 @@
  * bug.c - Basic Unencumbering Gettext, a minimal gettext-like tool
  *         (any better name is welcome)
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -1646,10 +1646,14 @@ static int is_gem_alert(const char *t)
 /*
  * print string in canonical format
  *
- * NOTE: the 'canonical' format is modified for handling of
- * the GEM Alert string specifications: if the string begins with
- * [n][, where n is a digit, then the string will be cut after
- * this initial [n][ and after every |.
+ * NOTE: the 'canonical' format is modified in the following way to
+ * provide special handling for GEM Alert strings:
+ * 1) if the string begins with [n][, where n is a digit, then it is
+ *    assumed to be a GEM Alert string
+ * 2) GEM Alert strings are cut after:
+ *      . the initial [n][
+ *      . every | until a ][ is reached
+ *      . between the ] and [
  *
  * returns error code from alert_check() (if any)
  */
@@ -1744,7 +1748,9 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
                 if (t[1] == '[')
                 {
                     line_start = t + 2;
+                    fprintf(f, "%c\"\n%s\"", *t, prefix);
                     gem_button = 1;
+                    break;
                 }
             }
             else if (gem_button && (*t != '|'))

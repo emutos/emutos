@@ -6,7 +6,7 @@
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
 *                 2001 John Elliott
-*                 2002-2020 The EmuTOS development team
+*                 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -396,6 +396,7 @@ static BOOL search_display(WORD curr, char *pathname, char *searchwild)
         search_window = win_alloc(curr);
         if (!search_window)
         {
+            desk_busy_off();
             fun_alert(1, STNOWIND);
             return FALSE;
         }
@@ -418,10 +419,14 @@ static BOOL search_display(WORD curr, char *pathname, char *searchwild)
     mark_matching_fnodes(search_window, searchwild);
 
     /*
-     *  we marked one or more FNODEs, ask if user wants to continue
+     * we marked one or more FNODEs, ask if user wants to continue.
+     * note that we don't need to call desk_busy_off() here, since
+     * do_diropen() always does that before returning.
      */
     if (fun_alert(1, STCNSRCH) != 1)
         return FALSE;   /* user cancelled */
+
+    desk_busy_on();
 
     return TRUE;
 }
@@ -570,12 +575,14 @@ void fun_search(WNODE *pw, WORD curr)
         WORD root = G.g_croot;  /*  will be changed by search_icon() */
         GRECT gr;
 
+        desk_busy_on();
         search_window = NULL;
         for ( ; curr; curr = win_isel(G.g_screen, root, curr))
         {
             if (!search_icon(win, curr, searchwild))
-                return;         /* user cancelled search */
+                return;         /* user cancelled search (busy has been turned off) */
         }
+        desk_busy_off();
         if (fnodes_found)
         {
             fun_alert(1, STNOMORE); /* no more files */
@@ -666,7 +673,7 @@ WORD fun_mkdir(WNODE *pw_node)
 {
     PNODE *pp_node;
     OBJECT *tree;
-    WORD  len;
+    WORD  len, rc;
     char  fnew_name[LEN_ZFNAME], unew_name[LEN_ZFNAME], *ptmp;
     char  path[MAXPATHLEN];
 
@@ -691,7 +698,10 @@ WORD fun_mkdir(WNODE *pw_node)
             break;
 
         ptmp = add_fname(path, unew_name);
-        if (dos_mkdir(path) == 0)   /* mkdir succeeded */
+        desk_busy_on();
+        rc = dos_mkdir(path);
+        desk_busy_off();
+        if (rc == 0)        /* mkdir succeeded */
         {
             fun_rebld(pw_node->w_pnode.p_spec);
             break;
@@ -1082,7 +1092,7 @@ static WORD fun_file2win(PNODE *pn_src, char  *spec, ANODE *an_dest, FNODE *fn_d
 
     p = filename_start(pathname);
 
-    if (an_dest && an_dest->a_type == AT_ISFOLD)
+    if (an_dest && (an_dest->a_type == AT_ISFOLD))
     {
         strcpy(p, fn_dest->f_name);
         strcat(p, "\\*.*");

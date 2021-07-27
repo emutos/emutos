@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2020 The EmuTOS development team
+*                 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -1240,7 +1240,7 @@ WORD hndl_msg(void)
 
     done = change = menu = shrunk = FALSE;
 
-    if ( G.g_rmsg[0] == WM_CLOSED && ig_close )
+    if ((G.g_rmsg[0] == WM_CLOSED) && ig_close)
     {
         ig_close = FALSE;
         return done;
@@ -1604,7 +1604,8 @@ static void adjust_menu(OBJECT *obj_array)
             if (m < l)
                 m = l;
         }
-        dropbox->ob_x = mbar->ob_x + title->ob_x;
+        /* force byte alignment for faster display */
+        dropbox->ob_x = (mbar->ob_x + title->ob_x) & 0x00ff;
 
         /* set up separator lines */
         for (k = dropbox->ob_head, item = OBJ(k), m++; k <= dropbox->ob_tail; k++, item++)
@@ -1614,7 +1615,7 @@ static void adjust_menu(OBJECT *obj_array)
         }
 
         /* make sure the menu is not too far on the right of the screen */
-        if ((dropbox->ob_x&0x00ff) + m >= width)
+        if (dropbox->ob_x + m >= width)
         {
             dropbox->ob_x = width - m;
             m = (m-1) | ((CHAR_WIDTH-1)<<8);
