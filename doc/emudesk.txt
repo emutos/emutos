@@ -1,8 +1,8 @@
 A brief user's guide to the newer features of EmuDesk, the EmuTOS desktop
 =========================================================================
 
-The current version of EmuDesk implements all of the features of the
-Atari TOS 2/3/4 desktop, including:
+The current version of EmuDesk implements almost all of the features of
+the Atari TOS 2/3/4 desktop, including:
 
 1) menu items
     . search
@@ -31,6 +31,10 @@ save the desktop to preserve the changes.
     . desktop printer support
 Due to space limitations, desktop shortcuts & desktop printer support
 are not available in the 192K ROMs.
+
+Refer to "Omitted features" at the end of this document for those features
+of the Atari TOS 2/3/4 desktop which are currently not implemented in
+EmuDesk.
 
 
 Search
@@ -442,3 +446,21 @@ end of each file.
 By default, the output will go to the parallel port; you may select the
 serial port instead by using any CPX, accessory, or program that allows
 you to do the same thing under Atari TOS.
+
+
+Omitted features
+================
+1) Copy/move with rename
+Unlike Atari TOS 2/3/4, holding the Alt key down while doing a copy or
+move does NOT cause a rename prompt to be issued for each file concerned.
+This feature has been deliberately omitted since it conflicts with using
+the Alt-arrow key feature to move the cursor when no mouse is available.
+
+2) Folder print
+Unlike Atari TOS 2/3/4, pressing the '>' key at the desktop does NOT
+print the contents of the folder being displayed in the currently-topped
+window.  This feature may be implemented in the future.
+
+3) HELP key
+Unlike Atari TOS 2/3/4, pressing the HELP key does NOT display a dialog.
+This feature may be implemented in the future.
