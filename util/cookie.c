@@ -28,13 +28,13 @@ void cookie_init(void)
     dflt_jar[0].tag = 0;
     dflt_jar[0].value = ARRAY_SIZE(dflt_jar);
 
-    p_cookies = (LONG *)dflt_jar;
+    p_cookies = dflt_jar;
 }
 
 void cookie_add(ULONG tag, ULONG value)
 {
     ULONG n, count;
-    struct cookie *jar = (struct cookie *)p_cookies;
+    struct cookie *jar = p_cookies;
 
     count = 0;
     while(jar->tag)
@@ -65,7 +65,7 @@ BOOL cookie_get(ULONG tag, ULONG *pvalue)
 {
     struct cookie *jar;
 
-    for (jar = (struct cookie *)p_cookies; jar->tag; jar++)
+    for (jar = p_cookies; jar->tag; jar++)
     {
         if (jar->tag == tag)
         {
