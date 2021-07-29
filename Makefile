@@ -1392,6 +1392,16 @@ makefile.dep: $(GEN_SRC)
 # being used. Be sure to keep this block at the end of the Makefile.
 ifneq (,$(MAKECMDGOALS))
 ifeq (,$(filter $(NODEP), $(MAKECMDGOALS)))
-include makefile.dep
+# The leading dash below means: don't warn if the included file doesn't exist.
+# That situation can't actually happen because we have a rule just above to
+# generate makefile.dep when needed. And that rule is automatically called by
+# make before inclusion.
+# *But* there is a bug in make <4.2:
+# Even if make knows it's going to generate makefile.dep,
+# it issues a bogus warning before the generation:
+# Makefile:...: makefile.dep: No such file or directory
+# This has been fixed in make 4.2: no more warning in this case.
+# But while older make versions are still around, we keep that leading dash.
+-include makefile.dep
 endif
 endif
