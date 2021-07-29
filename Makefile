@@ -1388,10 +1388,10 @@ makefile.dep: $(GEN_SRC)
 
 # Do not include or rebuild makefile.dep for the targets listed in NODEP
 # as well as the default target (currently "help").
-# Since NODEP is used inside an ifeq condition, it must be fully set before
-# being used. Be sure to keep this block at the end of the Makefile.
-ifneq (,$(MAKECMDGOALS))
-ifeq (,$(filter $(NODEP), $(MAKECMDGOALS)))
+# Be sure to keep this block at the end of the Makefile,
+# after NODEP is fully populated.
+GOALS_REQUIRING_DEPENDENCIES := $(filter-out $(NODEP),$(MAKECMDGOALS))
+ifneq ($(GOALS_REQUIRING_DEPENDENCIES),)
 # The leading dash below means: don't warn if the included file doesn't exist.
 # That situation can't actually happen because we have a rule just above to
 # generate makefile.dep when needed. And that rule is automatically called by
@@ -1403,5 +1403,4 @@ ifeq (,$(filter $(NODEP), $(MAKECMDGOALS)))
 # This has been fixed in make 4.2: no more warning in this case.
 # But while older make versions are still around, we keep that leading dash.
 -include makefile.dep
-endif
 endif
