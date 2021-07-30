@@ -26,6 +26,7 @@
 #include "gemdos.h"
 #include "optimopt.h"
 #include "optimize.h"
+#include "rectfunc.h"
 
 #include "aesdefs.h"
 #include "aesext.h"
@@ -347,11 +348,12 @@ WORD dr_code(PARMBLK *pparms)
  */
 void start_dialog(OBJECT *tree)
 {
-    WORD xd, yd, wd, hd;
+    GRECT t;
 
-    form_center(tree, &xd, &yd, &wd, &hd);
-    form_dial(FMD_START, 0, 0, 0, 0, xd, yd, wd, hd);
-    objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+    form_center(tree, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
+    rc_intersect(&gl_rfull, &t);    /* constrain dialog box */
+    form_dial(FMD_START, 0, 0, 0, 0, t.g_x, t.g_y, t.g_w, t.g_h);
+    objc_draw(tree, ROOT, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
 }
 
 
