@@ -1626,6 +1626,20 @@ static void adjust_menu(OBJECT *obj_array)
 #undef OBJ
 }
 
+#if CONF_WITH_3D_OBJECTS
+/*
+ *  Perform any final position tweaks for 3D objects
+ */
+static void adjust_3d_positions(void)
+{
+    OBJECT *tree = desk_rs_trees[ADDESKCF];
+
+    /* avoid button overlap */
+    tree[DCFUNNXT].ob_y += 3 * ADJ3DSTD;
+    tree[DCMNUNXT].ob_y += 3 * ADJ3DSTD;
+}
+#endif
+
 /*
  *  Align text objects according to special values in ob_flags
  *
@@ -1861,6 +1875,10 @@ static WORD desk_xlate_fix(void)
     {
         rsrc_obfix(desk_rs_obj, i);
     }
+
+#if CONF_WITH_3D_OBJECTS
+    adjust_3d_positions();
+#endif
 
     /*
      * perform special object alignment - this must be done after
