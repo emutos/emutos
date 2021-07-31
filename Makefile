@@ -983,15 +983,21 @@ GEN_SRC += $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h $(MFORMRSCGEN_BASE).c $(MFO
 # https://www.gnu.org/software/make/manual/html_node/Pattern-Examples.html
 # Note: GNU Make 4.3 provides a cleaner solution with "grouped explicit targets"
 # using the &: syntax in rules. But this is beyond our make prerequisites.
+#
+# Note: we also use '%' in the prerequisites to avoid matching '%.tr.c'
+# https://www.gnu.org/software/make/manual/html_node/Pattern-Match.html
+# "A pattern rule can be used to build a given file only if there is a target
+# pattern that matches the file name, and all prerequisites in that rule either
+# exist or can be built."
 
-$(DESKRSCGEN_BASE)%c $(DESKRSCGEN_BASE)%h: draft erd $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
+$(DESKRSCGEN_BASE)%c $(DESKRSCGEN_BASE)%h: draft erd $(DESKRSC_BASE)%rsc $(DESKRSC_BASE)%def
 	./draft $(DESKRSC_BASE) temp
 	./erd -pdesk temp $(DESKRSCGEN_BASE)
-$(GEMRSCGEN_BASE)%c $(GEMRSCGEN_BASE)%h: grd $(GEMRSC_BASE).rsc $(GEMRSC_BASE).def
+$(GEMRSCGEN_BASE)%c $(GEMRSCGEN_BASE)%h: grd $(GEMRSC_BASE)%rsc $(GEMRSC_BASE)%def
 	./grd $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
-$(ICONRSCGEN_BASE)%c $(ICONRSCGEN_BASE)%h: ird $(ICONRSC_BASE).rsc $(ICONRSC_BASE).def
+$(ICONRSCGEN_BASE)%c $(ICONRSCGEN_BASE)%h: ird $(ICONRSC_BASE)%rsc $(ICONRSC_BASE)%def
 	./ird -picon $(ICONRSC_BASE) $(ICONRSCGEN_BASE)
-$(MFORMRSCGEN_BASE)%c $(MFORMRSCGEN_BASE)%h: mrd $(MFORMRSC_BASE).rsc $(MFORMRSC_BASE).def
+$(MFORMRSCGEN_BASE)%c $(MFORMRSCGEN_BASE)%h: mrd $(MFORMRSC_BASE)%rsc $(MFORMRSC_BASE)%def
 	./mrd -pmform $(MFORMRSC_BASE) $(MFORMRSCGEN_BASE)
 
 #
