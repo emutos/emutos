@@ -964,14 +964,34 @@ MFORMRSCGEN_BASE = aes/mforms
 GEN_SRC += $(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h $(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h
 GEN_SRC += $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h $(MFORMRSCGEN_BASE).c $(MFORMRSCGEN_BASE).h
 
-$(DESKRSCGEN_BASE).c $(DESKRSCGEN_BASE).h: draft erd $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
+# Hack below! '%' is used instead of '.' to support tools with multiple outputs.
+# For example, the erd tool produces 2 files: a .c and a .h
+# Without special care, when using parallel execution (make -j), the recipe
+# may run twice (or more) in parallel. This is useless and could be harmful.
+# Problem is that _standard rules_ with several targets just specify that the
+# same recipe must be applied for all targets. This *doesn't* mean that recipe
+# will generate all the targets at the same time.
+# This issue is hidden when parallel execution is not used.
+# On the other hand, _pattern rules_ (the ones with %) explicitly specify
+# that all the targets will be built at the same time by the recipe.
+# In order to work, all the targets must share a common substring replaced
+# by the % wildcard. A simple trick is to use the '%' wilcard to replace the '.'
+# character. This is enough to match actual filenames and enable the special
+# behaviour of pattern rules.
+# Trick source: https://stackoverflow.com/a/3077254
+# For official documentation of pattern rules, see the bison example there:
+# https://www.gnu.org/software/make/manual/html_node/Pattern-Examples.html
+# Note: GNU Make 4.3 provides a cleaner solution with "grouped explicit targets"
+# using the &: syntax in rules. But this is beyond our make prerequisites.
+
+$(DESKRSCGEN_BASE)%c $(DESKRSCGEN_BASE)%h: draft erd $(DESKRSC_BASE).rsc $(DESKRSC_BASE).def
 	./draft $(DESKRSC_BASE) temp
 	./erd -pdesk temp $(DESKRSCGEN_BASE)
-$(GEMRSCGEN_BASE).c $(GEMRSCGEN_BASE).h: grd $(GEMRSC_BASE).rsc $(GEMRSC_BASE).def
+$(GEMRSCGEN_BASE)%c $(GEMRSCGEN_BASE)%h: grd $(GEMRSC_BASE).rsc $(GEMRSC_BASE).def
 	./grd $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
-$(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h: ird $(ICONRSC_BASE).rsc $(ICONRSC_BASE).def
+$(ICONRSCGEN_BASE)%c $(ICONRSCGEN_BASE)%h: ird $(ICONRSC_BASE).rsc $(ICONRSC_BASE).def
 	./ird -picon $(ICONRSC_BASE) $(ICONRSCGEN_BASE)
-$(MFORMRSCGEN_BASE).c $(MFORMRSCGEN_BASE).h: mrd $(MFORMRSC_BASE).rsc $(MFORMRSC_BASE).def
+$(MFORMRSCGEN_BASE)%c $(MFORMRSCGEN_BASE)%h: mrd $(MFORMRSC_BASE).rsc $(MFORMRSC_BASE).def
 	./mrd -pmform $(MFORMRSC_BASE) $(MFORMRSCGEN_BASE)
 
 #
