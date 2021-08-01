@@ -121,7 +121,7 @@ void fs_start(void)
     {
         if (row >= DRIVE_ROWS)
             row = 0;
-        obj->ob_flags |= FL3DACT;
+        obj->ob_flags |= FL3DIND;
         obj->ob_x += 2*ADJ3DSTD;
         obj->ob_y += 2*ADJ3DSTD + row*(3*ADJ3DSTD-1);
     }
