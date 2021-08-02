@@ -247,6 +247,17 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
     bt.g_y = max(ic.g_y+ic.g_h,nummsg+1) + 1 + INTER_HSPACE;
     al.g_h = max(bt.g_y+bt.g_h,ic.g_y+ic.g_h) + 1 + INTER_HSPACE;
 
+    /*
+     * final adjustments(3): button height
+     *  for 3D objects, increase button height by 3 pixels, which adds
+     *  an extra pixel between the top of the text and the button outline.
+     *  this provides slightly better aesthetics and is what TOS4 does.
+     *  this must be done after the calls to max() for obvious reasons.
+     */
+#if CONF_WITH_3D_OBJECTS
+    bt.g_h |= 0x0300;   /* assumes original height is in exact chars */
+#endif
+
     /* init. root object    */
     ob_setxywh(tree, ROOT, &al);
     for (i = 0, obj = tree; i < NUM_ALOBJS; i++, obj++)
