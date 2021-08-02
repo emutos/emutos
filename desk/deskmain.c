@@ -1634,9 +1634,13 @@ static void adjust_3d_positions(void)
 {
     OBJECT *tree = desk_rs_trees[ADDESKCF];
 
-    /* avoid button overlap */
-    tree[DCFUNNXT].ob_y += 3 * ADJ3DSTD;
-    tree[DCMNUNXT].ob_y += 3 * ADJ3DSTD;
+    /*
+     * adjust Desktop configuration dialog
+     */
+    tree[DCFUNPRV].ob_y -= 2 * ADJ3DSTD;    /* avoid button overlap */
+    tree[DCFUNNXT].ob_y += ADJ3DSTD;
+    tree[DCMNUPRV].ob_y -= 2 * ADJ3DSTD;
+    tree[DCMNUNXT].ob_y += ADJ3DSTD;
 }
 #endif
 
