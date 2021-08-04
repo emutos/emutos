@@ -230,6 +230,26 @@ Note: The game fails to load for the same reason under Atari TOS 2.06,
 which uses a similar media change detection method.
 
 
+Program: GFA Basic
+------------------
+Error: Black background for file selector/form alerts
+
+Bug analysis:
+This only occurs when GFA Basic is launched in ST Low resolution, under
+a version of EmuTOS that supports 3D objects.  After launch, GFA Basic
+automatically switches to ST Medium without notifying the AES.  However,
+with 3D object support, EmuTOS sets up the file selector/form alerts
+differently between ST Low and ST Medium, and this causes the black
+backgrounds.
+
+Workaround:
+On versions of EmuTOS with 3D object support, launch GFA Basic in ST
+Medium.
+
+Note: Other programs which change resolutions without notifying the
+AES may have similar problems.
+
+
 Program: HDCOOKIE
 -----------------
 Error: Fails to set the _FDC cookie.
