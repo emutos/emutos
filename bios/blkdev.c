@@ -634,6 +634,10 @@ LONG blkdev_getbpb(WORD dev)
     if (recsiz > pun_info.max_sect_siz)
         return 0L;
 
+    /* don't login a disk if the number of FATs is unsupported */
+    if ((b->fat != 1) && (b->fat != 2))
+        return 0L;
+
     KDEBUG(("bootsector[dev=%d] = {\n  ...\n  res = %d;\n  hid = %d;\n}\n",
             dev,getiword(b->res),getiword(b->hid)));
 
