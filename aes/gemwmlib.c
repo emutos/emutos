@@ -1640,9 +1640,19 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 #endif
     }
 
-    if (w_handle == gl_wtop)    /* only update slides in topped window */
+    /*
+     * if we've changed slider gadgets and they are visible, we must
+     * update the window.  slider gadgets are always visible when 3D
+     * object support is enabled; otherwise they are only visible if
+     * the window is topped.
+     */
+#if !CONF_WITH_3D_OBJECTS
+    if (w_handle == gl_wtop)
+#endif
+    {
         if ((gadget == W_HSLIDE) || (gadget == W_VSLIDE))
             do_cpwalk = TRUE;
+    }
 
     if (do_cpwalk)
         w_cpwalk(w_handle, gadget, MAX_DEPTH, TRUE);
