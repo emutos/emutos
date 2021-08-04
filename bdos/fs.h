@@ -239,7 +239,8 @@ struct _dmd         /* drive media block */
 
     OFD    *m_ofl;      /*  list of open files                  */
     DND    *m_dtl;      /* root of directory tree list          */
-    UWORD  m_16;        /* 16 bit fat ?                         */
+    UBYTE  m_16;        /* 16 bit fat ?                         */
+    UBYTE  m_1fat;      /* 1 FAT only ?                         */
 } ;
 
 

@@ -210,6 +210,7 @@ long log_media(BPB *b, int drv)
     d->d_name[0] = 0;           /*  null out name of root       */
 
     dm->m_16 = b->b_flags & B_16;       /*  set 12 or 16 bit fat flag   */
+    dm->m_1fat = b->b_flags & B_1FAT;   /*  set single FAT flag         */
     dm->m_clsiz = cs;                   /*  set cluster size in sectors */
     dm->m_clsizb = b->clsizb;           /*    and in bytes              */
     dm->m_recsiz = rsiz;                /*  set record (sector) size    */
