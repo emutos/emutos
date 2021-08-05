@@ -461,8 +461,7 @@ void vdi_v_opnwk(Vwk * vwk)
 
     /*
      * Programs can request a video mode switch by passing the desired
-     * mode + 2 in INTIN[0]. Falcon-specific modes are currently not
-     * supported.
+     * mode + 2 in INTIN[0].
      */
     newrez = INTIN[0] - 2;
     if (
@@ -475,6 +474,16 @@ void vdi_v_opnwk(Vwk * vwk)
             Setscreen(-1L, -1L, newrez, 0);
         }
     }
+#if CONF_WITH_VIDEL
+    if (newrez == FALCON_REZ) {
+        /* Atari TOS 4 uses INTOUT (sic!) to pass new Videl mode. */
+        WORD newvidel = INTOUT[45];
+        WORD curvidel = VsetMode(-1);
+        if (curvidel != newvidel) {
+            Setscreen(-1L, -1L, newrez, newvidel);
+        }
+    }
+#endif
 
     /* We need to copy some initial table data from the ROM */
     for (i = 0; i < 12; i++) {
