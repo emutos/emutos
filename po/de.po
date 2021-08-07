@@ -280,7 +280,7 @@ msgstr "Auslassen"
 
 #: desk/desk_rsc.c
 msgid "Install"
-msgstr "Installieren"
+msgstr "Anmelden"
 
 #: desk/desk_rsc.c
 msgid "Remove"
@@ -348,7 +348,7 @@ msgstr "Dokumenttyp: ___"
 
 #: desk/desk_rsc.c
 msgid "Install as: F__"
-msgstr "Installieren als: F__"
+msgstr "Anmelden als: F__"
 
 #: desk/desk_rsc.c
 msgid "Current name: ________.___"
@@ -580,7 +580,7 @@ msgstr "Parameter:"
 
 #: desk/desk_rsc.c
 msgid "INSTALL DESKTOP ICON"
-msgstr "DESKTOP ICON INSTALLIEREN"
+msgstr "DESKTOPICON ANMELDEN"
 
 #: desk/desk_rsc.c
 msgid "Item type:"
@@ -784,7 +784,7 @@ msgstr "ST kompatibel"
 
 #: desk/desk_rsc.c
 msgid "INSTALL WINDOW ICON"
-msgstr "FENSTERICON INSTALLIEREN"
+msgstr "FENSTERICON ANMELDEN"
 
 #: desk/desk_rsc.c
 msgid "Folder"
