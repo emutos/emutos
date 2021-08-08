@@ -58,24 +58,6 @@ void coldfire_rs232_write_byte(UBYTE b)
     MCF_UART_UTB(RS232_UART_PORT) = (UBYTE)b;
 }
 
-BOOL coldfire_rs232_can_read(void)
-{
-    /* Wait until a byte is received */
-    return MCF_UART_USR(RS232_UART_PORT) & MCF_UART_USR_RXRDY;
-}
-
-UBYTE coldfire_rs232_read_byte(void)
-{
-    /* Wait until character has been received */
-    while (!coldfire_rs232_can_read())
-    {
-        /* Wait */
-    }
-
-    /* Read the received byte */
-    return MCF_UART_URB(RS232_UART_PORT);
-}
-
 #endif /* CONF_WITH_COLDFIRE_RS232 */
 
 #if CONF_COLDFIRE_TIMER_C

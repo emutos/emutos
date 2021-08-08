@@ -20,8 +20,6 @@ void coldfire_early_init(void);
 #if CONF_WITH_COLDFIRE_RS232
 BOOL coldfire_rs232_can_write(void);
 void coldfire_rs232_write_byte(UBYTE b);
-BOOL coldfire_rs232_can_read(void);
-UBYTE coldfire_rs232_read_byte(void);
 #endif
 
 #if CONF_COLDFIRE_TIMER_C
