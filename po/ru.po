@@ -520,11 +520,11 @@ msgstr "  Кэш"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
-msgstr "Чт./Зап."
+msgstr "Чтение/Запись"
 
 #: desk/desk_rsc.c
 msgid "Read-Only"
-msgstr "ТлкЧтение"
+msgstr "Только Чтение"
 
 #: desk/desk_rsc.c
 msgid "DISK INFORMATION"
