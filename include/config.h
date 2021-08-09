@@ -328,6 +328,9 @@
 # ifndef CONF_WITH_FILEMASK
 #  define CONF_WITH_FILEMASK 0
 # endif
+# ifndef CONF_WITH_NICELINES
+#  define CONF_WITH_NICELINES 0
+# endif
 # ifndef CONF_WITH_DESKTOP_CONFIG
 #  define CONF_WITH_DESKTOP_CONFIG 0
 # endif
@@ -1570,6 +1573,14 @@
  */
 #ifndef CONF_WITH_FORMAT
 # define CONF_WITH_FORMAT 1
+#endif
+
+/*
+ * Set CONF_WITH_NICELINES to 1 to use a drawn line instead of dashes
+ * for separators in menus
+ */
+#ifndef CONF_WITH_NICELINES
+# define CONF_WITH_NICELINES 1
 #endif
 
 /*
