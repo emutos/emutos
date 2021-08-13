@@ -1161,7 +1161,7 @@ WORD ob_delete(OBJECT *tree, WORD obj)
  *  siblings in the tree.  0 is the head of the list and NIL
  *  is the tail of the list.
  */
-void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
+BOOL ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
 {
     WORD parent;
     WORD chg_obj, ii, junk;
@@ -1169,7 +1169,7 @@ void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
     OBJECT *parentptr, *movptr, *chgptr;
 
     if (mov_obj == ROOT)
-        return;
+        return FALSE;
 
     parent = get_par(tree, mov_obj, &junk);
     parentptr = treeptr + parent;
@@ -1204,6 +1204,8 @@ void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
 
     if (movptr->ob_next == parent)
         parentptr->ob_tail = mov_obj;
+
+    return TRUE;
 }
 
 

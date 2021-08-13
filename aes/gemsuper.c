@@ -222,7 +222,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ob_offset((OBJECT *)OB_TREE, OB_OBJ, &OB_XOFF, &OB_YOFF);
         break;
     case OBJC_ORDER:
-        ob_order((OBJECT *)OB_TREE, OB_OBJ, OB_NEWPOS);
+        ret = ob_order((OBJECT *)OB_TREE, OB_OBJ, OB_NEWPOS);
         break;
     case OBJC_EDIT:
         gsx_sclip(&gl_rfull);
