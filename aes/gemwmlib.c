@@ -1386,7 +1386,7 @@ void wm_open(WORD w_handle, GRECT *pt)
     rc_copy(pt, &t);
     wm_update(BEG_UPDATE);
 
-    D.w_win[w_handle].w_flags |= VF_INTREE;
+    D.w_win[w_handle].w_flags |= VF_ISOPEN;
     w_obadd(&W_TREE[ROOT], ROOT, w_handle);
     draw_change(w_handle, &t);
     w_setsize(WS_PREV, w_handle, pt);
@@ -1406,7 +1406,7 @@ void wm_close(WORD w_handle)
     wm_update(BEG_UPDATE);
 
     ob_delete(gl_wtree, w_handle);
-    D.w_win[w_handle].w_flags &= ~VF_INTREE;
+    D.w_win[w_handle].w_flags &= ~VF_ISOPEN;
     draw_change(w_handle, &t);
 
     wm_update(END_UPDATE);
@@ -1568,7 +1568,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
     {
     case WF_NAME:
         gl_aname.te_ptext = pwin->w_pname = *(char **)pinwds;
-        if (pwin->w_flags & VF_INTREE)
+        if (pwin->w_flags & VF_ISOPEN)
         {
             gadget = W_NAME;
             do_cpwalk = TRUE;   /* update name applies to all open windows */
@@ -1576,7 +1576,7 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         break;
     case WF_INFO:
         gl_ainfo.te_ptext = pwin->w_pinfo = *(char **)pinwds;
-        if (pwin->w_flags & VF_INTREE)
+        if (pwin->w_flags & VF_ISOPEN)
         {
             gadget = W_INFO;
             do_cpwalk = TRUE;   /* update info line applies to all open windows */
@@ -1778,7 +1778,7 @@ void wm_new(void)
     /* Delete windows: */
     for (wh = 1; wh < NUM_WIN; wh++)
     {
-        if (D.w_win[wh].w_flags & VF_INTREE)
+        if (D.w_win[wh].w_flags & VF_ISOPEN)
             wm_close(wh);
         if (D.w_win[wh].w_flags & VF_INUSE)
             wm_delete(wh);
