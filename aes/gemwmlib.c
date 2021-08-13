@@ -1377,39 +1377,76 @@ WORD wm_create(WORD kind, GRECT *pt)
 
 
 /*
+ *  Return pointer to AES window structure for created window
+ */
+static WINDOW *get_pwin(WORD w_handle)
+{
+    WINDOW *pwin;
+
+    if ((w_handle < 0) || (w_handle >= NUM_WIN))
+        return NULL;
+
+    pwin = &D.w_win[w_handle];
+
+    if (!(pwin->w_flags & VF_INUSE))
+        return NULL;
+
+    return pwin;
+}
+
+
+/*
  *  Opens a window from a created but closed state
  */
-void wm_open(WORD w_handle, GRECT *pt)
+BOOL wm_open(WORD w_handle, GRECT *pt)
 {
+    WINDOW *pwin;
     GRECT   t;
+
+    pwin = get_pwin(w_handle);
+    if (!pwin)                      /* window doesn't exist */
+        return FALSE;
+    if (pwin->w_flags & VF_ISOPEN)  /* window is already open */
+        return FALSE;
 
     rc_copy(pt, &t);
     wm_update(BEG_UPDATE);
 
-    D.w_win[w_handle].w_flags |= VF_ISOPEN;
+    pwin->w_flags |= VF_ISOPEN;
     w_obadd(&W_TREE[ROOT], ROOT, w_handle);
     draw_change(w_handle, &t);
     w_setsize(WS_PREV, w_handle, pt);
 
     wm_update(END_UPDATE);
+
+    return TRUE;
 }
 
 
 /*
  *  Closes a window from an open state
  */
-void wm_close(WORD w_handle)
+BOOL wm_close(WORD w_handle)
 {
+    WINDOW *pwin;
     GRECT   t;
+
+    pwin = get_pwin(w_handle);
+    if (!pwin)                          /* window doesn't exist */
+        return FALSE;
+    if (!(pwin->w_flags & VF_ISOPEN))   /* window isn't open */
+        return FALSE;
 
     rc_copy(&gl_rzero, &t);
     wm_update(BEG_UPDATE);
 
     ob_delete(gl_wtree, w_handle);
-    D.w_win[w_handle].w_flags &= ~VF_ISOPEN;
+    pwin->w_flags &= ~VF_ISOPEN;
     draw_change(w_handle, &t);
 
     wm_update(END_UPDATE);
+
+    return TRUE;
 }
 
 
@@ -1417,15 +1454,25 @@ void wm_close(WORD w_handle)
  *  Frees a window and its handle up for use by another application
  *  or by the same application
  */
-void wm_delete(WORD w_handle)
+BOOL wm_delete(WORD w_handle)
 {
+    WINDOW *pwin;
+
+    pwin = get_pwin(w_handle);
+    if (!pwin)                      /* window doesn't exist */
+        return FALSE;
+    if (pwin->w_flags & VF_ISOPEN)  /* window is open      */
+        wm_close(w_handle);         /* - so close it first */
+
     newrect(gl_wtree, w_handle);      /* give back recs. */
     w_setsize(WS_CURR, w_handle, &gl_rscreen);
     w_setsize(WS_PREV, w_handle, &gl_rscreen);
     w_setsize(WS_FULL, w_handle, &gl_rfull);
     w_setsize(WS_WORK, w_handle, &gl_rfull);
-    D.w_win[w_handle].w_flags = 0x0;        /*&= ~VF_INUSE; */
-    D.w_win[w_handle].w_owner = NULL;
+    pwin->w_flags = 0;
+    pwin->w_owner = NULL;
+
+    return TRUE;
 }
 
 
@@ -1446,7 +1493,7 @@ void wm_delete(WORD w_handle)
  *  a special case since there are three intin[] values, rather than the two
  *  used for all other wind_get() functions.
  */
-void wm_get(WORD w_handle, WORD w_field, WORD *poutwds, WORD *pinwds)
+BOOL wm_get(WORD w_handle, WORD w_field, WORD *poutwds, WORD *pinwds)
 {
     WORD    which, gadget;
     GRECT   t;
@@ -1454,7 +1501,18 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds, WORD *pinwds)
     WINDOW  *pwin;
     MAYBE_UNUSED(gadget);
 
-    pwin = &D.w_win[w_handle];
+    pwin = get_pwin(w_handle);
+
+    switch(w_field)
+    {
+    case WF_TOP:                    /* these don't require a valid handle */
+    case WF_SCREEN:
+    case WF_DCOLOR:
+        break;
+    default:
+        if (!pwin)                  /* window doesn't exist */
+            return FALSE;
+    }
 
     which = -1;
     switch(w_field)
@@ -1508,10 +1566,14 @@ void wm_get(WORD w_handle, WORD w_field, WORD *poutwds, WORD *pinwds)
         poutwds[2] = gl_wbcolor[gadget];
         break;
 #endif
+    default:
+        return FALSE;
     }
 
     if (which != -1)
         w_getsize(which, w_handle, (GRECT *)poutwds);
+
+    return TRUE;
 }
 
 
@@ -1536,15 +1598,22 @@ static void wm_mktop(WORD w_handle)
  *  the scroll bar elevator positions.
  */
 
-void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
+BOOL wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
 {
     BOOL    do_cpwalk = FALSE;
+    BOOL    ret = TRUE;
     WORD    gadget = -1;
     WINDOW  *pwin;
 
-    wm_update(BEG_UPDATE);      /* grab the window sync */
+    pwin = get_pwin(w_handle);
 
-    pwin = &D.w_win[w_handle];
+    if (w_field != WF_DCOLOR)   /* WF_DCOLOR doesn't require a valid handle */
+    {
+        if (!pwin)
+            return FALSE;
+    }
+
+    wm_update(BEG_UPDATE);      /* grab the window sync */
 
     /*
      * validate input
@@ -1630,6 +1699,8 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         gadget = -1;            /* do not call w_cpwalk() in this case */
         break;
 #endif
+    default:
+        ret = FALSE;
     }
 
     /*
@@ -1650,6 +1721,8 @@ void wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         w_cpwalk(w_handle, gadget, MAX_DEPTH, TRUE);
 
     wm_update(END_UPDATE);      /* give up the sync */
+
+    return ret;
 }
 
 

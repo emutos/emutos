@@ -328,19 +328,19 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = wm_create(WM_KIND, (GRECT *)&WM_WX);
         break;
     case WIND_OPEN:
-        wm_open(WM_HANDLE, (GRECT *)&WM_WX);
+        ret = wm_open(WM_HANDLE, (GRECT *)&WM_WX);
         break;
     case WIND_CLOSE:
-        wm_close(WM_HANDLE);
+        ret = wm_close(WM_HANDLE);
         break;
     case WIND_DELETE:
-        wm_delete(WM_HANDLE);
+        ret = wm_delete(WM_HANDLE);
         break;
     case WIND_GET:
-        wm_get(WM_HANDLE, WM_WFIELD, &WM_OX, &WM_IX);
+        ret = wm_get(WM_HANDLE, WM_WFIELD, &WM_OX, &WM_IX);
         break;
     case WIND_SET:
-        wm_set(WM_HANDLE, WM_WFIELD, &WM_IX);
+        ret = wm_set(WM_HANDLE, WM_WFIELD, &WM_IX);
         break;
     case WIND_FIND:
         ret = wm_find(WM_MX, WM_MY);
