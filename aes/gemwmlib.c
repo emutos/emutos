@@ -1377,47 +1377,39 @@ WORD wm_create(WORD kind, GRECT *pt)
 
 
 /*
- *  Opens or closes a window
+ *  Opens a window from a created but closed state
  */
-static void wm_opcl(WORD wh, GRECT *pt, BOOL isadd)
+void wm_open(WORD w_handle, GRECT *pt)
 {
     GRECT   t;
 
     rc_copy(pt, &t);
     wm_update(BEG_UPDATE);
-    if (isadd)
-    {
-        D.w_win[wh].w_flags |= VF_INTREE;
-        w_obadd(&W_TREE[ROOT], ROOT, wh);
-    }
-    else
-    {
-        ob_delete(gl_wtree, wh);
-        D.w_win[wh].w_flags &= ~VF_INTREE;
-    }
-    draw_change(wh, &t);
-    if (isadd)
-        w_setsize(WS_PREV, wh, pt);
+
+    D.w_win[w_handle].w_flags |= VF_INTREE;
+    w_obadd(&W_TREE[ROOT], ROOT, w_handle);
+    draw_change(w_handle, &t);
+    w_setsize(WS_PREV, w_handle, pt);
+
     wm_update(END_UPDATE);
-}
-
-
-/*
- *  Opens a window from a created but closed state
- */
-void wm_open(WORD w_handle, GRECT *pt)
-{
-    wm_opcl(w_handle, pt, TRUE);
 }
 
 
 /*
  *  Closes a window from an open state
  */
-
 void wm_close(WORD w_handle)
 {
-    wm_opcl(w_handle, &gl_rzero, FALSE);
+    GRECT   t;
+
+    rc_copy(&gl_rzero, &t);
+    wm_update(BEG_UPDATE);
+
+    ob_delete(gl_wtree, w_handle);
+    D.w_win[w_handle].w_flags &= ~VF_INTREE;
+    draw_change(w_handle, &t);
+
+    wm_update(END_UPDATE);
 }
 
 
