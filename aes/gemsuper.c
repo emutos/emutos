@@ -165,14 +165,14 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         mn_bar((OBJECT *)MM_ITREE, SHOW_IT);
         break;
     case MENU_ICHECK:
-        do_chg((OBJECT *)MM_ITREE, ITEM_NUM, CHECKED, CHECK_IT, FALSE, FALSE);
+        ret = do_chg((OBJECT *)MM_ITREE, ITEM_NUM, CHECKED, CHECK_IT, FALSE, FALSE);
         break;
     case MENU_IENABLE:
-        do_chg((OBJECT *)MM_ITREE, (ITEM_NUM & 0x7fff), DISABLED,
+        ret = do_chg((OBJECT *)MM_ITREE, (ITEM_NUM & 0x7fff), DISABLED,
                 !ENABLE_IT, ((ITEM_NUM & 0x8000) != 0x0), FALSE);
         break;
     case MENU_TNORMAL:
-        do_chg((OBJECT *)MM_ITREE, TITLE_NUM, SELECTED, !NORMAL_IT, TRUE, TRUE);
+        ret = do_chg((OBJECT *)MM_ITREE, TITLE_NUM, SELECTED, !NORMAL_IT, TRUE, TRUE);
         break;
     case MENU_TEXT:
         tree = (OBJECT *)MM_ITREE;
