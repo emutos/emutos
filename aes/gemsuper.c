@@ -47,10 +47,6 @@
 #include "string.h"
 
 
-#if CONF_SERIAL_CONSOLE
-#define ENABLE_KDEBUG
-#endif
-
 LONG super(WORD cx, AESPB *pcrys_blk);  /* called only from gemdosif.S */
 
 GLOBAL WORD     gl_mnclick;
