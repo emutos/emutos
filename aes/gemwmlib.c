@@ -289,7 +289,7 @@ static void w_adjust( WORD parent, WORD obj, WORD x, WORD y,  WORD w, WORD h)
     W_ACTIVE[obj].ob_height = h;
 
     W_ACTIVE[obj].ob_head = W_ACTIVE[obj].ob_tail = NIL;
-    w_obadd(&W_ACTIVE[ROOT], parent, obj);
+    w_obadd(W_ACTIVE, parent, obj);
 }
 
 
@@ -1261,8 +1261,8 @@ void wm_init(void)
     or_start();
 
     /* init window extent objects */
-    bzero(&W_TREE[ROOT], NUM_MWIN * sizeof(OBJECT));
-    w_nilit(NUM_MWIN, &W_TREE[ROOT]);
+    bzero(W_TREE, NUM_MWIN * sizeof(OBJECT));
+    w_nilit(NUM_MWIN, W_TREE);
     for (i = 0; i < NUM_MWIN; i++)
     {
         D.w_win[i].w_flags = 0x0;
@@ -1274,7 +1274,7 @@ void wm_init(void)
     W_TREE[ROOT].ob_spec = tree->ob_spec;
 
     /* init window element objects */
-    bzero(&W_ACTIVE[ROOT], NUM_ELEM * sizeof(OBJECT));
+    bzero(W_ACTIVE, NUM_ELEM * sizeof(OBJECT));
     w_nilit(NUM_ELEM, W_ACTIVE);
     for (i = 0; i < NUM_ELEM; i++)
     {
@@ -1298,7 +1298,7 @@ void wm_init(void)
 
     /* init global variables */
     gl_wtop = NIL;
-    gl_wtree = &W_TREE[ROOT];
+    gl_wtree = W_TREE;
     gl_awind = W_ACTIVE;
     gl_newdesk = NULL;
 
@@ -1413,7 +1413,7 @@ BOOL wm_open(WORD w_handle, GRECT *pt)
     wm_update(BEG_UPDATE);
 
     pwin->w_flags |= VF_ISOPEN;
-    w_obadd(&W_TREE[ROOT], ROOT, w_handle);
+    w_obadd(W_TREE, ROOT, w_handle);
     draw_change(w_handle, &t);
     w_setsize(WS_PREV, w_handle, pt);
 
