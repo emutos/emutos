@@ -46,8 +46,6 @@
 /*
  *  defines
  */
-#define NUM_MWIN NUM_WIN
-
 #define XFULL   0
 #define YFULL   gl_hbox
 #define WFULL   gl_width
@@ -67,7 +65,7 @@ GLOBAL OBJECT   *gl_awind;
 static OBJECT *gl_newdesk;      /* current desktop background pattern */
 static WORD gl_newroot;         /* current object within gl_newdesk   */
 
-static OBJECT W_TREE[NUM_MWIN];
+static OBJECT W_TREE[NUM_WIN];
 static OBJECT W_ACTIVE[NUM_ELEM];
 
 
@@ -1261,9 +1259,9 @@ void wm_init(void)
     or_start();
 
     /* init window extent objects */
-    bzero(W_TREE, NUM_MWIN * sizeof(OBJECT));
-    w_nilit(NUM_MWIN, W_TREE);
-    for (i = 0; i < NUM_MWIN; i++)
+    bzero(W_TREE, NUM_WIN * sizeof(OBJECT));
+    w_nilit(NUM_WIN, W_TREE);
+    for (i = 0; i < NUM_WIN; i++)
     {
         D.w_win[i].w_flags = 0x0;
         D.w_win[i].w_rlist = NULL;
