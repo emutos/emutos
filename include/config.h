@@ -1241,7 +1241,7 @@
  * can take several seconds for the monitor to recover from stand-by mode,
  * so the welcome screen may never be seen. In such cases, it is wise to
  * increase the welcome screen duration.
- * You can use the INITINFO_DURATION define to specifiy the welcome screen
+ * You can use the INITINFO_DURATION define to specify the welcome screen
  * duration, in seconds. If it is set to 0, the welcome screen will never
  * be displayed.
  */
