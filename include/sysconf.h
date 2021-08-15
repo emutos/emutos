@@ -5,7 +5,7 @@
  * definitions, i.e. ones that cannot be overridden by localconf.h.
  * It is equivalent to EmuDesk's deskconf.h.
  *
- * Copyright (C) 2019-2020 The EmuTOS development team
+ * Copyright (C) 2019-2021 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -20,8 +20,19 @@
 /*
  * System configuration definitions
  */
-#define NUM_WIN     8                   /* maximum number of windows (the     */
-                                        /* desktop itself counts as 1 window) */
+
+/*
+ * Maximum number of windows (the desktop itself counts as 1 window)
+ *
+ * Note: in AES version 0x0340 (Atari TOS4), the maximum number of windows
+ * is limited only by available memory, but the extra complexity required
+ * to support this is judged to be overkill, given actual usage.
+ */
+#if (AES_VERSION > 0x0320)
+# define NUM_WIN    16
+#else
+# define NUM_WIN    8
+#endif
 
 #define NUM_ACCS    6                   /* maximum number of desk accessory   */
                                         /* files (.ACC) that will be loaded   */
