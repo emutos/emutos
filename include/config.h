@@ -529,9 +529,6 @@
 # ifndef CONF_WITH_UAE
 #  define CONF_WITH_UAE 1
 # endif
-# ifndef MAX_VERTICES
-#  define MAX_VERTICES 512
-# endif
 #endif
 
 /*
@@ -560,9 +557,6 @@
 # ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
    /* This makes LisaEm timings completely inaccurate, so disable it */
 #  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
-# endif
-# ifndef MAX_VERTICES
-#  define MAX_VERTICES 512
 # endif
 #endif
 
