@@ -367,6 +367,9 @@
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
 # endif
+# ifndef MAX_VERTICES
+#  define MAX_VERTICES 512
+# endif
 # ifndef NUM_VDI_HANDLES
 #  define NUM_VDI_HANDLES 64
 # endif
@@ -411,6 +414,9 @@
 # endif
 # ifndef CONF_WITH_3D_OBJECTS
 #  define CONF_WITH_3D_OBJECTS 0
+# endif
+# ifndef MAX_VERTICES
+#  define MAX_VERTICES 512
 # endif
 #endif
 
@@ -482,6 +488,18 @@
 # ifndef CONF_WITH_NOVA
 #  define CONF_WITH_NOVA 0
 # endif
+# ifndef MAX_VERTICES
+#  define MAX_VERTICES 512
+# endif
+#endif
+
+/*
+ * Defaults for the standard floppy target
+ */
+#ifdef TARGET_FLOPPY
+# ifndef MAX_VERTICES
+#  define MAX_VERTICES 512
+# endif
 #endif
 
 /*
@@ -511,6 +529,9 @@
 # ifndef CONF_WITH_UAE
 #  define CONF_WITH_UAE 1
 # endif
+# ifndef MAX_VERTICES
+#  define MAX_VERTICES 512
+# endif
 #endif
 
 /*
@@ -539,6 +560,9 @@
 # ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
    /* This makes LisaEm timings completely inaccurate, so disable it */
 #  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
+# endif
+# ifndef MAX_VERTICES
+#  define MAX_VERTICES 512
 # endif
 #endif
 
@@ -1504,11 +1528,7 @@
  * TOS2 allows 512 vertices, TOS3/TOS4 allow 1024.
  */
 #ifndef MAX_VERTICES
-# if defined(TARGET_1024) || defined(TARGET_512) || defined(TARGET_PRG) || defined(MACHINE_FIREBEE) || defined(MACHINE_M548X) || defined(MACHINE_ARANYM)
-#  define MAX_VERTICES   1024
-# else
-#  define MAX_VERTICES   512
-# endif
+# define MAX_VERTICES 1024
 #endif
 
 /*
