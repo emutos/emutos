@@ -177,13 +177,13 @@ static void fm_parse(OBJECT *tree, char *palstr, WORD *picnum, WORD *pnummsg,
  *
  *  Inputs are:
  *      tree            the alert dialog
- *      haveicon        boolean, 1 if icon specified
+ *      iconnum         icon number, 0 => no icon
  *      nummsg          number of message lines
  *      mlenmsg         length of longest line
  *      numbut          number of buttons
  *      mlenbut         length of biggest button
  */
-static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
+static void fm_build(OBJECT *tree, WORD iconnum, WORD nummsg, WORD mlenmsg,
                      WORD numbut, WORD mlenbut)
 {
     WORD i, hicon, allbut;
@@ -210,7 +210,7 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
      * convert the icon height from pixels to characters, based on
      * the current character height.
      */
-    if (haveicon)
+    if (iconnum)
     {
         hicon = (rs_bitblk[NOTEBB].bi_hl+gl_hchar-1) / gl_hchar;
         r_set(&ic, 1+INTER_WSPACE, 1+INTER_HSPACE, 4, hicon);
@@ -264,8 +264,21 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
           obj->ob_next = obj->ob_head = obj->ob_tail = -1;
 
     /* add icon object      */
-    if (haveicon)
+    if (iconnum)
     {
+        switch(iconnum) {
+        case 1:
+            i = NOTEBB;
+            break;
+        case 2:
+            i = QUESTBB;
+            break;
+        default:
+            i = STOPBB;
+            break;
+        }
+        obj = tree + 1;
+        obj->ob_spec = (LONG) &rs_bitblk[i];
         ob_setxywh(tree, 1, &ic);
         ob_add(tree, ROOT, 1);
     }
@@ -290,13 +303,17 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
 
     /* set last object flag */
     (--obj)->ob_flags |= LASTOB;
+
+    /* convert to pixels    */
+    for (i = 0; i < NUM_ALOBJS; i++)
+        rs_obfix(tree, i);
 }
 
 
 WORD fm_alert(WORD defbut, char *palstr)
 {
     WORD i;
-    WORD inm, nummsg, mlenmsg, numbut, mlenbut, image;
+    WORD inm, nummsg, mlenmsg, numbut, mlenbut;
     OBJECT *tree;
     GRECT d, t;
     OBJECT *obj;
@@ -315,7 +332,7 @@ WORD fm_alert(WORD defbut, char *palstr)
     set_mouse_to_arrow();
 
     fm_parse(tree, palstr, &inm, &nummsg, &mlenmsg, &numbut, &mlenbut);
-    fm_build(tree, (inm != 0), nummsg, mlenmsg, numbut, mlenbut);
+    fm_build(tree, inm, nummsg, mlenmsg, numbut, mlenbut);
 
     if (defbut)
     {
@@ -323,29 +340,8 @@ WORD fm_alert(WORD defbut, char *palstr)
         obj->ob_flags |= DEFAULT;
     }
 
-    obj = tree + 1;
-
-    if (inm != 0)
-    {
-        switch(inm) {
-        case 1:
-            image = NOTEBB;
-            break;
-        case 2:
-            image = QUESTBB;
-            break;
-        default:
-            image = STOPBB;
-            break;
-        }
-        obj->ob_spec = (LONG) &rs_bitblk[image];
-    }
-
-    /* convert to pixels    */
-    for (i = 0; i < NUM_ALOBJS; i++)
-        rs_obfix(tree, i);
-
     /* fix up icon, 32x32   */
+    obj = tree + 1;
     obj->ob_type = G_IMAGE;
     obj->ob_width = obj->ob_height = 32;
 
