@@ -1715,7 +1715,7 @@ static void align_objects(OBJECT *obj_array, int nobj)
  *  If CONF_WITH_ALT_DESKTOP_GRAPHICS is specified, titles are left-aligned;
  *  otherwise they are centre-aligned, like Atari TOS.
  */
-void centre_title(OBJECT *root)
+void align_title(OBJECT *root)
 {
     OBJECT *title;
 
@@ -1979,7 +1979,7 @@ BOOL deskmain(void)
     /* initialize menus and dialogs */
     for (ii = 0; ii < RS_NTREE; ii++)
     {
-        centre_title(desk_rs_trees[ii]);
+        align_title(desk_rs_trees[ii]);
     }
 
     for (ii = 0; ii < RS_NBB; ii++) /* initialize bit images */

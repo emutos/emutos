@@ -932,7 +932,7 @@ WORD dir_op(WORD op, WORD icontype, PNODE *pspath, char *pdst_path, DIRCOUNT *co
 
     if (tree)
     {
-        centre_title(tree);
+        align_title(tree);
         inf_numset(tree, CDFILES, count->files);
         inf_numset(tree, CDFOLDS, count->dirs);
         start_dialog(tree);
