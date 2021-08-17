@@ -412,6 +412,9 @@
 # ifndef CONF_WITH_DSP
 #  define CONF_WITH_DSP 0
 # endif
+# ifndef CONF_WITH_ALT_DESKTOP_GRAPHICS
+#  define CONF_WITH_ALT_DESKTOP_GRAPHICS 0
+# endif
 # ifndef CONF_WITH_3D_OBJECTS
 #  define CONF_WITH_3D_OBJECTS 0
 # endif
