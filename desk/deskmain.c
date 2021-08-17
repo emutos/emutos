@@ -1707,25 +1707,32 @@ static void align_objects(OBJECT *obj_array, int nobj)
 }
 
 /*
- *  Horizontally centre dialog title: this is done dynamically to
- *  handle translated titles.
+ *  Align dialog title: this is done dynamically to handle translated titles
  *
  *  If object 1 of a tree is a G_STRING and its y position equals
  *  one character height, we assume it's the title.
+ *
+ *  If CONF_WITH_ALT_DESKTOP_GRAPHICS is specified, titles are left-aligned;
+ *  otherwise they are centre-aligned, like Atari TOS.
  */
 void centre_title(OBJECT *root)
 {
     OBJECT *title;
-    WORD len;
 
     title = root + 1;
 
     if ((title->ob_type == G_STRING) && (title->ob_y == gl_hchar))
     {
-        len = strlen((char *)title->ob_spec) * gl_wchar;
+#if CONF_WITH_ALT_DESKTOP_GRAPHICS
+        title->ob_x = gl_wchar;
+        title->ob_width = root->ob_width - (gl_wchar * 2);
+        title->ob_state |= WHITEBAK;
+#else
+        WORD len = strlen((char *)title->ob_spec) * gl_wchar;
         if (len > root->ob_width)
             len = root->ob_width;
         title->ob_x = (root->ob_width - len) / 2;
+#endif
     }
 }
 

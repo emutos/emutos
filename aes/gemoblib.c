@@ -842,6 +842,21 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
             {
                 gsx_tblt(IBM, tmpx, tmpy, len);
             }
+#if CONF_WITH_ALT_DESKTOP_GRAPHICS
+            /*
+             * handle special formatting used when EmuDesk wants a dialog
+             * title to be underlined
+             */
+            if ((obtype == G_STRING) && (state & WHITEBAK))
+            {
+                gsx_attr(FALSE, MD_REPLACE, LBLACK);
+                gsx_cline(t.g_x, t.g_y+t.g_h+2, t.g_x+t.g_w, t.g_y+t.g_h+2);
+#if CONF_WITH_3D_OBJECTS
+                gsx_attr(FALSE, MD_REPLACE, WHITE);
+                gsx_cline(t.g_x, t.g_y+t.g_h+1, t.g_x+t.g_w, t.g_y+t.g_h+1);
+#endif
+            }
+#endif
         }
     }
 
