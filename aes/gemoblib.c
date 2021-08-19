@@ -447,7 +447,7 @@ static WORD ob_user(OBJECT *tree, WORD obj, GRECT *pt, LONG spec,
 }
 
 
-#if CONF_WITH_ALT_DESKTOP_GRAPHICS
+#if CONF_WITH_NICELINES
 /*
  *  Routine to determine if an object's text is all dashes
  */
@@ -483,7 +483,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
     WORD effect_th;
     BOOL movetext, changecol;
 #endif
-
+HERE;
     ch = ob_sst(tree, obj, &spec, &state, &obtype, &flags, &t, &th);
 
     if ((flags & HIDETREE) || (spec == -1L))
@@ -828,7 +828,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
                 }
 #endif
             }
-#if CONF_WITH_ALT_DESKTOP_GRAPHICS
+#if CONF_WITH_NICELINES
             /*
              * for an apparent menu separator, we replace the traditional
              * string of dashes with a drawn line for neatness

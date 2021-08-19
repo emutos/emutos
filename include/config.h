@@ -304,6 +304,9 @@
 # ifndef CONF_WITH_3D_OBJECTS
 #  define CONF_WITH_3D_OBJECTS 0
 # endif
+# ifndef CONF_WITH_NICELINES
+#  define CONF_WITH_NICELINES 0
+# endif
 # ifndef CONF_WITH_WINDOW_ICONS
 #  define CONF_WITH_WINDOW_ICONS 0
 # endif
@@ -1216,6 +1219,14 @@
 #endif
 
 /*
+ * Set CONF_WITH_NICELINES to use a drawn line instead of dashes for
+ * separators in menus
+ */
+#ifndef CONF_WITH_NICELINES
+# define CONF_WITH_NICELINES 1
+#endif
+
+/*
  * Set CONF_WITH_PCGEM to 1 to support various PC-GEM-compatible AES functions
  */
 #ifndef CONF_WITH_PCGEM
@@ -1577,7 +1588,6 @@
 /*
  * Set CONF_WITH_ALT_DESKTOP_GRAPHICS to 1 to replace Atari-style desktop
  * graphic elements with alternate versions:
- *  . use a drawn line instead of dashes for separators in menus
  *  . left-align dialog titles and draw a line under them
  */
 #ifndef CONF_WITH_ALT_DESKTOP_GRAPHICS
