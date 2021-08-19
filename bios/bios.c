@@ -17,7 +17,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-/* #define ENABLE_KDEBUG */
+//#define ENABLE_KDEBUG
 
 #include "emutos.h"
 #include "biosext.h"
@@ -59,6 +59,7 @@
 #include "memory.h"
 #include "nova.h"
 #include "tosvars.h"
+#include "dana.h"
 #include "amiga.h"
 #include "lisa.h"
 #include "coldfire.h"
@@ -226,6 +227,10 @@ static void bios_init(void)
 #if CONF_WITH_UAE
     KDEBUG(("amiga_uae_init()\n"));
     amiga_uae_init();
+#endif
+#if defined(MACHINE_DANA)
+    KDEBUG(("dana_init()\n"));
+    dana_init();
 #endif
 
     /* Initialize the processor */
@@ -403,7 +408,7 @@ static void bios_init(void)
     boot_status |= CHARDEV_AVAILABLE;   /* track progress */
     KDEBUG(("init_serport()\n"));
     init_serport();
-    boot_status |= RS232_AVAILABLE;     /* track progress */
+	boot_status |= RS232_AVAILABLE;     /* track progress */
 #if CONF_WITH_SCC
     if (has_scc)
         boot_status |= SCC_AVAILABLE;   /* track progress */

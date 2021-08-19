@@ -33,7 +33,7 @@
 /*
  * Determine if this EmuTOS is built for ROM or RAM
  */
-#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_AMIGA_FLOPPY) || defined(TARGET_LISA_FLOPPY)
+#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_AMIGA_FLOPPY) || defined(TARGET_LISA_FLOPPY) || defined(TARGET_DANA)
 #  define EMUTOS_LIVES_IN_RAM 1
 # else
 #  define EMUTOS_LIVES_IN_RAM 0
@@ -505,6 +505,46 @@
 #ifdef TARGET_FLOPPY
 # ifndef MAX_VERTICES
 #  define MAX_VERTICES 512
+# endif
+#endif
+
+/*
+ * Defaults for the AlphaSmart Dana ROM target
+ */
+#ifdef TARGET_DANA
+# define MACHINE_DANA
+#endif
+
+/*
+ * Defaults for the Amiga machine
+ */
+#ifdef MACHINE_DANA
+# ifndef CONF_ATARI_HARDWARE
+#  define CONF_ATARI_HARDWARE 0
+# endif
+# ifndef CONF_WITH_IDE
+#  define CONF_WITH_IDE 0
+# endif
+# ifndef CONF_WITH_UAE
+#  define CONF_WITH_UAE 0
+# endif
+# ifndef CONF_SERIAL_CONSOLE
+#  define CONF_SERIAL_CONSOLE 1
+# endif
+# ifndef CONF_SERIAL_CONSOLE_ANSI
+#  define CONF_SERIAL_CONSOLE_ANSI 0
+# endif
+# ifndef CONF_WITH_ADVANCED_CPU
+#  define CONF_WITH_ADVANCED_CPU 0
+# endif
+# ifndef CONF_WITH_CACHE_CONTROL
+#  define CONF_WITH_CACHE_CONTROL 0
+# endif
+# ifndef CONF_WITH_APOLLO_68080
+#  define CONF_WITH_APOLLO_68080 0
+# endif
+# ifndef DANA_DEBUG_PRINT
+#  define DANA_DEBUG_PRINT 1
 # endif
 #endif
 

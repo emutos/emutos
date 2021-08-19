@@ -12,6 +12,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
+#define ENABLE_KDEBUG
+
 #include "emutos.h"
 #include "asm.h"
 #include "chardev.h"
@@ -26,6 +28,7 @@
 #include "tosvars.h"
 #include "vectors.h"
 #include "coldfire.h"
+#include "dana.h"
 #include "amiga.h"
 #include "ikbd.h"
 
@@ -275,6 +278,8 @@ LONG bcostat1(void)
 {
 #if CONF_WITH_COLDFIRE_RS232
     return coldfire_rs232_can_write() ? -1 : 0;
+#elif defined(MACHINE_DANA)
+    return dana_rs232_can_write() ? -1 : 0;
 #elif CONF_WITH_MFP_RS232
 # if RS232_DEBUG_PRINT
     return (MFP_BASE->tsr & 0x80) ? -1 : 0;
@@ -297,6 +302,9 @@ LONG bconout1(WORD dev, WORD b)
 
 #if CONF_WITH_COLDFIRE_RS232
     coldfire_rs232_write_byte(b);
+    return 1;
+#elif defined(MACHINE_DANA)
+	dana_rs232_writeb(b);
     return 1;
 #elif CONF_WITH_MFP_RS232
 # if RS232_DEBUG_PRINT
@@ -885,6 +893,7 @@ void init_serport(void)
     }
 #endif  /* CONF_WITH_TT_MFP */
 
+
 #if BCONMAP_AVAILABLE
     memcpy(&iorec_dummy,&iorec_init,sizeof(EXT_IOREC));
     init_bconmap();
@@ -892,6 +901,10 @@ void init_serport(void)
 
 #ifdef MACHINE_AMIGA
     amiga_rs232_init();
+#endif
+
+#ifdef MACHINE_DANA
+    dana_rs232_init();
 #endif
 
 #if !CONF_SERIAL_IKBD

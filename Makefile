@@ -54,6 +54,7 @@ help:
 	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
+	@echo "dana    $(ROM_DANA), EmuTOS ROM for the AlphaSmart Dana"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigavampire $(VAMPIRE_ROM_AMIGA), EmuTOS ROM for Amiga optimized for Vampire V2"
 	@echo "v4sa    $(V4_ROM_AMIGA), EmuTOS ROM for Amiga Vampire V4 Standalone"
@@ -190,7 +191,7 @@ TOOLCHAIN_CFLAGS = -fleading-underscore -Wa,--register-prefix-optional -fno-reor
 else
 # MiNT toolchain
 TOOLCHAIN_PREFIX = m68k-atari-mint-
-TOOLCHAIN_CFLAGS =
+TOOLCHAIN_CFLAGS = -g
 endif
 
 # indent flags
@@ -274,6 +275,7 @@ bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              mfp.c midi.c mouse.c natfeat.S natfeats.c nvram.c panicasm.S \
              parport.c screen.c serport.c sound.c videl.c vt52.c xhdi.c \
              pmmu030.c 68040_pmmu.S \
+			 dana.c \
              amiga.c amiga2.S spi_vamp.c \
              lisa.c lisa2.S \
              delay.c delayasm.S sd.c memory2.c bootparams.c scsi.c nova.c \
@@ -620,6 +622,30 @@ cart:
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS104))) bytes more than TOS 1.04)"
 	@printf "$(LOCALCONFINFO)"
+
+#
+# AlphaSmart Dana Image
+#
+
+TOCLEAN += *.rom
+
+ROM_DANA = emutos-dana.rom
+DANA_DEFS =
+
+.PHONY: dana
+NODEP += dana
+dana: UNIQUE = $(COUNTRY)
+dana: OPTFLAGS = $(SMALL_OPTFLAGS)
+dana: override DEF += -DTARGET_DANA $(DANA_DEFS)
+dana:
+	@echo "# Building AlphaSmart Dana EmuTOS into $(ROM_DANA)"
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_DANA=$(ROM_DANA) $(ROM_DANA)
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
+	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS206))) bytes more than TOS 2.06)"
+	@printf "$(LOCALCONFINFO)"
+
+$(ROM_DANA): emutos.img mkrom
+	cp $< $(ROM_DANA)
 
 #
 # Amiga Image

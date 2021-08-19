@@ -1,5 +1,5 @@
 /*
- * amiga.c - Amiga specific functions
+ * dana.c - Dana specific functions
  *
  * Copyright (C) 2013-2020 The EmuTOS development team
  *
@@ -13,7 +13,7 @@
 /* #define ENABLE_KDEBUG */
 
 #include "emutos.h"
-#include "amiga.h"
+#include "dana.h"
 #include "vectors.h"
 #include "tosvars.h"
 #include "bios.h"

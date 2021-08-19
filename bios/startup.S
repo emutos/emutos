@@ -141,7 +141,8 @@ _main:
  *    6         Amiga
  *    7         (currently reserved)
  *    8         ARAnyM
- *   9-15       (currently reserved)
+ *    9			AlphaSmart Dana
+ *    10-15     (currently reserved)
  */
 #if defined(MACHINE_ARANYM)
 # define OSXH_ST        0
@@ -152,6 +153,17 @@ _main:
 # define OSXH_M548X     0
 # define OSXH_AMIGA     0
 # define OSXH_ARANYM    (1<<8)
+# define OSXH_DANA      0
+#elif defined(MACHINE_DANA)
+# define OSXH_ST        0
+# define OSXH_STE       0
+# define OSXH_TT        0
+# define OSXH_FALCON    0
+# define OSXH_FIREBEE   0
+# define OSXH_M548X     0
+# define OSXH_AMIGA     0
+# define OSXH_ARANYM    0
+# define OSXH_DANA      (1<<9)
 #elif defined(MACHINE_AMIGA)
 # define OSXH_ST        0
 # define OSXH_STE       0
@@ -161,6 +173,7 @@ _main:
 # define OSXH_M548X     0
 # define OSXH_AMIGA     (1<<6)
 # define OSXH_ARANYM    0
+# define OSXH_DANA      0
 #elif defined(MACHINE_M548X)
 # define OSXH_ST        0
 # define OSXH_STE       0
@@ -170,6 +183,7 @@ _main:
 # define OSXH_M548X     (1<<5)
 # define OSXH_AMIGA     0
 # define OSXH_ARANYM    0
+# define OSXH_DANA      0
 #elif defined(MACHINE_FIREBEE)
 # define OSXH_ST        0
 # define OSXH_STE       0
@@ -179,6 +193,7 @@ _main:
 # define OSXH_M548X     0
 # define OSXH_AMIGA     0
 # define OSXH_ARANYM    0
+# define OSXH_DANA      0
 #else
 # define OSXH_FIREBEE   0
 # define OSXH_M548X     0
@@ -208,6 +223,7 @@ _main:
 # else
 #  define OSXH_ARANYM   0
 # endif
+# define OSXH_DANA      0
 #endif
 #define OSXH_MACHINES   (OSXH_ST+OSXH_STE+OSXH_TT+OSXH_FALCON+OSXH_FIREBEE+OSXH_M548X+OSXH_ARANYM+OSXH_AMIGA)
 

@@ -13,7 +13,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-/*#define ENABLE_KDEBUG*/
+#define ENABLE_KDEBUG
 
 #include "emutos.h"
 #include "machine.h"
@@ -33,6 +33,8 @@
 #include "biosmem.h"
 #include "biosext.h"
 #include "bios.h"
+#include "screen.h"
+#include "dana.h"
 #include "amiga.h"
 #include "lisa.h"
 #include "nova.h"
@@ -613,6 +615,10 @@ void screen_init_mode(void)
 #endif /* CONF_WITH_ATARI_VIDEO */
     MAYBE_UNUSED(get_default_palmode);
 
+#ifdef MACHINE_DANA
+    dana_screen_init();
+#endif
+
 #ifdef MACHINE_AMIGA
     amiga_screen_init();
 #endif
@@ -669,6 +675,10 @@ int rez_changeable(void)
 {
     if (rez_was_hacked)
         return FALSE;
+
+#ifdef MACHINE_DANA
+    return FALSE;
+#endif
 
 #ifdef MACHINE_AMIGA
     return TRUE;
@@ -732,6 +742,8 @@ ULONG initial_vram_size(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();
+#elif defined(MACHINE_DANA)
+	return dana_initial_vram_size();
 #elif defined(MACHINE_LISA)
     return 32*1024UL;
 #else
@@ -788,6 +800,10 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
 
 #ifdef MACHINE_AMIGA
     amiga_get_current_mode_info(planes, hz_rez, vt_rez);
+#elif defined(MACHINE_DANA)
+	*planes = 1;
+	*hz_rez = 480;
+	*vt_rez = 160;
 #elif defined(MACHINE_LISA)
     *planes = 1;
     *hz_rez = 720;
@@ -804,7 +820,7 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
  */
 WORD get_palette(void)
 {
-#ifdef MACHINE_AMIGA
+#if defined(MACHINE_AMIGA) || defined(MACHINE_DANA)
     return 2;               /* we currently only support monochrome */
 #else
     WORD palette;
@@ -868,7 +884,7 @@ static __inline__ void get_std_pixel_size(WORD *width,WORD *height)
  */
 void get_pixel_size(WORD *width,WORD *height)
 {
-#ifdef MACHINE_AMIGA
+#if defined(MACHINE_AMIGA) || defined(MACHINE_DANA)
     get_std_pixel_size(width,height);
 #else
     if (HAS_VIDEL || HAS_TT_SHIFTER)
@@ -1014,6 +1030,8 @@ const UBYTE *physbase(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_physbase();
+#elif defined(MACHINE_DANA)
+    return dana_physbase();
 #elif defined(MACHINE_LISA)
     return lisa_physbase();
 #elif CONF_WITH_ATARI_VIDEO
@@ -1032,6 +1050,8 @@ static void setphys(const UBYTE *addr)
 
 #ifdef MACHINE_AMIGA
     amiga_setphys(addr);
+#elif defined(MACHINE_DANA)
+    dana_setphys(addr);
 #elif defined(MACHINE_LISA)
     lisa_setphys(addr);
 #elif CONF_WITH_ATARI_VIDEO
