@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-/* #define ENABLE_KDEBUG */
+//#define ENABLE_KDEBUG
 
 #include "emutos.h"
 #include "dana.h"
@@ -36,20 +36,59 @@
 #ifdef MACHINE_DANA
 
 /* Custom registers */
-#define URX1 *(volatile UWORD*)0xffffff904
-#define UTX1 *(volatile UWORD*)0xffffff906
-#define UTX1D *(volatile UBYTE*)0xffffff907
+#define URX1   *(volatile UWORD*)0xfffff904
+#define UTX1   *(volatile UWORD*)0xfffff906
+#define UTX1D  *(volatile UBYTE*)0xfffff907
+#define IVR    *(volatile UBYTE*)0xfffff300
+#define ICR    *(volatile UWORD*)0xfffff302
+#define IMR    *(volatile ULONG*)0xfffff304
+#define ISR    *(volatile ULONG*)0xfffff30c
+#define TCTL1  *(volatile UWORD*)0xfffff600
+#define TPRER  *(volatile UWORD*)0xfffff602
+#define TCMP1  *(volatile UWORD*)0xfffff604
+#define PLLFSR *(volatile UWORD*)0xfffff202
 
 static const UBYTE* dana_screenbase;
 
+#define VECTOR(i) (*(volatile PFVOID*)((i)*4))
+#define VEC_USER(i) VECTOR(0x40 + i)
+
 void dana_init(void)
 {
+	IVR = 0x40; /* map interrupts to autovector vectors */
+	ICR = 0x8000;
+	IMR = 0x00ffffff; /* all interrupt sources disabled */
+	ISR = 0;
+
 	phystop = (UBYTE*) (8L*1024L*1024L);
 	bootflags |= BOOTFLAG_EARLY_CLI;
 }
 
 void dana_init_system_timer(void)
 {
+	ULONG pllfsr = PLLFSR;
+	ULONG qc = (pllfsr >> 8) & 0x3f;
+	ULONG pc = pllfsr & 0xff;
+	ULONG clockfreq = (pc*14 + qc + 15) * 0x8000;
+	KDEBUG(("system clock probably %ld Hz\n", clockfreq));
+  	
+    ULONG prescale = 1;
+    ULONG dc = (clockfreq + (CLOCKS_PER_SEC/2)) / CLOCKS_PER_SEC;
+    ULONG cv = dc;
+    while (cv > 0xffff) {
+      prescale += 1;
+      cv = dc / prescale;
+    }
+	KDEBUG(("prescale=%ld cv=%ld\n", prescale, cv));
+
+	VEC_USER(6) = dana_int_6;
+
+	/* Assuming the system clock is at 16MHz. */
+	TPRER = prescale - 1;
+	TCMP1 = cv;
+
+	TCTL1 = 0x33;
+	IMR &= 0xfffffd;
 }
 
 void dana_rs232_init(void)
@@ -78,7 +117,7 @@ void dana_screen_init(void)
 
 ULONG dana_initial_vram_size(void)
 {
-	return 480L*160L / 8;
+	return 560L*160L / 8;
 };
 
 void dana_setphys(const UBYTE *addr)
