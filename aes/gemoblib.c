@@ -483,7 +483,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
     WORD effect_th;
     BOOL movetext, changecol;
 #endif
-HERE;
+
     ch = ob_sst(tree, obj, &spec, &state, &obtype, &flags, &t, &th);
 
     if ((flags & HIDETREE) || (spec == -1L))
