@@ -634,6 +634,10 @@ LONG blkdev_getbpb(WORD dev)
     if (recsiz > pun_info.max_sect_siz)
         return 0L;
 
+    /* don't login a disk if the number of FATs is unsupported */
+    if ((b->fat != 1) && (b->fat != 2))
+        return 0L;
+
     KDEBUG(("bootsector[dev=%d] = {\n  ...\n  res = %d;\n  hid = %d;\n}\n",
             dev,getiword(b->res),getiword(b->hid)));
 
@@ -667,7 +671,13 @@ LONG blkdev_getbpb(WORD dev)
     reserved = getiword(b->res);
     if (reserved == 0)      /* should not happen */
         reserved = 1;       /* but if it does, Atari TOS assumes this */
-    bdev->bpb.fatrec = reserved + bdev->bpb.fsiz;
+    bdev->bpb.fatrec = reserved;
+    /*
+     * with 2 FATs, use 2nd FAT by default.
+     * The code that flushes the FATs also assumes this.
+     */
+    if (b->fat >= 2)
+        bdev->bpb.fatrec += bdev->bpb.fsiz;
     bdev->bpb.datrec = bdev->bpb.fatrec + bdev->bpb.fsiz + bdev->bpb.rdlen;
 
     /*
@@ -691,9 +701,11 @@ LONG blkdev_getbpb(WORD dev)
      * the FAT format, after all), FAT type should be determined on the
      * basis of cluster count and nothing else
      */
+    bdev->bpb.b_flags = 0;         /* FAT12 */
     if (bdev->bpb.numcl > MAX_FAT12_CLUSTERS)
-        bdev->bpb.b_flags = B_16;       /* FAT16 */
-    else bdev->bpb.b_flags = 0;         /* FAT12 */
+        bdev->bpb.b_flags |= B_16;      /* FAT16 */
+    if (b->fat < 2)
+        bdev->bpb.b_flags |= B_1FAT;
 
     /* additional geometry info */
     bdev->geometry.sides = getiword(b->sides);

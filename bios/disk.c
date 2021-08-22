@@ -404,13 +404,32 @@ static ULONG check_for_no_partitions(UBYTE *sect)
     ULONG size = 0UL;
     int i;
 
-    if ((bs->media == 0xf8)
-     && (bs->ext == 0x29)
-     && (memcmp(bs->fstype,"FAT16   ",8) == 0)
-     && (bs->sec[0] == 0)
-     && (bs->sec[1] == 0)) {
+    /* bytes per sector must not be zero */
+    if (0 == (bs->bps[0] | bs->bps[1]))
+        return 0;
+
+    /* reserved sectors must not be zero */
+    if (0 == (bs->res[0] | bs->res[1]))
+        return 0;
+
+    /* sectors per cluster must be a power of 2 */
+    i = bs->spc;
+    if ((i != 1) && (i != 2) && (i != 4) && (i != 8) &&
+        (i != 16) && (i != 32) && (i != 64) && (i != 128))
+        return 0;
+
+    /* number of FATs must be 1 or 2 */
+    i = bs->fat;
+    if ((i != 1) && (i != 2))
+        return 0;
+
+    /* get total number of sectors */
+    if (0 == (bs->sec[0] | bs->sec[1])) {
+        /* more than 65535 sectors, use 32 bit field */
         for (i = 3; i >= 0; i--)
             size = (size << 8) + bs->sec2[i];
+    } else {
+        size = MAKE_UWORD(bs->sec[1], bs->sec[0]);
     }
 
     return size;

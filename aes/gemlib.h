@@ -60,7 +60,7 @@ typedef struct moblk
 /* values used in w_flags field of window structure */
 #define VF_INUSE    0x0001      /* the window has been created */
 #define VF_BROKEN   0x0002      /* the window is overlapped, can't be blitted */
-#define VF_INTREE   0x0004      /* the window is currently open */
+#define VF_ISOPEN   0x0004      /* the window is currently open */
 
 /* the AES window structure */
 typedef struct window

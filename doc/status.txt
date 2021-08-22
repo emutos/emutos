@@ -252,7 +252,7 @@ TOS v4.00:
  - 0x5c VsetVars        (for Falcon Videl only) - undocumented
  T 0x5d VsetRGB         (for Falcon Videl only)
  T 0x5e VgetRGB         (for Falcon Videl only)
- - 0x5f VfixMode        (for Falcon Videl only) - undocumented
+ t 0x5f VcheckMode      (for Falcon Videl only) - undocumented
 
  - 0x96 VsetMask        (for Falcon Videl only) - relevant when 16-bit colour is supported
 

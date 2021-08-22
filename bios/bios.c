@@ -338,6 +338,7 @@ static void bios_init(void)
     KDEBUG(("screen_init_address()\n"));
     screen_init_address();
 
+    KDEBUG(("vt52_init()\n"));
     vt52_init();        /* initialize the vt52 console */
 
     /* Now kcprintf() will also send debug info to the screen */

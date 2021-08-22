@@ -659,7 +659,14 @@ void fun_mask(WNODE *pw)
     if (inf_what(tree, FMOK) == 1)
     {
         inf_sget(tree, FMMASK, filemask);
-        unfmt_str(filemask, maskptr);
+        if (filemask[0])
+        {
+            unfmt_str(filemask, maskptr);
+        }
+        else    /* empty string => use the default of "*.*" */
+        {
+            strcpy(maskptr, "*.*");
+        }
         refresh_window(pw, FALSE);
     }
 }

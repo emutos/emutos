@@ -980,6 +980,12 @@ static void xbios_5e(WORD index,WORD count,ULONG *rgb)
     kprintf("XBIOS: VgetRGB\n");
     vgetrgb(index,count,rgb);
 }
+static WORD xbios_5f(WORD mode)
+{
+    kprintf("XBIOS: VcheckMode\n");
+    /* aka vfixmode */
+    return vfixmode(mode);
+}
 #endif
 
 /*
@@ -1261,7 +1267,7 @@ LONG supexec(PFLONG);       /* defined in vectors.S */
 #elif CONF_WITH_DSP
 # define LAST_ENTRY 0x7f
 #elif CONF_WITH_VIDEL
-# define LAST_ENTRY 0x5e
+# define LAST_ENTRY 0x5f
 #elif CONF_WITH_TT_SHIFTER
 # define LAST_ENTRY 0x57
 #else
@@ -1402,7 +1408,8 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 5c */
     VEC(xbios_5d, vsetrgb),   /* 5d */
     VEC(xbios_5e, vgetrgb),   /* 5e */
-#elif LAST_ENTRY > 0x5e     /* must insert fillers for videl opcodes */
+    VEC(xbios_5f, vfixmode),  /* 5f */
+#elif LAST_ENTRY > 0x5f     /* must insert fillers for videl opcodes */
     xbios_unimpl,   /* 58 */
     xbios_unimpl,   /* 59 */
     xbios_unimpl,   /* 5a */
@@ -1410,11 +1417,8 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 5c */
     xbios_unimpl,   /* 5d */
     xbios_unimpl,   /* 5e */
-#endif  /* CONF_WITH_VIDEL */
-
-#if LAST_ENTRY > 0x5e       /* must insert fillers */
     xbios_unimpl,   /* 5f */
-#endif
+#endif  /* CONF_WITH_VIDEL */
 
 #if CONF_WITH_DSP
     VEC(xbios_60, dsp_doblock),

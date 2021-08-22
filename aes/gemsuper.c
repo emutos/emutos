@@ -47,10 +47,6 @@
 #include "string.h"
 
 
-#if CONF_SERIAL_CONSOLE
-#define ENABLE_KDEBUG
-#endif
-
 LONG super(WORD cx, AESPB *pcrys_blk);  /* called only from gemdosif.S */
 
 GLOBAL WORD     gl_mnclick;
@@ -165,14 +161,14 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         mn_bar((OBJECT *)MM_ITREE, SHOW_IT);
         break;
     case MENU_ICHECK:
-        do_chg((OBJECT *)MM_ITREE, ITEM_NUM, CHECKED, CHECK_IT, FALSE, FALSE);
+        ret = do_chg((OBJECT *)MM_ITREE, ITEM_NUM, CHECKED, CHECK_IT, FALSE, FALSE);
         break;
     case MENU_IENABLE:
-        do_chg((OBJECT *)MM_ITREE, (ITEM_NUM & 0x7fff), DISABLED,
+        ret = do_chg((OBJECT *)MM_ITREE, (ITEM_NUM & 0x7fff), DISABLED,
                 !ENABLE_IT, ((ITEM_NUM & 0x8000) != 0x0), FALSE);
         break;
     case MENU_TNORMAL:
-        do_chg((OBJECT *)MM_ITREE, TITLE_NUM, SELECTED, !NORMAL_IT, TRUE, TRUE);
+        ret = do_chg((OBJECT *)MM_ITREE, TITLE_NUM, SELECTED, !NORMAL_IT, TRUE, TRUE);
         break;
     case MENU_TEXT:
         tree = (OBJECT *)MM_ITREE;
@@ -192,15 +188,13 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         break;
     case MENU_CLICK:
         /* distinguish between menu_click() and menu_attach() */
-        /*
-         * although menu_click() is PC-GEM only, it's always
-         * enabled because the desktop uses it.
-         */
+#if CONF_WITH_PCGEM
         if (IN_LEN == 2) {
             if (MN_SETIT)
                 gl_mnclick = MN_CLICK;
             ret = gl_mnclick;
         } else
+#endif
             unsupported = TRUE;
         break;
 
@@ -222,7 +216,7 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ob_offset((OBJECT *)OB_TREE, OB_OBJ, &OB_XOFF, &OB_YOFF);
         break;
     case OBJC_ORDER:
-        ob_order((OBJECT *)OB_TREE, OB_OBJ, OB_NEWPOS);
+        ret = ob_order((OBJECT *)OB_TREE, OB_OBJ, OB_NEWPOS);
         break;
     case OBJC_EDIT:
         gsx_sclip(&gl_rfull);
@@ -328,19 +322,19 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = wm_create(WM_KIND, (GRECT *)&WM_WX);
         break;
     case WIND_OPEN:
-        wm_open(WM_HANDLE, (GRECT *)&WM_WX);
+        ret = wm_open(WM_HANDLE, (GRECT *)&WM_WX);
         break;
     case WIND_CLOSE:
-        wm_close(WM_HANDLE);
+        ret = wm_close(WM_HANDLE);
         break;
     case WIND_DELETE:
-        wm_delete(WM_HANDLE);
+        ret = wm_delete(WM_HANDLE);
         break;
     case WIND_GET:
-        wm_get(WM_HANDLE, WM_WFIELD, &WM_OX, &WM_IX);
+        ret = wm_get(WM_HANDLE, WM_WFIELD, &WM_OX, &WM_IX);
         break;
     case WIND_SET:
-        wm_set(WM_HANDLE, WM_WFIELD, &WM_IX);
+        ret = wm_set(WM_HANDLE, WM_WFIELD, &WM_IX);
         break;
     case WIND_FIND:
         ret = wm_find(WM_MX, WM_MY);

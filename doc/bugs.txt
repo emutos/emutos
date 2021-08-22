@@ -1,18 +1,10 @@
 Video problems:
 
 Atari Falcon / TOS v4 compatibility bugs:
-+ There are many window management problems in Escape Paint (v0.72):
-  windows are not completely redrawn when uncovered, windows cannot be
-  moved, etc.
-+ The text on some Falcon FalcAMP buttons is not visible because the text
-  boxes are too small.  This isn't a problem on TOS4 because FalcAMP marks
-  them as 3D objects which causes the Falcon AES to automatically expand
-  the boxes by 2 pixels in each direction.  EmuTOS doesn't yet support
-  3D objects.
 + Videl Inside causes a desktop crash if a resolution is selected that
   requires more than the standard EmuTOS Falcon video memory allocation
-  (307200 bytes).  It should be able to detect or avoid this situation
-  but does not.
+  (see FALCON_VRAM_SIZE in bios/screen.h).  It should be able to detect
+  or avoid this situation but does not.
 
 Problems that also occur in Atari TOS:
 + BIOS: Startup time can be slow on a floppy-only system.  You can speed
@@ -32,7 +24,3 @@ Problems that also occur in Atari TOS:
   In that case, the welcome screen is not displayed.
 
 Links to programs listed above:
-+ Escape Paint:
-  https://www.pouet.net/prod.php?which=25328
-+ FalcAMP:
-  http://deunstg.free.fr/sct1/falcamp/

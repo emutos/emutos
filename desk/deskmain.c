@@ -67,7 +67,9 @@ typedef struct {
 #define menu_text(tree,inum,ptext) (((tree)+(inum))->ob_spec = (LONG)(ptext))
 
 
+#define CR      0x0d
 #define ESC     0x1b
+
 
 /* architectural */
 #define MIN_DESKMENU_WIDTH  20  /* in characters, compatible with Atari TOS */
@@ -1193,6 +1195,11 @@ static WORD hndl_kbd(WORD thechar)
     WORD title = -1, item;
 
     ascii = LOBYTE(thechar);
+    if (ascii == CR)    /* deselect icons */
+    {
+        desk_clear_all();
+        return FALSE;
+    }
     if (ascii == ESC)   /* refresh window */
     {
         pw = win_ontop();
@@ -1631,6 +1638,24 @@ static void adjust_menu(OBJECT *obj_array)
 #undef OBJ
 }
 
+#if CONF_WITH_3D_OBJECTS
+/*
+ *  Perform any final position tweaks for 3D objects
+ */
+static void adjust_3d_positions(void)
+{
+    OBJECT *tree = desk_rs_trees[ADDESKCF];
+
+    /*
+     * adjust Desktop configuration dialog
+     */
+    tree[DCFUNPRV].ob_y -= 2 * ADJ3DSTD;    /* avoid button overlap */
+    tree[DCFUNNXT].ob_y += ADJ3DSTD;
+    tree[DCMNUPRV].ob_y -= 2 * ADJ3DSTD;
+    tree[DCMNUNXT].ob_y += ADJ3DSTD;
+}
+#endif
+
 /*
  *  Align text objects according to special values in ob_flags
  *
@@ -1694,25 +1719,32 @@ static void align_objects(OBJECT *obj_array, int nobj)
 }
 
 /*
- *  Horizontally centre dialog title: this is done dynamically to
- *  handle translated titles.
+ *  Align dialog title: this is done dynamically to handle translated titles
  *
  *  If object 1 of a tree is a G_STRING and its y position equals
  *  one character height, we assume it's the title.
+ *
+ *  If CONF_WITH_ALT_DESKTOP_GRAPHICS is specified, titles are left-aligned;
+ *  otherwise they are centre-aligned, like Atari TOS.
  */
-void centre_title(OBJECT *root)
+void align_title(OBJECT *root)
 {
     OBJECT *title;
-    WORD len;
 
     title = root + 1;
 
     if ((title->ob_type == G_STRING) && (title->ob_y == gl_hchar))
     {
-        len = strlen((char *)title->ob_spec) * gl_wchar;
+#if CONF_WITH_ALT_DESKTOP_GRAPHICS
+        title->ob_x = gl_wchar;
+        title->ob_width = root->ob_width - (gl_wchar * 2);
+        title->ob_state |= WHITEBAK;
+#else
+        WORD len = strlen((char *)title->ob_spec) * gl_wchar;
         if (len > root->ob_width)
             len = root->ob_width;
         title->ob_x = (root->ob_width - len) / 2;
+#endif
     }
 }
 
@@ -1867,6 +1899,10 @@ static WORD desk_xlate_fix(void)
         rsrc_obfix(desk_rs_obj, i);
     }
 
+#if CONF_WITH_3D_OBJECTS
+    adjust_3d_positions();
+#endif
+
     /*
      * perform special object alignment - this must be done after
      * translation and coordinate fixing
@@ -1955,7 +1991,7 @@ BOOL deskmain(void)
     /* initialize menus and dialogs */
     for (ii = 0; ii < RS_NTREE; ii++)
     {
-        centre_title(desk_rs_trees[ii]);
+        align_title(desk_rs_trees[ii]);
     }
 
     for (ii = 0; ii < RS_NBB; ii++) /* initialize bit images */

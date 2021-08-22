@@ -1516,6 +1516,7 @@ void do_format(void)
     WORD i, drivebits, drive;
     WORD exitobj, rc;
     WORD max_width, incr;
+    BOOL done = FALSE;
 
     tree = desk_rs_trees[ADFORMAT];
 
@@ -1606,7 +1607,10 @@ void do_format(void)
         if (exitobj == FMT_OK)
             rc = format_floppy(tree, max_width, incr);
         else
+        {
             rc = -1;
+            done = TRUE;
+        }
         end_dialog(tree);
 
         if (rc == 0)
@@ -1615,12 +1619,12 @@ void do_format(void)
             refresh_drive('A'+drive);           /* update relevant windows */
             dos_space(drive + 1, &total, &avail);
             if (fun_alert_merge(2, STFMTINF, avail) == 2)
-                rc = -1;
+                done = TRUE;
         }
         tree[FMT_BAR].ob_width = max_width;     /* reset to starting values */
         tree[FMT_BAR].ob_spec = 0x00FF1101L;
         tree[FMT_OK].ob_state &= ~SELECTED;
-    } while (rc == 0);
+    } while (!done);
 }
 #endif
 

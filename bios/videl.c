@@ -125,7 +125,7 @@ static UWORD ste_shadow_palette[16];
 /*
  * tables that cover all(?) valid Falcon modes
  * note:
- *  . 256-colour and Truecolor modes are not currently supported by the VDI
+ *  . Truecolor modes are not currently supported by the VDI
  */
 static const VMODE_ENTRY vga_init_table[] = {
     /* the entries in this table are for VGA/NTSC (i.e. VGA 60Hz) and VGA/PAL

@@ -447,6 +447,23 @@ static WORD ob_user(OBJECT *tree, WORD obj, GRECT *pt, LONG spec,
 }
 
 
+#if CONF_WITH_NICELINES
+/*
+ *  Routine to determine if an object's text is all dashes
+ */
+static BOOL is_dashes(char *s, WORD len)
+{
+    while(len--)
+    {
+        if (*s++ != '-')
+            return FALSE;
+    }
+
+    return TRUE;
+}
+#endif
+
+
 /*
  *  Routine to draw an object from an object tree.
  */
@@ -811,7 +828,35 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
                 }
 #endif
             }
-            gsx_tblt(IBM, tmpx, tmpy, len);
+#if CONF_WITH_NICELINES
+            /*
+             * for an apparent menu separator, we replace the traditional
+             * string of dashes with a drawn line for neatness
+             */
+            if ((obtype == G_STRING) && (state & DISABLED) && is_dashes((char *)spec, len))
+            {
+                gsx_cline(t.g_x, t.g_y+t.g_h/2, t.g_x+t.g_w-1, t.g_y+t.g_h/2);
+            }
+            else
+#endif
+            {
+                gsx_tblt(IBM, tmpx, tmpy, len);
+            }
+#if CONF_WITH_ALT_DESKTOP_GRAPHICS
+            /*
+             * handle special formatting used when EmuDesk wants a dialog
+             * title to be underlined
+             */
+            if ((obtype == G_STRING) && (state & WHITEBAK))
+            {
+                gsx_attr(FALSE, MD_REPLACE, LBLACK);
+                gsx_cline(t.g_x, t.g_y+t.g_h+2, t.g_x+t.g_w, t.g_y+t.g_h+2);
+#if CONF_WITH_3D_OBJECTS
+                gsx_attr(FALSE, MD_REPLACE, WHITE);
+                gsx_cline(t.g_x, t.g_y+t.g_h+1, t.g_x+t.g_w, t.g_y+t.g_h+1);
+#endif
+            }
+#endif
         }
     }
 
@@ -1131,7 +1176,7 @@ WORD ob_delete(OBJECT *tree, WORD obj)
  *  siblings in the tree.  0 is the head of the list and NIL
  *  is the tail of the list.
  */
-void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
+BOOL ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
 {
     WORD parent;
     WORD chg_obj, ii, junk;
@@ -1139,7 +1184,7 @@ void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
     OBJECT *parentptr, *movptr, *chgptr;
 
     if (mov_obj == ROOT)
-        return;
+        return FALSE;
 
     parent = get_par(tree, mov_obj, &junk);
     parentptr = treeptr + parent;
@@ -1174,6 +1219,8 @@ void ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
 
     if (movptr->ob_next == parent)
         parentptr->ob_tail = mov_obj;
+
+    return TRUE;
 }
 
 

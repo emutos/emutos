@@ -17,7 +17,7 @@ extern AESPD    *gl_mnppd;
 extern WORD     gl_dabox;
 
 
-UWORD do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
+BOOL do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
              WORD dochg, WORD dodraw, WORD chkdisabled);
 WORD mn_do(WORD *ptitle, WORD *pitem);
 

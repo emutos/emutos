@@ -519,7 +519,7 @@ msgstr "  Välimuisti"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
-msgstr "Lue/Kirj."
+msgstr "Luku/Kirjoitus"
 
 #: desk/desk_rsc.c
 msgid "Read-Only"

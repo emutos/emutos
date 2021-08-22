@@ -523,7 +523,7 @@ msgstr "  Caché"
 
 #: desk/desk_rsc.c
 msgid "Read/Write"
-msgstr "Lect./Escr."
+msgstr "Lectura/Escritura"
 
 #: desk/desk_rsc.c
 msgid "Read-Only"
