@@ -30,6 +30,7 @@ extern void dana_rs232_writeb(UBYTE b);
 
 extern void dana_ikbd_writeb(UBYTE b);
 
+extern void dana_int_4(void);
 extern void dana_int_6(void);
 
 #endif /* MACHINE_DANA */

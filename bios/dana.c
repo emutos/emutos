@@ -36,17 +36,18 @@
 #ifdef MACHINE_DANA
 
 /* Custom registers */
-#define URX1   *(volatile UWORD*)0xfffff904
-#define UTX1   *(volatile UWORD*)0xfffff906
-#define UTX1D  *(volatile UBYTE*)0xfffff907
-#define IVR    *(volatile UBYTE*)0xfffff300
-#define ICR    *(volatile UWORD*)0xfffff302
-#define IMR    *(volatile ULONG*)0xfffff304
-#define ISR    *(volatile ULONG*)0xfffff30c
-#define TCTL1  *(volatile UWORD*)0xfffff600
-#define TPRER  *(volatile UWORD*)0xfffff602
-#define TCMP1  *(volatile UWORD*)0xfffff604
-#define PLLFSR *(volatile UWORD*)0xfffff202
+#define USTCNT1 *(volatile UWORD*)0xfffff900
+#define URX1    *(volatile UWORD*)0xfffff904
+#define UTX1    *(volatile UWORD*)0xfffff906
+#define UTX1D   *(volatile UBYTE*)0xfffff907
+#define IVR     *(volatile UBYTE*)0xfffff300
+#define ICR     *(volatile UWORD*)0xfffff302
+#define IMR     *(volatile ULONG*)0xfffff304
+#define ISR     *(volatile ULONG*)0xfffff30c
+#define TCTL1   *(volatile UWORD*)0xfffff600
+#define TPRER   *(volatile UWORD*)0xfffff602
+#define TCMP1   *(volatile UWORD*)0xfffff604
+#define PLLFSR  *(volatile UWORD*)0xfffff202
 
 static const UBYTE* dana_screenbase;
 
@@ -61,7 +62,7 @@ void dana_init(void)
 	ISR = 0;
 
 	phystop = (UBYTE*) (8L*1024L*1024L);
-	bootflags |= BOOTFLAG_EARLY_CLI;
+	bootflags = 0;
 }
 
 void dana_init_system_timer(void)
@@ -93,6 +94,10 @@ void dana_init_system_timer(void)
 
 void dana_rs232_init(void)
 {
+	KDEBUG(("dana_rs232_init()\n"));
+	VEC_USER(4) = dana_int_4;
+	USTCNT1 |= 1<<3; /* RXRE enable */
+	IMR &= ~(1<<2); /* UART1 interrupts unmask */
 }
 
 BOOL dana_rs232_can_write(void)

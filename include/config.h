@@ -546,6 +546,9 @@
 # ifndef DANA_DEBUG_PRINT
 #  define DANA_DEBUG_PRINT 1
 # endif
+# ifndef ALWAYS_SHOW_INITINFO
+#  define ALWAYS_SHOW_INITINFO 1
+# endif
 #endif
 
 /*

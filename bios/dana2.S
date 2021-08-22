@@ -13,12 +13,31 @@
 #include "asmdefs.h"
 
 #define TSTAT1 0xfffff60a
+#define URX1 0xfffff904
 #define UTX1 0xfffff906
+
+	.globl _dana_int_4
+_dana_int_4:
+	movml %d0-%d2/%a0-%a1, -(%sp)
+
+loop:
+	movw URX1, %d0
+	btstl #13, %d0
+	beqb nodata
+
+	movw %d0, -(%sp)
+	jsr _push_serial_iorec
+	addql #2, %sp
+
+	bra loop
+
+nodata:
+	movml (%sp)+, %d0-%d2/%a0-%a1
+	rte
 
 	.globl _dana_int_6
 _dana_int_6:
-	lea -8(%sp), %sp
-	movml %d0/%a0, (%sp)
+	movml %d0/%a0, -(%sp)
 
 	pea _dana_int_6_ret
 	movw %sr, d0
@@ -31,7 +50,6 @@ _dana_int_6:
 _dana_int_6_ret:
 	andi #0, TSTAT1
 
-	movml (%sp), %d0/%a0
-	lea 8(%sp), %sp
+	movml (%sp)+, %d0/%a0
 	rte
 
