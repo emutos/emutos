@@ -158,7 +158,7 @@ static void draw_3d_outline(GRECT *pt)
 
     gsx_attr(FALSE, MD_REPLACE, LBLACK);
     /*
-     * draw 3 nested lines from bottom left to bottom right to top right:
+     * draw 3 grey nested lines from bottom left to bottom right to top right:
      *                [4,5]
      *                  |
      *      [0,1] --- [2,3]
@@ -182,20 +182,22 @@ static void draw_3d_outline(GRECT *pt)
         v_pline(3, pts);
     }
 
-    gsx_attr(FALSE, MD_REPLACE, WHITE);
     /*
      * draw 3 nested lines from bottom left to top left to top right:
      *      [2,3] --- [4,5]
      *        |
      *      [0,1]
+     * note: the outermost is grey, the inner are white
      */
     pts[0] = pt->g_x - 3;
     pts[1] = pt->g_y + pt->g_h + 2;
     pts[2] = pts[0];
     pts[3] = pt->g_y - 3;
-    pts[4] = pts[2] + pt->g_w + 6;
+    pts[4] = pts[2] + pt->g_w + 5;
     pts[5] = pts[3];
     v_pline(3, pts);
+
+    gsx_attr(FALSE, MD_REPLACE, WHITE);
 
     for (i = 0; i < 2; i++)
     {
