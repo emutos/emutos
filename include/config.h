@@ -528,6 +528,9 @@
 # ifndef CONF_WITH_UAE
 #  define CONF_WITH_UAE 0
 # endif
+# ifndef CONF_WITH_SDMMC
+#  define CONF_WITH_SDMMC 1
+# endif
 # ifndef CONF_SERIAL_CONSOLE
 #  define CONF_SERIAL_CONSOLE 1
 # endif
@@ -545,9 +548,6 @@
 # endif
 # ifndef DANA_DEBUG_PRINT
 #  define DANA_DEBUG_PRINT 1
-# endif
-# ifndef ALWAYS_SHOW_INITINFO
-#  define ALWAYS_SHOW_INITINFO 1
 # endif
 #endif
 

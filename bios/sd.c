@@ -71,7 +71,7 @@
                             /* a useful macro */
 #define msec_to_ticks(msec)     ((msec*CLOCKS_PER_SEC+999)/1000)
                             /* these are byte-count timeout values */
-#define SD_CMD_TIMEOUT          8       /* between sending crc & receiving response */
+#define SD_CMD_TIMEOUT          20      /* between sending crc & receiving response */
 #define SD_CSD_TIMEOUT          8       /* between sending SEND_CSD cmd & receiving data */
                             /* these are millisecond timeout values (see SD specifications v4.10) */
 #define SD_POWERUP_DELAY_MSEC   1       /* minimum power-up time */
@@ -118,6 +118,7 @@ struct cardinfo {
  */
 static struct cardinfo card;
 static UBYTE response[5];
+static BOOL csasserted;
 
 /*
  *  function prototypes
@@ -144,7 +145,30 @@ static LONG sd_write(UWORD drv,ULONG sector,UWORD count,UBYTE *buf);
  */
 void sd_init(void)
 {
+	KDEBUG(("sd_init()\n"));
     sd_check(0);    /* just drive 0 to check */
+}
+
+/*
+ *  assert CS, if already asserted
+ */
+static void sd_assert(void)
+{
+	spi_cs_assert();
+	csasserted = TRUE;
+}
+
+/*
+ *  deassert CS, if already asserted
+ */
+static void sd_release(void)
+{
+	if (csasserted)
+	{
+		spi_cs_unassert();
+		csasserted = FALSE;
+	}
+	spi_recv_byte();
 }
 
 /*
@@ -272,14 +296,11 @@ static int sd_special_read(UBYTE cmd,UBYTE *data)
 UWORD special = (cmd==CMD9) ? 1 : 0;
 int rc = ERR;
 
-    spi_cs_assert();
-
     if (sd_command(cmd,0L,0,R1,response) == 0)
         if (sd_receive_data(data,16,special) == 0)
             rc = 0;
 
-    spi_cs_unassert();
-
+	sd_release();
     return rc;
 }
 
@@ -301,10 +322,9 @@ int i, rc;
 
     /* send at least 74 dummy clocks with CS unasserted (high) */
     spi_cs_unassert();
-    for (i = 0; i < 10; i++)
+    for (i = 0; i < 20; i++)
         spi_send_byte(0xff);
 
-    spi_cs_assert();
 
     /*
      *  if CMD0 doesn't cause a switch to idle state, there's
@@ -314,7 +334,6 @@ int i, rc;
     if ((rc < 0) || !(rc&SD_ERR_IDLE_STATE)) {
         KDEBUG(("CMD0 failed, rc=%d, response=0x%02x\n",rc,response[0]));
         card.type = CARDTYPE_UNKNOWN;
-        spi_cs_unassert();
         return EDRVNR;
     }
 
@@ -331,8 +350,6 @@ int i, rc;
         if (!(card.features&BLOCK_ADDRESSING))
             if (sd_command(CMD16,SECTOR_SIZE,0,R1,response) != 0)
                 card.type = CARDTYPE_UNKNOWN;
-
-    spi_cs_unassert();
 
     KDEBUG(("Card info: type %d, version %d, features 0x%02x\n",
             card.type,card.version,card.features));
@@ -358,8 +375,6 @@ static LONG sd_read(UWORD drv,ULONG sector,UWORD count,UBYTE *buf)
 {
 LONG i, rc, rc2;
 LONG posn, incr;
-
-    spi_cs_assert();
 
     /*
      *  handle byte/block addressing
@@ -399,8 +414,7 @@ LONG posn, incr;
         }
     }
 
-    spi_cs_unassert();
-
+	sd_release();
     return rc;
 }
 
@@ -414,8 +428,6 @@ static LONG sd_write(UWORD drv,ULONG sector,UWORD count,UBYTE *buf)
 {
 LONG i, rc, rc2;
 LONG posn, incr;
-
-    spi_cs_assert();
 
     /*
      *  handle byte/block addressing
@@ -455,8 +467,7 @@ LONG posn, incr;
         }
     }
 
-    spi_cs_unassert();
-
+	sd_release();
     return rc;
 }
 
@@ -498,8 +509,13 @@ static int sd_command(UBYTE cmd,ULONG argument,UBYTE crc,UBYTE resp_type,UBYTE *
      *  2. it cleans up any residual data that the card may be sending as
      *     a result of a previous command that experienced problems.
      */
+	sd_release();
+	sd_assert();
+
     if (sd_wait_for_ready(SD_READ_TIMEOUT_TICKS) < 0)
         return -1;
+
+	KDEBUG(("SD request: %02x %08lx %02x\n", cmd, argument, crc|1));
 
     /* Send the command byte, argument, crc */
     spi_send_byte((cmd & 0x3f) | 0x40);
@@ -512,8 +528,7 @@ static int sd_command(UBYTE cmd,ULONG argument,UBYTE crc,UBYTE resp_type,UBYTE *
     /* CRC is ignored by default in SPI mode ... but we always need a stop bit! */
     spi_send_byte(crc|0x01);
 
-    if (cmd == CMD12)                   /* stop transmission: */
-        spi_recv_byte();                /* always discard first byte */
+	spi_recv_byte();                /* always discard first byte */
 
     /* now we look for the response, which starts with a byte with the 0x80 bit clear */
     for (i = 0; i < SD_CMD_TIMEOUT; i++) {
@@ -542,6 +557,7 @@ static int sd_command(UBYTE cmd,ULONG argument,UBYTE crc,UBYTE resp_type,UBYTE *
         if (sd_wait_for_not_busy(SD_WRITE_TIMEOUT_TICKS) < 0)
             return -1;
 
+	KDEBUG(("SD response: %02x %02x %02x %02x %02x\n", resp[0], resp[1], resp[2], resp[3], resp[4]));
     return resp[0];
 }
 
