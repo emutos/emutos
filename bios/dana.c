@@ -133,6 +133,15 @@ void dana_rs232_writeb(UBYTE b)
 	UTX1D = b;
 }
 
+void dana_rs232_interrupt(UBYTE b)
+{
+#if CONF_SERIAL_CONSOLE && !CONF_SERIAL_CONSOLE_POLLING_MODE
+	push_ascii_ikbdiorec(b);
+#else
+	push_serial_iorec(b);
+#endif
+}
+
 void dana_screen_init(void)
 {
 }

@@ -26,7 +26,7 @@ loop:
 	beqb nodata
 
 	movw %d0, -(%sp)
-	jsr _push_serial_iorec
+	jsr _dana_rs232_interrupt
 	addql #2, %sp
 
 	bra loop

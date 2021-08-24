@@ -27,6 +27,7 @@ extern const UBYTE *dana_physbase(void);
 extern void dana_rs232_init(void);
 extern BOOL dana_rs232_can_write(void);
 extern void dana_rs232_writeb(UBYTE b);
+extern void dana_rs232_interrupt(UBYTE b);
 
 extern void dana_ikbd_writeb(UBYTE b);
 
