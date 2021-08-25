@@ -15,10 +15,14 @@
 
 #ifdef MACHINE_DANA
 
+#define DANA_SCREEN_WIDTH 560L
+#define DANA_SCREEN_HEIGHT 160L
+
 extern void dana_init(void);
 
 extern void dana_init_system_timer(void);
 
+extern void dana_set_lcd_contrast(UBYTE contrast);
 extern void dana_screen_init(void);
 extern ULONG dana_initial_vram_size(void);
 extern void dana_setphys(const UBYTE *addr);

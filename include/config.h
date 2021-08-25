@@ -531,12 +531,6 @@
 # ifndef CONF_WITH_SDMMC
 #  define CONF_WITH_SDMMC 1
 # endif
-# ifndef CONF_SERIAL_CONSOLE
-#  define CONF_SERIAL_CONSOLE 1
-# endif
-# ifndef CONF_SERIAL_CONSOLE_ANSI
-#  define CONF_SERIAL_CONSOLE_ANSI 0
-# endif
 # ifndef CONF_WITH_ADVANCED_CPU
 #  define CONF_WITH_ADVANCED_CPU 0
 # endif

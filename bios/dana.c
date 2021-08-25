@@ -32,6 +32,7 @@
 #include "machine.h"
 #include "has.h"
 #include "spi.h"
+#include "serport.h"
 #include "../bdos/bdosstub.h"
 
 #ifdef MACHINE_DANA
@@ -41,15 +42,34 @@
 #define IMR      *(volatile ULONG*)0xfffff304
 #define ISR      *(volatile ULONG*)0xfffff30c
 #define IVR      *(volatile UBYTE*)0xfffff300
+#define LACDRC   *(volatile UBYTE*)0xfffffa23
+#define LCKCON   *(volatile UBYTE*)0xfffffa27
+#define LGPMR    *(volatile UBYTE*)0xfffffa33
+#define LPICF    *(volatile UBYTE*)0xfffffa20
+#define LPOLCF   *(volatile UBYTE*)0xfffffa21
+#define LPOSR    *(volatile UBYTE*)0xfffffa2d
+#define LPXCD    *(volatile UBYTE*)0xfffffa25
+#define LRAA     *(volatile UBYTE*)0xfffffa28
+#define LRRA     *(volatile UWORD*)0xfffffa28
+#define LSSA     *(volatile ULONG*)0xfffffa00
+#define LVPW     *(volatile UBYTE*)0xfffffa05
+#define LXMAX    *(volatile UWORD*)0xfffffa08
+#define LYMAX    *(volatile UWORD*)0xfffffa0a
 #define PBDATA   *(volatile UBYTE*)0xfffff409
 #define PBDIR    *(volatile UBYTE*)0xfffff408
-#define PBSEL    *(volatile UBYTE*)0xfffff40b
 #define PBPUEN   *(volatile UBYTE*)0xfffff40a
+#define PBSEL    *(volatile UBYTE*)0xfffff40b
+#define PCPDEN   *(volatile UBYTE*)0xfffff412
+#define PCSEL    *(volatile UBYTE*)0xfffff413
+#define PFSEL    *(volatile UBYTE*)0xfffff42b
 #define PJDATA   *(volatile UBYTE*)0xfffff439
 #define PJDIR    *(volatile UBYTE*)0xfffff438
 #define PJPUEN   *(volatile UBYTE*)0xfffff43a
 #define PJSEL    *(volatile UBYTE*)0xfffff43b
+#define PKDATA   *(volatile UBYTE*)0xfffff441
+#define PKSEL    *(volatile UBYTE*)0xfffff443
 #define PLLFSR   *(volatile UWORD*)0xfffff202
+#define PWMR     *(volatile UWORD*)0xfffffa36
 #define SPICONT1 *(volatile UWORD*)0xfffff704
 #define SPIINTCS *(volatile UWORD*)0xfffff706
 #define SPIRXD   *(volatile UWORD*)0xfffff700
@@ -63,13 +83,36 @@
 #define UTX1     *(volatile UWORD*)0xfffff906
 #define UTX1D    *(volatile UBYTE*)0xfffff907
 
+
 #define DELAY_MS(n) delay_loop(loopcount_1_msec * n)
 
-static const UBYTE* dana_screenbase;
 static ULONG clock_frequency;
 
 #define VECTOR(i) (*(volatile PFVOID*)((i)*4))
 #define VEC_USER(i) VECTOR(0x40 + i)
+
+/*
+ * GPIO pin usage that we're aware of, and init time SEL:
+ *
+ * F: c5, 11000101
+ * 		7
+ * 		6 LCD contrast data?
+ * 		5
+ * 		4
+ * 		3
+ * 		2 pen?
+ * 		1
+ * 		0
+ * K: fd, 11111101
+ * 		7 LCD power?
+ * 		6 LCD contrast command?
+ * 		5
+ * 		4 backlight on/off
+ * 		3 LCD contrast clock?
+ * 		2
+ * 		1
+ * 		0
+ */
 
 void dana_init(void)
 {
@@ -97,7 +140,6 @@ void dana_init_system_timer(void)
       prescale += 1;
       cv = dc / prescale;
     }
-	KDEBUG(("prescale=%ld cv=%ld\n", prescale, cv));
 
 	VEC_USER(6) = dana_int_6;
 
@@ -111,7 +153,6 @@ void dana_init_system_timer(void)
 
 void dana_rs232_init(void)
 {
-	KDEBUG(("dana_rs232_init()\n"));
 	VEC_USER(4) = dana_int_4;
 	USTCNT1 |= 1<<3; /* RXRE enable */
 	IMR &= ~(1<<2); /* UART1 interrupts unmask */
@@ -144,22 +185,41 @@ void dana_rs232_interrupt(UBYTE b)
 
 void dana_screen_init(void)
 {
+	PCSEL = 0;
+	PCPDEN = 0;
+	PFSEL &= 0xfe; /* enable LCONTRAST */
+	PKSEL |= 0x90; /* LCD power, backlight GPIO */
+	PKDATA |= 0x90; /* backlight, LCD on */
+
+	LCKCON = 0; /* LCD controller off */
+	LPICF = 8; /* Four-bit bus, black and white mode */
+	LVPW = DANA_SCREEN_WIDTH / 16;
+    LXMAX = DANA_SCREEN_WIDTH;
+    LYMAX = DANA_SCREEN_HEIGHT - 1;
+    LPOLCF = 0;
+    LACDRC = 0;
+    LPXCD = 3;
+    LCKCON = 0x80;
+    LRRA = 0x50;
+    LPOSR = 0;
+
+	dana_set_lcd_contrast(0x70);
+	dana_set_lcd_contrast(0x81);
 }
 
 ULONG dana_initial_vram_size(void)
 {
-	return 560L*160L / 8;
+	return (DANA_SCREEN_WIDTH * DANA_SCREEN_HEIGHT) / 8;
 };
 
 void dana_setphys(const UBYTE *addr)
 {
-    KDEBUG(("dana_setphys(%p)\n", addr));
-    dana_screenbase = addr;
+    LSSA = (ULONG) addr;
 }
 
-const UBYTE *dana_physbase(void)
+const UBYTE* dana_physbase(void)
 {
-    return dana_screenbase;
+    return (UBYTE*) LSSA;
 }
 
 void dana_ikbd_writeb(UBYTE b)

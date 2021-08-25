@@ -12,9 +12,11 @@
 
 #include "asmdefs.h"
 
+#define PFDATA 0xfffff429
+#define PKDATA 0xfffff441
 #define TSTAT1 0xfffff60a
-#define URX1 0xfffff904
-#define UTX1 0xfffff906
+#define URX1   0xfffff904
+#define UTX1   0xfffff906
 
 	.globl _dana_int_4
 _dana_int_4:
@@ -52,4 +54,43 @@ _dana_int_6_ret:
 
 	movml (%sp)+, %d0/%a0
 	rte
+
+	.globl _dana_set_lcd_contrast
+_dana_set_lcd_contrast:
+	moveb (5,%sp), %d0
+
+	| Start sequence
+
+	andib #~0x40, PFDATA
+	orib #0x40, PKDATA
+	.rept 8
+		orib #0x08, PKDATA
+	.endr
+	andib #~0x08, PKDATA
+	andib #~0x40, PKDATA
+
+	moveb #0x80, %d1			| bit marker
+1:
+	andw %d1, %d0				| test bit
+	beqb bit_is_zero
+	orib #0x40, PFDATA		| set bit
+	bra 2f
+bit_is_zero:
+	andib #~0x40, PFDATA		| clear bit
+2:
+	.rep 8
+		orib #0x40, PKDATA
+	.endr
+	andib #~0x40, PKDATA
+
+	lsrb #1, %d1
+	bneb 1b
+
+	.rept 8
+		orib #0x08, PKDATA
+	.endr
+	andib #~0x08, PKDATA
+	andib #~0x40, PKDATA
+
+	rts
 

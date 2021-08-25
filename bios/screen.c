@@ -802,8 +802,8 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
     amiga_get_current_mode_info(planes, hz_rez, vt_rez);
 #elif defined(MACHINE_DANA)
 	*planes = 1;
-	*hz_rez = 480;
-	*vt_rez = 160;
+	*hz_rez = DANA_SCREEN_WIDTH;
+	*vt_rez = DANA_SCREEN_HEIGHT;
 #elif defined(MACHINE_LISA)
     *planes = 1;
     *hz_rez = 720;
