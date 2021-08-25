@@ -200,13 +200,13 @@ void spi_initialise(void)
 void spi_clock_sd(void)
 {
 	/* 8MHz */
-	//SPICONT1 = (SPICONT1 & 0x1fff) | (0<<13); /* divide by 4 */
+	SPICONT1 = (SPICONT1 & 0x1fff) | (0<<13); /* divide by 4 */
 }
 
 void spi_clock_mmc(void)
 {
 	/* 8MHz */
-	//SPICONT1 = (SPICONT1 & 0x1fff) | (0<<13); /* divide by 4 */
+	SPICONT1 = (SPICONT1 & 0x1fff) | (0<<13); /* divide by 4 */
 }
 
 void spi_clock_ident(void)
