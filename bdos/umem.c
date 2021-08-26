@@ -357,7 +357,7 @@ void *srealloc(long amount)
     if (!has_videl)
         return (void *)EINVFN;
 
-    maxmem = initial_vram_size();
+    maxmem = calc_vram_size();
 
     if (amount < 0L)
         return (void *)maxmem;

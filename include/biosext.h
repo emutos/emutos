@@ -41,7 +41,8 @@ extern UBYTE bootflags;
 #define BOOTFLAG_SKIP_HDD_BOOT 0x02
 #define BOOTFLAG_SKIP_AUTO_ACC 0x04
 
-ULONG initial_vram_size(void);
+ULONG calc_vram_size(void);
+
 void flush_data_cache(void *start, long size);
 void invalidate_data_cache(void *start, long size);
 void invalidate_instruction_cache(void *start, long size);

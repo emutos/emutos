@@ -634,7 +634,7 @@ void screen_init_address(void)
     UNUSED(vram_size);
     screen_start = (UBYTE *)CONF_VRAM_ADDRESS;
 #else
-    vram_size = initial_vram_size();
+    vram_size = calc_vram_size();
     /* videoram is placed just below the phystop */
     screen_start = balloc_stram(vram_size, TRUE);
 #endif /* CONF_VRAM_ADDRESS */
@@ -722,13 +722,13 @@ static const struct video_mode vmode_table[] = {
 };
 
 /*
- * calculate initial VRAM size based on video hardware
+ * calculate VRAM size based on video hardware
  *
  * note: all versions of Atari TOS overallocate memory; we do the same
  * because some programs (e.g. NVDI) rely on this and write past what
  * should be the end of screen memory.
  */
-ULONG initial_vram_size(void)
+ULONG calc_vram_size(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();
