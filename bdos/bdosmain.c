@@ -196,7 +196,13 @@ static const FND funcs[] =
 #else
     { NI, 0, 0 },               /* 0x14 */
 #endif
+
+#if CONF_WITH_VIDEL
     { F(srealloc),  0, 2 },     /* 0x15 */
+#else
+    { NI, 0, 0 },               /* 0x15 */
+#endif
+
     { NI, 0, 0 },
     { NI, 0, 0 },
     { NI, 0, 0 },

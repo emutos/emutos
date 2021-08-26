@@ -25,6 +25,7 @@
 #include "xbiosbind.h"
 #include "bdosstub.h"
 #include "cookie.h"
+#include "has.h"        /* for has_videl */
 
 
 /*
@@ -332,6 +333,7 @@ ret:
     return ret_value;
 }
 
+#if CONF_WITH_VIDEL
 /*
  *  srealloc - Function 0x15 (Srealloc)
  *
@@ -350,7 +352,12 @@ ret:
  */
 void *srealloc(long amount)
 {
-    ULONG maxmem = initial_vram_size();
+    ULONG maxmem;
+
+    if (!has_videl)
+        return (void *)EINVFN;
+
+    maxmem = initial_vram_size();
 
     if (amount < 0L)
         return (void *)maxmem;
@@ -360,6 +367,7 @@ void *srealloc(long amount)
 
     return (void *)Physbase();
 }
+#endif
 
 #if CONF_WITH_ALT_RAM
 
