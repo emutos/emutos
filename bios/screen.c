@@ -631,7 +631,7 @@ void screen_init_address(void)
     UBYTE *screen_start;
 
 #if CONF_VRAM_ADDRESS
-    UNUSED(vram_size);
+    vram_size = 0UL;        /* unspecified */
     screen_start = (UBYTE *)CONF_VRAM_ADDRESS;
 #else
     vram_size = calc_vram_size();
@@ -641,7 +641,7 @@ void screen_init_address(void)
 
     /* set new v_bas_ad */
     v_bas_ad = screen_start;
-    KDEBUG(("v_bas_ad = %p, vram_size = %ld\n", v_bas_ad, vram_size));
+    KDEBUG(("v_bas_ad = %p, vram_size = %lu\n", v_bas_ad, vram_size));
     /* correct physical address */
     setphys(screen_start);
 }
