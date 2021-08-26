@@ -17,6 +17,7 @@
 #define ST_VRAM_SIZE        32000UL
 #define TT_VRAM_SIZE        153600UL
 #define FALCON_VRAM_SIZE    368640UL    /* 768x480x256 (including overscan) */
+#define EXTRA_VRAM_SIZE     256UL       /* amount to overallocate, like Atari TOS */
 
 #if CONF_WITH_ATARI_VIDEO
 

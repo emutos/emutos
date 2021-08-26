@@ -738,13 +738,13 @@ ULONG initial_vram_size(void)
     ULONG vram_size;
 
     if (HAS_VIDEL)
-        return FALCON_VRAM_SIZE + 256UL;
+        return FALCON_VRAM_SIZE + EXTRA_VRAM_SIZE;
 
     vram_size = (ULONG)BYTES_LIN * V_REZ_VT;
 
     /* TT TOS allocates 256 bytes more than actually needed. */
     if (HAS_TT_SHIFTER)
-        return vram_size + 256UL;
+        return vram_size + EXTRA_VRAM_SIZE;
 
     /*
      * The most important issue for the ST is ensuring that screen memory
