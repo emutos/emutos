@@ -33,8 +33,12 @@ extern BOOL dana_rs232_can_write(void);
 extern void dana_rs232_writeb(UBYTE b);
 extern void dana_rs232_interrupt(UBYTE b);
 
+extern void dana_kbd_init(void);
+extern void dana_ikbd_interrupt(void);
+extern void dana_poll_keyboard(void);
 extern void dana_ikbd_writeb(UBYTE b);
 
+extern void dana_int_1(void);
 extern void dana_int_4(void);
 extern void dana_int_6(void);
 

@@ -521,6 +521,10 @@ _int_timerc:
 #else
         movem.l d0-d7/a0-a6,-(sp)       // save registers
 #endif
+		// Dana polled keyboard handling
+#ifdef MACHINE_DANA
+		jsr 	_dana_poll_keyboard
+#endif
 
         // repeat keys
         jsr     _kb_timerc_int

@@ -61,16 +61,23 @@
 #define PBSEL    *(volatile UBYTE*)0xfffff40b
 #define PCPDEN   *(volatile UBYTE*)0xfffff412
 #define PCSEL    *(volatile UBYTE*)0xfffff413
+#define PDDATA   *(volatile UBYTE*)0xfffff419
+#define PDSEL    *(volatile UBYTE*)0xfffff41b
+#define PEDATA   *(volatile UBYTE*)0xfffff421
+#define PESEL    *(volatile UBYTE*)0xfffff423
 #define PFSEL    *(volatile UBYTE*)0xfffff42b
 #define PJDATA   *(volatile UBYTE*)0xfffff439
 #define PJDIR    *(volatile UBYTE*)0xfffff438
 #define PJPUEN   *(volatile UBYTE*)0xfffff43a
 #define PJSEL    *(volatile UBYTE*)0xfffff43b
+#define PKDIR    *(volatile UBYTE*)0xfffff440
 #define PKDATA   *(volatile UBYTE*)0xfffff441
 #define PKSEL    *(volatile UBYTE*)0xfffff443
 #define PLLFSR   *(volatile UWORD*)0xfffff202
 #define PWMR     *(volatile UWORD*)0xfffffa36
 #define SPICONT1 *(volatile UWORD*)0xfffff704
+#define SPICONT2 *(volatile UWORD*)0xfffff802
+#define SPIDATA2 *(volatile UWORD*)0xfffff800
 #define SPIINTCS *(volatile UWORD*)0xfffff706
 #define SPIRXD   *(volatile UWORD*)0xfffff700
 #define SPISPC   *(volatile UWORD*)0xfffff70a
@@ -83,6 +90,9 @@
 #define UTX1     *(volatile UWORD*)0xfffff906
 #define UTX1D    *(volatile UBYTE*)0xfffff907
 
+#define ST_READY (1<<2)
+#define ST_RESET (1<<6)
+#define ST_CS (1<<3)
 
 #define DELAY_MS(n) delay_loop(loopcount_1_msec * n)
 
@@ -91,9 +101,39 @@ static ULONG clock_frequency;
 #define VECTOR(i) (*(volatile PFVOID*)((i)*4))
 #define VEC_USER(i) VECTOR(0x40 + i)
 
+static UBYTE keys_pressed[8];
+#include "dana_keymap.h"
+
 /*
  * GPIO pin usage that we're aware of, and init time SEL:
  *
+ * B: 60, 01100000
+ * 		7
+ * 		6 ST micontroller reset
+ * 		5
+ * 		4
+ * 		3
+ * 		2
+ * 		1
+ * 		0
+ * D: 10, 00010000
+ * 		7
+ * 		6
+ * 		5
+ * 		4 ST microcontroller IRQ, IRQ1
+ * 		3
+ * 		2
+ * 		1
+ * 		0
+ * E: c8, 11001000
+ * 		7
+ * 		6
+ * 		5
+ * 		4
+ * 		3 ST microcontroller chip select
+ * 		2
+ * 		1
+ * 		0
  * F: c5, 11000101
  * 		7
  * 		6 LCD contrast data?
@@ -109,10 +149,24 @@ static ULONG clock_frequency;
  * 		5
  * 		4 backlight on/off
  * 		3 LCD contrast clock?
- * 		2
+ * 		2 ST microcontroller?
  * 		1
  * 		0
  */
+
+static void delay_us(ULONG us)
+{
+	ULONG ticks = ((us>>8) + (us>>4) + us)>>4;
+	UWORD then = PLLFSR & 0x8000;
+	while (ticks--)
+	{
+		UWORD now;
+		do
+			now = PLLFSR & 0x8000;
+		while (now == then);
+		then = now;
+	}
+}
 
 void dana_init(void)
 {
@@ -220,6 +274,137 @@ void dana_setphys(const UBYTE *addr)
 const UBYTE* dana_physbase(void)
 {
     return (UBYTE*) LSSA;
+}
+
+static UBYTE st_send_recv(UBYTE b)
+{
+	SPICONT2 = 0x2200; /* enable SPI2 */
+	PEDATA &= ~ST_CS;
+	SPIDATA2 = b;
+	SPICONT2 = 0x2307; /* send/recv byte */
+	while (!(SPICONT2 & (1<<7)))
+		;
+	PEDATA |= ST_CS;
+	return SPIDATA2;
+}
+
+static void st_reset(void)
+{
+	PKSEL |= ST_READY; /* ready pin is GPIO */
+	PBSEL |= ST_RESET; /* reset pin is GPIO */
+	PESEL |= ST_CS;    /* CS pin is GPIO */
+
+	for (;;)
+	{
+		PKDATA &= ~ST_READY;
+		PKDIR |= ST_READY; /* set to output */
+		delay_us(32);
+		PKDIR &= ~ST_READY; /* set to input */
+		if (!(PKDATA & ST_READY))
+		{
+			/* Reset ST controller */
+
+			PBDATA |= ST_RESET;
+			delay_us(15); /* short */
+			PBDATA &= ~ST_RESET;
+			delay_us(1000);
+		}
+		else
+		{
+			delay_us(7000);
+
+			if (st_send_recv(0) == 0xaa)
+				break;
+		}
+	}
+
+	memset(keys_pressed, 0, sizeof(keys_pressed));
+}
+
+void dana_kbd_init(void)
+{
+	KDEBUG(("dana_kbd_init\n"));
+
+	st_reset();
+	#if 0
+	/* Interrupts don't work how I expect, so we're polling instead. */
+	VEC_USER(1) = dana_int_1;
+	IMR &= ~(1L<<16); /* unmask IRQ1 */
+	PDSEL &= ~0x10; /* connect up ST microntroller interrupt line */
+	#endif
+}
+
+void dana_ikbd_interrupt(void)
+{
+	SPICONT2 = 0x2200; /* enable SPI2 */
+	PEDATA &= ~ST_CS;
+	SPIDATA2 = 0;
+	SPICONT2 = 0x2307; /* send/recv byte */
+	while (!(SPICONT2 & (1<<7)))
+		;
+	PEDATA |= ST_CS;
+
+	UBYTE b = SPIDATA2;
+	KDEBUG(("controller said %02x\n", b));
+}
+
+static void press_release_key(UBYTE scancode, BOOL pressed)
+{
+	UBYTE atari = dana_to_atari_keymap[scancode & 0x7f];
+	if (!atari)
+		return;
+
+	typedef void (*kbdvec_t)(UBYTE scancode);
+	kbdvec_t kbdvec;
+	asm volatile ("movel _kbdvecs-4, %0" : "=g" (kbdvec));
+
+	kbdvec(atari | (pressed ? 0 : 0x80));
+}
+
+static BOOL find_key(UBYTE* buffer, UBYTE scancode)
+{
+	int i;
+	for (i=0; i<8; i++)
+		if (buffer[i] == scancode)
+			return TRUE;
+	return FALSE;
+}
+
+void dana_poll_keyboard(void)
+{
+	UBYTE opcode = st_send_recv(0);
+	if (!opcode)
+		return;
+
+	if (opcode & 0x40) /* keyboard command */
+	{
+		if (opcode & 0x10) /* dunno */
+			return;
+
+		UBYTE new_keys[8] = {0};
+
+		int key_count = opcode & 0x0f;
+		UBYTE* k = new_keys;
+		while (key_count--)
+		{
+			delay_us(32);
+			*k++ = st_send_recv(0);
+		}
+
+		int i;
+		for (i=0; i<8; i++)
+		{
+			UBYTE k = keys_pressed[i];
+			if (k && !find_key(new_keys, k))
+				press_release_key(k, FALSE);
+
+			k = new_keys[i];
+			if (k && !find_key(keys_pressed, k))
+				press_release_key(k, TRUE);
+		}
+
+		memcpy(keys_pressed, new_keys, 8);
+	}
 }
 
 void dana_ikbd_writeb(UBYTE b)

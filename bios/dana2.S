@@ -18,6 +18,13 @@
 #define URX1   0xfffff904
 #define UTX1   0xfffff906
 
+	.globl _dana_int_1
+_dana_int_1:
+	movml %d0-%d2/%a0-%a1, -(%sp)
+	jsr _dana_ikbd_interrupt
+	movml (%sp)+, %d0-%d2/%a0-%a1
+	rte
+
 	.globl _dana_int_4
 _dana_int_4:
 	movml %d0-%d2/%a0-%a1, -(%sp)
