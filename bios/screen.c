@@ -33,6 +33,7 @@
 #include "biosmem.h"
 #include "biosext.h"
 #include "bios.h"
+#include "bdosbind.h"
 #include "amiga.h"
 #include "lisa.h"
 #include "nova.h"
@@ -1068,27 +1069,24 @@ WORD getrez(void)
 /*
  * setscreen(): implement the Setscreen() xbios call
  *
- * implementation details:
- *  . sets the logical screen address, iff logLoc > 0
- *  . sets the physical screen address, iff physLoc > 0
- *  . sets the screen resolution iff 0 <= rez <= 7
- *      if a VIDEL is present and rez==3, then the video mode is
- *      set by a call to vsetmode with 'videlmode' as the argument
+ * implementation summary:
+ *  . for all hardware:
+ *      . sets the logical screen address from logLoc, iff logLoc > 0
+ *      . sets the physical screen address from physLoc, iff physLoc > 0
+ *  . for videl, if logLoc==0 and physLoc==0:
+ *      . reallocates screen memory and updates logical & physical
+ *        screen addresses
+ *  . for all hardware:
+ *      . sets the screen resolution iff 0 <= rez <= 7 (this includes
+ *        setting the mode specified by 'videlmode' if appropriate)
+ *      . reinitialises lineA and the VT52 console
+ *
+ *  NOTE: this function is everywhere documented to return void;
+ *  however, in TOS 4, this function returns -1 if 'rez' is invalid
+ *  or Srealloc() failed.
  */
 void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
-#if CONF_WITH_VIDEL
-    /*
-     * fixup videl mode if applicable (this is where we could test
-     * for NULL values in logLoc & physLoc, allocate new memory, &
-     * update logLoc/physLoc)
-     */
-    if (has_videl) {
-        if ((rez == FALCON_REZ) && (videlmode != -1))
-            videlmode = vfixmode(videlmode);
-    }
-#endif
-
     if ((LONG)logLoc > 0) {
         v_bas_ad = logLoc;
         KDEBUG(("v_bas_ad = %p\n", v_bas_ad));
@@ -1101,6 +1099,26 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
     if (rez_was_hacked) {
         return;
     }
+
+#if CONF_WITH_VIDEL
+    /*
+     * 1. fixup videl mode
+     * 2. reallocate screen memory & update logical/physical screen addresses
+     */
+    if (has_videl) {
+        if ((rez == FALCON_REZ) && (videlmode != -1)) {
+            videlmode = vfixmode(videlmode);
+            if (!logLoc && !physLoc) {
+                UBYTE *addr = (UBYTE *)Srealloc(vgetsize(videlmode));
+                if (addr) {
+                    KDEBUG(("screen realloc'd to %d\n", addr));
+                    v_bas_ad = addr;
+                    setphys(addr);
+                }
+            }
+        }
+    }
+#endif
 
     if (rez >= 0 && rez < 8) {
         /* Wait for the end of display to avoid the plane-shift bug on ST */
