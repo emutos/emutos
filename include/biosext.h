@@ -41,7 +41,13 @@ extern UBYTE bootflags;
 #define BOOTFLAG_SKIP_HDD_BOOT 0x02
 #define BOOTFLAG_SKIP_AUTO_ACC 0x04
 
+/* Video RAM stuff */
+#if CONF_WITH_VIDEL
+extern LONG video_ram_size;
+extern void *video_ram_addr;
+#endif
 ULONG calc_vram_size(void);
+#define EXTRA_VRAM_SIZE 256UL   /* amount to overallocate, like Atari TOS */
 
 void flush_data_cache(void *start, long size);
 void invalidate_data_cache(void *start, long size);

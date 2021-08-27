@@ -40,6 +40,11 @@
 void detect_monitor_change(void);
 static void setphys(const UBYTE *addr);
 
+#if CONF_WITH_VIDEL
+LONG video_ram_size;        /* these are used by Srealloc() */
+void *video_ram_addr; 
+#endif
+
 #if CONF_WITH_ATARI_VIDEO
 
 /* Define palette */
@@ -627,17 +632,22 @@ void screen_init_mode(void)
 /* Initialize the video address (mode is already set) */
 void screen_init_address(void)
 {
-    ULONG vram_size;
+    LONG vram_size;
     UBYTE *screen_start;
 
 #if CONF_VRAM_ADDRESS
-    vram_size = 0UL;        /* unspecified */
+    vram_size = 0L;         /* unspecified */
     screen_start = (UBYTE *)CONF_VRAM_ADDRESS;
 #else
     vram_size = calc_vram_size();
     /* videoram is placed just below the phystop */
     screen_start = balloc_stram(vram_size, TRUE);
 #endif /* CONF_VRAM_ADDRESS */
+
+#if CONF_WITH_VIDEL
+    video_ram_size = vram_size;     /* these are used by Srealloc() */
+    video_ram_addr = screen_start;
+#endif
 
     /* set new v_bas_ad */
     v_bas_ad = screen_start;

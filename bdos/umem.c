@@ -25,6 +25,7 @@
 #include "xbiosbind.h"
 #include "bdosstub.h"
 #include "cookie.h"
+#include "string.h"
 #include "has.h"        /* for has_videl */
 
 
@@ -337,35 +338,90 @@ ret:
 /*
  *  srealloc - Function 0x15 (Srealloc)
  *
- *  This function (undocumented by Atari) was introduced in Falcon TOS.
+ *  This system call (undocumented by Atari) was introduced in Falcon TOS.
  *  It has two functions:
  *  'len' < 0:  returns the maximum amount of memory that could be used
  *              for the screen; on standard Atari systems, this is the
- *              largest chunk of free memory in ST RAM
- *  'len' >= 0: allocate a block of memory of size 'len' for the screen
- *              and returns a pointer to it; the memory will be owned by
- *              the boot process.  returns NULL if the memory cannot be
- *              allocated.
+ *              current size of video ram plus the size of the free memory
+ *              (if any) immediately below the current video ram.
+ *  'len' >= 0: allocates a block of memory of size 'len' for the screen
+ *              and returns a pointer to it; the memory is not part of the
+ *              normal GEMDOS memory pool.  returns NULL if the memory
+ *              cannot be allocated.
  *
- *  at this time, this implementation is provided for compatibility
- *  purposes only, since video memory is always preallocated.
+ *  notes:
+ *    . the actual amount of memory allocated (by EmuTOS and TOS4) is 256
+ *      bytes more than specified, for compatibility with screen memory
+ *      allocation in other versions of TOS.
+ *    . this is not yet used by EmuTOS itself: video memory is always
+ *      preallocated at the moment
  */
+#define FREESPACE_KLUDGE    256     /* see code below */
 void *srealloc(long amount)
 {
-    ULONG maxmem;
+    MD *md, *last;
+    LONG available;
+    BOOL realloc;   /* TRUE iff reallocation is possible */
 
     if (!has_videl)
         return (void *)EINVFN;
 
-    maxmem = calc_vram_size();
-
-    if (amount < 0L)
-        return (void *)maxmem;
-
-    if (amount > maxmem)
+    if (video_ram_size == 0)    /* unspecified */
         return NULL;
 
-    return (void *)Physbase();
+    /*
+     * first, calculate available video ram size
+     */
+
+    /* find last free memory segment */
+    for (md = last = pmd.mp_mfl; md; last = md, md = md->m_link)
+        ;
+    if (!last)                  /* "can't happen" */
+        return NULL;
+
+    /*
+     * if free memory is contiguous with existing video ram, we can mess
+     * (carefully) with the last free space MD.  in the very unlikely
+     * event that we used up all the free space defined by the MD, we'd
+     * have to free up the MD itself which would be messy.  the following
+     * calculation of 'available' ensures that the MD will always have at
+     * least FREESPACE_KLUDGE bytes of memory left.
+     */
+    if (last->m_start + last->m_length == video_ram_addr) {
+        available = last->m_length + video_ram_size - EXTRA_VRAM_SIZE - FREESPACE_KLUDGE;
+        realloc = TRUE;
+    } else {
+        available = video_ram_size - EXTRA_VRAM_SIZE;
+        if (available < 0)
+            available = 0;
+        realloc = FALSE;    /* not contiguous, forbid reallocation */
+    }
+
+    /* if just a request for size, return it now */
+    if (amount < 0L)
+        return (void *)available;
+
+    /*
+     * else handle request for reallocation
+     */
+    if (!realloc)               /* can't reallocate */
+        return NULL;
+
+    /* round request up to next 256 bytes, then add extra, just like TOS */
+    amount = (amount + 255UL) & ~255UL;
+    amount += EXTRA_VRAM_SIZE;
+    if (amount > available)
+        return NULL;
+
+    /* update length in MD, plus saved video ram info */
+    last->m_length = last->m_length + video_ram_size - amount;
+    video_ram_size = amount;
+    video_ram_addr = last->m_start + last->m_length;
+
+    /* finally, clear video ram */
+    bzero(video_ram_addr, video_ram_size);
+
+    return (void *)video_ram_addr;
 }
 #endif
 
