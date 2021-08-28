@@ -65,7 +65,10 @@
 #define PDSEL    *(volatile UBYTE*)0xfffff41b
 #define PEDATA   *(volatile UBYTE*)0xfffff421
 #define PESEL    *(volatile UBYTE*)0xfffff423
+#define PFDATA   *(volatile UBYTE*)0xfffff429
+#define PFPUEN   *(volatile UBYTE*)0xfffff42a
 #define PFSEL    *(volatile UBYTE*)0xfffff42b
+#define PGDATA   *(volatile UBYTE*)0xfffff431
 #define PJDATA   *(volatile UBYTE*)0xfffff439
 #define PJDIR    *(volatile UBYTE*)0xfffff438
 #define PJPUEN   *(volatile UBYTE*)0xfffff43a
@@ -94,6 +97,9 @@
 #define ST_RESET (1<<6)
 #define ST_CS (1<<3)
 
+#define PEN_IRQ (1<<1) /* port F */
+#define PEN_CS (1<<2) /* port G */
+
 #define DELAY_MS(n) delay_loop(loopcount_1_msec * n)
 
 static ULONG clock_frequency;
@@ -117,7 +123,7 @@ static UBYTE keys_pressed[8];
  * 		1
  * 		0
  * D: 10, 00010000
- * 		7
+ * 		7 battery?
  * 		6
  * 		5
  * 		4 ST microcontroller IRQ, IRQ1
@@ -133,7 +139,7 @@ static UBYTE keys_pressed[8];
  * 		3 ST microcontroller chip select
  * 		2
  * 		1
- * 		0 pen?
+ * 		0 battery?
  * F: c5, 11000101
  * 		7
  * 		6 LCD contrast data bit
@@ -141,7 +147,7 @@ static UBYTE keys_pressed[8];
  * 		4
  * 		3
  * 		2 
- * 		1 pen
+ * 		1 pen interrupt
  * 		0
  * G:
  * 		7
@@ -149,7 +155,16 @@ static UBYTE keys_pressed[8];
  * 		5
  * 		4
  * 		3
- * 		2 battery CS?
+ * 		2 pen + battery
+ * 		1 battery?
+ * 		0
+ * J:
+ * 		7
+ * 		6 /charger enable
+ * 		5
+ * 		4
+ * 		3
+ * 		2
  * 		1
  * 		0
  * K: fd, 11111101
@@ -331,11 +346,45 @@ static void st_reset(void)
 	memset(keys_pressed, 0, sizeof(keys_pressed));
 }
 
+static UWORD pen_send_recv(UBYTE b)
+{
+	WORD old_sr = set_sr(0x2700); /* interrupts off */
+
+	SPICONT2 = 0x2247; /* enable SPI2 */
+	SPIDATA2 = b;
+	PGDATA &= ~PEN_CS;
+	SPICONT2 = 0x2347; /* send/recv byte */
+	while (!(SPICONT2 & (1<<7)))
+		;
+
+	SPIDATA2 = 0;
+	SPICONT2 = 0x224f;
+	SPICONT2 = 0x234f; /* send/recv sixteen bits */
+	while (!(SPICONT2 & (1<<7)))
+		;
+	PGDATA |= PEN_CS;
+	WORD data = SPIDATA2;
+	set_sr(old_sr);
+
+	return data;
+}
+
 void dana_kbd_init(void)
 {
 	KDEBUG(("dana_kbd_init\n"));
 
 	st_reset();
+
+	PFPUEN &= ~PEN_CS; /* no pull-up resistor */
+	PFSEL |= PEN_CS; /* pen interrupt is GPIO */
+
+	for (;;)
+	{
+		WORD x = pen_send_recv(0x90);
+		WORD y = pen_send_recv(0xd0);
+		KDEBUG(("pen said %04x %04x %02x\n", x, y, PFDATA));
+	}
+
 	#if 0
 	/* Interrupts don't work how I expect, so we're polling instead. */
 	VEC_USER(1) = dana_int_1;
