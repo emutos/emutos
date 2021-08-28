@@ -13,7 +13,7 @@
 /* #define ENABLE_KDEBUG */
 
 #include "emutos.h"
-#include "dana.h"
+#include "amiga.h"
 #include "vectors.h"
 #include "tosvars.h"
 #include "bios.h"

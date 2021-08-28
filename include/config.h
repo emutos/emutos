@@ -543,6 +543,15 @@
 # ifndef DANA_DEBUG_PRINT
 #  define DANA_DEBUG_PRINT 1
 # endif
+# ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
+#  define USE_STOP_INSN_TO_FREE_HOST_CPU 1
+# endif
+# ifndef CONF_SERIAL_CONSOLE
+#  define CONF_SERIAL_CONSOLE 1
+# endif
+# ifndef CONF_SERIAL_CONSOLE_ANSI
+#  define CONF_SERIAL_CONSOLE_ANSI 0
+# endif
 #endif
 
 /*
@@ -1880,6 +1889,17 @@
 #endif
 
 /*
+ * Set DANA_DEBUG_PRINT to 1 to redirect debug prints to the Dana serial port
+ */
+#ifndef DANA_DEBUG_PRINT
+# if CONF_SERIAL_CONSOLE
+#  define DANA_DEBUG_PRINT 1
+# else
+#  define DANA_DEBUG_PRINT 0
+# endif
+#endif
+
+/*
  * Set MIDI_DEBUG_PRINT to 1 to redirect debug prints to MIDI out.  This
  * is useful for an emulator without any native debug print capabilities,
  * or for real hardware. This overrides previous debug print settings.
@@ -2072,8 +2092,8 @@
 # endif
 #endif
 
-#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT) > 1
-# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1.
+#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT + DANA_DEBUG_PRINT) > 1
+# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT, DANA_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1.
 #endif
 
 

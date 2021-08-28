@@ -12,6 +12,8 @@
 
 #include "asmdefs.h"
 
+#ifdef MACHINE_DANA
+
 #define PFDATA 0xfffff429
 #define PKDATA 0xfffff441
 #define TSTAT1 0xfffff60a
@@ -100,4 +102,6 @@ bit_is_zero:
 	andib #~0x40, PKDATA
 
 	rts
+
+#endif
 
