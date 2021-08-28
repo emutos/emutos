@@ -133,23 +133,32 @@ static UBYTE keys_pressed[8];
  * 		3 ST microcontroller chip select
  * 		2
  * 		1
- * 		0
+ * 		0 pen?
  * F: c5, 11000101
  * 		7
- * 		6 LCD contrast data?
+ * 		6 LCD contrast data bit
  * 		5
  * 		4
  * 		3
- * 		2 pen?
+ * 		2 
+ * 		1 pen
+ * 		0
+ * G:
+ * 		7
+ * 		6
+ * 		5
+ * 		4
+ * 		3
+ * 		2 battery CS?
  * 		1
  * 		0
  * K: fd, 11111101
  * 		7 LCD power?
- * 		6 LCD contrast command?
+ * 		6 LCD contrast clock
  * 		5
  * 		4 backlight on/off
- * 		3 LCD contrast clock?
- * 		2 ST microcontroller?
+ * 		3 LCD contrast start/stop bit
+ * 		2 ST microcontroller
  * 		1
  * 		0
  */
@@ -241,9 +250,9 @@ void dana_screen_init(void)
 {
 	PCSEL = 0;
 	PCPDEN = 0;
-	PFSEL &= 0xfe; /* enable LCONTRAST */
+	PFSEL |= 0x01; /* enable LCONTRAST */
 	PKSEL |= 0x90; /* LCD power, backlight GPIO */
-	PKDATA |= 0x90; /* backlight, LCD on */
+	PKDATA |= 0x80; /* backlight, LCD on */
 
 	LCKCON = 0; /* LCD controller off */
 	LPICF = 8; /* Four-bit bus, black and white mode */
@@ -258,7 +267,8 @@ void dana_screen_init(void)
     LPOSR = 0;
 
 	dana_set_lcd_contrast(0x70);
-	dana_set_lcd_contrast(0x81);
+	delay_us(20000);
+	dana_set_lcd_contrast(100); /* reasonable initial contrast */
 }
 
 ULONG dana_initial_vram_size(void)

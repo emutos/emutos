@@ -68,30 +68,30 @@ _dana_set_lcd_contrast:
 
 	| Start sequence
 
-	andib #~0x40, PFDATA
-	orib #0x40, PKDATA
+	andib #~0x40, PFDATA		| data to 0
+	orib #0x40, PKDATA			| clock to 1
 	.rept 8
-		orib #0x08, PKDATA
+		orib #0x08, PKDATA		| command to 1
 	.endr
-	andib #~0x08, PKDATA
-	andib #~0x40, PKDATA
+	andib #~0x08, PKDATA		| command to 0
+	andib #~0x40, PKDATA		| clock to 0
 
-	moveb #0x80, %d1			| bit marker
+	moveb #7, %d1				| which bit
 1:
-	andw %d1, %d0				| test bit
+	btstb %d1, %d0				| test bit
 	beqb bit_is_zero
-	orib #0x40, PFDATA		| set bit
+	orib #0x40, PFDATA			| set data bit
 	bra 2f
 bit_is_zero:
-	andib #~0x40, PFDATA		| clear bit
+	andib #~0x40, PFDATA		| clear data bit
 2:
 	.rep 8
-		orib #0x40, PKDATA
+		orib #0x40, PKDATA		| clock to 1
 	.endr
-	andib #~0x40, PKDATA
+	andib #~0x40, PKDATA		| clock to 0
 
-	lsrb #1, %d1
-	bneb 1b
+	subq #1, %d1
+	bge 1b
 
 	.rept 8
 		orib #0x08, PKDATA
