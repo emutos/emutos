@@ -120,16 +120,17 @@ struct kbdvecs
  */
 typedef void (*ETV_TIMER_T)(int ms); /* Type of BDOS Event Timer */
 
-/* TT resolutions */
-#define TT_HIGH        6
-#define TT_MEDIUM      4
-#define TT_LOW         7
+/* standard Atari resolution values */
+#define ST_LOW          0   /* used for ST/STe */
+#define ST_MEDIUM       1
+#define ST_HIGH         2
+#define FALCON_REZ      3   /* used as a Falcon indicator */
+#define TT_MEDIUM       4   /* used for TT */
+#define TT_HIGH         6
+#define TT_LOW          7
 
-/* ST(e) resolutions */
-#define ST_HIGH        2
-#define ST_MEDIUM      1
-#define ST_LOW         0
-#define FALCON_REZ     3    /* used as a Falcon indicator */
+#define MIN_REZ         ST_LOW          /* valid range (except that 5 isn't used) */
+#define MAX_REZ         TT_LOW
 
 /* monitor types (from VgetMonitor()) */
 #define MON_MONO       0    /* ST monochrome */
