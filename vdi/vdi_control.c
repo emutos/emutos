@@ -471,7 +471,7 @@ void vdi_v_opnwk(Vwk * vwk)
 #endif
        ) {
         if (newrez != Getrez()) {
-            Setscreen(-1L, -1L, newrez, 0);
+            Setscreen(0L, 0L, newrez, 0);
         }
     }
 #if CONF_WITH_VIDEL
@@ -480,7 +480,7 @@ void vdi_v_opnwk(Vwk * vwk)
         WORD newvidel = INTOUT[45];
         WORD curvidel = VsetMode(-1);
         if (curvidel != newvidel) {
-            Setscreen(-1L, -1L, newrez, newvidel);
+            Setscreen(0L, 0L, newrez, newvidel);
         }
     }
 #endif

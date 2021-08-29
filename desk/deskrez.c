@@ -30,7 +30,9 @@
 #include "deskinf.h"
 #include "deskfun.h"
 #include "deskrez.h"
+#include "desksupp.h"
 
+#include "bdosbind.h"
 #include "xbiosbind.h"
 #include "has.h"                /* for has_videl etc */
 #include "biosdefs.h"
@@ -149,6 +151,7 @@ static int change_falcon_rez(WORD *newres,WORD *newmode)
 OBJECT *tree, *obj;
 int i, selected;
 WORD oldmode, oldbase, oldoptions;
+WORD mode;
 
     oldmode = VsetMode(-1);
     oldbase = oldmode & (VIDEL_VERTICAL|VIDEL_COMPAT|VIDEL_80COL|VIDEL_BPPMASK);
@@ -194,10 +197,17 @@ WORD oldmode, oldbase, oldoptions;
     if (i == selected)          /* no change */
         return 0;
 
-    *newres = FALCON_REZ;
-    *newmode = falconmode_from_button[i] | oldoptions;
+    mode = falconmode_from_button[i] | oldoptions;
     if (!(oldoptions&VIDEL_VGA))    /* if RGB mode, */
-        *newmode ^= VIDEL_VERTICAL; /* invert the bit returned */
+        mode ^= VIDEL_VERTICAL;     /* invert the bit returned */
+
+    if (Srealloc(-1L) < VgetSize(mode)) {
+        malloc_fail_alert();
+        return 0;
+    }
+
+    *newres = FALCON_REZ;
+    *newmode = mode;
 
     return 1;
 }
