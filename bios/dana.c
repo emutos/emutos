@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#define ENABLE_KDEBUG
+//#define ENABLE_KDEBUG
 
 #include "emutos.h"
 #include "dana.h"
@@ -378,12 +378,14 @@ void dana_kbd_init(void)
 	PFPUEN &= ~PEN_CS; /* no pull-up resistor */
 	PFSEL |= PEN_CS; /* pen interrupt is GPIO */
 
+#if 0
 	for (;;)
 	{
 		WORD x = pen_send_recv(0x90);
 		WORD y = pen_send_recv(0xd0);
 		KDEBUG(("pen said %04x %04x %02x\n", x, y, PFDATA));
 	}
+#endif
 
 	#if 0
 	/* Interrupts don't work how I expect, so we're polling instead. */
@@ -413,11 +415,7 @@ static void press_release_key(UBYTE scancode, BOOL pressed)
 	if (!atari)
 		return;
 
-	typedef void (*kbdvec_t)(UBYTE scancode);
-	kbdvec_t kbdvec;
-	asm volatile ("movel _kbdvecs-4, %0" : "=g" (kbdvec));
-
-	kbdvec(atari | (pressed ? 0 : 0x80));
+	call_ikbdraw(atari | (pressed ? 0 : 0x80));
 }
 
 static BOOL find_key(UBYTE* buffer, UBYTE scancode)
