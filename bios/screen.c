@@ -1100,6 +1100,11 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
         return;
     }
 
+    /* ignore requests for invalid resolutions */
+    if ((rez < MIN_REZ) || (rez > MAX_REZ)) {
+        return;
+    }
+
 #if CONF_WITH_VIDEL
     /*
      * 1. fixup videl mode
@@ -1120,20 +1125,18 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
     }
 #endif
 
-    if (rez >= 0 && rez < 8) {
-        /* Wait for the end of display to avoid the plane-shift bug on ST */
-        vsync();
+    /* Wait for the end of display to avoid the plane-shift bug on ST */
+    vsync();
 
 #ifdef MACHINE_AMIGA
-        amiga_setrez(rez, videlmode);
+    amiga_setrez(rez, videlmode);
 #elif CONF_WITH_ATARI_VIDEO
-        atari_setrez(rez, videlmode);
+    atari_setrez(rez, videlmode);
 #endif
 
-        /* Re-initialize line-a, VT52 etc: */
-        linea_init();
-        vt52_init();
-    }
+    /* Re-initialize line-a, VT52 etc: */
+    linea_init();
+    vt52_init();
 }
 
 void setpalette(const UWORD *palettePtr)
