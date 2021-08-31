@@ -558,6 +558,9 @@
 # ifndef CONF_WITH_EXTENDED_MOUSE
 #  define CONF_WITH_EXTENDED_MOUSE 0
 # endif
+# ifndef CONF_WITH_FAKE_VBL
+#  define CONF_WITH_FAKE_VBL 1
+# endif
 #endif
 
 /*
