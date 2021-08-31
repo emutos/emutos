@@ -1080,13 +1080,11 @@ WORD getrez(void)
  *      . sets the screen resolution iff 0 <= rez <= 7 (this includes
  *        setting the mode specified by 'videlmode' if appropriate)
  *      . reinitialises lineA and the VT52 console
- *
- *  NOTE: this function is everywhere documented to return void;
- *  however, in TOS 4, this function returns -1 if 'rez' is invalid
- *  or Srealloc() failed.
  */
-void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
+WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
+    WORD oldmode = 0;
+
     if ((LONG)logLoc > 0) {
         v_bas_ad = logLoc;
         KDEBUG(("v_bas_ad = %p\n", v_bas_ad));
@@ -1095,32 +1093,36 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
         setphys(physLoc);
     }
 
-    /* Don't allow any mode changes when Line A variables were 'hacked'. */
-    if (rez_was_hacked) {
-        return;
+    /* forbid res changes if Line A variables were 'hacked' or 'rez' is -1 */
+    if (rez_was_hacked || (rez == -1)) {
+        return 0;
     }
 
-    /* ignore requests for invalid resolutions */
+    /* return error for requests for invalid resolutions */
     if ((rez < MIN_REZ) || (rez > MAX_REZ)) {
-        return;
+        return -1;
     }
 
 #if CONF_WITH_VIDEL
     /*
+     * if we have videl, and this is a mode change request:
      * 1. fixup videl mode
      * 2. reallocate screen memory & update logical/physical screen addresses
      */
     if (has_videl) {
-        if ((rez == FALCON_REZ) && (videlmode != -1)) {
-            videlmode = vfixmode(videlmode);
-            if (!logLoc && !physLoc) {
-                UBYTE *addr = (UBYTE *)Srealloc(vgetsize(videlmode));
-                if (addr) {
+        if (rez == FALCON_REZ) {
+            if (videlmode != -1) {
+                videlmode = vfixmode(videlmode);
+                if (!logLoc && !physLoc) {
+                    UBYTE *addr = (UBYTE *)Srealloc(vgetsize(videlmode));
+                    if (!addr)      /* Srealloc() failed */
+                        return -1;
                     KDEBUG(("screen realloc'd to %d\n", addr));
                     v_bas_ad = addr;
                     setphys(addr);
                 }
             }
+            oldmode = vsetmode(-1);
         }
     }
 #endif
@@ -1137,6 +1139,8 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
     /* Re-initialize line-a, VT52 etc: */
     linea_init();
     vt52_init();
+
+    return oldmode;
 }
 
 void setpalette(const UWORD *palettePtr)
