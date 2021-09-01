@@ -577,7 +577,10 @@ LONG blkdev_getbpb(WORD dev)
     KDEBUG(("blkdev_getbpb(%d)\n",dev));
 
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !(bdev->flags&DEVICE_VALID))
+    {
+        KDEBUG(("device is invalid\n"));
         return 0L;  /* unknown device */
+    }
 
     unit = bdev->unit;
 
@@ -605,7 +608,10 @@ LONG blkdev_getbpb(WORD dev)
 
     /* check if this device supports GetBPB() */
     if (!(bdev->flags & GETBPB_ALLOWED))
+    {
+        KDEBUG(("device does not support Getbpb()\n"));
         return 0L;              /* no can do */
+    }
 
     /*
      * now we can read the bootsector using the physical mode.  for
@@ -621,7 +627,10 @@ LONG blkdev_getbpb(WORD dev)
     } while(ret == CRITIC_RETRY_REQUEST);
 
     if (ret < 0L)
+    {
+        KDEBUG(("can't read boot sector\n"));
         return 0L;  /* error */
+    }
 
     b = (struct bs *)dskbufp;
     b16 = (struct fat16_bs *)dskbufp;
@@ -629,7 +638,11 @@ LONG blkdev_getbpb(WORD dev)
     /* don't login a disk if the logical sector size is too large */
     recsiz = getiword(b->bps);
     if (recsiz > pun_info.max_sect_siz)
+    {
+        KDEBUG(("recsiz %u is too large (max recsiz = %u)\n",
+                recsiz,pun_info.max_sect_siz));
         return 0L;
+    }
 
     /* don't login a disk if the cluster size (in bytes) is invalid */
     clsizb = (ULONG)b->spc * recsiz;
@@ -642,7 +655,10 @@ LONG blkdev_getbpb(WORD dev)
 
     /* don't login a disk if the number of FATs is unsupported */
     if ((b->fat != 1) && (b->fat != 2))
+    {
+        KDEBUG(("invalid FAT count %u\n",b->fat));
         return 0L;
+    }
 
     KDEBUG(("bootsector[dev=%d] = {\n  ...\n  res = %d;\n  hid = %d;\n}\n",
             dev,getiword(b->res),getiword(b->hid)));
