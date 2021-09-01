@@ -569,7 +569,7 @@ LONG blkdev_getbpb(WORD dev)
     BLKDEV *bdev = blkdev + dev;
     struct bs *b;
     struct fat16_bs *b16;
-    ULONG tmp;
+    ULONG tmp, clsizb;
     LONG ret;
     UWORD reserved, recsiz;
     int n, unit;
@@ -626,13 +626,19 @@ LONG blkdev_getbpb(WORD dev)
     b = (struct bs *)dskbufp;
     b16 = (struct fat16_bs *)dskbufp;
 
-    if (b->spc == 0)
-        return 0L;
-
     /* don't login a disk if the logical sector size is too large */
     recsiz = getiword(b->bps);
     if (recsiz > pun_info.max_sect_siz)
         return 0L;
+
+    /* don't login a disk if the cluster size (in bytes) is invalid */
+    clsizb = (ULONG)b->spc * recsiz;
+    if ((clsizb == 0UL) || (clsizb > MAX_CLUSTER_SIZE))
+    {
+        KDEBUG(("invalid cluster size (%lu bytes): spc=%u, recsiz=%u\n",
+                clsizb,b->spc,recsiz));
+        return 0L;
+    }
 
     /* don't login a disk if the number of FATs is unsupported */
     if ((b->fat != 1) && (b->fat != 2))
@@ -643,7 +649,7 @@ LONG blkdev_getbpb(WORD dev)
 
     bdev->bpb.recsiz = recsiz;
     bdev->bpb.clsiz = b->spc;
-    bdev->bpb.clsizb = bdev->bpb.clsiz * bdev->bpb.recsiz;
+    bdev->bpb.clsizb = clsizb;
 
     /*
      * determine the number of root directory sectors
