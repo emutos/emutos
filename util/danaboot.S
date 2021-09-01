@@ -13,7 +13,7 @@
 #include "asmdefs.h"
 
 entry:
-	lea 0x100000, sp
+	lea entry, sp
 	lea 0x2140, a4			// text area start
 	lea data_start, a5		// compressed data start
 	bsr inflate

@@ -650,7 +650,7 @@ emutos.img.deflate: emutos.img
 $(ROM_DANA): obj/danaboot.o util/danaboot.ld Makefile
 	$(LD) obj/danaboot.o -Wl,-T,util/danaboot.ld -o $(ROM_DANA)
 
-obj/danaboot: emutos.img.deflate
+obj/danaboot.o: emutos.img.deflate
 
 #
 # Amiga Image
