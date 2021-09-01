@@ -644,8 +644,13 @@ dana:
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS206))) bytes more than TOS 2.06)"
 	@printf "$(LOCALCONFINFO)"
 
-$(ROM_DANA): emutos.img mkrom
-	cp $< $(ROM_DANA)
+emutos.img.deflate: emutos.img
+	zopfli --deflate emutos.img
+
+$(ROM_DANA): obj/danaboot.o util/danaboot.ld Makefile
+	$(LD) obj/danaboot.o -Wl,-T,util/danaboot.ld -o $(ROM_DANA)
+
+obj/danaboot: emutos.img.deflate
 
 #
 # Amiga Image
