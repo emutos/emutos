@@ -205,7 +205,7 @@ void dana_init(void)
 	clock_frequency = (pc*14 + qc + 15) * 0x8000;
 	KDEBUG(("system clock probably %ld Hz\n", clock_frequency));
   	
-	phystop = (UBYTE*) (8L*1024L*1024L);
+	phystop = (UBYTE*) (4L*1024L*1024L);
 	bootflags = 0;
 }
 
@@ -281,8 +281,6 @@ void dana_screen_init(void)
     LRRA = 0x50;
     LPOSR = 0;
 
-	dana_set_lcd_contrast(0x70);
-	delay_us(20000);
 	dana_set_lcd_contrast(100); /* reasonable initial contrast */
 }
 
