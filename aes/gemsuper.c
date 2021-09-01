@@ -188,15 +188,13 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         break;
     case MENU_CLICK:
         /* distinguish between menu_click() and menu_attach() */
-        /*
-         * although menu_click() is PC-GEM only, it's always
-         * enabled because the desktop uses it.
-         */
+#if CONF_WITH_PCGEM
         if (IN_LEN == 2) {
             if (MN_SETIT)
                 gl_mnclick = MN_CLICK;
             ret = gl_mnclick;
         } else
+#endif
             unsupported = TRUE;
         break;
 

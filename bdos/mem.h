@@ -68,8 +68,11 @@ long xmfree(void *addr);
 long xsetblk(int n, void *blk, long len);
 /* mxalloc */
 void *xmxalloc(long amount, int mode);
+
+#if CONF_WITH_VIDEL
 /* srealloc */
 void *srealloc(long amount);
+#endif
 
 /* init user memory */
 void umem_init(void);

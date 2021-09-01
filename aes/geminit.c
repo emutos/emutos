@@ -762,7 +762,7 @@ void run_accs_and_desktop(void)
  */
 static void new_resolution(WORD rez, WORD videlmode)
 {
-    Setscreen(-1L, -1L, rez, videlmode);        /* change resolution */
+    Setscreen(0L, 0L, rez, videlmode);          /* change resolution */
     initialise_palette_registers(rez, videlmode);
 }
 #endif
