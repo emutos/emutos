@@ -154,45 +154,6 @@ static WORD incr_tail(IOREC *iorec)
     return tail;
 }
 
-#if CONF_WITH_MFP_RS232 || CONF_WITH_TT_MFP
-/*
- * routines shared by both MFPs
- */
-static ULONG rsconf_mfp(MFP *mfp, EXT_IOREC *iorec, WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
-{
-    const struct mfp_rs232_table *init;
-    ULONG old;
-
-    if (baud == -2)     /* wants current baud rate */
-        return iorec->baudrate;
-
-    /*
-     * remember old ucr/rsr/tsr; note that we don't bother with scr, despite
-     * the docs, because it's not useful and TOS doesn't return it either ...
-     */
-    old = ((ULONG)mfp->ucr<<24) | ((ULONG)mfp->rsr<<16) | (ULONG)mfp->tsr<<8;
-
-    if ((baud >= MIN_BAUDRATE_CODE ) && (baud <= MAX_BAUDRATE_CODE)) {
-        iorec->baudrate = baud;
-        init = &mfp_rs232_init[baud];
-        setup_timer(mfp,3,init->control,init->data);
-    }
-
-    if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
-        iorec->flowctrl = ctrl;
-    if (ucr >= 0)
-        mfp->ucr = ucr;
-    if (rsr >= 0)
-        mfp->rsr = rsr;
-    if (tsr >= 0)
-        mfp->tsr = tsr;
-    if (scr >= 0)
-        mfp->scr = scr;
-
-    return old;
-}
-#endif
-
 #if (!CONF_WITH_COLDFIRE_RS232 && CONF_WITH_MFP_RS232 && !RS232_DEBUG_PRINT) || CONF_WITH_TT_MFP
 static void put_iorecbuf(MFP *mfp, IOREC *out, WORD b)
 {
@@ -240,6 +201,45 @@ static LONG get_iorecbuf(IOREC *in)
 
     return value;
 }
+
+#if CONF_WITH_MFP_RS232 || CONF_WITH_TT_MFP
+/*
+ * routines shared by both MFPs
+ */
+static ULONG rsconf_mfp(MFP *mfp, EXT_IOREC *iorec, WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+{
+    const struct mfp_rs232_table *init;
+    ULONG old;
+
+    if (baud == -2)     /* wants current baud rate */
+        return iorec->baudrate;
+
+    /*
+     * remember old ucr/rsr/tsr; note that we don't bother with scr, despite
+     * the docs, because it's not useful and TOS doesn't return it either ...
+     */
+    old = ((ULONG)mfp->ucr<<24) | ((ULONG)mfp->rsr<<16) | (ULONG)mfp->tsr<<8;
+
+    if ((baud >= MIN_BAUDRATE_CODE ) && (baud <= MAX_BAUDRATE_CODE)) {
+        iorec->baudrate = baud;
+        init = &mfp_rs232_init[baud];
+        setup_timer(mfp,3,init->control,init->data);
+    }
+
+    if ((ctrl >= MIN_FLOW_CTRL) && (ctrl <= MAX_FLOW_CTRL))
+        iorec->flowctrl = ctrl;
+    if (ucr >= 0)
+        mfp->ucr = ucr;
+    if (rsr >= 0)
+        mfp->rsr = rsr;
+    if (tsr >= 0)
+        mfp->tsr = tsr;
+    if (scr >= 0)
+        mfp->scr = scr;
+
+    return old;
+}
+#endif
 
 /*
  * MFP serial port i/o routines
