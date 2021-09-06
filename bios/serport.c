@@ -155,25 +155,17 @@ static WORD incr_tail(IOREC *iorec)
 }
 
 #if (!CONF_WITH_COLDFIRE_RS232 && CONF_WITH_MFP_RS232 && !RS232_DEBUG_PRINT) || CONF_WITH_TT_MFP
-static void put_iorecbuf(MFP *mfp, IOREC *out, WORD b)
+static void put_iorecbuf(IOREC *out, WORD b)
 {
     WORD old_sr, tail;
 
     /* disable interrupts */
     old_sr = set_sr(0x2700);
 
-    /*
-     * if the buffer is empty & the port is empty, output directly.
-     * otherwise queue the data.
-     */
-    if ((out->head == out->tail) && (mfp->tsr & 0x80)) {
-        mfp->udr = (UBYTE)b;
-    } else {
-        *(out->buf + out->tail) = (UBYTE)b;
-        tail = incr_tail(out);
-        if (tail != out->head) {        /* buffer not full,  */
-            out->tail = tail;           /*  so ok to advance */
-        }
+    *(out->buf + out->tail) = (UBYTE)b;
+    tail = incr_tail(out);
+    if (tail != out->head) {        /* buffer not full,  */
+        out->tail = tail;           /*  so ok to advance */
     }
 
     /* restore interrupts */
@@ -201,6 +193,28 @@ static LONG get_iorecbuf(IOREC *in)
 
     return value;
 }
+
+static LONG bconstat_iorec(EXT_IOREC *iorec)
+{
+    /* Character available in the serial input buffer? */
+    if (iorec->in.head == iorec->in.tail) {
+        return 0;   /* iorec empty */
+    }
+    else {
+        return -1;  /* not empty => input available */
+    }
+}
+
+static LONG bconin_iorec(EXT_IOREC *iorec)
+{
+    /* Wait for character at the serial line */
+    while(!bconstat_iorec(iorec))
+        ;
+
+    /* Return character... */
+    return get_iorecbuf(&iorec->in);
+}
+
 
 #if CONF_WITH_MFP_RS232 || CONF_WITH_TT_MFP
 /*
@@ -246,23 +260,12 @@ static ULONG rsconf_mfp(MFP *mfp, EXT_IOREC *iorec, WORD baud, WORD ctrl, WORD u
  */
 LONG bconstat1(void)
 {
-    /* Character available in the serial input buffer? */
-    if (iorec1.in.head == iorec1.in.tail) {
-        return 0;   /* iorec empty */
-    }
-    else {
-        return -1;  /* not empty => input available */
-    }
+    return bconstat_iorec(&iorec1);
 }
 
 LONG bconin1(void)
 {
-    /* Wait for character at the serial line */
-    while(!bconstat1())
-        ;
-
-    /* Return character... */
-    return get_iorecbuf(&iorec1.in);
+    return bconin_iorec(&iorec1);
 }
 
 /*
@@ -303,7 +306,15 @@ LONG bconout1(WORD dev, WORD b)
     MFP_BASE->udr = (char)b;
     return 1L;
 # else
-    put_iorecbuf(MFP_BASE, &iorec1.out, b);
+    /*
+     * If the buffer is empty & the port is empty, output directly.
+     * otherwise queue the data.
+     */
+    if ((iorec1.out.head == iorec1.out.tail) && (MFP_BASE->tsr & 0x80)) {
+        MFP_BASE->udr = (UBYTE)b;
+    } else {
+        put_iorecbuf(&iorec1.out, b);
+    }
     return 1L;
 # endif
 #else
@@ -383,21 +394,12 @@ ULONG rsconf1(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
  */
 static LONG bconstatTT(void)
 {
-    /* Character available in the serial input buffer? */
-    if (iorecTT.in.head == iorecTT.in.tail)
-        return 0L;  /* iorec buffer empty */
-
-    return -1L;     /* not empty => input available */
+    return bconstat_iorec(&iorecTT);
 }
 
 static LONG bconinTT(void)
 {
-    /* Wait for character at the serial line */
-    while(!bconstatTT())
-        ;
-
-    /* return data byte */
-    return get_iorecbuf(&iorecTT.in);
+    return bconin_iorec(&iorecTT);
 }
 
 static LONG bcostatTT(void)
@@ -413,8 +415,15 @@ static LONG bconoutTT(WORD dev, WORD b)
     /* Wait for transmit buffer to become empty */
     while(!bcostatTT())
         ;
-
-    put_iorecbuf(TT_MFP_BASE, &iorecTT.out, b);
+     /*
+     * If the buffer is empty & the port is empty, output directly.
+     * otherwise queue the data.
+     */
+    if ((iorecTT.out.head == iorecTT.out.tail) && (TT_MFP_BASE->tsr & 0x80)) {
+        TT_MFP_BASE->udr = (UBYTE)b;
+    } else {
+        put_iorecbuf(&iorecTT.out, b);
+    }
     return 1L;
 }
 
