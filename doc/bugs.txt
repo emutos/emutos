@@ -1,10 +1,6 @@
 Video problems:
 
 Atari Falcon / TOS v4 compatibility bugs:
-+ Videl Inside causes a desktop crash if a resolution is selected that
-  requires more than the standard EmuTOS Falcon video memory allocation
-  (see FALCON_VRAM_SIZE in bios/screen.h).  It should be able to detect
-  or avoid this situation but does not.
 + Certain versions of Hatari (including 2.3.0) in Falcon emulation mode
   may issue the following message (or similar) when EmuTOS switches to
   monochrome mode:
