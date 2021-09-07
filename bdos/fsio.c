@@ -75,13 +75,8 @@ static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm)
 /*
  * xrw - read/write for BDOS functions
  *
- * This has two (related) functions:
- * 1. transfer 'len' bytes between the file indicated by the OFD and the
- *    buffer pointed to by 'ubufr'
- * 2. if 'ubufr' is NULL, return a pointer to the current file position
- *    within an internal buffer.  this is used internally within fsdir.c
- *    and fsopnclo.c to request ixgetfcb() [which calls xrw()] to return a
- *    pointer to a directory entry.
+ * This transfers 'len' bytes between the file indicated by the OFD and
+ * the buffer pointed to by 'ubufr'
  *
  * We wish to do the i/o in whole clusters as much as possible.
  * Therefore, we break the i/o up into 5 sections.  Data which occupies
@@ -94,8 +89,7 @@ static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm)
  * whole clusters.
  *
  *  returns
- *      1. nbr of bytes read/written from/to the file, or
- *      2. pointer (see above)
+ *      nbr of bytes read/written from/to the file
  */
 static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
 {
@@ -138,9 +132,6 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
         addit(p,lenxfr,1);              /* update OFD          */
         len -= lenxfr;                  /* nbr left to do      */
         recn++;                         /* starting w/ next    */
-
-        if (!ubufr)
-            return (long) (bufp+bytn);
 
         if (wrtflg)
             memcpy(bufp+bytn,ubufr,lenxfr);
@@ -255,9 +246,6 @@ mulio:
 
         bufp = getrec((RECNO)p->o_currec+recn,p,wrtflg);
         addit(p,lentail,1);
-
-        if (!ubufr)
-            return (long) bufp;
 
         if (wrtflg)
              memcpy(bufp,ubufr,lentail);
@@ -446,7 +434,33 @@ long    xread(int h, long len, void *ubufr)
  */
 FCB *ixgetfcb(OFD *p)
 {
-    return (FCB *)xrw(0,p,sizeof(FCB),NULL);
+    DMD *dm;
+    UBYTE *buf;
+    RECNO recnum;
+    UWORD offset;
+
+    /* get logical record number & byte offset within it */
+    dm = p->o_dmd;
+    recnum = p->o_curbyt >> dm->m_rblog;
+    offset = p->o_curbyt & dm->m_rbm;
+
+    /* handle start-of-record case */
+    if (offset == 0)
+    {
+        if ((recnum == 0) || (recnum == (RECNO)dm->m_clsiz))
+        {
+            if (nextcl(p,0))    /* end of directory? */
+                return NULL;
+            recnum = 0;
+        }
+    }
+
+    recnum += p->o_currec;
+
+    buf = getrec(recnum,p,0);   /* get desired record  */
+    addit(p,sizeof(FCB),1);     /* update OFD          */
+
+    return (FCB *)(buf+offset);
 }
 
 
