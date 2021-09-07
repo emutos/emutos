@@ -213,7 +213,7 @@ long xmkdir(char *s)
     fd = f->o_dirfil;
 
     ixlseek(fd,f->o_dirbyt);
-    b = (FCB *) ixread(fd,32L,NULL);
+    b = ixgetfcb(fd);
 
     /* is the total path length too long? */    /* M01.01.1107.01 */
     plen = namlen( b->f_name );
@@ -315,7 +315,7 @@ long xrmdir(char *p)
     ixlseek(fd,0x40L);              /* skip over . and .. */
     do
     {
-        if (!(f = (FCB *) ixread(fd,32L,NULL)))
+        if (!(f = ixgetfcb(fd)))
             break;
     } while ((f->f_name[0] == ERASE_MARKER) || (f->f_attrib == FA_LFN));
 
@@ -366,7 +366,7 @@ long xrmdir(char *p)
      * finally, we delete the entry from the parent directory
      */
     ixlseek((f2 = fd->o_dirfil),(pos = fd->o_dirbyt));
-    f = (FCB *)ixread(f2,32L,NULL);
+    f = ixgetfcb(f2);
 
     return ixdel(d1,f,pos);
 }
@@ -1532,7 +1532,7 @@ FCB *scan(DND *dnd, const char *n, WORD att, LONG *posp)
     /*
      *  scan thru the directory file, looking for a match
      */
-    while ((fcb = (FCB *) ixread(fd,32L,NULL)) && (fcb->f_name[0]))
+    while ((fcb = ixgetfcb(fd)) && (fcb->f_name[0]))
     {
         /*
          *  Add New DND.

@@ -80,7 +80,7 @@ static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm)
  *    buffer pointed to by 'ubufr'
  * 2. if 'ubufr' is NULL, return a pointer to the current file position
  *    within an internal buffer.  this is used internally within fsdir.c
- *    and fsopnclo.c to request ixread() [which calls xrw()] to return a
+ *    and fsopnclo.c to request ixgetfcb() [which calls xrw()] to return a
  *    pointer to a directory entry.
  *
  * We wish to do the i/o in whole clusters as much as possible.
@@ -437,6 +437,18 @@ long    xread(int h, long len, void *ubufr)
 
     return ret;
 }
+
+
+/*
+ * ixgetfcb - get ptr to FCB in directory buffer
+ *
+ * returns NULL at end of buffer
+ */
+FCB *ixgetfcb(OFD *p)
+{
+    return (FCB *)xrw(0,p,sizeof(FCB),NULL);
+}
+
 
 /*
  * ixread -
