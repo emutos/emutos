@@ -384,7 +384,8 @@ long ixlseek(OFD *p,long n)
     if ((n&dm->m_clbm) == 0)    /* go one less if on cluster boundary */
         clnum--;
 
-    for (i = 0; i < clnum; i++) {
+    for (i = 0; i < clnum; i++)
+    {
         clx = getclnum(clx,p);
         if (endofchain(clx))
             return EINTRN;      /* FAT chain is shorter than filesize says ... */
@@ -510,11 +511,10 @@ long xwrite(int h, long len, void *ubufr)
      * but this is not compatible with Atari TOS ...
      */
 
-    if (p) {
+    if (p)
         ret = ixwrite(p,len,ubufr);
-    } else {
+    else
         ret = EIHNDL;
-    }
 
     KDEBUG(("xwrite(%d,%ld) => %ld\n",h,len,ret));
 
