@@ -146,7 +146,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
     lentail = len & dm->m_rbm;
 
     lenmid = len - lentail;             /*  Is there a Middle ? */
-    if ( lenmid )
+    if (lenmid)
     {
         hdrrec = recn & dm->m_clrm;
 
@@ -159,8 +159,8 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
              *  the number of header records to read/write.
              */
 
-            hdrrec = ( dm->m_clsiz - hdrrec ) ; /* M00.14.01 */
-            if ( hdrrec > lenmid >> dm->m_rblog )       /* M00.14.01 */
+            hdrrec = dm->m_clsiz - hdrrec;      /* M00.14.01 */
+            if (hdrrec > (lenmid >> dm->m_rblog))   /* M00.14.01 */
                 hdrrec = lenmid >> dm->m_rblog; /* M00.14.01 */
 
             usrio(wrtflg,hdrrec,recn,ubufr,dm);
@@ -293,12 +293,12 @@ long eof(int h)
  *      ixlseek()
  */
 
-long    xlseek(long n, int h, int flg)
+long xlseek(long n, int h, int flg)
 {
     OFD *f;
 
     f = getofd(h);
-    if ( !f )
+    if (!f)
         return(EIHNDL);
 
     if (flg == 2)
@@ -410,13 +410,13 @@ long ixlseek(OFD *p,long n)
  *   bios()
  */
 
-long    xread(int h, long len, void *ubufr)
+long xread(int h, long len, void *ubufr)
 {
     OFD *p;
     long ret;
 
     p = getofd(h);
-    if ( p )
+    if (p)
         ret = ixread(p,len,ubufr);
     else
         ret = EIHNDL;
@@ -468,7 +468,7 @@ FCB *ixgetfcb(OFD *p)
  * ixread -
  */
 
-long    ixread(OFD *p, long len, void *ubufr)
+long ixread(OFD *p, long len, void *ubufr)
 {
     long maxlen;
 
@@ -498,7 +498,7 @@ long    ixread(OFD *p, long len, void *ubufr)
  *   bios()
  */
 
-long    xwrite(int h, long len, void *ubufr)
+long xwrite(int h, long len, void *ubufr)
 {
     OFD *p;
     long ret;
@@ -510,7 +510,7 @@ long    xwrite(int h, long len, void *ubufr)
      * but this is not compatible with Atari TOS ...
      */
 
-    if ( p ) {
+    if (p) {
         ret = ixwrite(p,len,ubufr);
     } else {
         ret = EIHNDL;
@@ -525,7 +525,7 @@ long    xwrite(int h, long len, void *ubufr)
  *  ixwrite -
  */
 
-long    ixwrite(OFD *p, long len, void *ubufr)
+long ixwrite(OFD *p, long len, void *ubufr)
 {
     return(xrw(1,p,len,ubufr));
 }
