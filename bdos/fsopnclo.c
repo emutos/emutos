@@ -156,7 +156,7 @@ long ixcreat(char *name, UBYTE attr)
             if ((f->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR))
                 return EACCDN;          /*  subdir or read only  */
         }
-        pos -= 32;
+        pos -= sizeof(FCB);
         ixdel(dn,f,pos);
     }
     else
@@ -179,7 +179,7 @@ long ixcreat(char *name, UBYTE attr)
     }
 
     builds(s,a);
-    pos -= 32;
+    pos -= sizeof(FCB);
     f->f_attrib = attr;
     for (i = 0; i < 10; i++)
         f->f_fill[i] = 0;
@@ -276,7 +276,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
     p->o_curbyt = 0;                /*  "                           */
     p->o_dnode = dn;                /*  link to directory           */
     p->o_dirfil = dn->d_ofd;        /*  link to dir's OFD           */
-    p->o_dirbyt = dn->d_ofd->o_bytnum - 32; /*  offset of fcb in dir*/
+    p->o_dirbyt = dn->d_ofd->o_bytnum - sizeof(FCB);    /* offset of fcb in dir */
 
     for (p2 = dn->d_files; p2; p2 = p2->o_link)
         if (p2->o_dirbyt == p->o_dirbyt)
@@ -546,7 +546,7 @@ long xunlink(char *name)
     if (f->f_attrib & FA_RO)
         return EACCDN;
 
-    pos -= 32;
+    pos -= sizeof(FCB);
 
     return ixdel(dn,f,pos);
 }
