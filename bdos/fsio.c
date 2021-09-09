@@ -73,20 +73,127 @@ static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm)
 
 
 /*
+ * read/write records on behalf of xrw()
+ *
+ * returns
+ *      NULL if end of cluster chain was reached
+ *      otherwise, updated buffer ptr
+ */
+static char *xrw_recs(WORD wrtflg, OFD *p, RECNO startrec, RECNO numrecs, char *ubufr)
+{
+    DMD *dm;
+    RECNO hdrrec, tailrec, last, nrecs;
+    CLNO numclus;
+    LONG nbytes;
+    WORD rc;
+
+    dm = p->o_dmd;
+
+    /*
+     * do 'header' records
+     */
+    hdrrec = startrec & dm->m_clrm;
+    if (hdrrec)     /* not on a cluster boundary */
+    {
+        /*
+         * the number of records to write is the minimum of:
+         *  .the number of records remaining in the current cluster, and
+         *  .the number of records remaining in the file
+         */
+        hdrrec = dm->m_clsiz - hdrrec;      /* M00.14.01 */
+        if (hdrrec > numrecs)               /* M00.14.01 */
+            hdrrec = numrecs;               /* M00.14.01 */
+
+        KDEBUG(("xrw(%d): xfer head recs %ld->%ld\n",
+                dm->m_drvnum,startrec,startrec+hdrrec-1));
+        usrio(wrtflg,hdrrec,startrec,ubufr,dm);
+        nbytes = hdrrec << dm->m_rblog;
+        ubufr += nbytes;
+        addit(p,nbytes,1);
+        numrecs -= hdrrec;
+    }
+
+    /* now we can calculate the number of 'tail' records */
+    tailrec = numrecs & dm->m_clrm;
+
+    /*
+     * do whole (middle) clusters
+     */
+    numclus = numrecs >> dm->m_clrlog;
+    last = nrecs = 0L;
+    rc = 0;
+
+    while(TRUE)
+    {
+        if (numclus)
+            rc = nextcl(p,wrtflg);
+
+        if (last == 0L)                     /* first time through */
+            last = p->o_currec;
+
+        /* if necessary, complete pending data transfer */
+
+        if ((rc != 0)                       /* end of cluster chain */
+         || (numclus == 0)                  /* end of request */
+         || (p->o_currec != last + nrecs)   /* clusters aren't contiguous */
+         || (nrecs + dm->m_clsiz > CNTMAX)) /* request is too large for one i/o */
+        {
+            if (nrecs)
+            {
+                KDEBUG(("xrw(%d): xfer main recs %ld->%ld\n",
+                        dm->m_drvnum,last,last+nrecs-1));
+                usrio(wrtflg,nrecs,last,ubufr,dm);
+                nbytes = nrecs << dm->m_rblog;
+                addit(p,nbytes,0);
+                ubufr += nbytes;
+                last = p->o_currec;
+                nrecs = 0;
+            }
+        }
+
+        if (rc != 0)
+            return NULL;
+
+        if (numclus == 0)
+            break;
+
+        nrecs += dm->m_clsiz;
+        numclus--;
+    }
+
+    /*
+     * do 'tail' records
+     */
+    if (tailrec)
+    {
+        if (nextcl(p,wrtflg))
+            return NULL;
+        KDEBUG(("xrw(%d): xfer tail recs %ld->%ld\n",
+                dm->m_drvnum,p->o_currec,p->o_currec+tailrec-1));
+        usrio(wrtflg,tailrec,p->o_currec,ubufr,dm);
+        nbytes = tailrec << dm->m_rblog;
+        addit(p,nbytes,1);
+        ubufr += nbytes;
+    }
+
+    return ubufr;
+}
+
+
+/*
  * xrw - read/write for BDOS functions
  *
  * This transfers 'len' bytes between the file indicated by the OFD and
  * the buffer pointed to by 'ubufr'
  *
- * We wish to do the i/o in whole clusters as much as possible.
- * Therefore, we break the i/o up into 5 sections.  Data which occupies
- * part of a logical sector along with data not in the request (both at
- * the start and the end of the request) are handled separately and are
- * called header (tail) bytes.  Data which are contained complete in
- * sectors but share part of a cluster with data not in the request are
- * called header (tail) records.  These are also handled separately.  In
- * between handling of header and tail sections, we do i/o in terms of
- * whole clusters.
+ * We wish to do the i/o in whole records (logical sectors) as much as
+ * possible.  Therefore, we break the i/o up into 3 sections:
+ *  . data at the start of the request which occupies part of a record
+ *    along with data not in the request
+ *  . data which is contained completely within records - this is handled
+ *    separately by xrw_recs()
+ *  . data at the end of the request which occupies part of a record
+ *    along with data not in the request
  *
  *  returns
  *      nbr of bytes read/written from/to the file
@@ -95,34 +202,24 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
 {
     DMD *dm;
     UBYTE *bufp;
-    unsigned int bytn, tailrec;
-    int lenxfr, lentail;
-    RECNO recn, num;
-    int hdrrec, lsiz;
-    RECNO last, nrecs;                  /* multi-sector variables */
-    int lflg;
-    long nbyts;
-    long rc,bytpos,lenrec,lenmid;
-
-    /* determine where we currently are in the file */
+    WORD bytn, lenxfr, lentail;
+    RECNO recn, numrecs;
+    LONG rc, bytpos;
 
     dm = p->o_dmd;                      /*  get drive media descriptor  */
-
     bytpos = p->o_bytnum;               /*  starting file position      */
 
     /*
      * get logical record number to start i/o with
      * (bytn will be byte offset into sector # recn)
      */
-
     recn = p->o_curbyt >> dm->m_rblog;
     bytn = p->o_curbyt & dm->m_rbm;
 
     recn += p->o_currec;
 
-    /* determine "header" of request. */
-
-    if (bytn) /* do header */
+    /* do header bytes */
+    if (bytn)
     {
         /* xfer len is min( #bytes req'd , */
         /* #bytes left in current record ) */
@@ -143,96 +240,17 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
     /* "header" complete.      See if there is a "tail". */
     /* After that, see if there is anything left in the middle. */
 
-    lentail = len & dm->m_rbm;
+    lentail = len & dm->m_rbm;              /* in bytes */
+    numrecs = (len-lentail) >> dm->m_rblog; /* length of middle in records */
 
-    lenmid = len - lentail;             /*  Is there a Middle ? */
-    if (lenmid)
+    if (numrecs)
     {
-        hdrrec = recn & dm->m_clrm;
-
-        if (hdrrec)
-        {
-            /*  if hdrrec != 0, then we do not start on a clus bndy;
-             *  so determine the min of (the nbr sects
-             *  remaining in the current cluster) and (the nbr
-             *  of sects remaining in the file).  This will be
-             *  the number of header records to read/write.
-             */
-
-            hdrrec = dm->m_clsiz - hdrrec;      /* M00.14.01 */
-            if (hdrrec > (lenmid >> dm->m_rblog))   /* M00.14.01 */
-                hdrrec = lenmid >> dm->m_rblog; /* M00.14.01 */
-
-            usrio(wrtflg,hdrrec,recn,ubufr,dm);
-            ubufr += (lsiz = hdrrec << dm->m_rblog);
-            lenmid -= lsiz;
-            addit(p,lsiz,1);
-        }
-
-        /* do whole clusters */
-
-        lenrec = lenmid >> dm->m_rblog;            /* nbr of records  */
-
-        num = lenrec >> dm->m_clrlog;
-        tailrec = lenrec & dm->m_clrm;
-
-        last = nrecs = 0L;
-        nbyts = lflg = 0;
-
-        while (num--)           /*  for each whole cluster...   */
-        {
-            rc = nextcl(p,wrtflg);
-
-            /*
-             *  if eof or non-contiguous cluster, or last cluster
-             *  of request, or request would be for more than CNTMAX sectors,
-             *  then finish pending I/O
-             */
-
-            if ((!rc) && (p->o_currec == last + nrecs) && (nrecs + (long)dm->m_clsiz < CNTMAX))
-            {
-                nrecs += dm->m_clsiz;
-                nbyts += dm->m_clsizb;
-                if (!num)
-                    goto mulio;
-            }
-            else
-            {
-                if (!num)
-                    lflg = 1;
-mulio:
-                if (nrecs)
-                    usrio(wrtflg,nrecs,last,ubufr,dm);
-                ubufr += nbyts;
-                addit(p,nbyts,0);
-                if (rc)
-                    goto eof;
-                last = p->o_currec;
-                nrecs = dm->m_clsiz;
-                nbyts = dm->m_clsizb;
-                if ((!num) && lflg)
-                {
-                    lflg = 0;
-                    goto mulio;
-                }
-            }
-        }  /*  end while  */
-
-        /* do "tail" records */
-
-        if (tailrec)
-        {
-            if (nextcl(p,wrtflg))
-                goto eof;
-            lsiz = tailrec << dm->m_rblog;
-            addit(p,lsiz,1);
-            usrio(wrtflg,tailrec,p->o_currec,ubufr,dm);
-            ubufr += lsiz;
-        }
+        ubufr = xrw_recs(wrtflg,p,recn,numrecs,ubufr);
+        if (!ubufr)                         /* end of cluster chain reached */
+            goto eof;
     }
 
-    /* do tail bytes within this cluster */
-
+    /* do tail bytes */
     if (lentail)
     {
         recn = p->o_curbyt >> dm->m_rblog;
@@ -250,7 +268,7 @@ mulio:
         if (wrtflg)
              memcpy(bufp,ubufr,lentail);
         else memcpy(ubufr,bufp,lentail);
-    } /*  end tail bytes  */
+    }
 
 eof:
     rc = p->o_bytnum - bytpos;
