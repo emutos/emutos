@@ -28,14 +28,14 @@
  * update the OFD for the file to reflect the fact that 'siz' bytes
  * have been written to it.
  *
- * flg: update curbyt ? (yes if less than 1 cluster transferred)
+ * update o_curbyt iff less than 1 cluster is being transferred
  */
-static void addit(OFD *p, long siz, int flg)
+static void addit(OFD *p, long siz)
 {
-    p->o_bytnum += siz;
-
-    if (flg)
+    if (siz < p->o_dmd->m_clsizb)
         p->o_curbyt += siz;
+
+    p->o_bytnum += siz;
 
     if (p->o_bytnum > p->o_fileln)
     {
@@ -109,7 +109,7 @@ static char *xrw_recs(WORD wrtflg, OFD *p, RECNO startrec, RECNO numrecs, char *
         usrio(wrtflg,hdrrec,startrec,ubufr,dm);
         nbytes = hdrrec << dm->m_rblog;
         ubufr += nbytes;
-        addit(p,nbytes,1);
+        addit(p,nbytes);
         numrecs -= hdrrec;
     }
 
@@ -144,7 +144,7 @@ static char *xrw_recs(WORD wrtflg, OFD *p, RECNO startrec, RECNO numrecs, char *
                         dm->m_drvnum,last,last+nrecs-1));
                 usrio(wrtflg,nrecs,last,ubufr,dm);
                 nbytes = nrecs << dm->m_rblog;
-                addit(p,nbytes,0);
+                addit(p,nbytes);
                 ubufr += nbytes;
                 last = p->o_currec;
                 nrecs = 0;
@@ -172,7 +172,7 @@ static char *xrw_recs(WORD wrtflg, OFD *p, RECNO startrec, RECNO numrecs, char *
                 dm->m_drvnum,p->o_currec,p->o_currec+tailrec-1));
         usrio(wrtflg,tailrec,p->o_currec,ubufr,dm);
         nbytes = tailrec << dm->m_rblog;
-        addit(p,nbytes,1);
+        addit(p,nbytes);
         ubufr += nbytes;
     }
 
@@ -226,7 +226,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
 
         lenxfr = min(len,dm->m_recsiz-bytn);
         bufp = getrec(recn,p,wrtflg);   /* get desired record  */
-        addit(p,lenxfr,1);              /* update OFD          */
+        addit(p,lenxfr);                /* update OFD          */
         len -= lenxfr;                  /* nbr left to do      */
         recn++;                         /* starting w/ next    */
 
@@ -263,7 +263,7 @@ static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
         }
 
         bufp = getrec((RECNO)p->o_currec+recn,p,wrtflg);
-        addit(p,lentail,1);
+        addit(p,lentail);
 
         if (wrtflg)
              memcpy(bufp,ubufr,lentail);
@@ -477,7 +477,7 @@ FCB *ixgetfcb(OFD *p)
     recnum += p->o_currec;
 
     buf = getrec(recnum,p,0);   /* get desired record  */
-    addit(p,sizeof(FCB),1);     /* update OFD          */
+    addit(p,sizeof(FCB));       /* update OFD          */
 
     return (FCB *)(buf+offset);
 }
