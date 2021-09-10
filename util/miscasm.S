@@ -150,40 +150,46 @@ _just_rts:
 /*
  *  WORD mul_div_round(WORD mult1,WORD mult2,WORD divisor)
  *
- *  multiplies two WORDs together and divides by a WORD, returning a WORD.
- *  the result is rounded away from zero if the remainder is greater than
- *  or equal to half the divisor.
+ *  returns (mult1 * mult2 / divisor), rounded away from zero
+ *
+ *  this is actually calculated as:
+ *      ((mult1 * mult2 * 2 / divisor) +/- 1) / 2
+ *  where mult1 & divisor are signed 16-bit integers
+ *        mult2 is a signed 15-bit integer
+ *
+ *  this version of the code is derived (with some tweaks) from the
+ *  original imported AES code (function mul_div() in aes/gsx2.S)
  *
  *  if you do not need rounding, use mul_div() from intmath.h instead!
  */
         .globl  _mul_div_round
 _mul_div_round:
-        move.l  d2,-(sp)        // ColdFire friendly
-        move.l  d3,-(sp)
-        moveq   #1,d1           // preload increment
-        move.w  8+6(sp),d0
-        muls    8+4(sp),d0      // d0 = mult1 * mult2
-        jpl     mulplus
-        neg.l   d1              // negate increment
-mulplus:
-        move.w  8+8(sp),d2
-        divs    d2,d0           // d0 = mult1 * mult2 / divisor
-        ext.l   d2              // extend divisor to longword for ColdFire
-        jpl     divplus         // branch if divisor positive
-        neg.l   d1              // else negate increment
-        neg.l   d2              //  & make divisor positive
-divplus:
-        move.l  d0,d3
-        swap    d3              // d3.w = remainder
-        ext.l   d3              // extend remainder to longword for ColdFire
-        jpl     remplus         // branch if positive
-        neg.l   d3              // else make remainder positive
-remplus:
-        asl.l   #1,d3           // d3.l = 2 * remainder
-        cmp.l   d2,d3           // bigger than divisor?
-        jlt     noround         // no, branch
-        add.l   d1,d0           // else add increment
-noround:
-        move.l  (sp)+,d3
-        move.l  (sp)+,d2
+#ifdef __mcoldfire__
+        moveq.l #0,d0
+        move.w  6(sp),d0        // d0 = mult2
+        add.l   d0,d0           // d0 = mult2 * 2
+        muls.w  4(sp),d0        // d0 = mult1 * mult2 * 2
+        divs.w  8(sp),d0        // d0 = (mult1 * mult2 * 2) / divisor
+        ext.l   d0
+        jmi     mdrminus
+        addq.l  #1,d0           // d0 = (mult1 * mult2 * 2) / divisor + 1
+        asr.l   #1,d0           // d0 = ((mult1 * mult2 * 2) / divisor + 1) / 2
         rts
+mdrminus:
+        subq.l  #1,d0           // d0 = (mult1 * mult2 * 2) / divisor - 1
+        asr.l   #1,d0           // d0 = ((mult1 * mult2 * 2) / divisor - 1) / 2
+        rts
+#else
+        move.w  6(sp),d0        // d0 = mult2
+        add.w   d0,d0           // d0 = mult2 * 2
+        muls.w  4(sp),d0        // d0 = mult1 * mult2 * 2
+        divs.w  8(sp),d0        // d0 = (mult1 * mult2 * 2) / divisor
+        jmi     mdrminus
+        addq.w  #1,d0           // d0 = (mult1 * mult2 * 2) / divisor + 1
+        asr.w   #1,d0           // d0 = ((mult1 * mult2 * 2) / divisor + 1) / 2
+        rts
+mdrminus:
+        subq.w  #1,d0           // d0 = (mult1 * mult2 * 2) / divisor - 1
+        asr.w   #1,d0           // d0 = ((mult1 * mult2 * 2) / divisor - 1) / 2
+        rts
+#endif
