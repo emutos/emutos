@@ -192,7 +192,8 @@ static void clc_arc(Vwk * vwk, int steps)
     steps = point - (Point *)PTSIN; /* number of points, not number of steps */
 
     /*
-     * If pie wedge draw to center and then close
+     * If pie wedge, draw to center
+     * (when 'polygon' runs, it always connects the first point to the last)
      */
     if ((CONTRL[5] == 3) || (CONTRL[5] == 7)) { /* v_pieslice()/v_ellpie() */
         point->x = xc;
@@ -202,7 +203,8 @@ static void clc_arc(Vwk * vwk, int steps)
 
     point = (Point *)PTSIN;
     /*
-     * If arc or circle, do nothing because loop should close circle
+     * If arc or ellarc, we draw a line;
+     * otherwise (pieslice, circle, ellipse, ellpie), we draw a polygon
      */
     if ((CONTRL[5] == 2) || (CONTRL[5] == 6)) { /* v_arc() or v_ellarc() */
         if (vwk->line_width == 1) {
