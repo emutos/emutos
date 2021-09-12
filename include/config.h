@@ -1591,7 +1591,7 @@
  *  . left-align dialog titles and draw a line under them
  */
 #ifndef CONF_WITH_ALT_DESKTOP_GRAPHICS
-# define CONF_WITH_ALT_DESKTOP_GRAPHICS 1
+# define CONF_WITH_ALT_DESKTOP_GRAPHICS 0
 #endif
 
 /*
