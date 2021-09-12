@@ -512,59 +512,39 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
      * pixels).  We now conform to Atari TOS.
      */
 
-    if (attr->clip) {
-        /*
-         * Clipping is in force.  Clip the endpoints of the line segment
-         * to the left and right sides of the clipping rectangle.
-         */
+    /*
+     * Loop through points, calling draw_rect_common() for each pair
+     */
+    bufptr = vdishare.main.fill_buffer;
+    for (i = intersections / 2 - 1; i >= 0; i--) {
+        WORD x1, x2;
+        Rect rect;
 
-        /* loop through buffered points */
-        WORD * ptr = vdishare.main.fill_buffer;
-        for (i = intersections / 2 - 1; i >= 0; i--) {
-            WORD x1, x2;
-            Rect rect;
+        /* grab a pair of endpoints */
+        x1 = *bufptr++;
+        x2 = *bufptr++;
 
-            /* grab a pair of endpoints */
-            x1 = *ptr++;
-            x2 = *ptr++;
-
-            if ( x1 < clipper->xmn_clip ) {
-                if ( x2 < clipper->xmn_clip )
+        /* handle clipping */
+        if (attr->clip) {
+            if (x1 < clipper->xmn_clip) {
+                if (x2 < clipper->xmn_clip)
                     continue;           /* entire segment clipped left */
                 x1 = clipper->xmn_clip; /* clip left end of line */
             }
 
-            if ( x2 > clipper->xmx_clip ) {
-                if ( x1 > clipper->xmx_clip )
-                    continue;           /* entire segment clippped */
+            if (x2 > clipper->xmx_clip) {
+                if (x1 > clipper->xmx_clip)
+                    continue;           /* entire segment clipped right */
                 x2 = clipper->xmx_clip; /* clip right end of line */
             }
-            rect.x1 = x1;
-            rect.y1 = y;
-            rect.x2 = x2;
-            rect.y2 = y;
-
-            /* rectangle fill routine draws horizontal line */
-            draw_rect_common(attr, &rect);
         }
-    }
-    else {
-        /* Clipping is not in force.  Draw from point to point. */
+        rect.x1 = x1;
+        rect.y1 = y;
+        rect.x2 = x2;
+        rect.y2 = y;
 
-        /* loop through buffered points */
-        WORD * ptr = vdishare.main.fill_buffer;
-        for (i = intersections / 2 - 1; i >= 0; i--) {
-            Rect rect;
-
-            /* grab a pair of endpoints */
-            rect.x1 = *ptr++;
-            rect.y1 = y;
-            rect.x2 = *ptr++;
-            rect.y2 = y;
-
-            /* rectangle fill routine draws horizontal line */
-            draw_rect_common(attr, &rect);
-        }
+        /* rectangle fill routine draws horizontal line */
+        draw_rect_common(attr, &rect);
     }
 }
 
