@@ -490,18 +490,20 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
 
     /*
      * All of the points of intersection have now been found.  If there
-     * were none then there is nothing more to do.  Otherwise, sort the
-     * list of points of intersection in ascending order.
+     * were none (or one, which I think is impossible), then there is
+     * nothing more to do.  Otherwise, sort the list of points of
+     * intersection in ascending order.
      * (The list contains only the x-coordinates of the points.)
      */
-
-    /* anything to do? */
-    if (intersections == 0)
+    if (intersections < 2)
         return;
 
-    /* bubblesort the intersections, if it makes sense */
-    if ( intersections > 1 )
-        bub_sort(vdishare.main.fill_buffer, intersections);
+    /*
+     * Sort the intersections.  There are almost always exactly 2, except
+     * for weird shapes (if this wasn't true, bubble sort would be a bad
+     * choice).
+     */
+    bub_sort(vdishare.main.fill_buffer, intersections);
 
     /*
      * Testing under Atari TOS shows that the fill area always *includes*
