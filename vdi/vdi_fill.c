@@ -452,7 +452,7 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
         /* if the current vector is horizontal, ignore it. */
         dy = y2 - y1;
         if ( dy ) {
-            LONG dy1, dy2;
+            WORD dy1, dy2;
 
             /* fetch scan-line y. */
             dy1 = y - y1;       /* d4 - delta y1. */
@@ -466,7 +466,7 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
              * not intersect and can be ignored.  The origin for this
              * test is found in Newman and Sproull.
              */
-            if ((dy1 < 0) != (dy2 < 0)) {
+            if ((dy1^dy2) < 0) {
                 int dx;
                 WORD x1, x2;
                 x1 = point[i].x;        /* fetch x-value of 1st endpoint. */
