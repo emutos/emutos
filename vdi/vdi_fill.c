@@ -516,7 +516,8 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
      * Loop through points, calling draw_rect_common() for each pair
      */
     bufptr = vdishare.main.fill_buffer;
-    for (i = intersections / 2 - 1; i >= 0; i--) {
+    i = intersections / 2;
+    while(i--) {
         WORD x1, x2;
         Rect rect;
 
