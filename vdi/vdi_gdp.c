@@ -21,7 +21,8 @@
  * rectangle.  this should be 5 for TOS visual compatibility.
  */
 #define CORNER_POINTS   5
-#define RBOX_POINTS     (4*CORNER_POINTS+1)
+#define RBOX_POINTS     (4*CORNER_POINTS+1)     /* for polyline()/wideline() */
+#define RFBOX_POINTS    (4*CORNER_POINTS)       /* for polygon() */
 
 /* Definitions for sine and cosine */
 #define    HALFPI    900
@@ -319,21 +320,20 @@ static void gdp_rbox(Vwk *vwk)
         *p++ = ycentre - *--yp;
     }
 
-    /*
-     * join up the box
-     */
-    *p++ = PTSIN[0];
-    *p = PTSIN[1];
-
     if (CONTRL[5] == 8) {       /* v_rbox() */
         set_LN_MASK(vwk);
+
+        /* join up the polyline */
+        *p++ = PTSIN[0];
+        *p = PTSIN[1];
 
         if (vwk->line_width == 1) {
             polyline(vwk, (Point*)PTSIN, RBOX_POINTS, vwk->line_color);
         } else
             wideline(vwk, (Point*)PTSIN, RBOX_POINTS);
     } else {                    /* v_rfbox() */
-        polygon(vwk, (Point*)PTSIN, RBOX_POINTS);
+        /* polygon() will join up the first & last points itself */
+        polygon(vwk, (Point*)PTSIN, RFBOX_POINTS);
     }
 }
 
