@@ -304,6 +304,9 @@
 # ifndef CONF_WITH_3D_OBJECTS
 #  define CONF_WITH_3D_OBJECTS 0
 # endif
+# ifndef CONF_WITH_EXTENDED_OBJECTS
+#  define CONF_WITH_EXTENDED_OBJECTS 0
+# endif
 # ifndef CONF_WITH_NICELINES
 #  define CONF_WITH_NICELINES 0
 # endif
@@ -1197,6 +1200,14 @@
  */
 #ifndef CONF_WITH_COLOUR_ICONS
 # define CONF_WITH_COLOUR_ICONS 1
+#endif
+
+/*
+ * Set CONF_WITH_EXTENDED_OBJECTS to 1 to include AES support for a
+ * number of MagiC-style object type extensions
+ */
+#ifndef CONF_WITH_EXTENDED_OBJECTS
+# define CONF_WITH_EXTENDED_OBJECTS 1
 #endif
 
 /*
