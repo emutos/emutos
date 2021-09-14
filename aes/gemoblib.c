@@ -92,10 +92,10 @@ static const UBYTE vdi16comp[] = {
  */
 static WORD xor_color(WORD color)
 {
-    if ((color >= 16) || (color > gl_ws.ws_ncolors))
+    if ((color >= 16) || (color >= gl_ws.ws_ncolors))
         return WHITE;
 
-    if (gl_ws.ws_ncolors < 4)
+    if (gl_ws.ws_ncolors <= 4)
         return vdi4comp[color];
 
     return vdi16comp[color];
