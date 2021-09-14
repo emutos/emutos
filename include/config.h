@@ -1602,7 +1602,7 @@
  *  . left-align dialog titles and draw a line under them
  */
 #ifndef CONF_WITH_ALT_DESKTOP_GRAPHICS
-# define CONF_WITH_ALT_DESKTOP_GRAPHICS 0
+# define CONF_WITH_ALT_DESKTOP_GRAPHICS 1
 #endif
 
 /*
@@ -2029,6 +2029,11 @@
 # endif
 #endif
 
+#if !CONF_WITH_EXTENDED_OBJECTS
+# if CONF_WITH_ALT_DESKTOP_GRAPHICS
+#  error CONF_WITH_ALT_DESKTOP_GRAPHICS requires CONF_WITH_EXTENDED_OBJECTS.
+# endif
+#endif
 
 /*
  * Sanity checks for debugging options
