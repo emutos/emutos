@@ -3,7 +3,7 @@
  *
  * Note that the bindings for these functions are in gembind.c
  *
- * Copyright (C) 2002-2020 The EmuTOS development team
+ * Copyright (C) 2002-2021 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -38,7 +38,7 @@ WORD evnt_multi(UWORD flags, UWORD bclk, UWORD bmsk, UWORD bst,
                 UWORD m1flags, UWORD m1x, UWORD m1y, UWORD m1w, UWORD m1h,
                 UWORD m2flags, UWORD m2x, UWORD m2y, UWORD m2w, UWORD m2h,
                 WORD *mepbuff, UWORD tlc, UWORD thc, UWORD *pmx, UWORD *pmy,
-                UWORD *pmb, UWORD *pks, UWORD *pkr, UWORD *pbr );
+                UWORD *pmb, UWORD *pks, UWORD *pkr, UWORD *pbr);
 WORD evnt_dclick(WORD rate, WORD setit);
 /*
 UWORD evnt_keybd(void);

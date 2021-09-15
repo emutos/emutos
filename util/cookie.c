@@ -28,13 +28,13 @@ void cookie_init(void)
     dflt_jar[0].tag = 0;
     dflt_jar[0].value = ARRAY_SIZE(dflt_jar);
 
-    p_cookies = (LONG *)dflt_jar;
+    p_cookies = dflt_jar;
 }
 
-void cookie_add(long tag, long value)
+void cookie_add(ULONG tag, ULONG value)
 {
-    long n, count;
-    struct cookie *jar = (struct cookie *)p_cookies;
+    ULONG n, count;
+    struct cookie *jar = p_cookies;
 
     count = 0;
     while(jar->tag)
@@ -58,19 +58,18 @@ void cookie_add(long tag, long value)
  *
  * returns TRUE if found, FALSE if not
  *
- * if found, and the second argument is non-NULL, copies the cookie value
+ * if found, copies the cookie value
  * into the variable pointed to by the second arg
  */
-BOOL cookie_get(LONG tag, LONG *pvalue)
+BOOL cookie_get(ULONG tag, ULONG *pvalue)
 {
     struct cookie *jar;
 
-    for (jar = (struct cookie *)p_cookies; jar->tag; jar++)
+    for (jar = p_cookies; jar->tag; jar++)
     {
         if (jar->tag == tag)
         {
-            if (pvalue)
-                *pvalue = jar->value;
+            *pvalue = jar->value;
             return TRUE;
         }
     }
@@ -81,9 +80,9 @@ BOOL cookie_get(LONG tag, LONG *pvalue)
 /*
  * get the current value of the _IDT cookie; used by EmuDesk
  */
-LONG get_idt_cookie(void)
+ULONG get_idt_cookie(void)
 {
-    LONG idt;
+    ULONG idt;
 
     if (cookie_get(COOKIE_IDT, &idt))
         return idt;
@@ -98,10 +97,10 @@ LONG get_idt_cookie(void)
  */
 UBYTE *get_frb_cookie(void)
 {
-    UBYTE *frbvalue;
+    ULONG frbvalue;
 
-    if (cookie_get(COOKIE_FRB, (LONG *)&frbvalue))
-        return frbvalue;
+    if (cookie_get(COOKIE_FRB, &frbvalue))
+        return (UBYTE *)frbvalue;
 
     return NULL;
 }
@@ -115,7 +114,7 @@ UBYTE *get_frb_cookie(void)
  */
 WORD get_floppy_type(void)
 {
-    LONG value;
+    ULONG value;
 
     if (cookie_get(COOKIE_FDC, &value))
         return value>>24;

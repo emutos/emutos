@@ -2,7 +2,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2011-2019 The EmuTOS development team
+*                 2011-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -89,6 +89,12 @@
 #define TOUCHEXIT   0x0040
 #define HIDETREE    0x0080
 #define INDIRECT    0x0100
+#define FL3DOBJ     0x0200          /* bit flag for 3D indicator OR activator */
+#define FL3DMASK    0x0600
+#define  FL3DNONE   0x0000          /* no 3D effect */
+#define  FL3DIND    0x0200          /* 3D indicator */
+#define  FL3DACT    0x0600          /* 3D activator */
+#define  FL3DBAK    0x0400          /* 3D backgound */
 
 #define NORMAL      0x0000      /* Object states */
 #define SELECTED    0x0001
@@ -118,6 +124,17 @@
 
 #define FILLPAT_MASK    0x00000070L /* obspec colour word masks */
 #define FILLCOL_MASK    0x0000000fL
+
+#define LK3DIND     1           /* ob_which values used with objc_sysvar() */
+#define LK3DACT     2
+#define INDBUTCOL   3
+#define ACTBUTCOL   4
+#define BACKGRCOL   5
+#define AD3DVALUE   6
+
+#define ADJ3DSTD    2           /* standard pixel adjustment for 3D objects */
+#define ADJ3DOUT    3           /* pixel adjustment for 3D OUTLINED objects */
+#define ADJ3DSHA    2           /* pixel adjustment for 3D SHADOWED objects */
 
 typedef struct
 {

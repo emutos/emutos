@@ -220,7 +220,7 @@
 # ifndef CONF_WITH_APOLLO_68080
 #  define CONF_WITH_APOLLO_68080 0
 # endif
-# ifndef  CONF_WITH_CACHE_CONTROL
+# ifndef CONF_WITH_CACHE_CONTROL
 #  define CONF_WITH_CACHE_CONTROL 0
 # endif
 # ifndef CONF_WITH_TT_MMU
@@ -301,6 +301,15 @@
 # ifndef CONF_WITH_WINDOW_COLOURS
 #  define CONF_WITH_WINDOW_COLOURS 0
 # endif
+# ifndef CONF_WITH_3D_OBJECTS
+#  define CONF_WITH_3D_OBJECTS 0
+# endif
+# ifndef CONF_WITH_EXTENDED_OBJECTS
+#  define CONF_WITH_EXTENDED_OBJECTS 0
+# endif
+# ifndef CONF_WITH_NICELINES
+#  define CONF_WITH_NICELINES 0
+# endif
 # ifndef CONF_WITH_WINDOW_ICONS
 #  define CONF_WITH_WINDOW_ICONS 0
 # endif
@@ -324,6 +333,9 @@
 # endif
 # ifndef CONF_WITH_FILEMASK
 #  define CONF_WITH_FILEMASK 0
+# endif
+# ifndef CONF_WITH_ALT_DESKTOP_GRAPHICS
+#  define CONF_WITH_ALT_DESKTOP_GRAPHICS 0
 # endif
 # ifndef CONF_WITH_DESKTOP_CONFIG
 #  define CONF_WITH_DESKTOP_CONFIG 0
@@ -360,6 +372,9 @@
 # endif
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
+# endif
+# ifndef MAX_VERTICES
+#  define MAX_VERTICES 512
 # endif
 # ifndef NUM_VDI_HANDLES
 #  define NUM_VDI_HANDLES 64
@@ -403,6 +418,15 @@
 # ifndef CONF_WITH_DSP
 #  define CONF_WITH_DSP 0
 # endif
+# ifndef CONF_WITH_ALT_DESKTOP_GRAPHICS
+#  define CONF_WITH_ALT_DESKTOP_GRAPHICS 0
+# endif
+# ifndef CONF_WITH_3D_OBJECTS
+#  define CONF_WITH_3D_OBJECTS 0
+# endif
+# ifndef MAX_VERTICES
+#  define MAX_VERTICES 512
+# endif
 #endif
 
 /*
@@ -422,7 +446,7 @@
 # ifndef CONF_WITH_APOLLO_68080
 #  define CONF_WITH_APOLLO_68080 0
 # endif
-# ifndef  CONF_WITH_CACHE_CONTROL
+# ifndef CONF_WITH_CACHE_CONTROL
 #  define CONF_WITH_CACHE_CONTROL 0
 # endif
 # ifndef CONF_WITH_SCSI
@@ -472,6 +496,18 @@
 # endif
 # ifndef CONF_WITH_NOVA
 #  define CONF_WITH_NOVA 0
+# endif
+# ifndef MAX_VERTICES
+#  define MAX_VERTICES 512
+# endif
+#endif
+
+/*
+ * Defaults for the standard floppy target
+ */
+#ifdef TARGET_FLOPPY
+# ifndef MAX_VERTICES
+#  define MAX_VERTICES 512
 # endif
 #endif
 
@@ -1120,125 +1156,9 @@
 
 
 
-/****************************************
- *  S O F T W A R E   S E C T I O N     *
- ****************************************/
-
-/*
- * Define the TOS version here. Valid values are 0x104 and 0x206 for example.
- * This is just a version number, EmuTOS functionality is not affected.
- */
-#ifndef TOS_VERSION
-/* By default, we pretend to be TOS 2.06, as it is available as an update for
- * both ST and STe. On the other hand, TOS 3.x is only for TT and TOS 4.x
- * only for Falcon. */
-# define TOS_VERSION 0x206
-#endif
-
-/*
- * Define the GEMDOS version here: this number is returned by the GEMDOS
- * Sversion() function call. The value contains the minor version number
- * in the high-order byte, and the major version number in the low-order
- * byte.  Valid values include:
- *      0x1300      used by TOS v1.0 & v1.02
- *      0x1500      used by TOS v1.04 & v1.06
- *      0x1700      used by TOS v1.62
- *      0x1900      used by TOS v2.01, v2.05, v3.01, v3.05
- *      0x2000      used by TOS v2.06 & v3.06
- *      0x3000      used by TOS v4.0x
- * This does not have a well-defined purpose, although it could be checked
- * by programs to determine presence or absence of certain GEMDOS functions.
- */
-#ifndef GEMDOS_VERSION
-# define GEMDOS_VERSION 0x2000
-#endif
-
-/*
- * With this switch you can control if some functions should be used as
- * static-inlines. This is generally a good idea if your compiler supports
- * this (the current GCC does). It will shrink the size of the ROM since
- * only very small functions will be used as static inlines, and it will
- * also make the code faster!
- */
-#ifndef USE_STATIC_INLINES
-# define USE_STATIC_INLINES 1
-#endif
-
-/*
- * CONF_LOGSEC_SIZE defines the maximum size of logical sectors that
- * GEMDOS can handle, specified in bytes; however, if a larger value
- * is found on a mounted drive during startup, that value will be used
- * instead.
- *
- * The value *must* be a power of two between 512 and 16384 inclusive.
- *
- * Note that this is only significant if you use Atari-style FAT
- * filesystems; DOS-style FAT filesystems always have a logical sector
- * size of 512 bytes.
- */
-#ifndef CONF_LOGSEC_SIZE
-# define CONF_LOGSEC_SIZE 512
-#endif
-
-/*
- * Set CONF_PREFER_STRAM_DISK_BUFFERS to 1 if disk buffers are more efficient
- * when located in ST-RAM (i.e. for floppy/ACSI DMA transfers)
- */
-#ifndef CONF_PREFER_STRAM_DISK_BUFFERS
-# if CONF_ATARI_HARDWARE
-#  define CONF_PREFER_STRAM_DISK_BUFFERS 1
-# else
-#  define CONF_PREFER_STRAM_DISK_BUFFERS 0
-# endif
-#endif
-
-/*
- * Set CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF to 1 to detect a first boot
- * even when memconf is not called. This is useful when the RAM is
- * already initialized before EmuTOS boots. This is always the case on
- * the FireBee where the actual RAM is setup by the BaS or other pre-OS.
- * Also, this is always the case when EmuTOS itself lives in RAM.
- */
-#ifndef CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
-# if EMUTOS_LIVES_IN_RAM
-#  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 1
-# else
-#  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 0
-# endif
-#endif
-
-/*
- * Set FULL_INITINFO to 0 to display the EmuTOS version as a single line
- * of text instead of the full welcome screen.
- * This is only useful when there are severe ROM size restrictions.
- */
-#ifndef FULL_INITINFO
-# define FULL_INITINFO 1
-#endif
-
-/*
- * By default, the EmuTOS welcome screen (initinfo) is only shown on cold
- * boot.  If you set ALWAYS_SHOW_INITINFO to 1, the welcome screen will
- * always be displayed, on both cold boot and warm boot (reset).
- */
-#ifndef ALWAYS_SHOW_INITINFO
-# define ALWAYS_SHOW_INITINFO 0
-#endif
-
-/*
- * By default, the EmuTOS welcome screen (initinfo) is displayed for 3
- * seconds. On emulators, this is enough to read the text, and optionally
- * to press Shift to keep the screen displayed. But on real hardware, it
- * can take several seconds for the monitor to recover from stand-by mode,
- * so the welcome screen may never be seen. In such cases, it is wise to
- * increase the welcome screen duration.
- * You can use the INITINFO_DURATION define to specifiy the welcome screen
- * duration, in seconds. If it is set to 0, the welcome screen will never
- * be displayed.
- */
-#ifndef INITINFO_DURATION
-# define INITINFO_DURATION 3
-#endif
+/****************************************************
+ *  S O F T W A R E   S E C T I O N   -   A E S     *
+ ****************************************************/
 
 /*
  * AES_STACK_SIZE is the size of the private stack for each AES process,
@@ -1260,18 +1180,18 @@
  * we default to a larger value when building for them (see above).
  *
  * A value for AES_STACK_SIZE can be estimated by enabling the define
- * CONF_DEBUG_AES_STACK (see below).
+ * CONF_DEBUG_AES_STACK (see "Debug section" below).
  */
 #ifndef AES_STACK_SIZE
 # define AES_STACK_SIZE 590     /* standard value for 68K systems, in LONGs */
 #endif
 
 /*
- * Set CONF_WITH_BIOS_EXTENSIONS to 1 to support various BIOS extension
- * functions
+ * Set CONF_WITH_3D_OBJECTS to 1 to enable support for 3D objects,
+ * as in Atari TOS 4
  */
-#ifndef CONF_WITH_BIOS_EXTENSIONS
-# define CONF_WITH_BIOS_EXTENSIONS 1
+#ifndef CONF_WITH_3D_OBJECTS
+# define CONF_WITH_3D_OBJECTS 1
 #endif
 
 /*
@@ -1280,6 +1200,217 @@
  */
 #ifndef CONF_WITH_COLOUR_ICONS
 # define CONF_WITH_COLOUR_ICONS 1
+#endif
+
+/*
+ * Set CONF_WITH_EXTENDED_OBJECTS to 1 to include AES support for a
+ * number of MagiC-style object type extensions
+ */
+#ifndef CONF_WITH_EXTENDED_OBJECTS
+# define CONF_WITH_EXTENDED_OBJECTS 1
+#endif
+
+/*
+ * Set CONF_WITH_GRAF_MOUSE_EXTENSION to 1 to include AES support for
+ * graf_mouse() modes M_SAVE, M_RESTORE, M_PREVIOUS.
+ */
+#ifndef CONF_WITH_GRAF_MOUSE_EXTENSION
+# define CONF_WITH_GRAF_MOUSE_EXTENSION 1
+#endif
+
+/*
+ * Set CONF_WITH_LOADABLE_CURSORS to 1 to allow mouse cursors to
+ * be loaded from the file specified by CURSOR_RSC_NAME
+ */
+#ifndef CONF_WITH_LOADABLE_CURSORS
+# define CONF_WITH_LOADABLE_CURSORS 1
+#endif
+#if CONF_WITH_LOADABLE_CURSORS
+# define CURSOR_RSC_NAME "A:\\EMUCURS.RSC"  /* path to user cursor file */
+#endif
+
+/*
+ * Set CONF_WITH_NICELINES to use a drawn line instead of dashes for
+ * separators in menus
+ */
+#ifndef CONF_WITH_NICELINES
+# define CONF_WITH_NICELINES 1
+#endif
+
+/*
+ * Set CONF_WITH_PCGEM to 1 to support various PC-GEM-compatible AES functions
+ */
+#ifndef CONF_WITH_PCGEM
+# define CONF_WITH_PCGEM 1
+#endif
+
+/*
+ * Set CONF_WITH_WINDOW_COLOURS to 1 to include AES support for managing
+ * window element colours.  Management is via modes WF_COLOR/WF_DCOLOR
+ * in wind_get()/wind_set().
+ */
+#ifndef CONF_WITH_WINDOW_COLOURS
+# define CONF_WITH_WINDOW_COLOURS 1
+#endif
+
+/*
+ * Define the AES version here. This must be done at the end of the
+ * "Software Section - AES", since the value depends on features that
+ * are set within that section. Valid values include:
+ *      0x0120      AES 1.20, used by TOS v1.02
+ *      0x0140      AES 1.40, used by TOS v1.04 & v1.62
+ *      0x0320      AES 3.20, used by TOS v2.06 & v3.06
+ *      0x0330      AES 3.30, indicates the availability of wind_set(WF_COLOR/WF_DCOLOR)
+ *      0x0340      AES 3.40, used by TOS v4.04
+ * Do not change this arbitrarily, as each value implies the presence or
+ * absence of certain AES functions ... but note that we currently define
+ * AES 3.30/3.40 even though we do not (yet) support certain menu_xxx()
+ * functions that were introduced in AES 3.30.
+ */
+#ifndef AES_VERSION
+# if CONF_WITH_3D_OBJECTS && CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
+#  define AES_VERSION 0x0340
+# elif CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
+#  define AES_VERSION 0x0330
+# elif CONF_WITH_GRAF_MOUSE_EXTENSION
+#  define AES_VERSION 0x0320
+# else
+#  define AES_VERSION 0x0140
+# endif
+#endif
+
+
+
+/****************************************************
+ *  S O F T W A R E   S E C T I O N   -   B I O S   *
+ ****************************************************/
+
+/*
+ * Define the TOS version here. Valid values are 0x104 and 0x206 for example.
+ * This is just a version number, EmuTOS functionality is not affected.
+ */
+#ifndef TOS_VERSION
+/* By default, we pretend to be TOS 2.06, as it is available as an update for
+ * both ST and STe. On the other hand, TOS 3.x is only for TT and TOS 4.x
+ * only for Falcon. */
+# define TOS_VERSION 0x206
+#endif
+
+/*
+ * By default, the EmuTOS welcome screen (initinfo) is only shown on cold
+ * boot.  If you set ALWAYS_SHOW_INITINFO to 1, the welcome screen will
+ * always be displayed, on both cold boot and warm boot (reset).
+ */
+#ifndef ALWAYS_SHOW_INITINFO
+# define ALWAYS_SHOW_INITINFO 0
+#endif
+
+/*
+ * Set FULL_INITINFO to 0 to display the EmuTOS version as a single line
+ * of text instead of the full welcome screen.
+ * This is only useful when there are severe ROM size restrictions.
+ */
+#ifndef FULL_INITINFO
+# define FULL_INITINFO 1
+#endif
+
+/*
+ * By default, the EmuTOS welcome screen (initinfo) is displayed for 3
+ * seconds. On emulators, this is enough to read the text, and optionally
+ * to press Shift to keep the screen displayed. But on real hardware, it
+ * can take several seconds for the monitor to recover from stand-by mode,
+ * so the welcome screen may never be seen. In such cases, it is wise to
+ * increase the welcome screen duration.
+ * You can use the INITINFO_DURATION define to specify the welcome screen
+ * duration, in seconds. If it is set to 0, the welcome screen will never
+ * be displayed.
+ */
+#ifndef INITINFO_DURATION
+# define INITINFO_DURATION 3
+#endif
+
+/*
+ * Set CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF to 1 to detect a first boot
+ * even when memconf is not called. This is useful when the RAM is
+ * already initialized before EmuTOS boots. This is always the case on
+ * the FireBee where the actual RAM is setup by the BaS or other pre-OS.
+ * Also, this is always the case when EmuTOS itself lives in RAM.
+ */
+#ifndef CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
+# if EMUTOS_LIVES_IN_RAM
+#  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 1
+# else
+#  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 0
+# endif
+#endif
+
+/*
+ * Set CONF_SERIAL_CONSOLE to 1 in order to:
+ * - send console output to the serial port, in addition to the screen
+ * - use exclusively the serial port input for console input.
+ */
+#ifndef CONF_SERIAL_CONSOLE
+# define CONF_SERIAL_CONSOLE 0
+#endif
+
+/*
+ * Set CONF_SERIAL_CONSOLE_ANSI to 1 if the terminal connected to the
+ * serial port uses ANSI escape sequences. Set it to 0 if it is an Atari
+ * VT52 terminal.
+ */
+#ifndef CONF_SERIAL_CONSOLE_ANSI
+# if CONF_SERIAL_CONSOLE
+#  define CONF_SERIAL_CONSOLE_ANSI 1
+# else
+#  define CONF_SERIAL_CONSOLE_ANSI 0
+# endif
+#endif
+
+/*
+ * Set CONF_SERIAL_CONSOLE_POLLING_MODE to 1 if ikbdiorec is not filled
+ * on serial interrupt when CONF_SERIAL_CONSOLE is enabled. This is handy
+ * in early stages when porting EmuTOS to new hardware, as this works even if
+ * bconstat1()/bconin1() are implemented by polling. Interrupts are generally
+ * more complicated to set up.
+ * Pros: Polling mode is good enough for EmuTOS itself.
+ * Cons: FreeMiNT's advanced keyboard processor doesn't support polling mode.
+ */
+#ifndef CONF_SERIAL_CONSOLE_POLLING_MODE
+# define CONF_SERIAL_CONSOLE_POLLING_MODE 0
+#endif
+
+/*
+ * Set CONF_SERIAL_IKBD to 1 to allow IKBD keyboard/mouse/joysticks to be
+ * plugged on the serial port
+ */
+#ifndef CONF_SERIAL_IKBD
+# define CONF_SERIAL_IKBD 0
+#endif
+
+/*
+ * Set CONF_WITH_68030_PMMU to install a PMMU tree on a 68030 CPU.
+ * This provides improved performance by allowing the data cache to
+ * be enabled.
+ */
+#ifndef CONF_WITH_68030_PMMU
+# define CONF_WITH_68030_PMMU 1
+#endif
+
+/*
+ * Set CONF_WITH_68040_PMMU to install a PMMU tree when running on a
+ * 68040 CPU.  The main purpose of this is to allow FreeMiNT to be
+ * run under aranym-mmu without using set_mmu.prg.
+ */
+#ifndef CONF_WITH_68040_PMMU
+# define CONF_WITH_68040_PMMU 0
+#endif
+
+/*
+ * Set CONF_WITH_BIOS_EXTENSIONS to 1 to support various BIOS extension
+ * functions
+ */
+#ifndef CONF_WITH_BIOS_EXTENSIONS
+# define CONF_WITH_BIOS_EXTENSIONS 1
 #endif
 
 /*
@@ -1299,15 +1430,91 @@
 #endif
 
 /*
- * Set CONF_WITH_LOADABLE_CURSORS to 1 to allow mouse cursors to
- * be loaded from the file specified by CURSOR_RSC_NAME
+ * Set CONF_WITH_XBIOS_SOUND to 1 to enable support for the XBIOS sound
+ * extension.  This extension provides (some of) the Falcon XBIOS sound
+ * functions when running on STe- or TT-compatible hardware.  You must
+ * also enable CONF_WITH_DMASOUND.
  */
-#ifndef CONF_WITH_LOADABLE_CURSORS
-# define CONF_WITH_LOADABLE_CURSORS 1
+#ifndef CONF_WITH_XBIOS_SOUND
+# define CONF_WITH_XBIOS_SOUND 1
 #endif
-#if CONF_WITH_LOADABLE_CURSORS
-# define CURSOR_RSC_NAME "A:\\EMUCURS.RSC"  /* path to user cursor file */
+
+/*
+ * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
+ */
+#ifndef CONF_WITH_XHDI
+# define CONF_WITH_XHDI 1
 #endif
+
+/*
+ * Set the default baud rate for serial ports.
+ */
+#ifndef DEFAULT_BAUDRATE
+# define DEFAULT_BAUDRATE B9600
+#endif
+
+/*
+ * Retry count for the internal_inquire() used to detect the presence of
+ * a physical hard disk drive
+ *
+ * Setting this to be non-zero is usually not necessary, and will increase
+ * boot time by approximately (0.1 * HD_DETECT_RETRIES * n) seconds, where
+ * n is the total number of devices that are not present.  For example, if
+ * you set it to 1 on an ST with one device on the ACSI bus, the boot time
+ * will increase by (0.1*1*7) = 0.7 seconds.
+ *
+ * However, a non-zero retry count may help in some cases of misbehaving
+ * hardware.
+ */
+#ifndef HD_DETECT_RETRIES
+# define HD_DETECT_RETRIES 0
+#endif
+
+
+
+/********************************************************
+ *  S O F T W A R E   S E C T I O N   -   G E M D O S   *
+ ********************************************************/
+
+/*
+ * Define the GEMDOS version here: this number is returned by the GEMDOS
+ * Sversion() function call. The value contains the minor version number
+ * in the high-order byte, and the major version number in the low-order
+ * byte.  Valid values include:
+ *      0x1300      used by TOS v1.0 & v1.02
+ *      0x1500      used by TOS v1.04 & v1.06
+ *      0x1700      used by TOS v1.62
+ *      0x1900      used by TOS v2.01, v2.05, v3.01, v3.05
+ *      0x2000      used by TOS v2.06 & v3.06
+ *      0x3000      used by TOS v4.0x
+ * This does not have a well-defined purpose, although it could be checked
+ * by programs to determine presence or absence of certain GEMDOS functions.
+ */
+#ifndef GEMDOS_VERSION
+# define GEMDOS_VERSION 0x2000
+#endif
+
+/*
+ * CONF_LOGSEC_SIZE defines the maximum size of logical sectors that
+ * GEMDOS can handle, specified in bytes; however, if a larger value
+ * is found on a mounted drive during startup, that value will be used
+ * instead.
+ *
+ * The value *must* be a power of two between 512 and 16384 inclusive.
+ *
+ * Note that this is only significant if you use Atari-style FAT
+ * filesystems; DOS-style FAT filesystems always have a logical sector
+ * size of 512 bytes.
+ */
+#ifndef CONF_LOGSEC_SIZE
+# define CONF_LOGSEC_SIZE 512
+#endif
+
+
+
+/****************************************************
+ *  S O F T W A R E   S E C T I O N   -   V D I     *
+ ****************************************************/
 
 /*
  * Set CONF_WITH_GDOS to 1 to generate code within vst_load_fonts() and
@@ -1316,13 +1523,6 @@
  */
 #ifndef CONF_WITH_GDOS
 # define CONF_WITH_GDOS 1
-#endif
-
-/*
- * Set CONF_WITH_PCGEM to 1 to support various PC-GEM-compatible AES functions
- */
-#ifndef CONF_WITH_PCGEM
-# define CONF_WITH_PCGEM 1
 #endif
 
 /*
@@ -1347,138 +1547,31 @@
  * TOS2 allows 512 vertices, TOS3/TOS4 allow 1024.
  */
 #ifndef MAX_VERTICES
-# if defined(TARGET_1024) || defined(TARGET_512) || defined(TARGET_PRG) || defined(MACHINE_FIREBEE) || defined(MACHINE_M548X) || defined(MACHINE_ARANYM)
-#  define MAX_VERTICES   1024
-# else
-#  define MAX_VERTICES   512
-# endif
+# define MAX_VERTICES 1024
 #endif
 
 /*
- * Set CONF_WITH_GRAF_MOUSE_EXTENSION to 1 to include AES support for
- * graf_mouse() modes M_SAVE, M_RESTORE, M_PREVIOUS.
+ * VDI configuration
  */
-#ifndef CONF_WITH_GRAF_MOUSE_EXTENSION
-# define CONF_WITH_GRAF_MOUSE_EXTENSION 1
+#ifndef NUM_VDI_HANDLES
+# define NUM_VDI_HANDLES 128    /* maximum number of open workstations */
 #endif
+
+
+
+/************************************************************
+ *  S O F T W A R E   S E C T I O N   -   G E N E R A L     *
+ ************************************************************/
 
 /*
- * Set CONF_WITH_WINDOW_COLOURS to 1 to include AES support for managing
- * window element colours.  Management is via modes WF_COLOR/WF_DCOLOR
- * in wind_get()/wind_set().
+ * With this switch you can control if some functions should be used as
+ * static-inlines. This is generally a good idea if your compiler supports
+ * this (the current GCC does). It will shrink the size of the ROM since
+ * only very small functions will be used as static inlines, and it will
+ * also make the code faster!
  */
-#ifndef CONF_WITH_WINDOW_COLOURS
-# define CONF_WITH_WINDOW_COLOURS 1
-#endif
-
-/*
- * Set CONF_WITH_XBIOS_SOUND to 1 to enable support for the XBIOS sound
- * extension.  This extension provides (some of) the Falcon XBIOS sound
- * functions when running on STe- or TT-compatible hardware.  You must
- * also enable CONF_WITH_DMASOUND.
- */
-#ifndef CONF_WITH_XBIOS_SOUND
-# define CONF_WITH_XBIOS_SOUND 1
-#endif
-
-/*
- * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
- */
-#ifndef CONF_WITH_XHDI
-# define CONF_WITH_XHDI 1
-#endif
-
-/*
- * Set CONF_WITH_68030_PMMU to install a PMMU tree on a 68030 CPU.
- * This provides improved performance by allowing the data cache to
- * be enabled.
- * If CONF_WITH_68030_PMMU is enabled, then PMMUTREE_ADDRESS_68030
- * specifies where in low memory the tree is built.  Unless you
- * really understand the implications, don't change this value!
- */
-#ifndef CONF_WITH_68030_PMMU
-# define CONF_WITH_68030_PMMU 1
-#endif
-#if CONF_WITH_68030_PMMU
-# define PMMUTREE_ADDRESS_68030 0x700
-#endif
-
-/*
- * Set CONF_WITH_68040_PMMU to install a PMMU tree when running on a
- * 68040 CPU.  The main purpose of this is to allow FreeMiNT to be
- * run under aranym-mmu without using set_mmu.prg.
- */
-#ifndef CONF_WITH_68040_PMMU
-# define CONF_WITH_68040_PMMU 0
-#endif
-
-/*
- * Set CONF_SERIAL_CONSOLE to 1 in order to:
- * - send console output to the serial port, in addition to the screen
- * - use exclusively the serial port input for console input.
- */
-#ifndef CONF_SERIAL_CONSOLE
-# define CONF_SERIAL_CONSOLE 0
-#endif
-
-/*
- * Set CONF_SERIAL_CONSOLE_POLLING_MODE to 1 if ikbdiorec is not filled
- * on serial interrupt when CONF_SERIAL_CONSOLE is enabled. This is handy
- * in early stages when porting EmuTOS to new hardware, as this works even if
- * bconstat1()/bconin1() are implemented by polling. Interrupts are generally
- * more complicated to set up.
- * Pros: Polling mode is good enough for EmuTOS itself.
- * Cons: FreeMiNT's advanced keyboard processor doesn't support polling mode.
- */
-#ifndef CONF_SERIAL_CONSOLE_POLLING_MODE
-# define CONF_SERIAL_CONSOLE_POLLING_MODE 0
-#endif
-
-/*
- * Set CONF_SERIAL_CONSOLE_ANSI to 1 if the terminal connected to the
- * serial port uses ANSI escape sequences. Set it to 0 if it is an Atari
- * VT52 terminal.
- */
-#ifndef CONF_SERIAL_CONSOLE_ANSI
-# if CONF_SERIAL_CONSOLE
-#  define CONF_SERIAL_CONSOLE_ANSI 1
-# else
-#  define CONF_SERIAL_CONSOLE_ANSI 0
-# endif
-#endif
-
-/*
- * Set CONF_SERIAL_IKBD to 1 to allow IKBD keyboard/mouse/joysticks to be
- * plugged on the serial port
- */
-#ifndef CONF_SERIAL_IKBD
-# define CONF_SERIAL_IKBD 0
-#endif
-
-/* 
- * Set the default baud rate for serial ports.
- */
-#ifndef DEFAULT_BAUDRATE
-# define DEFAULT_BAUDRATE B9600
-#endif
-
-/*
- * Define the AES version here. This must be done at the end of the
- * "Software Section", since the value depends on features that are set
- * within that section. Valid values include:
- *      0x0120      AES 1.20, used by TOS v1.02
- *      0x0140      AES 1.40, used by TOS v1.04 & v1.62
- *      0x0320      AES 3.20, used by TOS v2.06 & v3.06
- *      0x0340      AES 3.40, used by TOS v4.04
- * Do not change this arbitrarily, as each value implies the presence or
- * absence of certain AES functions ...
- */
-#ifndef AES_VERSION
-# if CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
-#  define AES_VERSION 0x0320
-# else
-#  define AES_VERSION 0x0140
-# endif
+#ifndef USE_STATIC_INLINES
+# define USE_STATIC_INLINES 1
 #endif
 
 
@@ -1490,6 +1583,27 @@
 /*
  * in this section, defines are in strict alphabetic sequence for convenience
  */
+
+/*
+ * Set CONF_PREFER_STRAM_DISK_BUFFERS to 1 if disk buffers are more efficient
+ * when located in ST-RAM (applies to EmuDesk floppy/ACSI DMA transfers)
+ */
+#ifndef CONF_PREFER_STRAM_DISK_BUFFERS
+# if CONF_ATARI_HARDWARE
+#  define CONF_PREFER_STRAM_DISK_BUFFERS 1
+# else
+#  define CONF_PREFER_STRAM_DISK_BUFFERS 0
+# endif
+#endif
+
+/*
+ * Set CONF_WITH_ALT_DESKTOP_GRAPHICS to 1 to replace Atari-style desktop
+ * graphic elements with alternate versions:
+ *  . left-align dialog titles and draw a line under them
+ */
+#ifndef CONF_WITH_ALT_DESKTOP_GRAPHICS
+# define CONF_WITH_ALT_DESKTOP_GRAPHICS 1
+#endif
 
 /*
  * Set CONF_WITH_BACKGROUNDS to 1 to allow the background pattern/colour
@@ -1777,30 +1891,6 @@
 #endif
 
 /*
- * VDI configuration
- */
-#ifndef NUM_VDI_HANDLES
-# define NUM_VDI_HANDLES 128    /* maximum number of open workstations */
-#endif
-
-/*
- * Retry count for the internal_inquire() used to detect the presence of
- * a physical hard disk drive
- *
- * Setting this to be non-zero is usually not necessary, and will increase
- * boot time by approximately (0.1 * HD_DETECT_RETRIES * n) seconds, where
- * n is the total number of devices that are not present.  For example, if
- * you set it to 1 on an ST with one device on the ACSI bus, the boot time
- * will increase by (0.1*1*7) = 0.7 seconds.
- *
- * However, a non-zero retry count may help in some cases of misbehaving
- * hardware.
- */
-#ifndef HD_DETECT_RETRIES
-# define HD_DETECT_RETRIES 0
-#endif
-
-/*
  * Useful macros for both assembler and C
  */
 
@@ -1939,6 +2029,11 @@
 # endif
 #endif
 
+#if !CONF_WITH_EXTENDED_OBJECTS
+# if CONF_WITH_ALT_DESKTOP_GRAPHICS
+#  error CONF_WITH_ALT_DESKTOP_GRAPHICS requires CONF_WITH_EXTENDED_OBJECTS.
+# endif
+#endif
 
 /*
  * Sanity checks for debugging options

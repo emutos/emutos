@@ -1,3 +1,47 @@
+CHANGES BETWEEN RELEASE 1.1 AND RELEASE 1.1.1
+
+The only significant change was to fix a bug in EmuTOS 1.1:
+double-clicking on the desktop background caused a crash in EmuDesk.
+
+
+CHANGES BETWEEN RELEASE 1.0 AND RELEASE 1.1
+
+Major changes:
+- AES: Add support for colour icons
+- AES: Add support for colour windows
+- BIOS: Add support for Falcon DSP
+- BIOS: Add interrupt-driven I/O for MFP and TT-MFP serial ports
+- BIOS: Improve Nova video card support in several areas
+- EmuCON: Allow setting of EmuCON startup folder
+- EmuCON: Initialise EmuCON default path from AES's PATH variable
+- EmuDesk: Remove the non-standard 'menu click' preference
+- General: Add online manual for EmuTOS
+- General: Add support for Hungarian & Turkish languages
+- General: Make the 512K ROMs single-language only
+
+Other changes:
+- AES: Handle '||' and ']]' correctly in form_alert()
+- BIOS: Add early startup message so user knows we are alive
+- BIOS: Add support for UltraSatan RTC
+- BIOS: Fix keyboard tables for Norwegian/Russian/Swedish
+- BIOS: Fix many small bugs in Falcon videl handling
+- BIOS: Fix problem with slow ACSI device (Satandisk)
+- BIOS: Improve support for Spectre GCR partitions
+- BIOS: Speed up boot when no IDE drive is present
+- EmuDesk: Fix 'install application' bug related to default viewer
+- EmuDesk: Fix several bugs associated with desktop icons
+- General: Add multiple-language 1024K ROM image (Hatari only)
+- Many minor and/or obscure bugs have been fixed
+
+
+CHANGES BETWEEN RELEASE 1.0 AND RELEASE 1.0.1
+
+There was only one change to fix a bug in EmuTOS 1.0: On an Atari Falcon
+with 4 MB RAM, when using the 512k ROM version of EmuTOS, a Nova graphics
+card was erroneously detected. This caused a panic during boot, preventing
+the use of the 512k ROM version of EmuTOS 1.0 on such a machine.
+
+
 CHANGES BETWEEN RELEASE 0.9.12 AND RELEASE 1.0
 
 Major changes:

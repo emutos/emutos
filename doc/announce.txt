@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 1.0 -- September 1, 2020
+EmuTOS 1.1.1 -- July 19, 2021
 
 
 
@@ -136,7 +136,7 @@ EmuTOS also supports the following Atari-compatible hardware:
 
 EmuTOS is also available on some non-Atari hardware:
 - Amiga (floppy or ROM for any Amiga, including MapROM support)
-- Apple Lisa (experimental)
+- Apple Lisa (experimental - no binaries provided yet)
 - ColdFire Evaluation Boards (M5484LITE, M5485EVB)
 - Vampire v4 standalone board
 

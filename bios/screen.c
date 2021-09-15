@@ -1,7 +1,7 @@
 /*
  * screen.c - low-level screen routines
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  MAD   Martin Doering
@@ -33,12 +33,18 @@
 #include "biosmem.h"
 #include "biosext.h"
 #include "bios.h"
+#include "bdosbind.h"
 #include "amiga.h"
 #include "lisa.h"
 #include "nova.h"
 
 void detect_monitor_change(void);
 static void setphys(const UBYTE *addr);
+
+#if CONF_WITH_VIDEL
+LONG video_ram_size;        /* these are used by Srealloc() */
+void *video_ram_addr; 
+#endif
 
 #if CONF_WITH_ATARI_VIDEO
 
@@ -627,21 +633,26 @@ void screen_init_mode(void)
 /* Initialize the video address (mode is already set) */
 void screen_init_address(void)
 {
-    ULONG vram_size;
+    LONG vram_size;
     UBYTE *screen_start;
 
 #if CONF_VRAM_ADDRESS
-    UNUSED(vram_size);
+    vram_size = 0L;         /* unspecified */
     screen_start = (UBYTE *)CONF_VRAM_ADDRESS;
 #else
-    vram_size = initial_vram_size();
+    vram_size = calc_vram_size();
     /* videoram is placed just below the phystop */
     screen_start = balloc_stram(vram_size, TRUE);
 #endif /* CONF_VRAM_ADDRESS */
 
+#if CONF_WITH_VIDEL
+    video_ram_size = vram_size;     /* these are used by Srealloc() */
+    video_ram_addr = screen_start;
+#endif
+
     /* set new v_bas_ad */
     v_bas_ad = screen_start;
-    KDEBUG(("v_bas_ad = %p, vram_size = %ld\n", v_bas_ad, vram_size));
+    KDEBUG(("v_bas_ad = %p, vram_size = %lu\n", v_bas_ad, vram_size));
     /* correct physical address */
     setphys(screen_start);
 }
@@ -722,13 +733,13 @@ static const struct video_mode vmode_table[] = {
 };
 
 /*
- * calculate initial VRAM size based on video hardware
+ * calculate VRAM size based on video hardware
  *
  * note: all versions of Atari TOS overallocate memory; we do the same
  * because some programs (e.g. NVDI) rely on this and write past what
  * should be the end of screen memory.
  */
-ULONG initial_vram_size(void)
+ULONG calc_vram_size(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();
@@ -738,13 +749,13 @@ ULONG initial_vram_size(void)
     ULONG vram_size;
 
     if (HAS_VIDEL)
-        return FALCON_VRAM_SIZE + 256UL;
+        return FALCON_VRAM_SIZE + EXTRA_VRAM_SIZE;
 
     vram_size = (ULONG)BYTES_LIN * V_REZ_VT;
 
     /* TT TOS allocates 256 bytes more than actually needed. */
     if (HAS_TT_SHIFTER)
-        return vram_size + 256UL;
+        return vram_size + EXTRA_VRAM_SIZE;
 
     /*
      * The most important issue for the ST is ensuring that screen memory
@@ -1058,26 +1069,21 @@ WORD getrez(void)
 /*
  * setscreen(): implement the Setscreen() xbios call
  *
- * implementation details:
- *  . sets the logical screen address, iff logLoc > 0
- *  . sets the physical screen address, iff physLoc > 0
- *  . sets the screen resolution iff 0 <= rez <= 7
- *      if a VIDEL is present and rez==3, then the video mode is
- *      set by a call to vsetmode with 'videlmode' as the argument
+ * implementation summary:
+ *  . for all hardware:
+ *      . sets the logical screen address from logLoc, iff logLoc > 0
+ *      . sets the physical screen address from physLoc, iff physLoc > 0
+ *  . for videl, if logLoc==0 and physLoc==0:
+ *      . reallocates screen memory and updates logical & physical
+ *        screen addresses
+ *  . for all hardware:
+ *      . sets the screen resolution iff 0 <= rez <= 7 (this includes
+ *        setting the mode specified by 'videlmode' if appropriate)
+ *      . reinitialises lineA and the VT52 console
  */
-void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
+WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
-#if CONF_WITH_VIDEL
-    /*
-     * fixup videl mode if applicable (this is where we could test
-     * for NULL values in logLoc & physLoc, allocate new memory, &
-     * update logLoc/physLoc)
-     */
-    if (has_videl) {
-        if ((rez == FALCON_REZ) && (videlmode != -1))
-            videlmode = vfixmode(videlmode);
-    }
-#endif
+    WORD oldmode = 0;
 
     if ((LONG)logLoc > 0) {
         v_bas_ad = logLoc;
@@ -1087,25 +1093,54 @@ void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
         setphys(physLoc);
     }
 
-    /* Don't allow any mode changes when Line A variables were 'hacked'. */
-    if (rez_was_hacked) {
-        return;
+    /* forbid res changes if Line A variables were 'hacked' or 'rez' is -1 */
+    if (rez_was_hacked || (rez == -1)) {
+        return 0;
     }
 
-    if (rez >= 0 && rez < 8) {
-        /* Wait for the end of display to avoid the plane-shift bug on ST */
-        vsync();
+    /* return error for requests for invalid resolutions */
+    if ((rez < MIN_REZ) || (rez > MAX_REZ)) {
+        return -1;
+    }
 
-#ifdef MACHINE_AMIGA
-        amiga_setrez(rez, videlmode);
-#elif CONF_WITH_ATARI_VIDEO
-        atari_setrez(rez, videlmode);
+#if CONF_WITH_VIDEL
+    /*
+     * if we have videl, and this is a mode change request:
+     * 1. fixup videl mode
+     * 2. reallocate screen memory & update logical/physical screen addresses
+     */
+    if (has_videl) {
+        if (rez == FALCON_REZ) {
+            if (videlmode != -1) {
+                videlmode = vfixmode(videlmode);
+                if (!logLoc && !physLoc) {
+                    UBYTE *addr = (UBYTE *)Srealloc(vgetsize(videlmode));
+                    if (!addr)      /* Srealloc() failed */
+                        return -1;
+                    KDEBUG(("screen realloc'd to %d\n", addr));
+                    v_bas_ad = addr;
+                    setphys(addr);
+                }
+            }
+            oldmode = vsetmode(-1);
+        }
+    }
 #endif
 
-        /* Re-initialize line-a, VT52 etc: */
-        linea_init();
-        vt52_init();
-    }
+    /* Wait for the end of display to avoid the plane-shift bug on ST */
+    vsync();
+
+#ifdef MACHINE_AMIGA
+    amiga_setrez(rez, videlmode);
+#elif CONF_WITH_ATARI_VIDEO
+    atari_setrez(rez, videlmode);
+#endif
+
+    /* Re-initialize line-a, VT52 etc: */
+    linea_init();
+    vt52_init();
+
+    return oldmode;
 }
 
 void setpalette(const UWORD *palettePtr)

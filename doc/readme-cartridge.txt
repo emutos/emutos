@@ -4,10 +4,10 @@ This special EmuTOS version is a cartridge image for the ROM port.
 It behaves just like a diagnostic cartridge.
 
 etoscart.img - Raw binary cartridge image
-  emutos.stc - Steem Engine cartridge image
+emutos.stc - STeem Engine cartridge image
 
 This cartridge is compatible with any Atari hardware (except the FireBee) or
-emulator. Due to size limitation, it has limited features:
+emulator. Due to size limitations, it has very limited features:
 - English language only
 - No AES/Desktop
 - EmuCON only

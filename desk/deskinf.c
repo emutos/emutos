@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*       Copyright (C) 2002-2020 The EmuTOS development team
+*       Copyright (C) 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -26,6 +26,7 @@
 #include "gemdos.h"
 #include "optimopt.h"
 #include "optimize.h"
+#include "rectfunc.h"
 
 #include "aesdefs.h"
 #include "aesext.h"
@@ -216,9 +217,8 @@ static char *fmt_size(ULONG size, BOOL wide, char *psize)
 }
 
 
-static WORD format_fnode(LONG pfnode, char *pfmt)
+static WORD format_fnode(FNODE *pf, char *pfmt)
 {
-    FNODE *pf;
     char *pdst, *psrc;
     WORD i;
     BOOL wide;
@@ -229,7 +229,6 @@ static WORD format_fnode(LONG pfnode, char *pfmt)
      */
     wide = USE_WIDE_FORMAT();
 
-    pf = (FNODE *)pfnode;
     pdst = pfmt;
 
     /*
@@ -309,7 +308,7 @@ static WORD format_fnode(LONG pfnode, char *pfmt)
 
 
 static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
-            WORD w, WORD h, LONG fnode)
+            WORD w, WORD h, FNODE *fnode)
 {
     WORD len;
     char temp[LEN_FNODE];
@@ -337,7 +336,7 @@ WORD dr_code(PARMBLK *pparms)
     gsx_gclip(&oc);
     gsx_sclip((GRECT *)&pparms->pb_xc);
     state = dr_fnode(pparms->pb_prevstate, pparms->pb_currstate,
-                    pparms->pb_x, pparms->pb_y, pparms->pb_w, pparms->pb_h, pparms->pb_parm);
+            pparms->pb_x, pparms->pb_y, pparms->pb_w, pparms->pb_h, (FNODE *)pparms->pb_parm);
     gsx_sclip(&oc);
 
     return state;
@@ -349,11 +348,12 @@ WORD dr_code(PARMBLK *pparms)
  */
 void start_dialog(OBJECT *tree)
 {
-    WORD xd, yd, wd, hd;
+    GRECT t;
 
-    form_center(tree, &xd, &yd, &wd, &hd);
-    form_dial(FMD_START, 0, 0, 0, 0, xd, yd, wd, hd);
-    objc_draw(tree, ROOT, MAX_DEPTH, xd, yd, wd, hd);
+    form_center(tree, &t.g_x, &t.g_y, &t.g_w, &t.g_h);
+    rc_intersect(&gl_rfull, &t);    /* constrain dialog box */
+    form_dial(FMD_START, 0, 0, 0, 0, t.g_x, t.g_y, t.g_w, t.g_h);
+    objc_draw(tree, ROOT, MAX_DEPTH, t.g_x, t.g_y, t.g_w, t.g_h);
 }
 
 
@@ -507,7 +507,7 @@ WORD inf_file_folder(char *ppath, FNODE *pf)
     title = (pf->f_attr & FA_SUBDIR) ? STFOINFO : STFIINFO;
     obj = tree + FFTITLE;
     obj->ob_spec = (LONG) desktop_str_addr(title);
-    centre_title(tree);
+    align_title(tree);
 
     strcpy(srcpth, ppath);
     strcpy(dstpth, ppath);

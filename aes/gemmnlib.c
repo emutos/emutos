@@ -195,7 +195,7 @@ static void rect_change(OBJECT *tree, MOBLK *prmob, WORD iob, BOOL x)
  *  parameter is set.  The object will be drawn with its new state only
  *  if the dodraw parameter is set.
  */
-UWORD do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
+BOOL do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
              WORD dochg, WORD dodraw, WORD chkdisabled)
 /* tree:         tree that holds item */
 /* iitem:        item to affect       */
@@ -229,7 +229,7 @@ UWORD do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
  *  Routine to set and reset values of certain items if they
  *  are not the current item
  */
-static WORD menu_set(OBJECT *tree, WORD last_item, WORD cur_item, WORD setit)
+static BOOL menu_set(OBJECT *tree, WORD last_item, WORD cur_item, WORD setit)
 {
     if ((last_item != NIL) && (last_item != cur_item))
     {

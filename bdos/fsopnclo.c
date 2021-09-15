@@ -156,7 +156,7 @@ long ixcreat(char *name, UBYTE attr)
             if ((f->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR))
                 return EACCDN;          /*  subdir or read only  */
         }
-        pos -= 32;
+        pos -= sizeof(FCB);
         ixdel(dn,f,pos);
     }
     else
@@ -179,7 +179,7 @@ long ixcreat(char *name, UBYTE attr)
     }
 
     builds(s,a);
-    pos -= 32;
+    pos -= sizeof(FCB);
     f->f_attrib = attr;
     for (i = 0; i < 10; i++)
         f->f_fill[i] = 0;
@@ -193,7 +193,7 @@ long ixcreat(char *name, UBYTE attr)
     ixwrite(fd,FNAMELEN,a);         /* write name, set dirty flag */
     ixclose(fd,CL_DIR);             /* partial close to flush */
     ixlseek(fd,pos);
-    s = (char*) ixread(fd,32L,NULL);
+    s = (char *)ixgetfcb(fd);
     f2 = rc = opnfil((FCB*)s,dn,(f->f_attrib&FA_RO)?RO_MODE:RW_MODE);
 
     if (rc < 0)
@@ -276,7 +276,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
     p->o_curbyt = 0;                /*  "                           */
     p->o_dnode = dn;                /*  link to directory           */
     p->o_dirfil = dn->d_ofd;        /*  link to dir's OFD           */
-    p->o_dirbyt = dn->d_ofd->o_bytnum - 32; /*  offset of fcb in dir*/
+    p->o_dirbyt = dn->d_ofd->o_bytnum - sizeof(FCB);    /* offset of fcb in dir */
 
     for (p2 = dn->d_files; p2; p2 = p2->o_link)
         if (p2->o_dirbyt == p->o_dirbyt)
@@ -468,7 +468,7 @@ long ixclose(OFD *fd, int part)
         UBYTE attr;
 
         ixlseek(fd->o_dirfil,fd->o_dirbyt); /* start of dir entry */
-        fcb = (FCB *)ixread(fd->o_dirfil,32L,NULL);
+        fcb = ixgetfcb(fd->o_dirfil);
         attr = fcb->f_attrib;               /* get attributes */
         memcpy(&fcb->f_td,&fd->o_td,10);    /* copy date/time, start, length */
         swpw(fcb->f_clust);                 /*  & fixup byte order */
@@ -546,7 +546,7 @@ long xunlink(char *name)
     if (f->f_attrib & FA_RO)
         return EACCDN;
 
-    pos -= 32;
+    pos -= sizeof(FCB);
 
     return ixdel(dn,f,pos);
 }

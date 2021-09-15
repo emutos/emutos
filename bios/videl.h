@@ -1,7 +1,7 @@
 /*
  * screen.h - low-level screen routines
  *
- * Copyright (C) 2013-2019 The EmuTOS development team
+ * Copyright (C) 2013-2021 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
@@ -78,9 +78,9 @@ WORD vsetsync(WORD external);
 LONG vgetsize(WORD mode);
 WORD vsetrgb(WORD index,WORD count,const ULONG *rgb);
 WORD vgetrgb(WORD index,WORD count,ULONG *rgb);
+WORD vfixmode(WORD mode);
 
 /* misc routines */
-WORD vfixmode(WORD mode);
 WORD videl_check_moderez(WORD moderez);
 void videl_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
 void videl_setrez(WORD rez, WORD videlmode);

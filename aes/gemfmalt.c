@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2019 The EmuTOS development team
+*                 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -47,6 +47,11 @@
 #define INTER_WSPACE 0
 #define INTER_HSPACE 0
 
+#if CONF_WITH_3D_OBJECTS
+#define BUTTON_FLAGS    (SELECTABLE | EXIT | FL3DACT)
+#else
+#define BUTTON_FLAGS    (SELECTABLE | EXIT)
+#endif
 
 
 /*
@@ -172,13 +177,13 @@ static void fm_parse(OBJECT *tree, char *palstr, WORD *picnum, WORD *pnummsg,
  *
  *  Inputs are:
  *      tree            the alert dialog
- *      haveicon        boolean, 1 if icon specified
+ *      iconnum         icon number, 0 => no icon
  *      nummsg          number of message lines
  *      mlenmsg         length of longest line
  *      numbut          number of buttons
  *      mlenbut         length of biggest button
  */
-static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
+static void fm_build(OBJECT *tree, WORD iconnum, WORD nummsg, WORD mlenmsg,
                      WORD numbut, WORD mlenbut)
 {
     WORD i, hicon, allbut;
@@ -205,7 +210,7 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
      * convert the icon height from pixels to characters, based on
      * the current character height.
      */
-    if (haveicon)
+    if (iconnum)
     {
         hicon = (rs_bitblk[NOTEBB].bi_hl+gl_hchar-1) / gl_hchar;
         r_set(&ic, 1+INTER_WSPACE, 1+INTER_HSPACE, 4, hicon);
@@ -248,8 +253,21 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
           obj->ob_next = obj->ob_head = obj->ob_tail = -1;
 
     /* add icon object      */
-    if (haveicon)
+    if (iconnum)
     {
+        switch(iconnum) {
+        case 1:
+            i = NOTEBB;
+            break;
+        case 2:
+            i = QUESTBB;
+            break;
+        default:
+            i = STOPBB;
+            break;
+        }
+        obj = tree + 1;
+        obj->ob_spec = (LONG) &rs_bitblk[i];
         ob_setxywh(tree, 1, &ic);
         ob_add(tree, ROOT, 1);
     }
@@ -265,7 +283,7 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
     /* add button objects with 1 space between them  */
     for (i = 0, obj = tree+BUTOFF; i < numbut; i++, obj++)
     {
-        obj->ob_flags = SELECTABLE | EXIT;
+        obj->ob_flags = BUTTON_FLAGS;
         obj->ob_state = NORMAL;
         ob_setxywh(tree, BUTOFF+i, &bt);
         bt.g_x += mlenbut + 2;
@@ -274,24 +292,51 @@ static void fm_build(OBJECT *tree, WORD haveicon, WORD nummsg, WORD mlenmsg,
 
     /* set last object flag */
     (--obj)->ob_flags |= LASTOB;
+
+    /* convert to pixels    */
+    for (i = 0; i < NUM_ALOBJS; i++)
+        rs_obfix(tree, i);
+
+    /*
+     * final pixel adjustments for 3D objects
+     *  (1) increase button height by 3 pixels, which adds an extra pixel
+     *      between the top of the text and the button outline.  this
+     *      provides slightly better aesthetics and is what TOS4 does
+     *  (2) move the buttons upwards to allow for this
+     */
+#if CONF_WITH_3D_OBJECTS
+    for (i = 0, obj = tree+BUTOFF; i < numbut; i++, obj++)
+    {
+        obj->ob_y -= ADJ3DSTD;
+        obj->ob_height += 2 * ADJ3DSTD - 1;
+    }
+#endif
 }
 
 
 WORD fm_alert(WORD defbut, char *palstr)
 {
     WORD i;
-    WORD inm, nummsg, mlenmsg, numbut, mlenbut, image;
+    WORD inm, nummsg, mlenmsg, numbut, mlenbut;
     OBJECT *tree;
     GRECT d, t;
     OBJECT *obj;
+#if CONF_WITH_3D_OBJECTS
+    WORD color;
+#endif
 
     /* init tree pointer    */
     tree = rs_trees[DIALERT];
 
+#if CONF_WITH_3D_OBJECTS
+    color = (backgrcol < gl_ws.ws_ncolors) ? backgrcol : WHITE;
+    tree[ROOT].ob_spec = (tree[ROOT].ob_spec & 0xffffff80L) | 0x70L | (color & 0x000f);
+#endif
+
     set_mouse_to_arrow();
 
     fm_parse(tree, palstr, &inm, &nummsg, &mlenmsg, &numbut, &mlenbut);
-    fm_build(tree, (inm != 0), nummsg, mlenmsg, numbut, mlenbut);
+    fm_build(tree, inm, nummsg, mlenmsg, numbut, mlenbut);
 
     if (defbut)
     {
@@ -299,29 +344,8 @@ WORD fm_alert(WORD defbut, char *palstr)
         obj->ob_flags |= DEFAULT;
     }
 
-    obj = tree + 1;
-
-    if (inm != 0)
-    {
-        switch(inm) {
-        case 1:
-            image = NOTEBB;
-            break;
-        case 2:
-            image = QUESTBB;
-            break;
-        default:
-            image = STOPBB;
-            break;
-        }
-        obj->ob_spec = (LONG) &rs_bitblk[image];
-    }
-
-    /* convert to pixels    */
-    for (i = 0; i < NUM_ALOBJS; i++)
-        rs_obfix(tree, i);
-
     /* fix up icon, 32x32   */
+    obj = tree + 1;
     obj->ob_type = G_IMAGE;
     obj->ob_width = obj->ob_height = 32;
 

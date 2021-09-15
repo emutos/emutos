@@ -1,7 +1,7 @@
 /*
  * dmasound.c - STe/TT/Falcon DMA sound routines
  *
- * Copyright (C) 2011-2020 The EmuTOS development team
+ * Copyright (C) 2011-2021 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -765,7 +765,7 @@ LONG devconnect(WORD source, WORD dest, WORD clk, WORD prescale, WORD protocol)
  * Get sound status or reset sound system
  *
  * To reset the sound system, we toggle bit3 of the byte at $ff8937
- * (codec_16bit_source).  This zeroes the following fields: 
+ * (codec_16bit_source).  This zeroes the following fields:
  *      $ff8920     track_control
  *      $ff8921     mode_control
  *      $ff8930-31  crossbar_src

@@ -1,7 +1,7 @@
 /*
  * DSP binary file generated from dspvect.lod
  *
- * Copyright (c) 2020 by The EmuTOS Development Team
+ * Copyright (c) 2020-2021 by The EmuTOS Development Team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -16,4 +16,3 @@
     0x0b, 0xf0, 0x80, 0x00, 0x00, 0x00,
     0x0b, 0xf0, 0x80, 0x00, 0x00, 0x00,
     0x0b, 0xf0, 0x80, 0x00, 0x00, 0x00,
-   

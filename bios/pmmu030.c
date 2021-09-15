@@ -1,7 +1,7 @@
 /*
  * pmmu030.c - initialisation for 68030 PMMU
  *
- * Copyright (C) 2013-2019 The EmuTOS development team
+ * Copyright (C) 2013-2021 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -32,12 +32,14 @@ struct pmmutable
 #define PMMU_FLAGS_CI   0x40        /* cache inhibit (page descriptors only) */
 
 
-#define mmutable_ram (*(struct pmmutable *)PMMUTREE_ADDRESS_68030)
+extern struct pmmutable pmmutree;   /* in low protected ST-RAM */
 
 /*
  * some macros useful for table creation
+ * Note: '+' must be used instead of '|' below to keep the expression constant,
+ * so it can be used in static initializers.
  */
-#define PMMU_SF_TABLE(table)    ( ((LONG)&mmutable_ram.table[0]) | PMMU_FLAGS_TD )
+#define PMMU_SF_TABLE(table)    ( ((LONG)pmmutree.table) + PMMU_FLAGS_TD )
 #define PMMU_SF_PAGE(addr)      ( ((LONG)(addr)) | PMMU_FLAGS_PD )
 #define PMMU_SF_PAGE_CI(addr)   ( ((LONG)(addr)) | PMMU_FLAGS_CI | PMMU_FLAGS_PD )
 
@@ -147,6 +149,6 @@ void setup_68030_pmmu(void);    /* called only from processor.S */
 
 void setup_68030_pmmu(void)
 {
-    memcpy(&mmutable_ram, &mmutable_rom, sizeof mmutable_rom);
+    memcpy(&pmmutree, &mmutable_rom, sizeof mmutable_rom);
 }
 #endif /* CONF_WITH_68030_PMMU */

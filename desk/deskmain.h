@@ -31,7 +31,7 @@ extern GRECT    gl_normwin;
 
 WORD hndl_msg(void);
 BOOL deskmain(void);
-void centre_title(OBJECT *tree);
+void align_title(OBJECT *tree);
 void install_shortcuts(void);
 
 #endif  /* _DESKMAIN_H */

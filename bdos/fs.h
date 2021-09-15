@@ -239,7 +239,8 @@ struct _dmd         /* drive media block */
 
     OFD    *m_ofl;      /*  list of open files                  */
     DND    *m_dtl;      /* root of directory tree list          */
-    UWORD  m_16;        /* 16 bit fat ?                         */
+    UBYTE  m_16;        /* 16 bit fat ?                         */
+    UBYTE  m_1fat;      /* 1 FAT only ?                         */
 } ;
 
 
@@ -415,6 +416,8 @@ long eof(int h);
 /* seek to byte position n on file with handle h */
 long xlseek(long n, int h, int flg);
 long ixlseek(OFD *p, long n);
+
+FCB *ixgetfcb(OFD *p);
 
 long xread(int h, long len, void *ubufr);
 long ixread(OFD *p, long len, void *ubufr);

@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2019 The EmuTOS development team
+*                 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -36,6 +36,7 @@
 #include "rectfunc.h"
 
 #include "intmath.h"
+#include "asm.h"
 
 /*
  *  Routine to watch the mouse while the button is down and it stays
@@ -353,9 +354,32 @@ WORD gr_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert)
 {
     GRECT   t, c;
     WORD    divnd, divis;
+    BOOL    xy_adjust;
+    MAYBE_UNUSED(xy_adjust);
 
     ob_actxywh(tree, parent, &c);
     ob_relxywh(tree, obj, &t);
+
+#if CONF_WITH_3D_OBJECTS
+    xy_adjust = FALSE;
+
+    /*
+     * if the child is 3D, adjust its width & height and
+     * (iff the parent is non-3D) its position too
+     */
+    if (tree[obj].ob_flags & FL3DOBJ)
+    {
+        t.g_w += 2 * ADJ3DSTD;
+        t.g_h += 2 * ADJ3DSTD;
+        if (!(tree[parent].ob_flags & FL3DOBJ))
+        {
+            t.g_x -= ADJ3DSTD;
+            t.g_y -= ADJ3DSTD;
+            xy_adjust = TRUE;
+        }
+    }
+#endif
+
     gr_dragbox(t.g_w, t.g_h, t.g_x + c.g_x, t.g_y + c.g_y,
                 &c, &t.g_x, &t.g_y);
 
@@ -370,8 +394,15 @@ WORD gr_slidebox(OBJECT *tree, WORD parent, WORD obj, WORD isvert)
         divis = c.g_w - t.g_w;
     }
 
+#if CONF_WITH_3D_OBJECTS
+    if (xy_adjust && divnd)
+        divnd += ADJ3DSTD;
+    if (divnd > divis)
+        divnd = divis;
+#endif
+
     if (divis)
-        return mul_div(divnd, 1000, divis);
+        return mul_div_round(divnd, 1000, divis);
     else
         return 0;
 }

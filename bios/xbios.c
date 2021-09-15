@@ -1,7 +1,7 @@
 /*
  * xbios.c - C portion of XBIOS initialization and front end
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -116,21 +116,35 @@ static WORD xbios_4(void)
 
 
 /*
- * xbios_5 - (setScreen) Set the screen locations
+ * xbios_5 - (Setscreen) Set the screen locations
  *
  * Set the logical screen location (logLoc), the physical screen location
- * (physLoc), and the physical screen resolution. Negative parameters are
- * ignored (making it possible, for instance, to set screen resolution without
- * changing anything else). When resolution is changed, the screen is cleared,
- * the cursor is homed, and the VT52 terminal emulator state is reset.
+ * (physLoc), and the physical screen resolution (rez).  To change videl
+ * mode on videl-capable systems, 'rez' is set to 3 and the mode (videlmode)
+ * is passed as an additional parameter.
+ *
+ * Setting a parameter to a negative value will cause it to be ignored
+ * (making it possible, for example, to set screen resolution without
+ * changing anything else).  In addition, on videl-capable systems, NULL
+ * values in both 'logLoc' and 'physLOC' will cause screen memory to be
+ * reallocated if possible.
+ *
+ * When resolution is changed, the screen is cleared, the cursor is homed,
+ * and the VT52 terminal emulator state is reset.
+ *
+ * NOTE: This function is everywhere documented to return void.  However,
+ * for TOS 4 compatibility, EmuTOS returns a WORD:
+ *      -1 if 'rez' is invalid or Srealloc() failed
+ *      else, for falcon resolutions, the previous videl mode
+ *      else 0
  */
 
 #if DBG_XBIOS
-static void xbios_5(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
+static WORD xbios_5(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
     kprintf("XBIOS: SetScreen(log = %p, phys = %p, rez = 0x%04x)\n",
            logLoc, physLoc, rez);
-    setscreen(logLoc, physLoc, rez, videlmode);
+    return setscreen(logLoc, physLoc, rez, videlmode);
 }
 #endif
 
@@ -980,6 +994,12 @@ static void xbios_5e(WORD index,WORD count,ULONG *rgb)
     kprintf("XBIOS: VgetRGB\n");
     vgetrgb(index,count,rgb);
 }
+static WORD xbios_5f(WORD mode)
+{
+    kprintf("XBIOS: VcheckMode\n");
+    /* aka vfixmode */
+    return vfixmode(mode);
+}
 #endif
 
 /*
@@ -1261,7 +1281,7 @@ LONG supexec(PFLONG);       /* defined in vectors.S */
 #elif CONF_WITH_DSP
 # define LAST_ENTRY 0x7f
 #elif CONF_WITH_VIDEL
-# define LAST_ENTRY 0x5e
+# define LAST_ENTRY 0x5f
 #elif CONF_WITH_TT_SHIFTER
 # define LAST_ENTRY 0x57
 #else
@@ -1402,7 +1422,8 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 5c */
     VEC(xbios_5d, vsetrgb),   /* 5d */
     VEC(xbios_5e, vgetrgb),   /* 5e */
-#elif LAST_ENTRY > 0x5e     /* must insert fillers for videl opcodes */
+    VEC(xbios_5f, vfixmode),  /* 5f */
+#elif LAST_ENTRY > 0x5f     /* must insert fillers for videl opcodes */
     xbios_unimpl,   /* 58 */
     xbios_unimpl,   /* 59 */
     xbios_unimpl,   /* 5a */
@@ -1410,11 +1431,8 @@ const PFLONG xbios_vecs[] = {
     xbios_unimpl,   /* 5c */
     xbios_unimpl,   /* 5d */
     xbios_unimpl,   /* 5e */
-#endif  /* CONF_WITH_VIDEL */
-
-#if LAST_ENTRY > 0x5e       /* must insert fillers */
     xbios_unimpl,   /* 5f */
-#endif
+#endif  /* CONF_WITH_VIDEL */
 
 #if CONF_WITH_DSP
     VEC(xbios_60, dsp_doblock),

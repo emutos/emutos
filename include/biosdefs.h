@@ -1,7 +1,7 @@
 /*
  * biosdefs.h - Public BIOS defines and structures
  *
- * Copyright (C) 2016-2020 The EmuTOS development team
+ * Copyright (C) 2016-2021 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows
@@ -82,7 +82,7 @@ typedef struct _bpb BPB;
  *  flags for BPB
  */
 #define B_16    1       /* device has 16-bit FATs */
-#define B_FIX   2       /* device has fixed media */
+#define B_1FAT  2       /* device has only a single FAT */
 
 /*
  * Flags for Kbshift()
@@ -120,16 +120,17 @@ struct kbdvecs
  */
 typedef void (*ETV_TIMER_T)(int ms); /* Type of BDOS Event Timer */
 
-/* TT resolutions */
-#define TT_HIGH        6
-#define TT_MEDIUM      4
-#define TT_LOW         7
+/* standard Atari resolution values */
+#define ST_LOW          0   /* used for ST/STe */
+#define ST_MEDIUM       1
+#define ST_HIGH         2
+#define FALCON_REZ      3   /* used as a Falcon indicator */
+#define TT_MEDIUM       4   /* used for TT */
+#define TT_HIGH         6
+#define TT_LOW          7
 
-/* ST(e) resolutions */
-#define ST_HIGH        2
-#define ST_MEDIUM      1
-#define ST_LOW         0
-#define FALCON_REZ     3    /* used as a Falcon indicator */
+#define MIN_REZ         ST_LOW          /* valid range (except that 5 isn't used) */
+#define MAX_REZ         TT_LOW
 
 /* monitor types (from VgetMonitor()) */
 #define MON_MONO       0    /* ST monochrome */

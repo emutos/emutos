@@ -10,27 +10,26 @@ a ROM version of EmuTOS.
   system              |  ok?  | who |   date      |  details
   --------------------+-------+-----+-------------+----------------
   Emulators           |       |     |             |
-  ARAnyM 0.9.16       |  yes  | VRI | 13 Oct 2019 |
-  Hatari v2.2.1       |  yes  | RFB | 16 Aug 2020 |
-  PaCifiST v0.48      |  yes  | LVL | winter 2001 |
+  ARAnyM 1.1.0        |  yes  | VRI |  2 Jul 2021 |
+  Hatari v2.3.1       |  yes  | VRI |  2 Jul 2021 |
+  PaCifiST v0.48      |   no  | (7) | 21 Jul 2021 | see (B)
   SainT v2.40         |  yes  | RFB | 29 Aug 2020 | 192k ROM only
-  STeem SSE 4.0.2     |  yes  | RFB | 29 Aug 2020 | (Win 64 DD)
+  Steem SSE 4.1.0 R7  |  yes  | VRI |  2 Jul 2021 | (Win 64 D3D)
   STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
-  STonX DOS           |  yes  | (7) | 16 Oct 2019 | 192k ROM
+  STonX DOS           |  yes  | CZ  | 22 Jul 2021 | see (A)
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon v0.5        |   no  | RFB | 29 Aug 2020 |
-  WinUAE 4.2.1        |  yes  | VRI | 13 Oct 2019 |
+  WinUAE 4.4.0        |  yes  | VRI |  2 Jul 2021 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
-  STf & STfm          |  yes  | CZ  | 16 Aug 2020 |
-  Mega ST             |  yes  | (6) |  7 Dec 2018 | tested with PRG
-  STe                 |  yes  | CZ  | 16 Aug 2020 |
+  STf & STfm          |  yes  | CZ  | 03 Jul 2021 |
+  Mega ST             |  yes  | (6) |  3 Jul 2021 | tested with PRG
+  STe                 |  yes  | CZ  | 03 Jul 2021 |
   Mega STe            |  yes  | CZ  | 31 Aug 2020 |
-  TT030               |  yes  | CZ  | 16 Aug 2020 |
-  Falcon030           |  yes  | (5) | 25 Aug 2020 |
-  Falcon030           |  yes  | (6) | 19 Aug 2020 | tested with PRG
-  Falcon030 + CT60    |  yes  | RFB | 26 Aug 2020 | tested with PRG
+  TT030               |  yes  | CZ  | 03 Jul 2021 |
+  Falcon030           |  yes  | CZ  | 03 Jul 2021 |
+  Falcon030 + CT60    |  yes  | RFB | 03 Jul 2021 | tested with PRG
   Suska III-C (2K15B) |  yes  | (3) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
   Other systems       |       |     |             |
@@ -38,10 +37,15 @@ a ROM version of EmuTOS.
   Amiga 500 + Vampire |  yes  | VRI | 13 Oct 2019 | GOLD2.11
   Amiga 600 + Vampire |  yes  | (4) |    Mar 2017 |
   Amiga 1000          |  yes  | (2) |    Jul 2012 |
-  FireBee             |  yes  | RFB | 26 Aug 2020 | also tested with PRG
-  M5484LITE           |  yes  | (3) | 30 Aug 2020 |
+  FireBee             |  yes  | VRI |  2 Jul 2021 |
+  M5484LITE           |  yes  | VRI |  2 Jul 2021 |
   Vampire V4          |  yes  | CZ  | 24 Aug 2020 |
   Apple Lisa          |  yes  | (8) |  4 Feb 2021 |
+
+Remarks:
+  (A) StonX DOS: EmuTOS 1.1 and 1.1.1 are known to be incompatible.
+      Newer snapshots are ok again.
+  (B) Last version tested OK under PaCifiST: EmuTOS 0.8.7, 192k ROMs
 
 Abbreviations for testers:
     CZ:  Christian Zietz
@@ -248,7 +252,7 @@ TOS v4.00:
  - 0x5c VsetVars        (for Falcon Videl only) - undocumented
  T 0x5d VsetRGB         (for Falcon Videl only)
  T 0x5e VgetRGB         (for Falcon Videl only)
- - 0x5f VfixMode        (for Falcon Videl only) - undocumented
+ t 0x5f VcheckMode      (for Falcon Videl only) - undocumented
 
  - 0x96 VsetMask        (for Falcon Videl only) - relevant when 16-bit colour is supported
 

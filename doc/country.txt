@@ -60,15 +60,24 @@ sequence (from fill_cookie_jar() in machine.c). See in bios.c:
   cookie_init();  /* sets a cookie jar */
   machine_init(); /* detect hardware features and fill the cookie jar */
 
-If NVRAM is found, then the time&date, keyboard, language and
-country are taken from it, and the charset is deduced from the
-language. Else the country code is taken from the OS header, and
-all parameters are deduced from the country code. The values of
-parameters in the OS header are contained in file bios/header.h,
-itself created by tools/mkheader.awk, depending on the build date and
-the value of the Makefile variable $(COUNTRY).
+There are three basic ways (chosen at compile time) that the country,
+language, keyboard, charset, and IDT values are set:
+1. For the 192K/256K versions of EmuTOS (expected to run on ST/STe
+   systems which have no NVRAM), the country code is stored in the OS
+   header, and all parameters are deduced from the country code.
+2. For the 512K version of EmuTOS (expected to run on TT/Falcon systems
+   with NVRAM), the country code is stored in the OS header and the
+   language is derived from that.  Other parameters are obtained from
+   NVRAM.
+3. For other versions of EmuTOS (including PRG and emulator versions),
+   all parameters are deduced from NVRAM if present; otherwise the
+   country code is taken from the OS header, and all parameters are
+   deduced from the country code.
+The values of parameters in the OS header are contained in the file
+bios/header.h, itself created by tools/mkheader.awk, depending on
+the build date and the value of the Makefile variable $(COUNTRY).
 
-Later, nls is inited and configured according to the language.
+Later, nls is initialised and configured according to the language.
 See in bios.c:
 
   nls_init();         /* init native language support */

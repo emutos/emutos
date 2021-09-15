@@ -213,7 +213,7 @@ long xmkdir(char *s)
     fd = f->o_dirfil;
 
     ixlseek(fd,f->o_dirbyt);
-    b = (FCB *) ixread(fd,32L,NULL);
+    b = ixgetfcb(fd);
 
     /* is the total path length too long? */    /* M01.01.1107.01 */
     plen = namlen( b->f_name );
@@ -312,10 +312,10 @@ long xrmdir(char *p)
     if (!(fd = d->d_ofd))
         fd = makofd(d);             /* makofd() also updates d->d_ofd */
 
-    ixlseek(fd,0x40L);              /* skip over . and .. */
+    ixlseek(fd,2*sizeof(FCB));      /* skip over . and .. */
     do
     {
-        if (!(f = (FCB *) ixread(fd,32L,NULL)))
+        if (!(f = ixgetfcb(fd)))
             break;
     } while ((f->f_name[0] == ERASE_MARKER) || (f->f_attrib == FA_LFN));
 
@@ -366,7 +366,7 @@ long xrmdir(char *p)
      * finally, we delete the entry from the parent directory
      */
     ixlseek((f2 = fd->o_dirfil),(pos = fd->o_dirbyt));
-    f = (FCB *)ixread(f2,32L,NULL);
+    f = ixgetfcb(f2);
 
     return ixdel(d1,f,pos);
 }
@@ -928,7 +928,7 @@ long xrename(int n, char *p1, char *p2)
      *   posp = offset of FCB from start of directory in bytes, plus 32
      */
     fd = dn1->d_ofd;
-    posp -= 32;                 /* adjust to start of FCB */
+    posp -= sizeof(FCB);        /* adjust to start of FCB */
 
     /* get old attribute & time/date/cluster/length */
     att = f->f_attrib;
@@ -1027,7 +1027,7 @@ long xrename(int n, char *p1, char *p2)
                 temp = 0;
             else temp = fdparent->o_strtcl; /* else real start cluster */
             swpw(temp);                     /* convert to disk format */
-            if (update_fcb(fd2,32+26,2L,(UBYTE *)&temp) < 0)
+            if (update_fcb(fd2,sizeof(FCB)+26,2L,(UBYTE *)&temp) < 0)
             {
                 KDEBUG(("xrename(): can't update .. entry\n"));
                 return EINTRN;
@@ -1532,7 +1532,7 @@ FCB *scan(DND *dnd, const char *n, WORD att, LONG *posp)
     /*
      *  scan thru the directory file, looking for a match
      */
-    while ((fcb = (FCB *) ixread(fd,32L,NULL)) && (fcb->f_name[0]))
+    while ((fcb = ixgetfcb(fd)) && (fcb->f_name[0]))
     {
         /*
          *  Add New DND.
@@ -1573,7 +1573,7 @@ FCB *scan(DND *dnd, const char *n, WORD att, LONG *posp)
 
     if (*posp == -1)
     {       /*  seek to position of found entry  */
-        ixlseek(fd,fd->o_bytnum - 32);
+        ixlseek(fd,fd->o_bytnum - sizeof(FCB));
         return (FCB *)dnd1;
     }
 
@@ -1649,7 +1649,7 @@ static DND *makdnd(DND *p, FCB *b)
     swpw(p1->d_strtcl);
     p1->d_drv = p->d_drv;
     p1->d_dirfil = fd;
-    p1->d_dirpos = fd->o_bytnum - 32;
+    p1->d_dirpos = fd->o_bytnum - sizeof(FCB);
     p1->d_td.time = b->f_td.time;   /* note: DND time/date are  */
     p1->d_td.date = b->f_td.date;   /*  actually little-endian! */
     memcpy(p1->d_name, b->f_name, FNAMELEN);

@@ -2,7 +2,7 @@
  * bdosmain.c - GEMDOS main function dispatcher
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2020 The EmuTOS development team
+ *               2002-2021 The EmuTOS development team
  *
  * Authors:
  *  EWF  Eric W. Fleischman
@@ -196,7 +196,13 @@ static const FND funcs[] =
 #else
     { NI, 0, 0 },               /* 0x14 */
 #endif
+
+#if CONF_WITH_VIDEL
     { F(srealloc),  0, 2 },     /* 0x15 */
+#else
+    { NI, 0, 0 },               /* 0x15 */
+#endif
+
     { NI, 0, 0 },
     { NI, 0, 0 },
     { NI, 0, 0 },

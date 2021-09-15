@@ -2,7 +2,7 @@
  * mem.h - header file for memory and process management routines
  *
  * Copyright (C) 2001 Lineo, Inc. and
- *               2002-2019 The EmuTOS development team
+ *               2002-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL Laurent Vogel
@@ -68,8 +68,11 @@ long xmfree(void *addr);
 long xsetblk(int n, void *blk, long len);
 /* mxalloc */
 void *xmxalloc(long amount, int mode);
+
+#if CONF_WITH_VIDEL
 /* srealloc */
 void *srealloc(long amount);
+#endif
 
 /* init user memory */
 void umem_init(void);

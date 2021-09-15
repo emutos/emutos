@@ -1,7 +1,7 @@
 /*
  * coldfire.c - ColdFire specific functions
  *
- * Copyright (C) 2013-2019 The EmuTOS development team
+ * Copyright (C) 2013-2021 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -56,24 +56,6 @@ void coldfire_rs232_write_byte(UBYTE b)
 
     /* Send the byte */
     MCF_UART_UTB(RS232_UART_PORT) = (UBYTE)b;
-}
-
-BOOL coldfire_rs232_can_read(void)
-{
-    /* Wait until a byte is received */
-    return MCF_UART_USR(RS232_UART_PORT) & MCF_UART_USR_RXRDY;
-}
-
-UBYTE coldfire_rs232_read_byte(void)
-{
-    /* Wait until character has been received */
-    while (!coldfire_rs232_can_read())
-    {
-        /* Wait */
-    }
-
-    /* Read the received byte */
-    return MCF_UART_URB(RS232_UART_PORT);
 }
 
 #endif /* CONF_WITH_COLDFIRE_RS232 */

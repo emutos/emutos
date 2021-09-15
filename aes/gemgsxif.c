@@ -1,7 +1,7 @@
 /*
  * gemgsxif.c - AES's interface to VDI (gsx)
  *
- * Copyright 2002-2019 The EmuTOS development team
+ * Copyright 2002-2021 The EmuTOS development team
  *           1999, Caldera Thin Clients, Inc.
  *           1987, Digital Research Inc.
  *
@@ -173,13 +173,13 @@ static void gsx_wsopen(void)
      *
      * but there are (undocumented) complications for the Falcon:
      * we need to use the special pseudo-screen rez, and put the actual
-     * videl mode into ptsout[0] (!).
+     * videl mode into intout[45] (!).
      */
     *p++ = screen_rez() + 2;
     for (i = 1; i < 10; i++)
         *p++ = 1;
     *p = 2;                         /* device coordinate space */
-    gl_ws.ws_pts0 = VsetMode(-1);   /* ptsout points here ... harmless if not a Falcon */
+    gl_ws.ws_pts0 = VsetMode(-1);   /* will be intout[45] ... harmless if not a Falcon */
     v_opnwk(intin, &gl_handle, &gl_ws);
     gl_graphic = TRUE;
 }

@@ -20,11 +20,11 @@ OUTPUT_FORMAT(binary)
 #if !EMUTOS_LIVES_IN_RAM
 
 /* The ROM address depends on the target */
-#if defined (MACHINE_AMIGA)
+#if defined(MACHINE_AMIGA)
 # define ROM_ORIGIN 0x00fc0000
-#elif defined (TARGET_CART)
+#elif defined(TARGET_CART)
 # define ROM_ORIGIN 0x00fa0000
-#elif defined (TARGET_192)
+#elif defined(TARGET_192)
 # define ROM_ORIGIN 0x00fc0000
 #else
 # define ROM_ORIGIN 0x00e00000

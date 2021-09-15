@@ -1,7 +1,7 @@
 EmuTOS - floppy versions
 
 These special versions allow EmuTOS to be loaded from a boot floppy
-without the need of replacing the system ROM.
+without needing to replace the system ROM.
 This is the simplest way to test EmuTOS on real hardware from a floppy.
 The drawback is less available RAM compared to ROM versions.
 
@@ -37,7 +37,7 @@ Notes:
   keyboard layouts are Norwegian/Swedish
 
 These floppies are provided in the form of raw single-sided floppy images.
-They can be used as is on most emulators.
+They can be used as-is on most emulators.
 
 In order to use a floppy image on real hardware, first you need to write it
 to a real floppy using some raw image tool.

@@ -39,6 +39,9 @@
 
 #define THEDESK 3       /* MUST be the same value as DESKMENU in desk/desk_rsc.h */
 
+#define TGADGETS    (NAME | CLOSER | FULLER | MOVER)
+#define VGADGETS    (UPARROW | DNARROW | VSLIDE)
+#define HGADGETS    (LFARROW | RTARROW | HSLIDE)
 
 /*
  * Global variables
@@ -155,117 +158,151 @@ static void perform_untop(WORD wh)
 
 static void hctl_window(WORD w_handle, WORD mx, WORD my)
 {
-    GRECT   t, f, pt;
+    GRECT   t, f;
     WINDOW  *pwin = &D.w_win[w_handle];
     WORD    x, y, w, h;
     WORD    wm, hm;
+    WORD    elev_x, elev_y;
     WORD    kind;
     WORD    cpt, message;
-    OBJECT  *tree;
-
-    message = 0;
-    x = y = w = h = 0;
-
-    if (w_handle == gl_wtop)
-    {
-        /*
-         * went down on active window so handle control points
-         */
-        w_bldactive(w_handle);
-        tree = gl_awind;
-        cpt = ob_find(gl_awind, 0, 10, mx, my);
-        w_getsize(WS_CURR, w_handle, &t);
-        r_get(&t, &x, &y, &w, &h);
-        kind = pwin->w_kind;
-        switch(cpt)
-        {
-        case W_CLOSER:
-#if CONF_WITH_PCGEM
-            if ( kind & HOTCLOSE )
-            {
-                message = WM_CLOSED;
-                break;
-            }
-            FALLTHROUGH;
+    WORD    gadget, normal, selected;
+#if !CONF_WITH_3D_OBJECTS
+    BOOL    need_normal = FALSE;
 #endif
-        case W_FULLER:
-            if ( gr_watchbox(gl_awind, cpt, SELECTED, NORMAL) )
-            {
-                message = (cpt == W_CLOSER) ? WM_CLOSED : WM_FULLED;
-                ob_change(gl_awind, cpt, NORMAL, TRUE);
-            }
-            break;
-        case W_NAME:
-            if ( kind & MOVER )
-            {
-                /* prevent the mover gadget from being moved completely offscreen */
-                r_set(&f, 0, gl_hbox, gl_rscreen.g_w + w - gl_wbox - 6, MAX_COORDINATE);
-                gr_dragbox(w, h, x, y, &f, &x, &y);
-                message = WM_MOVED;
-            }
-            break;
-        case W_SIZER:
-            if (kind & SIZER)
-            {
-                w_getsize(WS_WORK, w_handle, &t);
-                t.g_x -= x;
-                t.g_y -= y;
-                t.g_w -= w;
-                t.g_h -= h;
-                wm = gl_wchar;
-                hm = gl_hchar;
-                if (kind & (LFARROW | RTARROW | HSLIDE))
-                    wm = gl_wbox * 7;
-                if (kind & (UPARROW | DNARROW | VSLIDE))
-                    hm = gl_hbox * 7;
-                gr_rubwind(x, y, wm, hm, &t, &w, &h);
-                message = WM_SIZED;
-            }
-            break;
-        case W_HSLIDE:
-        case W_VSLIDE:
-            ob_actxywh(tree, cpt + 1, &pt);
-            if (inside(mx, my, &pt))
-            {
-                cpt = (cpt==W_HSLIDE) ? W_HELEV : W_VELEV;
-                goto doelev;
-            }
 
-            /* fix up cpt for index into gl_wa[] */
-            if (cpt == W_HSLIDE)
-            {
-                if ( !(mx < pt.g_x) )
-                    cpt += 1;
-            }
-            else
-            {
-                if ( !(my < pt.g_y) )
-                    cpt += 1;
-            }
-            FALLTHROUGH;
-        case W_UPARROW:
-        case W_DNARROW:
-        case W_LFARROW:
-        case W_RTARROW:
-            handle_arrow_msg(w_handle, cpt);
-            return;
-            break;
-        case W_HELEV:
-        case W_VELEV:
-doelev:     message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
-            x = gr_slidebox(gl_awind, cpt - 1, cpt, (cpt == W_VELEV));
-            /* slide is 1 less than elev    */
-            break;
-        }
-    }
-    else
+    if (w_handle != gl_wtop)
     {
         perform_untop(gl_wtop);
         /*
-         * went down on inactive window so tell ap. to bring it to top
+         * went down on inactive window so tell owner to bring it to top
          */
-        message = WM_TOPPED;
+        ct_msgup(WM_TOPPED, pwin->w_owner, w_handle, 0, 0, 0, 0);
+        return;
     }
+
+    message = 0;
+
+    /*
+     * went down on active window so handle control points
+     */
+    w_bldactive(w_handle);
+    gadget = cpt = ob_find(gl_awind, W_BOX, MAX_DEPTH, mx, my);
+#if CONF_WITH_3D_OBJECTS
+    normal = gl_awind[gadget].ob_state & ~SELECTED;
+    selected = normal | SELECTED;
+#else
+    normal = NORMAL;
+    selected = SELECTED;
+#endif
+    w_getsize(WS_CURR, w_handle, &t);
+    r_get(&t, &x, &y, &w, &h);
+    kind = pwin->w_kind;
+
+    switch(cpt)
+    {
+    case W_CLOSER:
+#if CONF_WITH_PCGEM
+        if (kind & HOTCLOSE)
+        {
+            message = WM_CLOSED;
+            break;
+        }
+        FALLTHROUGH;
+#endif
+    case W_FULLER:
+        if (gr_watchbox(gl_awind, gadget, selected, normal))
+        {
+            message = (cpt == W_CLOSER) ? WM_CLOSED : WM_FULLED;
+#if !CONF_WITH_3D_OBJECTS
+            need_normal = TRUE;
+#endif
+        }
+        break;
+    case W_NAME:
+        if (kind & MOVER)
+        {
+#if CONF_WITH_3D_OBJECTS
+            ob_change(gl_awind, gadget, selected, TRUE);
+#endif
+            /* prevent the mover gadget from being moved completely offscreen */
+            r_set(&f, 0, gl_hbox, gl_rscreen.g_w+w-gl_wbox-6, MAX_COORDINATE);
+            gr_dragbox(w, h, x, y, &f, &x, &y);
+            message = WM_MOVED;
+        }
+        break;
+    case W_SIZER:
+        if (kind & SIZER)
+        {
+#if CONF_WITH_3D_OBJECTS
+            ob_change(gl_awind, gadget, selected, TRUE);
+#endif
+            w_getsize(WS_WORK, w_handle, &t);
+            t.g_x -= x;
+            t.g_y -= y;
+            t.g_w -= w;
+            t.g_h -= h;
+            wm = gl_wchar;
+            hm = gl_hchar;
+            if (kind & (TGADGETS | HGADGETS))
+                wm = gl_wbox * 4;
+            if (kind & VGADGETS)
+                hm = gl_hbox * 6;
+            gr_rubwind(x, y, wm, hm, &t, &w, &h);
+            message = WM_SIZED;
+        }
+        break;
+    case W_HSLIDE:
+    case W_VSLIDE:
+        /*
+         * because of the way W_ACTIVE is arranged, adding 1 to cpt
+         * converts W_HSLIDE->W_HELEV, W_VSLIDE->W_VELEV
+         */
+        ob_offset(gl_awind, cpt+1, &elev_x, &elev_y);
+        if (cpt == W_HSLIDE)
+        {
+            if ( !(mx < elev_x) )
+                cpt += 1;
+        }
+        else
+        {
+            if ( !(my < elev_y) )
+                cpt += 1;
+        }
+        FALLTHROUGH;
+    case W_UPARROW:
+    case W_DNARROW:
+    case W_LFARROW:
+    case W_RTARROW:
+#if CONF_WITH_3D_OBJECTS
+        if ((gadget != W_HSLIDE) && (gadget != W_VSLIDE))
+            ob_change(gl_awind, gadget, selected, TRUE);
+#endif
+        handle_arrow_msg(w_handle, cpt);
+#if CONF_WITH_3D_OBJECTS
+        if ((gadget != W_HSLIDE) && (gadget != W_VSLIDE))
+            ob_change(gl_awind, gadget, normal, TRUE);
+#endif
+        return;
+        break;
+    case W_HELEV:
+    case W_VELEV:
+#if CONF_WITH_3D_OBJECTS
+        ob_change(gl_awind, gadget, selected, TRUE);
+#endif
+        message = (cpt == W_HELEV) ? WM_HSLID : WM_VSLID;
+        /*
+         * as noted above, subtracting 1 from cpt converts
+         * W_HELEV->W_HSLIDE, W_VELEV->W_VSLIDE
+         */
+        x = gr_slidebox(gl_awind, cpt-1, cpt, (cpt == W_VELEV));
+        break;
+    }
+
+#if !CONF_WITH_3D_OBJECTS
+    if (need_normal)
+#endif
+        ob_change(gl_awind, gadget, normal, TRUE);
+
     ct_msgup(message, pwin->w_owner, w_handle, x, y, w, h);
 }
 
@@ -306,6 +343,20 @@ static void hctl_rect(void)
         }
     }
 }
+
+
+#if CONF_WITH_3D_OBJECTS
+/*
+ * handle messages caught by control manager
+ *
+ * we currently only handle redraws
+ */
+static void hctl_msg(WORD *msgbuf)
+{
+    if (msgbuf[0] == WM_REDRAW)
+        w_redraw_desktop((GRECT *)&msgbuf[4]);
+}
+#endif
 
 
 /*
@@ -355,6 +406,7 @@ void ctlmgr(void)
     WORD    ev_which;
     WORD    rets[6];
     WORD    wh;
+    WORD    msgbuf[8];
 
     /*
      * set defaults for multi wait
@@ -369,11 +421,15 @@ void ctlmgr(void)
          * wait for something to happen, keys need to be eaten
          * including fake key sent by mn_bar() [the menu bar handler]
          */
+#if CONF_WITH_3D_OBJECTS
+        ev_which = MU_KEYBD | MU_BUTTON | MU_MESAG;
+#else
         ev_which = MU_KEYBD | MU_BUTTON;
+#endif
         if (gl_mntree)                  /* only wait on bar when there  */
             ev_which |= MU_M1;          /* is a menu                    */
         ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
-                                0x0L, 0x0001ff01L, NULL, rets);
+                                0x0L, 0x0001ff01L, msgbuf, rets);
 
         ct_mouse(TRUE);                 /* grab screen sink     */
         /*
@@ -389,6 +445,13 @@ void ctlmgr(void)
                                         /* mouse over menu bar  */
         if (ev_which & MU_M1)
             hctl_rect();
+
+#if CONF_WITH_3D_OBJECTS
+        /* handle messages for e.g. depressed activators */
+        if (ev_which & MU_MESAG)
+            hctl_msg(msgbuf);
+#endif
+
         ct_mouse(FALSE);                /* give up screen sink  */
     }
 }

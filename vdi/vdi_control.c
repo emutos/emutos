@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc.
- * Copyright 2002-2020 The EmuTOS development team.
+ * Copyright 2002-2021 The EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -460,8 +460,7 @@ void vdi_v_opnwk(Vwk * vwk)
 
     /*
      * Programs can request a video mode switch by passing the desired
-     * mode + 2 in INTIN[0]. Falcon-specific modes are currently not
-     * supported.
+     * mode + 2 in INTIN[0].
      */
     newrez = INTIN[0] - 2;
     if (
@@ -471,9 +470,19 @@ void vdi_v_opnwk(Vwk * vwk)
 #endif
        ) {
         if (newrez != Getrez()) {
-            Setscreen(-1L, -1L, newrez, 0);
+            Setscreen(0L, 0L, newrez, 0);
         }
     }
+#if CONF_WITH_VIDEL
+    if (newrez == FALCON_REZ) {
+        /* Atari TOS 4 uses INTOUT (sic!) to pass new Videl mode. */
+        WORD newvidel = INTOUT[45];
+        WORD curvidel = VsetMode(-1);
+        if (curvidel != newvidel) {
+            Setscreen(0L, 0L, newrez, newvidel);
+        }
+    }
+#endif
 
     /* We need to copy some initial table data from the ROM */
     for (i = 0; i < 12; i++) {

@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002-2020 The EmuTOS development team
+ * Copyright 2002-2021 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -452,7 +452,7 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
         /* if the current vector is horizontal, ignore it. */
         dy = y2 - y1;
         if ( dy ) {
-            LONG dy1, dy2;
+            WORD dy1, dy2;
 
             /* fetch scan-line y. */
             dy1 = y - y1;       /* d4 - delta y1. */
@@ -466,7 +466,7 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
              * not intersect and can be ignored.  The origin for this
              * test is found in Newman and Sproull.
              */
-            if ((dy1 < 0) != (dy2 < 0)) {
+            if ((dy1^dy2) < 0) {
                 int dx;
                 WORD x1, x2;
                 x1 = point[i].x;        /* fetch x-value of 1st endpoint. */
@@ -490,18 +490,20 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
 
     /*
      * All of the points of intersection have now been found.  If there
-     * were none then there is nothing more to do.  Otherwise, sort the
-     * list of points of intersection in ascending order.
+     * were none (or one, which I think is impossible), then there is
+     * nothing more to do.  Otherwise, sort the list of points of
+     * intersection in ascending order.
      * (The list contains only the x-coordinates of the points.)
      */
-
-    /* anything to do? */
-    if (intersections == 0)
+    if (intersections < 2)
         return;
 
-    /* bubblesort the intersections, if it makes sense */
-    if ( intersections > 1 )
-        bub_sort(vdishare.main.fill_buffer, intersections);
+    /*
+     * Sort the intersections.  There are almost always exactly 2, except
+     * for weird shapes (if this wasn't true, bubble sort would be a bad
+     * choice).
+     */
+    bub_sort(vdishare.main.fill_buffer, intersections);
 
     /*
      * Testing under Atari TOS shows that the fill area always *includes*
@@ -510,59 +512,40 @@ clc_flit (const VwkAttrib * attr, const VwkClip * clipper, const Point * point, 
      * pixels).  We now conform to Atari TOS.
      */
 
-    if (attr->clip) {
-        /*
-         * Clipping is in force.  Clip the endpoints of the line segment
-         * to the left and right sides of the clipping rectangle.
-         */
+    /*
+     * Loop through points, calling draw_rect_common() for each pair
+     */
+    bufptr = vdishare.main.fill_buffer;
+    i = intersections / 2;
+    while(i--) {
+        WORD x1, x2;
+        Rect rect;
 
-        /* loop through buffered points */
-        WORD * ptr = vdishare.main.fill_buffer;
-        for (i = intersections / 2 - 1; i >= 0; i--) {
-            WORD x1, x2;
-            Rect rect;
+        /* grab a pair of endpoints */
+        x1 = *bufptr++;
+        x2 = *bufptr++;
 
-            /* grab a pair of endpoints */
-            x1 = *ptr++;
-            x2 = *ptr++;
-
-            if ( x1 < clipper->xmn_clip ) {
-                if ( x2 < clipper->xmn_clip )
+        /* handle clipping */
+        if (attr->clip) {
+            if (x1 < clipper->xmn_clip) {
+                if (x2 < clipper->xmn_clip)
                     continue;           /* entire segment clipped left */
                 x1 = clipper->xmn_clip; /* clip left end of line */
             }
 
-            if ( x2 > clipper->xmx_clip ) {
-                if ( x1 > clipper->xmx_clip )
-                    continue;           /* entire segment clippped */
+            if (x2 > clipper->xmx_clip) {
+                if (x1 > clipper->xmx_clip)
+                    continue;           /* entire segment clipped right */
                 x2 = clipper->xmx_clip; /* clip right end of line */
             }
-            rect.x1 = x1;
-            rect.y1 = y;
-            rect.x2 = x2;
-            rect.y2 = y;
-
-            /* rectangle fill routine draws horizontal line */
-            draw_rect_common(attr, &rect);
         }
-    }
-    else {
-        /* Clipping is not in force.  Draw from point to point. */
+        rect.x1 = x1;
+        rect.y1 = y;
+        rect.x2 = x2;
+        rect.y2 = y;
 
-        /* loop through buffered points */
-        WORD * ptr = vdishare.main.fill_buffer;
-        for (i = intersections / 2 - 1; i >= 0; i--) {
-            Rect rect;
-
-            /* grab a pair of endpoints */
-            rect.x1 = *ptr++;
-            rect.y1 = y;
-            rect.x2 = *ptr++;
-            rect.y2 = y;
-
-            /* rectangle fill routine draws horizontal line */
-            draw_rect_common(attr, &rect);
-        }
+        /* rectangle fill routine draws horizontal line */
+        draw_rect_common(attr, &rect);
     }
 }
 

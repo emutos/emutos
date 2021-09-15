@@ -9,7 +9,7 @@ the motherboard.
 
 Note 2: Extra hardware is autodetected, but the following TT- and
 Falcon-specific hardware is not supported: memory control unit,
-video, SCSI, NVRAM, and the second MFP of a TT.
+video, DSP, SCSI, NVRAM, and the second MFP of a TT.
 
 The desktop features are comparable to Atari TOS 2.
 

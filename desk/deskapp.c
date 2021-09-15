@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*       Copyright (C) 2002-2020 The EmuTOS development team
+*       Copyright (C) 2002-2021 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -1404,6 +1404,9 @@ void app_blddesk(void)
 ANODE *app_afind_by_id(WORD obid)
 {
     ANODE *pa;
+
+    if (obid < WOBS_START)      /* validate obid */
+        return NULL;
 
     for (pa = G.g_ahead; pa; pa = pa->a_next)
     {

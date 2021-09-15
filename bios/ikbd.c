@@ -1,7 +1,7 @@
 /*
  * ikbd.c - Intelligent keyboard routines
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -963,7 +963,7 @@ void ikbd_writeb(UBYTE b)
     ikbd_acia.data = b;
 #elif CONF_WITH_FLEXCAN
     coldfire_flexcan_ikbd_writeb(b);
-#elif defined (MACHINE_AMIGA)
+#elif defined(MACHINE_AMIGA)
     amiga_ikbd_writeb(b);
 #endif
 }

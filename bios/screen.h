@@ -1,7 +1,7 @@
 /*
  * screen.h - low-level screen routines
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -16,7 +16,7 @@
 
 #define ST_VRAM_SIZE        32000UL
 #define TT_VRAM_SIZE        153600UL
-#define FALCON_VRAM_SIZE    307200UL
+#define FALCON_VRAM_SIZE    368640UL    /* 768x480x256 (including overscan) */
 
 #if CONF_WITH_ATARI_VIDEO
 
@@ -99,7 +99,7 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
 const UBYTE *physbase(void);
 UBYTE *logbase(void);
 WORD getrez(void);
-void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode);
+WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode);
 void setpalette(const UWORD *palettePtr);
 WORD setcolor(WORD colorNum, WORD color);
 void vsync(void);

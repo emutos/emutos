@@ -31,6 +31,13 @@ void lisa_init_system_timer(void);
 ULONG lisa_getdt(void);
 void lisa_shutdown(void);
 
+void lisa_read_lba_sector(ULONG lba, UBYTE *buffer); /* Defined in lisa2.S */
+
+void lisa_floppy_init(void);
+BOOL lisa_flop_detect_drive(WORD dev);
+WORD lisa_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count);
+LONG lisa_flop_mediach(WORD dev);
+
 #endif /* MACHINE_LISA */
 
 #endif /* LISA_H */

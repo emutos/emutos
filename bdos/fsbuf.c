@@ -96,7 +96,7 @@ void flush(BCB *b)
 
     /* flush to both fats */
 
-    if (n == BT_FAT) {
+    if (n == BT_FAT && !dm->m_1fat) {
         longjmp_rwabs(1, (long)b->b_bufr, 1,
                       b->b_bufrec+dm->m_recoff[BT_FAT]-dm->m_fsiz, d);
     }

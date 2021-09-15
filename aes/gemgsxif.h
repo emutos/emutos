@@ -1,7 +1,7 @@
 /*
  * gemgsxif.h - header for EmuTOS AES's interface to the VDI
  *
- * Copyright (C) 2002-2020 The EmuTOS development team
+ * Copyright (C) 2002-2021 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -63,5 +63,14 @@ void vsl_width(WORD width);
 #if CONF_WITH_EXTENDED_MOUSE
 void vex_wheelv(PFVOID new, PFVOID *old);
 #endif
+
+/*
+ * use #defines for simple functions
+ */
+#define vsf_color(x)    gsx_1code(SET_FILL_COLOR, x)
+#define vsf_interior(x) gsx_1code(SET_FILL_INTERIOR, x)
+#define vsf_style(x)    gsx_1code(SET_FILL_STYLE, x)
+#define vsl_type(x)     gsx_1code(SET_LINE_TYPE, x)
+#define vsl_udsty(x)    gsx_1code(SET_UD_LINE_STYLE, x)
 
 #endif

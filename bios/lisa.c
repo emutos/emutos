@@ -22,6 +22,8 @@
 #include "tosvars.h"
 #include "screen.h"
 #include "../vdi/vdi_defs.h"
+#include "disk.h"
+#include "gemerror.h"
 
 #ifdef MACHINE_LISA
 
@@ -486,6 +488,51 @@ ULONG lisa_getdt(void)
     time = (hour << 11) | (minute << 5) | (second >> 1);
 
     return MAKE_ULONG(date, time);
+}
+
+void lisa_floppy_init(void)
+{
+
+}
+
+BOOL lisa_flop_detect_drive(WORD dev)
+{
+    return dev == 0; /* Assume that A: is always connected */
+}
+
+/* Read or write sectors from floppy.
+ * Parameters assume 10 sectors on all tracks,
+ * while actual Lisa floppies have a variable number of sectors per track.
+ * So we convert the dummy track/sector numbers into an absolute sector number.
+ */
+WORD lisa_floprw(UBYTE *buf, WORD rw, WORD dev, WORD sect, WORD track, WORD side, WORD count)
+{
+    ULONG lba; /* Absolute sector number */
+    WORD i;
+
+    if (dev != 0 || side != 0)
+        return EBADRQ;
+
+    if (rw != 0)
+        return EWRPRO; /* Write is not supported */
+
+    lba = track * 10 + (sect - 1);
+
+    for (i = 0; i < count; i++)
+    {
+        ULONG sector_lba = lba + i;
+        UBYTE *sector_buffer = buf + i*512;
+        lisa_read_lba_sector(sector_lba, sector_buffer);
+        KDEBUG(("lba=%lu data=[%02x %02x %02x %02x ...]\n", sector_lba, sector_buffer[0], sector_buffer[1], sector_buffer[2], sector_buffer[3]));
+    }
+
+    return E_OK;
+}
+
+LONG lisa_flop_mediach(WORD dev)
+{
+    /* FIXME: Implement proper floppy eject and media change */
+    return MEDIANOCHANGE;
 }
 
 #endif /* MACHINE_LISA */

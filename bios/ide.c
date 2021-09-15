@@ -1,7 +1,7 @@
 /*
  * ide.c - Falcon IDE functions
  *
- * Copyright (C) 2011-2020 The EmuTOS development team
+ * Copyright (C) 2011-2021 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -273,7 +273,7 @@ struct IFINFO {
  * ROM image.  See doc/version.txt for details.
  */
 #define SHORT_TIMEOUT   (CLOCKS_PER_SEC/10) /* 100ms */
-#define XFER_TIMEOUT    (CLOCKS_PER_SEC)    /* 1000ms for data xfer */
+#define XFER_TIMEOUT    (3*CLOCKS_PER_SEC)  /* 3 seconds for data xfer */
 #define LONG_TIMEOUT    (3*CLOCKS_PER_SEC)  /* 3 seconds for reset */
 
 static int has_ide;

@@ -1,7 +1,7 @@
 /*
  * dsp.c - DSP routines
  *
- * Copyright (C) 2020 The EmuTOS development team
+ * Copyright (C) 2020-2021 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows

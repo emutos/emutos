@@ -8,7 +8,7 @@
  *          . install application
  *          . remove desktop icons
  *
- *      Copyright 2002-2020 The EmuTOS development team
+ *      Copyright 2002-2021 The EmuTOS development team
  *
  *      This software is licenced under the GNU Public License.
  *      Please see LICENSE.TXT for further information.
@@ -59,7 +59,7 @@ static void anode_dump(char *msg)
 
     kprintf("%s:\n",msg);
     for (pa = G.g_ahead; pa; pa = pa->a_next)
-        kprintf("  pa=%s,flags=0x%04x,type=%d,aicon=%d,dicon=%d,appl=%s,data=%s\n",
+        kprintf("  pa=%p,flags=0x%04x,type=%d,aicon=%d,dicon=%d,appl=%s,data=%s\n",
                 pa,pa->a_flags,pa->a_type,pa->a_aicon,pa->a_dicon,pa->a_pappl,pa->a_pdata);
 }
 #endif

@@ -4,7 +4,7 @@
  * note that the timings are quite imprecise (but conservative) unless
  * you are running on at least a 32MHz 68030 processor
  *
- * Copyright (C) 2013-2019 The EmuTOS development team
+ * Copyright (C) 2013-2021 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -50,7 +50,7 @@ void calibration_timer(void);
  */
 void init_delay(void)
 {
-#if defined (MACHINE_FIREBEE) || defined (MACHINE_M548X)
+#if defined(MACHINE_FIREBEE) || defined(MACHINE_M548X)
     loopcount_1_msec = SDCLK_FREQUENCY_MHZ * 1000;
 #else
 # if CONF_WITH_APOLLO_68080
