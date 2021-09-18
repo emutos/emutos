@@ -36,7 +36,10 @@ extern void dana_rs232_interrupt(UBYTE b);
 extern void dana_kbd_init(void);
 extern void dana_ikbd_interrupt(void);
 extern void dana_poll_keyboard(void);
+extern void dana_poll_touchscreen(void);
 extern void dana_ikbd_writeb(UBYTE b);
+extern void dana_ts_rawread(UWORD* x, UWORD* y, UWORD* state);
+extern void dana_ts_calibrate(LONG c[7]);
 
 extern void dana_int_1(void);
 extern void dana_int_4(void);

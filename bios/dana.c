@@ -10,7 +10,7 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-//#define ENABLE_KDEBUG
+/* #define ENABLE_KDEBUG */
 
 #include "emutos.h"
 #include "dana.h"
@@ -34,6 +34,7 @@
 #include "spi.h"
 #include "serport.h"
 #include "../bdos/bdosstub.h"
+#include "../vdi/vdi_defs.h"	/* for GCURX, GCURY */
 
 #ifdef MACHINE_DANA
 
@@ -106,6 +107,8 @@ static ULONG clock_frequency;
 
 #define VECTOR(i) (*(volatile PFVOID*)((i)*4))
 #define VEC_USER(i) VECTOR(0x40 + i)
+
+static LONG screen_calibration[7];
 
 static UBYTE keys_pressed[8];
 #include "dana_keymap.h"
@@ -267,7 +270,7 @@ void dana_screen_init(void)
 	PCPDEN = 0;
 	PFSEL |= 0x01; /* enable LCONTRAST */
 	PKSEL |= 0x90; /* LCD power, backlight GPIO */
-	PKDATA |= 0x80; /* backlight, LCD on */
+	PKDATA |= 0x90; /* backlight, LCD on */
 
 	LCKCON = 0; /* LCD controller off */
 	LPICF = 8; /* Four-bit bus, black and white mode */
@@ -376,15 +379,6 @@ void dana_kbd_init(void)
 	PFPUEN &= ~PEN_CS; /* no pull-up resistor */
 	PFSEL |= PEN_CS; /* pen interrupt is GPIO */
 
-#if 0
-	for (;;)
-	{
-		WORD x = pen_send_recv(0x90);
-		WORD y = pen_send_recv(0xd0);
-		KDEBUG(("pen said %04x %04x %02x\n", x, y, PFDATA));
-	}
-#endif
-
 	#if 0
 	/* Interrupts don't work how I expect, so we're polling instead. */
 	VEC_USER(1) = dana_int_1;
@@ -405,6 +399,42 @@ void dana_ikbd_interrupt(void)
 
 	UBYTE b = SPIDATA2;
 	KDEBUG(("controller said %02x\n", b));
+}
+
+void dana_ts_rawread(UWORD* x, UWORD* y, UWORD* state)
+{
+	*x = 0;
+	*y = 0;
+
+	int i;
+	int count = 0;
+	for (i=0; i<8; i++)
+	{
+		BOOL before = !(PFDATA & 0x02);
+		WORD dx = pen_send_recv(0x90) >> 4;
+		WORD dy = pen_send_recv(0xd0) >> 4;
+		*state = !(PFDATA & 0x02);
+		if (before && *state)
+		{
+			*x += dx;
+			*y += dy;
+			count++;
+		}
+	}
+	*x /= count;
+	*y /= count;
+	KDEBUG(("rawread x=%d y=%d state=%d\n", *x, *y, *state));
+}
+
+void dana_ts_calibrate(LONG c[7])
+{
+	KDEBUG(("calibrate c=%p\n", c));
+	int i;
+	for (i=0; i<7; i++)
+	{
+		KDEBUG(("screen_calibration[%d] = %ld\n", i, c[i]));
+		screen_calibration[i] = c[i];
+	}
 }
 
 static void press_release_key(UBYTE scancode, BOOL pressed)
@@ -460,6 +490,76 @@ void dana_poll_keyboard(void)
 
 		memcpy(keys_pressed, new_keys, 8);
 	}
+}
+
+void dana_poll_touchscreen(void)
+{
+	static WORD sx = 0;
+	static WORD sy = 0;
+	static BOOL was_pressed = FALSE;
+	UWORD is_pressed = !(PFDATA & 0x02);
+
+	if (is_pressed)
+	{
+		const LONG* c = screen_calibration;
+		UWORD x;
+		UWORD y;
+		
+		dana_ts_rawread(&x, &y, &is_pressed);
+
+		if (c[0])
+		{
+			sx = (c[1]*x + c[2]*y + c[3])/c[0];
+			sy = (c[4]*x + c[5]*y + c[6])/c[0];
+		}
+	}
+
+	if (was_pressed || is_pressed)
+	{
+		int dx = sx - GCURX;
+		int dy = sy - GCURY;
+
+		while ((dx != 0) || (dy != 0))
+		{
+			int ddx = 0;
+			if (dx < -128)
+				ddx = -128;
+			else if (dx > 127)
+				ddx = 127;
+			else
+				ddx = dx;
+
+			int ddy = 0;
+			if (dy < -128)
+				ddy = -128;
+			else if (dy > 127)
+				ddy = 127;
+			else
+				ddy = dy;
+
+
+			SBYTE packet[3];
+			packet[0] = 0xf8; /* relative report */
+			if (was_pressed)
+				packet[0] |= 0x02;
+			packet[1] = ddx;
+			packet[2] = ddy;
+			call_mousevec(packet);
+
+			dx -= ddx;
+			dy -= ddy;
+		}
+
+		SBYTE packet[3];
+		packet[0] = 0xf8; /* relative report */
+		if (is_pressed)
+			packet[0] |= 0x02;
+		packet[1] = 0;
+		packet[2] = 0;
+		call_mousevec(packet);
+	}
+
+	was_pressed = is_pressed;
 }
 
 void dana_ikbd_writeb(UBYTE b)

@@ -25,6 +25,7 @@
 #include "mouse.h"
 #include "vectors.h"
 #include "asm.h"
+#include "dana.h"
 
 
 
@@ -120,3 +121,20 @@ void Initmous(WORD type, struct param *param, PFVOID newvec)
         kbdvecs.mousevec = just_rts;    /* set dummy vector */
     }
 }
+
+#if CONF_WITH_TOUCHSCREEN_XBIOS
+void ts_rawread(UWORD* x, UWORD* y, UWORD* state)
+{
+	#ifdef MACHINE_DANA
+		dana_ts_rawread(x, y, state);
+	#endif
+}
+
+void ts_calibrate(LONG c[7])
+{
+	#ifdef MACHINE_DANA
+		dana_ts_calibrate(c);
+	#endif
+}
+#endif
+

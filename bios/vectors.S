@@ -521,9 +521,10 @@ _int_timerc:
 #else
         movem.l d0-d7/a0-a6,-(sp)       // save registers
 #endif
-		// Dana polled keyboard handling
+		// Dana polled keyboard and pen handling
 #ifdef MACHINE_DANA
 		jsr 	_dana_poll_keyboard
+		jsr		_dana_poll_touchscreen
 #endif
 
 		// Faked VBL for platforms which don't have one

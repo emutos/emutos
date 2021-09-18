@@ -131,6 +131,17 @@ static void kprintf_outc_stonx(int c)
 }
 #endif
 
+#if DANA_DEBUG_PRINT
+static void kprintf_outc_dana_rs232(int c)
+{
+    /* Raw terminals usually require CRLF */
+    if ( c == '\n')
+        dana_rs232_writeb('\r');
+
+    dana_rs232_writeb((char)c);
+}
+#endif
+
 #if COLDFIRE_DEBUG_PRINT
 static void kprintf_outc_coldfire_rs232(int c)
 {
@@ -187,6 +198,10 @@ static int vkprintf(const char *fmt, va_list ap)
             SuperToUser(stacksave);     /* switch back.    */
         return rc;
     }
+#endif
+
+#if DANA_DEBUG_PRINT
+    return doprintf(kprintf_outc_dana_rs232, fmt, ap);
 #endif
 
 #if COLDFIRE_DEBUG_PRINT

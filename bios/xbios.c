@@ -1242,6 +1242,23 @@ static LONG xbios_8d(LONG sptr)
 #endif
 
 /*
+ * Touchscreen
+ */
+#if CONF_WITH_TOUCHSCREEN_XBIOS
+static void xbios_8e(UWORD* x, UWORD* y, UWORD* state)
+{
+    kprintf("XBIOS: ts_rawread\n");
+    ts_rawread(x, y, state);
+}
+static void xbios_8f(LONG c[7])
+{
+    kprintf("XBIOS: ts_calibrate\n");
+    ts_calibrate(c);
+}
+#endif
+
+
+/*
  * xbios_unimpl
  *
  * ASM function _xbios_unimpl will call xbios_do_unimpl(WORD number);
@@ -1272,7 +1289,9 @@ LONG supexec(PFLONG);       /* defined in vectors.S */
 #define VEC(wrapper, direct) (PFLONG) direct
 #endif
 
-#if CONF_WITH_DMASOUND
+#if CONF_WITH_TOUCHSCREEN_XBIOS
+# define LAST_ENTRY 0x8f
+#elif CONF_WITH_DMASOUND
 # define LAST_ENTRY 0x8d
 #elif CONF_WITH_DSP
 # define LAST_ENTRY 0x7f
@@ -1513,7 +1532,30 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_8b, devconnect),  /* 8b */
     VEC(xbios_8c, sndstatus),   /* 8c */
     VEC(xbios_8d, buffptr),     /* 8d */
+#else
+	xbios_unimpl,	/* 80 */
+	xbios_unimpl,	/* 81 */
+	xbios_unimpl,	/* 82 */
+	xbios_unimpl,	/* 83 */
+	xbios_unimpl,	/* 84 */
+	xbios_unimpl,	/* 85 */
+	xbios_unimpl,	/* 86 */
+	xbios_unimpl,	/* 87 */
+	xbios_unimpl,	/* 88 */
+	xbios_unimpl,	/* 89 */
+	xbios_unimpl,	/* 8a */
+	xbios_unimpl,	/* 8b */
+	xbios_unimpl,	/* 8c */
+	xbios_unimpl,	/* 8d */
 #endif /* CONF_WITH_DMASOUND */
+
+#if CONF_WITH_TOUCHSCREEN_XBIOS
+    VEC(xbios_8e, ts_rawread),  /* 8e */
+    VEC(xbios_8f, ts_calibrate), /* 8f */
+#else
+	xbios_unimpl,   /* 8e */
+	xbios_unimpl,   /* 8f */
+#endif
 };
 
 const UWORD xbios_ent = ARRAY_SIZE(xbios_vecs);
