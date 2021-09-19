@@ -587,9 +587,11 @@ void x0term(void)
  */
 void xterm(UWORD rc)
 {
+    PFVOID userterm;
     PD *p = run;
 
-    (* (WORD(*)(void)) Setexc(0x102, (long)-1L))(); /*  call user term handler */
+    userterm = (PFVOID)Setexc(0x102, (long)-1L);  /* get user term handler address */
+    protect_v((PFLONG)userterm);    /* call it, protecting d2/a2 from modification */
 
     run = run->p_parent;
     ixterm(p);
