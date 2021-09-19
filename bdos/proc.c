@@ -25,7 +25,6 @@
 #include "string.h"
 #include "biosext.h"
 #include "asm.h"
-#include "tosvars.h"
 #include "has.h"
 
 
@@ -111,10 +110,6 @@ static void ixterm(PD *r)
 {
     WORD h;
     WORD i;
-
-    /* call process termination vector (last chance for user cleanup) */
-
-    etv_term();
 
     /* check the standard devices in both file tables  */
 
