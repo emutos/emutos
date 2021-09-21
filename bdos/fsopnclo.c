@@ -2,7 +2,7 @@
  * fsopnclo.c - open/close/create/delete routines for file system
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2020 The EmuTOS development team
+ *               2002-2021 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -83,7 +83,13 @@ static void sftdel(FTAB *sftp);
  */
 long xcreat(char *name, UBYTE attr)
 {
-    return ixcreat(name, attr & ~FA_SUBDIR);
+    long rc;
+
+    rc = ixcreat(name, attr & ~FA_SUBDIR);
+
+    KDEBUG(("xcreat(%s,0x%02x): rc=%ld\n",name,attr,rc));
+
+    return rc;    
 }
 
 
@@ -216,7 +222,13 @@ long ixcreat(char *name, UBYTE attr)
  */
 long xopen(char *name, int mod)
 {
-    return ixopen(name, mod&VALID_FOPEN_BITS);
+    long rc;
+
+    rc = ixopen(name, mod&VALID_FOPEN_BITS);
+
+    KDEBUG(("xopen(%s,%d): rc=%ld\n",name,mod,rc));
+
+    return rc;
 }
 
 /*
@@ -518,13 +530,9 @@ long ixclose(OFD *fd, int part)
 
 
 /*
- *  xunlink - unlink (delete) a file
- *
- *  Function 0x41   Fdelete
- *
- *  returns     EFILNF, EACCDN, ixdel()
+ *  ixunlink - do the work for xunlink
  */
-long xunlink(char *name)
+static long ixunlink(char *name)
 {
     DND *dn;
     FCB *f;
@@ -549,6 +557,25 @@ long xunlink(char *name)
     pos -= sizeof(FCB);
 
     return ixdel(dn,f,pos);
+}
+
+
+/*
+ *  xunlink - unlink (delete) a file
+ *
+ *  Function 0x41   Fdelete
+ *
+ *  returns     EFILNF, EACCDN
+ */
+long xunlink(char *name)
+{
+    long rc;
+
+    rc = ixunlink(name);
+
+    KDEBUG(("xunlink(%s): rc=%ld\n",name,rc));
+
+    return rc;
 }
 
 
