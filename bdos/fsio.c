@@ -86,6 +86,7 @@ static char *xrw_recs(WORD wrtflg, OFD *p, RECNO startrec, RECNO numrecs, char *
     CLNO numclus;
     LONG nbytes;
     WORD rc;
+    BOOL first_time;
 
     dm = p->o_dmd;
 
@@ -122,14 +123,18 @@ static char *xrw_recs(WORD wrtflg, OFD *p, RECNO startrec, RECNO numrecs, char *
     numclus = numrecs >> dm->m_clrlog;
     last = nrecs = 0L;
     rc = 0;
+    first_time = TRUE;
 
     while(TRUE)
     {
         if (numclus)
             rc = nextcl(p,wrtflg);
 
-        if (last == 0L)                     /* first time through */
+        if (first_time)
+        {
             last = p->o_currec;
+            first_time = FALSE;
+        }
 
         /* if necessary, complete pending data transfer */
 
