@@ -105,8 +105,8 @@ static char *xrw_recs(WORD wrtflg, OFD *p, RECNO startrec, RECNO numrecs, char *
         if (hdrrec > numrecs)               /* M00.14.01 */
             hdrrec = numrecs;               /* M00.14.01 */
 
-        KDEBUG(("xrw(%d): xfer head recs %ld->%ld\n",
-                dm->m_drvnum,startrec,startrec+hdrrec-1));
+        KDEBUG(("xrw(%c %d): xfer head recs %ld->%ld\n",
+                wrtflg?'W':'R',dm->m_drvnum,startrec,startrec+hdrrec-1));
         usrio(wrtflg,hdrrec,startrec,ubufr,dm);
         nbytes = hdrrec << dm->m_rblog;
         ubufr += nbytes;
@@ -145,8 +145,8 @@ static char *xrw_recs(WORD wrtflg, OFD *p, RECNO startrec, RECNO numrecs, char *
         {
             if (nrecs)
             {
-                KDEBUG(("xrw(%d): xfer main recs %ld->%ld\n",
-                        dm->m_drvnum,last,last+nrecs-1));
+                KDEBUG(("xrw(%c %d): xfer main recs %ld->%ld\n",
+                        wrtflg?'W':'R',dm->m_drvnum,last,last+nrecs-1));
                 usrio(wrtflg,nrecs,last,ubufr,dm);
                 nbytes = nrecs << dm->m_rblog;
                 addit(p,nbytes);
@@ -173,8 +173,8 @@ static char *xrw_recs(WORD wrtflg, OFD *p, RECNO startrec, RECNO numrecs, char *
     {
         if (nextcl(p,wrtflg))
             return NULL;
-        KDEBUG(("xrw(%d): xfer tail recs %ld->%ld\n",
-                dm->m_drvnum,p->o_currec,p->o_currec+tailrec-1));
+        KDEBUG(("xrw(%c %d): xfer tail recs %ld->%ld\n",
+                wrtflg?'W':'R',dm->m_drvnum,p->o_currec,p->o_currec+tailrec-1));
         usrio(wrtflg,tailrec,p->o_currec,ubufr,dm);
         nbytes = tailrec << dm->m_rblog;
         addit(p,nbytes);
@@ -445,7 +445,7 @@ long xread(int h, long len, void *ubufr)
     else
         ret = EIHNDL;
 
-    KDEBUG(("xread(%d,%ld) => %ld\n",h,len,ret));
+    KDEBUG(("xread(%d,%ld): rc=%ld\n",h,len,ret));
 
     return ret;
 }
@@ -539,7 +539,7 @@ long xwrite(int h, long len, void *ubufr)
     else
         ret = EIHNDL;
 
-    KDEBUG(("xwrite(%d,%ld) => %ld\n",h,len,ret));
+    KDEBUG(("xwrite(%d,%ld): rc=%ld\n",h,len,ret));
 
     return ret;
 }
