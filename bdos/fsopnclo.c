@@ -411,6 +411,16 @@ long xclose(int h)
     if (h >= NUMHANDLES)            /* M01.01.1022.01 */
         return EIHNDL;
 
+    /*
+     * for a standard handle:
+     *  . revert it to the default character device
+     *  . if the original was mapped to a character device, we're done
+     *  . otherwise it was Fforce'd, so continue on to close the non-standard handle
+     *
+     * for a non-standard handle:
+     *  . if it's mapped to a character device, decrement the usage, then we're done
+     *  . otherwise we continue on to close the non-standard handle
+     */
     if ((h0 = h) < NUMSTD)
     {
         h = run->p_uft[h];
@@ -429,11 +439,22 @@ long xclose(int h)
         return E_OK;
     }
 
+    /*
+     * we have a non-standard handle:
+     *  . check that it's valid
+     *  . if so, do a real close, updating the OFD, directory etc and
+     *    flushing buffers
+     */
     if (!(fd = getofd(h)))
         return EIHNDL;
 
     rc = ixclose(fd,0);
 
+    /*
+     * finally, decrement the usage and, if it is now zero, zero out the
+     * sft[] entry and, if there are no other entries with a pointer to
+     * the OFD for this handle, free up the OFD
+     */
     if (!(--sft[h-NUMSTD].f_use))
         sftdel(&sft[h-NUMSTD]);
 
