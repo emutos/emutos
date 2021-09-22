@@ -401,7 +401,7 @@ static void sftdel(FTAB *sftp)
  */
 long xclose(int h)
 {
-    int h0;
+    FTAB *ftab;
     OFD *fd;
     long rc;
 
@@ -421,22 +421,27 @@ long xclose(int h)
      *  . if it's mapped to a character device, decrement the usage, then we're done
      *  . otherwise we continue on to close the non-standard handle
      */
-    if ((h0 = h) < NUMSTD)
+    if (h < NUMSTD)
     {
-        h = run->p_uft[h];
-        run->p_uft[h0] = get_default_handle(h0);    /* revert to default */
+        int h0 = run->p_uft[h];     /* remember old mapping */
+        run->p_uft[h] = get_default_handle(h);  /* revert to default */
+        h = h0;
         if (h <= 0)                 /* M01.01.1023.01 */
             return E_OK;
     }
-    else if (((long) sft[h-NUMSTD].f_ofd) < 0L)
+    else
     {
-        if (!(--sft[h-NUMSTD].f_use))
-        {
-            sft[h-NUMSTD].f_ofd = 0;
-            sft[h-NUMSTD].f_own = 0;
-        }
+        ftab = &sft[h-NUMSTD];
 
-        return E_OK;
+        if ((long)ftab->f_ofd < 0L)
+        {
+            if (--ftab->f_use == 0)
+            {
+                ftab->f_ofd = 0;
+                ftab->f_own = 0;
+            }
+            return E_OK;
+        }
     }
 
     /*
@@ -455,8 +460,9 @@ long xclose(int h)
      * sft[] entry and, if there are no other entries with a pointer to
      * the OFD for this handle, free up the OFD
      */
-    if (!(--sft[h-NUMSTD].f_use))
-        sftdel(&sft[h-NUMSTD]);
+    ftab = &sft[h-NUMSTD];
+    if (--ftab->f_use == 0)
+        sftdel(ftab);
 
     return rc;
 }
