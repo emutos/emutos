@@ -69,9 +69,6 @@
  */
 static long ixopen(char *name, int mod);
 static long opnfil(FCB *f, DND *dn, int mod);
-static long makopn(FCB *f, DND *dn, int h, int mod);
-static FTAB *sftofdsrch(OFD *ofd);
-static void sftdel(FTAB *sftp);
 
 
 /*
