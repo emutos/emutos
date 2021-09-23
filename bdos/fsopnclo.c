@@ -415,7 +415,9 @@ long xclose(int h)
      * for a standard handle:
      *  . revert it to the default character device
      *  . if the original was mapped to a character device, we're done
-     *  . otherwise it was Fforce'd, so continue on to close the non-standard handle
+     *  . otherwise it was Fforce'd: as long as it wasn't mapped to
+     *    another standard handle (which would be illegal), we continue
+     *    on to close the non-standard handle
      *
      * for a non-standard handle:
      *  . if it's mapped to a character device, decrement the usage, then we're done
@@ -426,8 +428,10 @@ long xclose(int h)
         int h0 = run->p_uft[h];     /* remember old mapping */
         run->p_uft[h] = get_default_handle(h);  /* revert to default */
         h = h0;
-        if (h <= 0)                 /* M01.01.1023.01 */
+        if (h < 0)                  /* M01.01.1023.01 */
             return E_OK;
+        if (h < NUMSTD)             /* "can't happen" (bug in Fforce()?) */
+            return EIHNDL;
     }
     else
     {
