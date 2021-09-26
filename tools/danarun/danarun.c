@@ -1,4 +1,20 @@
-#define ERROR_CHECK_LEVEL ERROR_CHECK_FULL
+/*
+ * danarun.c : PalmOS boot loader
+ *
+ * This program is a very simple and stupid PalmOS program which will load and
+ * run the file "/kernel.img" from any VFS volume. The binary can be any size
+ * (that will fit in memory). It's loaded in chunks to fit the PalmOS heap,
+ * then reassembled into a contiguous image at an arbitrary address before the
+ * system is switched to supervisor mode and the image is run.
+ *
+ * Compile with the supplied Makefile. You'll need prctools.
+ *
+ * Copyright (C) 2021 David Given
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
+
 #include <PalmOS.h>
 #include <VFSMgr.h>
 #include <string.h>

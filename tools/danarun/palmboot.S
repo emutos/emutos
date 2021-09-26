@@ -1,3 +1,16 @@
+/*
+ * palmboot.S : PalmOS boot loader (bootstrap code)
+ *
+ * This is part of the danarun boot loader. It is used to reassemble the image
+ * after loading into chunks on the PalmOS heap and takes care of launching the
+ * image.  It will spit various useful numbers to the serial port as it runs.
+ *
+ * Copyright (C) 2021 David Given
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
+
 .text
 .cpu 68000
 

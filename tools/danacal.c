@@ -1,3 +1,17 @@
+/*
+ * danacal.c : simple calibration tool for the AlphaSmart Dana port
+ *
+ * This uses BIOS traps 0x8e and 0x8f to set the calibration vectors.
+ *
+ * Compile with:
+ *      m68k-atari-mint-gcc -o danacal.prg -Wall danacal.c
+ *
+ * Copyright (C) 2021 David Given
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdint.h>
