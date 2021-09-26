@@ -31,6 +31,34 @@ resolution mode, and the 560-pixel wide AlphaSmart screen is smaller than
 it thinks the screen is too small. This may be fixable with the appropriate
 shims but I don't know how.
 
+How to use:
+- You'll need two SD cards; one is formatted for Atari TOS and the other for
+  PalmOS. (It ought to be possible to combine the two, as both operating
+  systems use standard FAT filesystems, but they're both quite picky about
+  which formats they support and having two cards is easier.)
+- Build EmuTOS and danarun.prc.
+- Copy emutos-dana.rom -> \kernel.img on the PalmOS card.
+- Copy tools/danarun/danarun.prc -> \palm\launcher\danarun.prc on the PalmOS
+  card.
+- Insert the PalmOS card in the _left_ slot (the one furthest from the power
+  cable).
+- Insert the Atari TOS card in the _right_ slot (the one closest to the power
+  cable).
+- Ensure that any files you want to keep on the Dana are backed up, because
+  running EmuTOS will wipe the memory.
+- Run DanaRun on the Dana.
+- EmuTOS should start.
+
+Calibrating the touch screen:
+- You will want to build tools/danacal.c and copy the .prg file to the Atari
+  TOS card.
+- Run it, either from the ^Z EmuCON prompt or using the keyboard mouse
+  emulation.
+- Follow the instructions.
+- The touchscreen should now work, sort of. If it seems noticeably off,
+  recalibrate.
+- Be prepared to be underwhelmed (it works rather badly; this is a bug).
+
 Supported features:
 - 68328 CPU
 - 4MB of RAM (more is available but not yet usable; this is a bug)
