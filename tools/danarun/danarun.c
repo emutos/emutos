@@ -30,91 +30,93 @@ static UInt8* blocks[KERNEL_SIZE/BLOCK_SIZE];
 
 static Int16 comparator_cb(void* p1, void* p2, Int32 other)
 {
-	void* pp1 = *(void**)p1;
-	void* pp2 = *(void**)p2;
+    void* pp1 = *(void**)p1;
+    void* pp2 = *(void**)p2;
 
-	if (pp1 < pp2)
-		return -1;
-	if (pp1 > pp2)
-		return 1;
-	return 0;
+    if (pp1 < pp2)
+        return -1;
+    if (pp1 > pp2)
+        return 1;
+    return 0;
 }
 
 static void print(const char* s)
 {
-	EventType et;
+    EventType et;
 
-	WinEraseWindow();
-	WinDrawChars(s, strlen(s), 10, 10);
+    WinEraseWindow();
+    WinDrawChars(s, strlen(s), 10, 10);
 
-	for (;;)
-	{
-		EvtGetEvent(&et, 0);
-	    SysHandleEvent(&et);
-		if (et.eType == nilEvent)
-			break;
-	}
+    for (;;)
+    {
+        EvtGetEvent(&et, 0);
+        SysHandleEvent(&et);
+        if (et.eType == nilEvent)
+            break;
+    }
 }
-	
+    
 UInt32 PilotMain( UInt16 cmd, void *cmdPBP, UInt16 launchFlags)
 {
-	if (cmd == sysAppLaunchCmdNormalLaunch)
-	{
-		UInt16 vr;
-		UInt32 vi = vfsIteratorStart;
-		UInt16 block_count;
-		int i;
+    if (cmd == sysAppLaunchCmdNormalLaunch)
+    {
+        UInt16 vr;
+        UInt32 vi = vfsIteratorStart;
+        UInt16 block_count;
+        int i;
 
-		print("looking for volumes");
-		while (vi != vfsIteratorStop)
-		{
-			Err e = VFSVolumeEnumerate(&vr, &vi);
-			if (e == errNone)
-			{
-				FileRef fr;
+        print("looking for volumes");
+        while (vi != vfsIteratorStop)
+        {
+            Err e = VFSVolumeEnumerate(&vr, &vi);
+            if (e == errNone)
+            {
+                FileRef fr;
 
-				print("opening file");
-				e = VFSFileOpen(vr, "/kernel.img", vfsModeRead, &fr);
-				if (e == errNone)
-				{
-					UInt32 size;
+                print("opening file");
+                e = VFSFileOpen(vr, "/kernel.img", vfsModeRead, &fr);
+                if (e == errNone)
+                {
+                    UInt32 size;
 
-					e = VFSFileSize(fr, &size);
-					if (e != errNone)
-						goto error;
+                    e = VFSFileSize(fr, &size);
+                    if (e != errNone)
+                        goto error;
 
-					print("allocating blocks");
-					block_count = (size+BLOCK_SIZE-1) / BLOCK_SIZE;
-					for (i=0; i<=block_count; i++)
-						blocks[i] = MemPtrNew(BLOCK_SIZE);
+                    print("allocating blocks");
+                    block_count = (size+BLOCK_SIZE-1) / BLOCK_SIZE;
+                    for (i=0; i<=block_count; i++)
+                        blocks[i] = MemPtrNew(BLOCK_SIZE);
 
-					print("sorting blocks");
-					SysQSort(blocks, block_count+1, sizeof(*blocks), comparator_cb, 0);
+                    print("sorting blocks");
+                    SysQSort(blocks, block_count+1, sizeof(*blocks), comparator_cb, 0);
 
-					for (i=0; i<block_count; i++)
-					{
-						char buffer[64];
-						sprintf(buffer, "reading block %d to %p", i, blocks[i]);
-						print(buffer);
-						VFSFileRead(fr, BLOCK_SIZE, blocks[i], NULL);
-					}
+                    for (i=0; i<block_count; i++)
+                    {
+                        char buffer[64];
+                        sprintf(buffer, "reading block %d to %p", i, blocks[i]);
+                        print(buffer);
+                        VFSFileRead(fr, BLOCK_SIZE, blocks[i], NULL);
+                    }
 
-					print("copying bootloader");
-					memcpy(blocks[block_count], bootloader, sizeof(bootloader));
+                    print("copying bootloader");
+                    memcpy(blocks[block_count], bootloader, sizeof(bootloader));
 
-					print("starting bootloader");
-					{
-						typedef void (*go_t)(UInt8** blocks, UInt32 block_count);
-						go_t cb = (go_t) blocks[block_count];
-						cb(blocks, block_count);
-					}
+                    print("starting bootloader");
+                    {
+                        typedef void (*go_t)(UInt8** blocks, UInt32 block_count);
+                        go_t cb = (go_t) blocks[block_count];
+                        cb(blocks, block_count);
+                    }
 
-				error:
-					VFSFileClose(fr);
-				}
-			}
-		}
-	}
+                error:
+                    VFSFileClose(fr);
+                }
+            }
+        }
+    }
 
-	return 0;
+    return 0;
 }
+
+/* vim: set sw=4 ts=4 et: */

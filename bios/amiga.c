@@ -1,5 +1,5 @@
 /*
- * dana.c - Dana specific functions
+ * amiga.c - Amiga specific functions
  *
  * Copyright (C) 2013-2020 The EmuTOS development team
  *
