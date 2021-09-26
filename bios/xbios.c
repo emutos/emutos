@@ -1281,8 +1281,6 @@ LONG supexec(PFLONG);       /* defined in vectors.S */
  * xbios_vecs - the table of xbios command vectors.
  */
 
-/* PFLONG defined in bios/vectors.h */
-
 #if DBG_XBIOS
 #define VEC(wrapper, direct) (PFLONG) wrapper
 #else

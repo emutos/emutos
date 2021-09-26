@@ -1,7 +1,7 @@
 /*
  * rsdefs.h - RSC file definitions
  *
- * Copyright (C) 2016-2017 The EmuTOS development team
+ * Copyright (C) 2016-2021 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows
@@ -37,6 +37,6 @@ typedef struct rshdr
 
 /* definitions for rsh_vrsn */
 #define NEW_FORMAT_RSC  0x0004          /* this bit set indicates a new-format */
-                                        /* resource file (not yet supported)   */
+                                        /* resource file (with CICONBLKs)      */
 
 #endif /* RSDEFS_H */

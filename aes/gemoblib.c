@@ -92,10 +92,10 @@ static const UBYTE vdi16comp[] = {
  */
 static WORD xor_color(WORD color)
 {
-    if ((color >= 16) || (color > gl_ws.ws_ncolors))
+    if ((color >= 16) || (color >= gl_ws.ws_ncolors))
         return WHITE;
 
-    if (gl_ws.ws_ncolors < 4)
+    if (gl_ws.ws_ncolors <= 4)
         return vdi4comp[color];
 
     return vdi16comp[color];
@@ -844,12 +844,11 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
             {
                 gsx_tblt(IBM, tmpx, tmpy, len);
             }
-#if CONF_WITH_ALT_DESKTOP_GRAPHICS
+#if CONF_WITH_EXTENDED_OBJECTS
             /*
-             * handle special formatting used when EmuDesk wants a dialog
-             * title to be underlined
+             * handle underlining for string objects
              */
-            if ((obtype == G_STRING) && (state & WHITEBAK))
+            if ((obtype == G_STRING) && (state & WHITEBAK) && ((state&0xFF00) == 0xFF00))
             {
                 gsx_attr(FALSE, MD_REPLACE, LBLACK);
                 gsx_cline(t.g_x, t.g_y+t.g_h+2, t.g_x+t.g_w, t.g_y+t.g_h+2);

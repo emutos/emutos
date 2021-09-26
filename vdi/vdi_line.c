@@ -843,7 +843,7 @@ void linea_polygon(void)
         clipper.xmn_clip = 0;
         clipper.xmx_clip = xres;
     }
-    clc_flit(&attr, &clipper, points, Y1, count);
+    clc_flit(&attr, &clipper, points, count, Y1, Y1-1);
 }
 
 

@@ -304,6 +304,9 @@
 # ifndef CONF_WITH_3D_OBJECTS
 #  define CONF_WITH_3D_OBJECTS 0
 # endif
+# ifndef CONF_WITH_EXTENDED_OBJECTS
+#  define CONF_WITH_EXTENDED_OBJECTS 0
+# endif
 # ifndef CONF_WITH_NICELINES
 #  define CONF_WITH_NICELINES 0
 # endif
@@ -1261,6 +1264,14 @@
 #endif
 
 /*
+ * Set CONF_WITH_EXTENDED_OBJECTS to 1 to include AES support for a
+ * number of MagiC-style object type extensions
+ */
+#ifndef CONF_WITH_EXTENDED_OBJECTS
+# define CONF_WITH_EXTENDED_OBJECTS 1
+#endif
+
+/*
  * Set CONF_WITH_GRAF_MOUSE_EXTENSION to 1 to include AES support for
  * graf_mouse() modes M_SAVE, M_RESTORE, M_PREVIOUS.
  */
@@ -2087,6 +2098,11 @@
 # endif
 #endif
 
+#if !CONF_WITH_EXTENDED_OBJECTS
+# if CONF_WITH_ALT_DESKTOP_GRAPHICS
+#  error CONF_WITH_ALT_DESKTOP_GRAPHICS requires CONF_WITH_EXTENDED_OBJECTS.
+# endif
+#endif
 
 /*
  * Sanity checks for debugging options

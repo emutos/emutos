@@ -19,13 +19,267 @@
 #include "intmath.h"
 
 
-/*
- * forward prototypes
- */
+#define CNTMAX  0x7FFFul  /* 16-bit MAXINT */
 
-static void addit(OFD *p, long siz, int flg);
-static long xrw(int wrtflg, OFD *p, long len, char *ubufr);
-static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm);
+
+/*
+ * addit - update the OFD for the file
+ *
+ * update the OFD for the file to reflect the fact that 'siz' bytes
+ * have been written to it.
+ *
+ * update o_curbyt iff less than 1 cluster is being transferred
+ */
+static void addit(OFD *p, long siz)
+{
+    if (siz < p->o_dmd->m_clsizb)
+        p->o_curbyt += siz;
+
+    p->o_bytnum += siz;
+
+    if (p->o_bytnum > p->o_fileln)
+    {
+        p->o_fileln = p->o_bytnum;
+        p->o_flag |= O_DIRTY;
+    }
+}
+
+
+/*
+ * usrio - interface to rwabs
+ *
+ * NOTE: longjmp_rwabs() is a macro that includes a longjmp() which is
+ *       executed if the BIOS returns an error, therefore usrio() does
+ *       not need to return any error codes.
+ */
+static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm)
+{
+    BCB *b;
+
+    for (b = bufl[BI_DATA]; b; b = b->b_link)
+    {
+        if ((b->b_bufdrv == dm->m_drvnum) &&
+            (b->b_bufrec >= strt) &&
+            (b->b_bufrec < strt+num))
+        {
+            if (b->b_dirty)
+                flush(b);
+            b->b_bufdrv = -1;
+        }
+    }
+
+    longjmp_rwabs(rwflg, (long)ubuf, num, strt+dm->m_recoff[BT_DATA], dm->m_drvnum);
+}
+
+
+/*
+ * read/write records on behalf of xrw()
+ *
+ * returns
+ *      NULL if end of cluster chain was reached
+ *      otherwise, updated buffer ptr
+ */
+static char *xrw_recs(WORD wrtflg, OFD *p, RECNO startrec, RECNO numrecs, char *ubufr)
+{
+    DMD *dm;
+    RECNO hdrrec, tailrec, last, nrecs;
+    CLNO numclus;
+    LONG nbytes;
+    WORD rc;
+    BOOL first_time;
+
+    dm = p->o_dmd;
+
+    /*
+     * do 'header' records
+     */
+    hdrrec = startrec & dm->m_clrm;
+    if (hdrrec)     /* not on a cluster boundary */
+    {
+        /*
+         * the number of records to write is the minimum of:
+         *  .the number of records remaining in the current cluster, and
+         *  .the number of records remaining in the file
+         */
+        hdrrec = dm->m_clsiz - hdrrec;      /* M00.14.01 */
+        if (hdrrec > numrecs)               /* M00.14.01 */
+            hdrrec = numrecs;               /* M00.14.01 */
+
+        KDEBUG(("xrw(%c %d): xfer head recs %ld->%ld\n",
+                wrtflg?'W':'R',dm->m_drvnum,startrec,startrec+hdrrec-1));
+        usrio(wrtflg,hdrrec,startrec,ubufr,dm);
+        nbytes = hdrrec << dm->m_rblog;
+        ubufr += nbytes;
+        addit(p,nbytes);
+        numrecs -= hdrrec;
+    }
+
+    /* now we can calculate the number of 'tail' records */
+    tailrec = numrecs & dm->m_clrm;
+
+    /*
+     * do whole (middle) clusters
+     */
+    numclus = numrecs >> dm->m_clrlog;
+    last = nrecs = 0L;
+    rc = 0;
+    first_time = TRUE;
+
+    while(TRUE)
+    {
+        if (numclus)
+            rc = nextcl(p,wrtflg);
+
+        if (first_time)
+        {
+            last = p->o_currec;
+            first_time = FALSE;
+        }
+
+        /* if necessary, complete pending data transfer */
+
+        if ((rc != 0)                       /* end of cluster chain */
+         || (numclus == 0)                  /* end of request */
+         || (p->o_currec != last + nrecs)   /* clusters aren't contiguous */
+         || (nrecs + dm->m_clsiz > CNTMAX)) /* request is too large for one i/o */
+        {
+            if (nrecs)
+            {
+                KDEBUG(("xrw(%c %d): xfer main recs %ld->%ld\n",
+                        wrtflg?'W':'R',dm->m_drvnum,last,last+nrecs-1));
+                usrio(wrtflg,nrecs,last,ubufr,dm);
+                nbytes = nrecs << dm->m_rblog;
+                addit(p,nbytes);
+                ubufr += nbytes;
+                last = p->o_currec;
+                nrecs = 0;
+            }
+        }
+
+        if (rc != 0)
+            return NULL;
+
+        if (numclus == 0)
+            break;
+
+        nrecs += dm->m_clsiz;
+        numclus--;
+    }
+
+    /*
+     * do 'tail' records
+     */
+    if (tailrec)
+    {
+        if (nextcl(p,wrtflg))
+            return NULL;
+        KDEBUG(("xrw(%c %d): xfer tail recs %ld->%ld\n",
+                wrtflg?'W':'R',dm->m_drvnum,p->o_currec,p->o_currec+tailrec-1));
+        usrio(wrtflg,tailrec,p->o_currec,ubufr,dm);
+        nbytes = tailrec << dm->m_rblog;
+        addit(p,nbytes);
+        ubufr += nbytes;
+    }
+
+    return ubufr;
+}
+
+
+/*
+ * xrw - read/write for BDOS functions
+ *
+ * This transfers 'len' bytes between the file indicated by the OFD and
+ * the buffer pointed to by 'ubufr'
+ *
+ * We wish to do the i/o in whole records (logical sectors) as much as
+ * possible.  Therefore, we break the i/o up into 3 sections:
+ *  . data at the start of the request which occupies part of a record
+ *    along with data not in the request
+ *  . data which is contained completely within records - this is handled
+ *    separately by xrw_recs()
+ *  . data at the end of the request which occupies part of a record
+ *    along with data not in the request
+ *
+ *  returns
+ *      nbr of bytes read/written from/to the file
+ */
+static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
+{
+    DMD *dm;
+    UBYTE *bufp;
+    WORD bytn, lenxfr, lentail;
+    RECNO recn, numrecs;
+    LONG rc, bytpos;
+
+    dm = p->o_dmd;                      /*  get drive media descriptor  */
+    bytpos = p->o_bytnum;               /*  starting file position      */
+
+    /*
+     * get logical record number to start i/o with
+     * (bytn will be byte offset into sector # recn)
+     */
+    recn = p->o_curbyt >> dm->m_rblog;
+    bytn = p->o_curbyt & dm->m_rbm;
+
+    recn += p->o_currec;
+
+    /* do header bytes */
+    if (bytn)
+    {
+        /* xfer len is min( #bytes req'd , */
+        /* #bytes left in current record ) */
+
+        lenxfr = min(len,dm->m_recsiz-bytn);
+        bufp = getrec(recn,p,wrtflg);   /* get desired record  */
+        addit(p,lenxfr);                /* update OFD          */
+        len -= lenxfr;                  /* nbr left to do      */
+        recn++;                         /* starting w/ next    */
+
+        if (wrtflg)
+            memcpy(bufp+bytn,ubufr,lenxfr);
+        else memcpy(ubufr,bufp+bytn,lenxfr);
+
+        ubufr += lenxfr;
+    }
+
+    /* "header" complete.      See if there is a "tail". */
+    /* After that, see if there is anything left in the middle. */
+
+    lentail = len & dm->m_rbm;              /* in bytes */
+    numrecs = (len-lentail) >> dm->m_rblog; /* length of middle in records */
+
+    if (numrecs)
+    {
+        ubufr = xrw_recs(wrtflg,p,recn,numrecs,ubufr);
+        if (!ubufr)                         /* end of cluster chain reached */
+            goto eof;
+    }
+
+    /* do tail bytes */
+    if (lentail)
+    {
+        recn = p->o_curbyt >> dm->m_rblog;
+
+        if ((!recn) || (recn == (RECNO)dm->m_clsiz))
+        {
+            if (nextcl(p,wrtflg))
+                goto eof;
+            recn = 0;
+        }
+
+        bufp = getrec((RECNO)p->o_currec+recn,p,wrtflg);
+        addit(p,lentail);
+
+        if (wrtflg)
+             memcpy(bufp,ubufr,lentail);
+        else memcpy(ubufr,bufp,lentail);
+    }
+
+eof:
+    rc = p->o_bytnum - bytpos;
+
+    return(rc);
+}
 
 
 /*
@@ -62,12 +316,12 @@ long eof(int h)
  *      ixlseek()
  */
 
-long    xlseek(long n, int h, int flg)
+long xlseek(long n, int h, int flg)
 {
     OFD *f;
 
     f = getofd(h);
-    if ( !f )
+    if (!f)
         return(EIHNDL);
 
     if (flg == 2)
@@ -153,7 +407,8 @@ long ixlseek(OFD *p,long n)
     if ((n&dm->m_clbm) == 0)    /* go one less if on cluster boundary */
         clnum--;
 
-    for (i = 0; i < clnum; i++) {
+    for (i = 0; i < clnum; i++)
+    {
         clx = getclnum(clx,p);
         if (endofchain(clx))
             return EINTRN;      /* FAT chain is shorter than filesize says ... */
@@ -179,27 +434,65 @@ long ixlseek(OFD *p,long n)
  *   bios()
  */
 
-long    xread(int h, long len, void *ubufr)
+long xread(int h, long len, void *ubufr)
 {
     OFD *p;
     long ret;
 
     p = getofd(h);
-    if ( p )
+    if (p)
         ret = ixread(p,len,ubufr);
     else
         ret = EIHNDL;
 
-    KDEBUG(("xread(%d,%ld) => %ld\n",h,len,ret));
+    KDEBUG(("xread(%d,%ld): rc=%ld\n",h,len,ret));
 
     return ret;
 }
+
+
+/*
+ * ixgetfcb - get ptr to FCB in directory buffer
+ *
+ * returns NULL at end of buffer
+ */
+FCB *ixgetfcb(OFD *p)
+{
+    DMD *dm;
+    UBYTE *buf;
+    RECNO recnum;
+    UWORD offset;
+
+    /* get logical record number & byte offset within it */
+    dm = p->o_dmd;
+    recnum = p->o_curbyt >> dm->m_rblog;
+    offset = p->o_curbyt & dm->m_rbm;
+
+    /* handle start-of-record case */
+    if (offset == 0)
+    {
+        if ((recnum == 0) || (recnum == (RECNO)dm->m_clsiz))
+        {
+            if (nextcl(p,0))    /* end of directory? */
+                return NULL;
+            recnum = 0;
+        }
+    }
+
+    recnum += p->o_currec;
+
+    buf = getrec(recnum,p,0);   /* get desired record  */
+    addit(p,sizeof(FCB));       /* update OFD          */
+
+    return (FCB *)(buf+offset);
+}
+
 
 /*
  * ixread -
  */
 
-long    ixread(OFD *p, long len, void *ubufr)
+long ixread(OFD *p, long len, void *ubufr)
 {
     long maxlen;
 
@@ -229,7 +522,7 @@ long    ixread(OFD *p, long len, void *ubufr)
  *   bios()
  */
 
-long    xwrite(int h, long len, void *ubufr)
+long xwrite(int h, long len, void *ubufr)
 {
     OFD *p;
     long ret;
@@ -241,13 +534,12 @@ long    xwrite(int h, long len, void *ubufr)
      * but this is not compatible with Atari TOS ...
      */
 
-    if ( p ) {
+    if (p)
         ret = ixwrite(p,len,ubufr);
-    } else {
+    else
         ret = EIHNDL;
-    }
 
-    KDEBUG(("xwrite(%d,%ld) => %ld\n",h,len,ret));
+    KDEBUG(("xwrite(%d,%ld): rc=%ld\n",h,len,ret));
 
     return ret;
 }
@@ -256,260 +548,7 @@ long    xwrite(int h, long len, void *ubufr)
  *  ixwrite -
  */
 
-long    ixwrite(OFD *p, long len, void *ubufr)
+long ixwrite(OFD *p, long len, void *ubufr)
 {
     return(xrw(1,p,len,ubufr));
-}
-
-/*
- * addit - update the OFD for the file
- *
- * update the OFD for the file to reflect the fact that 'siz' bytes
- * have been written to it.
- *
- * flg: update curbyt ? (yes if less than 1 cluster transferred)
- */
-
-static void addit(OFD *p, long siz, int flg)
-{
-    p->o_bytnum += siz;
-
-    if (flg)
-        p->o_curbyt += siz;
-
-    if (p->o_bytnum > p->o_fileln)
-    {
-        p->o_fileln = p->o_bytnum;
-        p->o_flag |= O_DIRTY;
-    }
-}
-
-
-
-/*
- * xrw -
- *
- * This has two (related) functions:
- * 1. transfer 'len' bytes between the file indicated by the OFD and the
- *    buffer pointed to by 'ubufr'
- * 2. if 'ubufr' is NULL, return a pointer to the current file position
- *    within an internal buffer.  this is used internally within fsdir.c
- *    and fsopnclo.c to request ixread() [which calls xrw()] to return a
- *    pointer to a directory entry.
- *
- * We wish to do the i/o in whole clusters as much as possible.
- * Therefore, we break the i/o up into 5 sections.  Data which occupies
- * part of a logical sector along with data not in the request (both at
- * the start and the end of the request) are handled separately and are
- * called header (tail) bytes.  Data which are contained complete in
- * sectors but share part of a cluster with data not in the request are
- * called header (tail) records.  These are also handled separately.  In
- * between handling of header and tail sections, we do i/o in terms of
- * whole clusters.
- *
- *  returns
- *      1. nbr of bytes read/written from/to the file, or
- *      2. pointer (see above)
- */
-
-#define CNTMAX  0x7FFFul  /* 16-bit MAXINT */
-
-static long xrw(int wrtflg, OFD *p, long len, char *ubufr)
-{
-    DMD *dm;
-    UBYTE *bufp;
-    unsigned int bytn, tailrec;
-    int lenxfr, lentail;
-    RECNO recn, num;
-    int hdrrec, lsiz;
-    RECNO last, nrecs;                  /* multi-sector variables */
-    int lflg;
-    long nbyts;
-    long rc,bytpos,lenrec,lenmid;
-
-    /* determine where we currently are in the file */
-
-    dm = p->o_dmd;                      /*  get drive media descriptor  */
-
-    bytpos = p->o_bytnum;               /*  starting file position      */
-
-    /*
-     * get logical record number to start i/o with
-     * (bytn will be byte offset into sector # recn)
-     */
-
-    recn = p->o_curbyt >> dm->m_rblog;
-    bytn = p->o_curbyt & dm->m_rbm;
-
-    recn += p->o_currec;
-
-    /* determine "header" of request. */
-
-    if (bytn) /* do header */
-    {
-        /* xfer len is min( #bytes req'd , */
-        /* #bytes left in current record ) */
-
-        lenxfr = min(len,dm->m_recsiz-bytn);
-        bufp = getrec(recn,p,wrtflg);   /* get desired record  */
-        addit(p,lenxfr,1);              /* update OFD          */
-        len -= lenxfr;                  /* nbr left to do      */
-        recn++;                         /* starting w/ next    */
-
-        if (!ubufr)
-            return (long) (bufp+bytn);
-
-        if (wrtflg)
-            memcpy(bufp+bytn,ubufr,lenxfr);
-        else memcpy(ubufr,bufp+bytn,lenxfr);
-
-        ubufr += lenxfr;
-    }
-
-    /* "header" complete.      See if there is a "tail". */
-    /* After that, see if there is anything left in the middle. */
-
-    lentail = len & dm->m_rbm;
-
-    lenmid = len - lentail;             /*  Is there a Middle ? */
-    if ( lenmid )
-    {
-        hdrrec = recn & dm->m_clrm;
-
-        if (hdrrec)
-        {
-            /*  if hdrrec != 0, then we do not start on a clus bndy;
-             *  so determine the min of (the nbr sects
-             *  remaining in the current cluster) and (the nbr
-             *  of sects remaining in the file).  This will be
-             *  the number of header records to read/write.
-             */
-
-            hdrrec = ( dm->m_clsiz - hdrrec ) ; /* M00.14.01 */
-            if ( hdrrec > lenmid >> dm->m_rblog )       /* M00.14.01 */
-                hdrrec = lenmid >> dm->m_rblog; /* M00.14.01 */
-
-            usrio(wrtflg,hdrrec,recn,ubufr,dm);
-            ubufr += (lsiz = hdrrec << dm->m_rblog);
-            lenmid -= lsiz;
-            addit(p,lsiz,1);
-        }
-
-        /* do whole clusters */
-
-        lenrec = lenmid >> dm->m_rblog;            /* nbr of records  */
-
-        num = lenrec >> dm->m_clrlog;
-        tailrec = lenrec & dm->m_clrm;
-
-        last = nrecs = 0L;
-        nbyts = lflg = 0;
-
-        while (num--)           /*  for each whole cluster...   */
-        {
-            rc = nextcl(p,wrtflg);
-
-            /*
-             *  if eof or non-contiguous cluster, or last cluster
-             *  of request, or request would be for more than CNTMAX sectors,
-             *  then finish pending I/O
-             */
-
-            if ((!rc) && (p->o_currec == last + nrecs) && (nrecs + (long)dm->m_clsiz < CNTMAX))
-            {
-                nrecs += dm->m_clsiz;
-                nbyts += dm->m_clsizb;
-                if (!num)
-                    goto mulio;
-            }
-            else
-            {
-                if (!num)
-                    lflg = 1;
-mulio:
-                if (nrecs)
-                    usrio(wrtflg,nrecs,last,ubufr,dm);
-                ubufr += nbyts;
-                addit(p,nbyts,0);
-                if (rc)
-                    goto eof;
-                last = p->o_currec;
-                nrecs = dm->m_clsiz;
-                nbyts = dm->m_clsizb;
-                if ((!num) && lflg)
-                {
-                    lflg = 0;
-                    goto mulio;
-                }
-            }
-        }  /*  end while  */
-
-        /* do "tail" records */
-
-        if (tailrec)
-        {
-            if (nextcl(p,wrtflg))
-                goto eof;
-            lsiz = tailrec << dm->m_rblog;
-            addit(p,lsiz,1);
-            usrio(wrtflg,tailrec,p->o_currec,ubufr,dm);
-            ubufr += lsiz;
-        }
-    }
-
-    /* do tail bytes within this cluster */
-
-    if (lentail)
-    {
-        recn = p->o_curbyt >> dm->m_rblog;
-
-        if ((!recn) || (recn == (RECNO)dm->m_clsiz))
-        {
-            if (nextcl(p,wrtflg))
-                goto eof;
-            recn = 0;
-        }
-
-        bufp = getrec((RECNO)p->o_currec+recn,p,wrtflg);
-        addit(p,lentail,1);
-
-        if (!ubufr)
-            return (long) bufp;
-
-        if (wrtflg)
-             memcpy(bufp,ubufr,lentail);
-        else memcpy(ubufr,bufp,lentail);
-    } /*  end tail bytes  */
-
-eof:
-    rc = p->o_bytnum - bytpos;
-
-    return(rc);
-}
-
-/*
- * usrio -
- *
- * NOTE: longjmp_rwabs() is a macro that includes a longjmp() which is
- *       executed if the BIOS returns an error, therefore usrio() does
- *       not need to return any error codes.
- */
-
-static void usrio(int rwflg, int num, long strt, char *ubuf, DMD *dm)
-{
-    BCB *b;
-
-    for (b = bufl[BI_DATA]; b; b = b->b_link)
-    {
-        if ((b->b_bufdrv == dm->m_drvnum) &&
-            (b->b_bufrec >= strt) &&
-            (b->b_bufrec < strt+num))
-        {
-            if (b->b_dirty)
-                flush(b);
-            b->b_bufdrv = -1;
-        }
-    }
-
-    longjmp_rwabs(rwflg, (long)ubuf, num, strt+dm->m_recoff[BT_DATA], dm->m_drvnum);
 }

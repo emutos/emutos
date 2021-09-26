@@ -25,7 +25,6 @@
 #include "string.h"
 #include "biosext.h"
 #include "asm.h"
-#include "tosvars.h"
 #include "has.h"
 
 
@@ -111,10 +110,6 @@ static void ixterm(PD *r)
 {
     WORD h;
     WORD i;
-
-    /* call process termination vector (last chance for user cleanup) */
-
-    etv_term();
 
     /* check the standard devices in both file tables  */
 
@@ -592,9 +587,11 @@ void x0term(void)
  */
 void xterm(UWORD rc)
 {
+    PFVOID userterm;
     PD *p = run;
 
-    (* (WORD(*)(void)) Setexc(0x102, (long)-1L))(); /*  call user term handler */
+    userterm = (PFVOID)Setexc(0x102, (long)-1L);  /* get user term handler address */
+    protect_v((PFLONG)userterm);    /* call it, protecting d2/a2 from modification */
 
     run = run->p_parent;
     ixterm(p);

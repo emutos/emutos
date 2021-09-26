@@ -293,7 +293,7 @@ void wideline(Vwk *vwk, Point *point, int count);
 /* common drawing function */
 void Vwk2Attrib(const Vwk *vwk, VwkAttrib *attr, const UWORD color);
 void draw_rect_common(const VwkAttrib *attr, const Rect *rect);
-void clc_flit (const VwkAttrib *attr, const VwkClip *clipper, const Point *point, WORD y, int vectors);
+void clc_flit(const VwkAttrib *attr, const VwkClip *clipper, const Point *point, WORD vectors, WORD start, WORD end);
 void abline (const Line *line, const WORD wrt_mode, UWORD color);
 void contourfill(const VwkAttrib *attr, const VwkClip *clip);
 

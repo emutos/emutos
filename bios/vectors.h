@@ -109,11 +109,4 @@ void mfp_tt_rx_interrupt(void);
 void mfp_tt_tx_interrupt(void);
 #endif
 
-/* protect d2/a2 when calling external user-supplied code */
-
-LONG protect_v(LONG (*func)(void));
-LONG protect_w(LONG (*func)(WORD), WORD);
-LONG protect_ww(LONG (*func)(void), WORD, WORD);
-LONG protect_wlwwwl(LONG (*func)(void), WORD, LONG, WORD, WORD, WORD, LONG);
-
 #endif /* VECTORS_H */

@@ -417,6 +417,8 @@ long eof(int h);
 long xlseek(long n, int h, int flg);
 long ixlseek(OFD *p, long n);
 
+FCB *ixgetfcb(OFD *p);
+
 long xread(int h, long len, void *ubufr);
 long ixread(OFD *p, long len, void *ubufr);
 

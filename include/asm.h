@@ -1,7 +1,7 @@
 /*
  * asm.h - Assembler help routines
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -41,6 +41,12 @@ extern void stop_until_interrupt(void);
 
 /* perform WORD multiply/divide with rounding */
 WORD mul_div_round(WORD mult1, WORD mult2, WORD divisor);
+
+/* protect d2/a2 when calling external user-supplied code */
+LONG protect_v(LONG (*func)(void));
+LONG protect_w(LONG (*func)(WORD), WORD);
+LONG protect_ww(LONG (*func)(void), WORD, WORD);
+LONG protect_wlwwwl(LONG (*func)(void), WORD, LONG, WORD, WORD, WORD, LONG);
 
 /*
  * Push/Pop registers from stack, with ColdFire support.

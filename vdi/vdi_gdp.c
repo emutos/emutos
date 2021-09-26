@@ -21,7 +21,8 @@
  * rectangle.  this should be 5 for TOS visual compatibility.
  */
 #define CORNER_POINTS   5
-#define RBOX_POINTS     (4*CORNER_POINTS+1)
+#define RBOX_POINTS     (4*CORNER_POINTS+1)     /* for polyline()/wideline() */
+#define RFBOX_POINTS    (4*CORNER_POINTS)       /* for polygon() */
 
 /* Definitions for sine and cosine */
 #define    HALFPI    900
@@ -192,7 +193,8 @@ static void clc_arc(Vwk * vwk, int steps)
     steps = point - (Point *)PTSIN; /* number of points, not number of steps */
 
     /*
-     * If pie wedge draw to center and then close
+     * If pie wedge, draw to center
+     * (when 'polygon' runs, it always connects the first point to the last)
      */
     if ((CONTRL[5] == 3) || (CONTRL[5] == 7)) { /* v_pieslice()/v_ellpie() */
         point->x = xc;
@@ -202,7 +204,8 @@ static void clc_arc(Vwk * vwk, int steps)
 
     point = (Point *)PTSIN;
     /*
-     * If arc or circle, do nothing because loop should close circle
+     * If arc or ellarc, we draw a line;
+     * otherwise (pieslice, circle, ellipse, ellpie), we draw a polygon
      */
     if ((CONTRL[5] == 2) || (CONTRL[5] == 6)) { /* v_arc() or v_ellarc() */
         if (vwk->line_width == 1) {
@@ -317,21 +320,20 @@ static void gdp_rbox(Vwk *vwk)
         *p++ = ycentre - *--yp;
     }
 
-    /*
-     * join up the box
-     */
-    *p++ = PTSIN[0];
-    *p = PTSIN[1];
-
     if (CONTRL[5] == 8) {       /* v_rbox() */
         set_LN_MASK(vwk);
+
+        /* join up the polyline */
+        *p++ = PTSIN[0];
+        *p = PTSIN[1];
 
         if (vwk->line_width == 1) {
             polyline(vwk, (Point*)PTSIN, RBOX_POINTS, vwk->line_color);
         } else
             wideline(vwk, (Point*)PTSIN, RBOX_POINTS);
     } else {                    /* v_rfbox() */
-        polygon(vwk, (Point*)PTSIN, RBOX_POINTS);
+        /* polygon() will join up the first & last points itself */
+        polygon(vwk, (Point*)PTSIN, RFBOX_POINTS);
     }
 }
 

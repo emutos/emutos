@@ -1,7 +1,7 @@
 /*
  * sound.h - PSG sound routines
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel
@@ -28,6 +28,9 @@ LONG dosound(const UBYTE *table);
 /* initialize */
 void snd_init(void);
 
+/* play bell sound, called by the vt52 handler */
+void bell(void);
+
 #if CONF_WITH_YM2149
 
 /* timer C int sound routine */
@@ -35,12 +38,13 @@ void sndirq(void);
 
 #endif /* CONF_WITH_YM2149 */
 
-/* the routines below are implemented in assembler in vectors.S, because
- * a user routine hooked in these vectors might clobber registers D2/A2.
+/*
+ * the routine below is implemented in assembler in vectors.S, because
+ * a user routine hooking into kcl_hook:
+ * (a) expects to receive the scancode in d0 rather than on the stack, and
+ * (b) might clobber registers d2/a2, which GCC expects to be preserved
+ *     across function calls.
  */
-
-/* play bell sound, called by bconout2 */
-void bell(void);
 
 /* play key click sound, called by keyboard interrupt */
 void keyclick(UBYTE scancode);
