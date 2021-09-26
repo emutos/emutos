@@ -4,9 +4,9 @@
 #
 
 bios/bios.c
-bios/initinfo.c
 bios/kprint.c
 
+bdos/initinfo.c
 bdos/osmem.c
 
 aes/gem_rsc.c

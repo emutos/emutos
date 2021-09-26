@@ -29,6 +29,7 @@
 #include "mforms.h"
 #include "xbiosbind.h"
 #include "has.h"
+#include "../bdos/bdosstub.h"
 #include "biosext.h"
 
 #include "gemgsxif.h"

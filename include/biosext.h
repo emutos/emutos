@@ -35,11 +35,11 @@ struct font_head;
 /* Bitmap of removable logical drives */
 extern LONG drvrem;
 
-/* Boot flags */
-extern UBYTE bootflags;
-#define BOOTFLAG_EARLY_CLI     0x01
-#define BOOTFLAG_SKIP_HDD_BOOT 0x02
-#define BOOTFLAG_SKIP_AUTO_ACC 0x04
+ULONG kbd_default_datetime(void);
+
+#if DETECT_NATIVE_FEATURES
+void natfeat_bootstrap(const char *env); /* from bios.c */
+#endif
 
 /* Video RAM stuff */
 #if CONF_WITH_VIDEL
@@ -60,6 +60,20 @@ void set_cache(WORD enable);
 
 /* bios allocation of ST-RAM */
 UBYTE *balloc_stram(ULONG size, BOOL top);
+
+/* Information about available ram */
+enum ram_type_t {
+	ST = 1,
+	ALT = 2,
+};
+struct memory_block_t {
+	struct memory_block_t *next;
+	enum ram_type_t type;
+	char* name;
+	void* start;
+	ULONG size;
+};
+struct memory_block_t *bget_memory_info(void);
 
 /* print a panic message both via kprintf and cprintf, then halt */
 void panic(const char *fmt, ...) PRINTF_STYLE NORETURN;
@@ -85,6 +99,12 @@ void get_pixel_size(WORD *width,WORD *height);
 int rez_changeable(void);
 WORD check_moderez(WORD moderez);
 void initialise_palette_registers(WORD rez,WORD mode);
+
+/* return machine type name (machine.c) */
+const char *machine_name(void);
+
+/* whether it's a cold start (machine.c) */
+BOOL is_first_boot(void);
 
 /* RAM-copies of the ROM-fontheaders. See bios/fntxxx.c */
 extern struct font_head fon6x6;

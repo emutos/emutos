@@ -21,6 +21,7 @@ extern UBYTE dskbuf[DSKBUF_SIZE]; /* In ST-RAM */
 
 /* Prototypes */
 void bmem_init(void);
+void bmem_register(const char *name, enum ram_type_t type, const void *start, ULONG size);
 
 /* BIOS function */
 

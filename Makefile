@@ -269,7 +269,7 @@ bios_src += lowstram.c
 # Other BIOS sources can be put in any order
 bios_src +=  memory.S processor.S vectors.S aciavecs.S bios.c xbios.c acsi.c \
              biosmem.c blkdev.c chardev.c clock.c conout.c country.c \
-             disk.c dma.c dmasound.c floppy.c font.c ide.c ikbd.c initinfo.c \
+             disk.c dma.c dmasound.c floppy.c font.c ide.c ikbd.c \
              kprint.c kprintasm.S linea.S lineainit.c lineavars.S machine.c \
              mfp.c midi.c mouse.c natfeat.S natfeats.c nvram.c panicasm.S \
              parport.c screen.c serport.c sound.c videl.c vt52.c xhdi.c \
@@ -289,7 +289,7 @@ endif
 
 bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
            fshand.c fsio.c fsmain.c fsopnclo.c iumem.c kpgmld.c osmem.c \
-           proc.c rwa.S time.c umem.c
+           proc.c rwa.S time.c umem.c initinfo.c bootstrap.c
 
 #
 # source code in util/

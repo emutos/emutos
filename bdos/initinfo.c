@@ -21,21 +21,20 @@
 
 #include "emutos.h"
 #include "nls.h"
-#include "ikbd.h"
+//#include "ikbd.h"
 #include "asm.h"
 #include "string.h"
-#include "blkdev.h"     /* for BLKDEVNUM */
-#include "font.h"
+#include "sysconf.h"     /* for BLKDEVNUM */
+#include "fs.h"         /* for is_drive_available() */
+#include "cookie.h"
+#include "mem.h"        /* for total_alt_ram() */
 #include "tosvars.h"
-#include "machine.h"
-#include "processor.h"
+#include "console.h"
+#include "biosbind.h"   /* for Kbshift() */
 #include "xbiosbind.h"
 #include "biosext.h"
 #include "version.h"
-#include "bios.h"
-
 #include "initinfo.h"
-#include "conout.h"
 #include "../bdos/bdosstub.h"
 #include "lineavars.h"
 
@@ -188,7 +187,7 @@ static void cprint_asctime(void)
      * when comparing the clock to the default date/time, we would not
      * detect a bad clock.  therefore we ignore the seconds.
      */
-    if (system_time <= (DEFAULT_DATETIME>>5))
+    if (system_time <= (kbd_default_datetime()>>5))
         bad_clock = TRUE;
 
     minutes = system_time & 0x3F;
@@ -275,7 +274,7 @@ WORD initinfo(ULONG *pshiftbits)
 #if CONF_WITH_ALT_RAM
     long altramsize = total_alt_ram();
 #endif
-    LONG hdd_available = blkdev_avail(HARDDISK_BOOTDEV);
+    LONG hdd_available = is_drive_available(HARDDISK_BOOTDEV);
     ULONG shiftbits;
 
     /* clear startup message */
@@ -326,7 +325,11 @@ WORD initinfo(ULONG *pshiftbits)
         cprintf("Apollo 68080");
     else
 # endif
+    {
+        ULONG mcpu;
+        cookie_get(COOKIE_CPU, &mcpu);
         cprintf("M680%02ld", mcpu);
+    }
 #endif
     pair_end();
 
@@ -384,10 +387,10 @@ WORD initinfo(ULONG *pshiftbits)
 
         do
         {
-            shiftbits = kbshift(-1);
+            shiftbits = Kbshift(-1);
 
             /* If Shift, Control, Alt or normal key is pressed, stop waiting */
-            if ((shiftbits & MODE_SCA) || bconstat2())
+            if ((shiftbits & MODE_SCA) || xconstat())
                 break;
 
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
@@ -397,17 +400,17 @@ WORD initinfo(ULONG *pshiftbits)
         while (hz_200 < end);
 
         /* Wait while Shift is pressed, and normal key is not pressed */
-        while ((shiftbits & MODE_SHIFT) && !bconstat2())
+        while ((shiftbits & MODE_SHIFT) && !xconstat())
         {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
             stop_until_interrupt();
 #endif
-            shiftbits = kbshift(-1);
+            shiftbits = Kbshift(-1);
         }
 
         /* if a non-modifier key was pressed, examine it */
-        if (bconstat2()) {
-            int c = LOBYTE(bconin2());
+        if (xconstat()) {
+            int c = LOBYTE(xnecin());
 
             c = toupper(c);
 #if WITH_CLI
@@ -418,7 +421,7 @@ WORD initinfo(ULONG *pshiftbits)
             {
                 c -= 'A';
                 if ((c >= 0) && (c < BLKDEVNUM))
-                    if (blkdev_avail(c))
+                    if (is_drive_available(c))
                         dev = c;
             }
         }
@@ -453,15 +456,10 @@ WORD initinfo(ULONG *pshiftbits)
 {
     /* we already displayed a startup message */
 
-    *pshiftbits = kbshift(-1);
+    *pshiftbits = Kbshift(-1);
     return bootdev;
 }
 
 
 #endif   /* FULL_INITINFO */
 
-
-void display_startup_msg(void)
-{
-    cprintf("EmuTOS Version %s\r\n", version);
-}
