@@ -125,16 +125,18 @@ void Initmous(WORD type, struct param *param, PFVOID newvec)
 #if CONF_WITH_TOUCHSCREEN_XBIOS
 void ts_rawread(UWORD* x, UWORD* y, UWORD* state)
 {
-	#ifdef MACHINE_DANA
-		dana_ts_rawread(x, y, state);
-	#endif
+    #ifdef MACHINE_DANA
+        dana_ts_rawread(x, y, state);
+    #endif
 }
 
 void ts_calibrate(LONG c[7])
 {
-	#ifdef MACHINE_DANA
-		dana_ts_calibrate(c);
-	#endif
+    #ifdef MACHINE_DANA
+        dana_ts_calibrate(c);
+    #endif
 }
 #endif
+
+/* vim: set ts=4 sw=4 et: */
 

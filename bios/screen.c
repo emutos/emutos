@@ -753,7 +753,7 @@ ULONG calc_vram_size(void)
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();
 #elif defined(MACHINE_DANA)
-	return dana_initial_vram_size();
+    return dana_initial_vram_size();
 #elif defined(MACHINE_LISA)
     return 32*1024UL;
 #else
@@ -811,9 +811,9 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez)
 #ifdef MACHINE_AMIGA
     amiga_get_current_mode_info(planes, hz_rez, vt_rez);
 #elif defined(MACHINE_DANA)
-	*planes = 1;
-	*hz_rez = DANA_SCREEN_WIDTH;
-	*vt_rez = DANA_SCREEN_HEIGHT;
+    *planes = 1;
+    *hz_rez = DANA_SCREEN_WIDTH;
+    *vt_rez = DANA_SCREEN_HEIGHT;
 #elif defined(MACHINE_LISA)
     *planes = 1;
     *hz_rez = 720;
@@ -1326,3 +1326,6 @@ void detect_monitor_change(void)
     (*swv_vec)();
 }
 #endif /* CONF_WITH_ATARI_VIDEO */
+
+/* vim: set ts=4 sw=4 et: */
+

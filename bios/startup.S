@@ -141,7 +141,7 @@ _main:
  *    6         Amiga
  *    7         (currently reserved)
  *    8         ARAnyM
- *    9			AlphaSmart Dana
+ *    9         AlphaSmart Dana
  *    10-15     (currently reserved)
  */
 #if defined(MACHINE_ARANYM)
@@ -603,3 +603,6 @@ cartover:
 
         .even   // Mandatory in ELF section .rodata
 zero:   .dc.l   0
+
+/* vim: set ts=4 sw=4 et: */
+

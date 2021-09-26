@@ -304,7 +304,7 @@ LONG bconout1(WORD dev, WORD b)
     coldfire_rs232_write_byte(b);
     return 1;
 #elif defined(MACHINE_DANA)
-	dana_rs232_writeb(b);
+    dana_rs232_writeb(b);
     return 1;
 #elif CONF_WITH_MFP_RS232
 # if RS232_DEBUG_PRINT
@@ -969,3 +969,6 @@ LONG bconmap(WORD dev)
     return 0x2c;    /* return the function opcode */
 #endif  /* BCONMAP_AVAILABLE */
 }
+
+/* vim: set ts=4 sw=4 et: */
+

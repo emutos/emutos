@@ -967,7 +967,7 @@ void ikbd_writeb(UBYTE b)
 #elif defined(MACHINE_AMIGA)
     amiga_ikbd_writeb(b);
 #elif defined(MACHINE_DANA)
-	dana_ikbd_writeb(b);
+    dana_ikbd_writeb(b);
 #endif
 }
 
@@ -1088,7 +1088,7 @@ void kbd_init(void)
 #endif
 
 #ifdef MACHINE_DANA
-	dana_kbd_init();
+    dana_kbd_init();
 #endif
 
     /* initialize the IKBD */
@@ -1112,3 +1112,6 @@ void kbd_init(void)
 
     bioskeys();
 }
+
+/* vim: set ts=4 sw=4 et: */
+

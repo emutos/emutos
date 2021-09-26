@@ -1533,29 +1533,32 @@ const PFLONG xbios_vecs[] = {
     VEC(xbios_8c, sndstatus),   /* 8c */
     VEC(xbios_8d, buffptr),     /* 8d */
 #else
-	xbios_unimpl,	/* 80 */
-	xbios_unimpl,	/* 81 */
-	xbios_unimpl,	/* 82 */
-	xbios_unimpl,	/* 83 */
-	xbios_unimpl,	/* 84 */
-	xbios_unimpl,	/* 85 */
-	xbios_unimpl,	/* 86 */
-	xbios_unimpl,	/* 87 */
-	xbios_unimpl,	/* 88 */
-	xbios_unimpl,	/* 89 */
-	xbios_unimpl,	/* 8a */
-	xbios_unimpl,	/* 8b */
-	xbios_unimpl,	/* 8c */
-	xbios_unimpl,	/* 8d */
+    xbios_unimpl,   /* 80 */
+    xbios_unimpl,   /* 81 */
+    xbios_unimpl,   /* 82 */
+    xbios_unimpl,   /* 83 */
+    xbios_unimpl,   /* 84 */
+    xbios_unimpl,   /* 85 */
+    xbios_unimpl,   /* 86 */
+    xbios_unimpl,   /* 87 */
+    xbios_unimpl,   /* 88 */
+    xbios_unimpl,   /* 89 */
+    xbios_unimpl,   /* 8a */
+    xbios_unimpl,   /* 8b */
+    xbios_unimpl,   /* 8c */
+    xbios_unimpl,   /* 8d */
 #endif /* CONF_WITH_DMASOUND */
 
 #if CONF_WITH_TOUCHSCREEN_XBIOS
     VEC(xbios_8e, ts_rawread),  /* 8e */
     VEC(xbios_8f, ts_calibrate), /* 8f */
 #else
-	xbios_unimpl,   /* 8e */
-	xbios_unimpl,   /* 8f */
+    xbios_unimpl,   /* 8e */
+    xbios_unimpl,   /* 8f */
 #endif
 };
 
 const UWORD xbios_ent = ARRAY_SIZE(xbios_vecs);
+
+/* vim: set ts=4 sw=4 et: */
+

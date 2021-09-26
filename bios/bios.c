@@ -408,7 +408,7 @@ static void bios_init(void)
     boot_status |= CHARDEV_AVAILABLE;   /* track progress */
     KDEBUG(("init_serport()\n"));
     init_serport();
-	boot_status |= RS232_AVAILABLE;     /* track progress */
+    boot_status |= RS232_AVAILABLE;     /* track progress */
 #if CONF_WITH_SCC
     if (has_scc)
         boot_status |= SCC_AVAILABLE;   /* track progress */
@@ -1239,3 +1239,6 @@ BOOL is_text_pointer(const void *p)
 }
 
 #endif /* CONF_WITH_EXTENDED_MOUSE */
+
+/* vim: set ts=4 sw=4 et: */
+
