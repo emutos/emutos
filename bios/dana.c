@@ -67,6 +67,7 @@
 #define PEDATA   *(volatile UBYTE*)0xfffff421
 #define PESEL    *(volatile UBYTE*)0xfffff423
 #define PFDATA   *(volatile UBYTE*)0xfffff429
+#define PFDIR    *(volatile UBYTE*)0xfffff428
 #define PFPUEN   *(volatile UBYTE*)0xfffff42a
 #define PFSEL    *(volatile UBYTE*)0xfffff42b
 #define PGDATA   *(volatile UBYTE*)0xfffff431
@@ -77,6 +78,7 @@
 #define PKDIR    *(volatile UBYTE*)0xfffff440
 #define PKDATA   *(volatile UBYTE*)0xfffff441
 #define PKSEL    *(volatile UBYTE*)0xfffff443
+#define PKPUEN	 *(volatile UBYTE*)0xfffff442
 #define PLLFSR   *(volatile UWORD*)0xfffff202
 #define PWMR     *(volatile UWORD*)0xfffffa36
 #define SPICONT1 *(volatile UWORD*)0xfffff704
@@ -85,6 +87,7 @@
 #define SPIINTCS *(volatile UWORD*)0xfffff706
 #define SPIRXD   *(volatile UWORD*)0xfffff700
 #define SPISPC   *(volatile UWORD*)0xfffff70a
+#define SPITEST  *(volatile UWORD*)0xfffff708
 #define SPITXD   *(volatile UWORD*)0xfffff702
 #define TCMP1    *(volatile UWORD*)0xfffff604
 #define TCTL1    *(volatile UWORD*)0xfffff600
@@ -119,7 +122,7 @@ static UBYTE keys_pressed[8];
  * B: 60, 01100000
  * 		7
  * 		6 ST micontroller reset
- * 		5
+ * 		5 SD Card 0 power
  * 		4
  * 		3
  * 		2
@@ -130,8 +133,8 @@ static UBYTE keys_pressed[8];
  * 		6
  * 		5
  * 		4 ST microcontroller IRQ, IRQ1
- * 		3
- * 		2
+ * 		3 SD card 1 IRQ
+ * 		2 SD card 0 IRQ
  * 		1
  * 		0
  * E: c8, 11001000
@@ -149,7 +152,7 @@ static UBYTE keys_pressed[8];
  * 		5
  * 		4
  * 		3
- * 		2 
+ * 		2 SD card 1 CS
  * 		1 pen interrupt
  * 		0
  * G:
@@ -166,14 +169,14 @@ static UBYTE keys_pressed[8];
  * 		6 /charger enable
  * 		5
  * 		4
- * 		3
+ * 		3 SD card 0 CS
  * 		2
  * 		1
  * 		0
  * K: fd, 11111101
  * 		7 LCD power?
  * 		6 LCD contrast clock
- * 		5
+ * 		5 SD card 1 power
  * 		4 backlight on/off
  * 		3 LCD contrast start/stop bit
  * 		2 ST microcontroller
@@ -397,8 +400,7 @@ void dana_ikbd_interrupt(void)
 		;
 	PEDATA |= ST_CS;
 
-	UBYTE b = SPIDATA2;
-	KDEBUG(("controller said %02x\n", b));
+	KDEBUG(("controller said %02x\n", SPIDATA2));
 }
 
 void dana_ts_rawread(UWORD* x, UWORD* y, UWORD* state)
@@ -423,7 +425,7 @@ void dana_ts_rawread(UWORD* x, UWORD* y, UWORD* state)
 	}
 	*x /= count;
 	*y /= count;
-	KDEBUG(("rawread x=%d y=%d state=%d\n", *x, *y, *state));
+	/* KDEBUG(("rawread x=%d y=%d state=%d\n", *x, *y, *state)); */
 }
 
 void dana_ts_calibrate(LONG c[7])
@@ -571,23 +573,42 @@ void dana_ikbd_writeb(UBYTE b)
 
 void spi_initialise(void)
 {
-	/* Power off the card. */
+	/* Power off both cards. */
 	 
 	PBDATA &= ~(1<<5);
     PBDIR |= 1<<5;
     PBPUEN &= ~(1<<5);
     PBSEL |= 1<<5;
+
+	PKDATA &= ~(1<<5);
+	PKDIR |= 1<<5;
+	PKPUEN &= ~(1<<5);
+	PKSEL |= 1<<5;
+
+	/* Set up CS GPIOs and deassert both cards. */
+
+	PJDATA = (PJDATA & 0xff) | 0x08;
+	PJDIR = (PJDIR & 0xff) | 0x08;
+	PJPUEN = PJPUEN & 0xf3;
+	PJSEL = (PJSEL & 0xff) | 0x08;
+
+	PFDATA = (PJDATA & 0xff) | 0x04;
+	PFDIR = (PJDIR & 0xff) | 0x04;
+	PFPUEN = PJPUEN & 0xfd;
+	PFSEL = (PJSEL & 0xff) | 0x04;
+
+	/* Power on card 0 only. */
+
 	DELAY_MS(100);
-
-	/* Power on the card */
-
 	PBDATA |= 1<<5;
 	DELAY_MS(100);
 
-	PJDATA = (PJDATA & 0xf8) | 0x08;
-	PJDIR = (PJDIR & 0xf8) | 0x08;
-	PJPUEN = PJPUEN & 0xf0;
-	PJSEL = (PJSEL & 0xf8) | 0x08;
+	/* Connect the SPI interface to the GPIO pins. */
+
+	PJDATA = (PJDATA & 0xf8) | 0x00;
+	PJDIR = (PJDIR & 0xf8) | 0x00;
+	PJPUEN = PJPUEN & 0xf8;
+	PJSEL = (PJSEL & 0xf8) | 0x00;
 
 	SPISPC = 0;
 	SPIINTCS = 0;
@@ -595,24 +616,26 @@ void spi_initialise(void)
 			| (1<<9) /* SPI enabled */
 			| 7 /* transfer size of 8 bits */
 			;
+	SPITEST = 0;
+	SPISPC = 0;
 }
 
 void spi_clock_sd(void)
 {
 	/* 8MHz */
-	SPICONT1 = (SPICONT1 & 0x1fff) | (0<<13); /* divide by 4 */
+	SPICONT1 = (SPICONT1 & 0x1fff) | (0<<13); /* divide by 8 */
 }
 
 void spi_clock_mmc(void)
 {
 	/* 8MHz */
-	SPICONT1 = (SPICONT1 & 0x1fff) | (0<<13); /* divide by 4 */
+	SPICONT1 = (SPICONT1 & 0x1fff) | (0<<13); /* divide by 8 */
 }
 
 void spi_clock_ident(void)
 {
 	/* 250khZ */
-	SPICONT1 = (SPICONT1 & 0x1fff) | (5<<13); /* divide by 128 */
+	SPICONT1 = (SPICONT1 & 0x1fff) | (5<<13); /* divide by 256 */
 }
 
 void spi_cs_assert(void)
