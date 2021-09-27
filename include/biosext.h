@@ -103,6 +103,13 @@ void initialise_palette_registers(WORD rez,WORD mode);
 /* return machine type name (machine.c) */
 const char *machine_name(void);
 
+#if CONF_WITH_APOLLO_68080
+/* The CPU cookie reports a 68040 because that's what the 68080 is the closest too, and
+ * existing programs wouldn't know about the 68080. So if one wants to know if it's really
+ * a 68080 and not a 68040, this flag is here. **/
+extern BOOL is_apollo_68080; /* would normally belong to processor.h */
+#endif
+
 /* whether it's a cold start (machine.c) */
 BOOL is_first_boot(void);
 
