@@ -21,7 +21,6 @@
 
 #include "emutos.h"
 #include "nls.h"
-//#include "ikbd.h"
 #include "asm.h"
 #include "string.h"
 #include "sysconf.h"     /* for BLKDEVNUM */
@@ -52,6 +51,11 @@ static const char logo[][LOGO_LENGTH+1] =
       "1111   1 1  1   1  7   7   7  777 ",
       "1     1 1 1 1   1  7   7   7     7",
       "11111 1   1  111   7    777  7777 " };
+
+static void crlf(void) 
+{
+    cprintf("\r\n");
+}
 
 /* Print n spaces */
 static void print_spaces(WORD n)
@@ -92,7 +96,7 @@ static void print_art(const char *s)
     if(old != 0) {
         cprintf("\033c ");
     }
-    cprintf("\r\n");
+    crlf();
 }
 
 
@@ -120,14 +124,14 @@ static void display_message(const char *s)
 {
     set_margin();
     cprintf(s);
-    cprintf("\r\n");
+    crlf();
 }
 
 
 /*
  * display a message in inverse video, with optional cr/lf
  */
-static void display_inverse(const char *s,BOOL crlf)
+static void display_inverse(const char *s,BOOL addcrlf)
 {
     WORD len = strlen(s);
     WORD left = (INFO_LENGTH - len) / 2;
@@ -141,8 +145,8 @@ static void display_inverse(const char *s,BOOL crlf)
     print_spaces(right);
     cprintf("\033q");
 
-    if (crlf)
-        cprintf("\r\n");
+    if (addcrlf)
+        crlf();
 }
 
 
@@ -299,7 +303,7 @@ WORD initinfo(ULONG *pshiftbits)
     KDEBUG(("screen_height = %d, initinfo_height = %d, top_margin = %d\n",
         screen_height, initinfo_height, top_margin));
     for (i = 0; i < top_margin; i++)
-        cprintf("\r\n");
+        crlf();
 
     /* Centre the logo horizontally */
     left_margin = (SCREEN_WIDTH-LOGO_LENGTH) / 2;
@@ -358,7 +362,7 @@ WORD initinfo(ULONG *pshiftbits)
 #if WITH_CLI
     display_message(_("Press <Esc> to run an early console"));
 #endif
-    cprintf("\r\n");
+    crlf();
 
     /* centre 'hold shift' message in all languages */
     display_inverse(_("Hold <Shift> to pause this screen"),0);
