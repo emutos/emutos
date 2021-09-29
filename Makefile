@@ -289,7 +289,7 @@ endif
 
 bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
            fshand.c fsio.c fsmain.c fsopnclo.c iumem.c kpgmld.c osmem.c \
-           proc.c rwa.S time.c umem.c initinfo.c bootstrap.c
+           proc.c rwa.S time.c umem.c initinfo.c bootstrap.c logo.c
 
 #
 # source code in util/
@@ -1002,6 +1002,19 @@ $(MFORMRSCGEN_BASE)%c $(MFORMRSCGEN_BASE)%h: mrd $(MFORMRSC_BASE)%rsc $(MFORMRSC
 	./mrd -pmform $(MFORMRSC_BASE) $(MFORMRSCGEN_BASE)
 
 #
+# Logo support
+#
+
+TOCLEAN += logo_compressor
+NODEP += logo_compressor
+LOGO_BASE = bdos/logo
+GEN_SRC += $(LOGO_BASE).c $(LOGO_BASE).h
+logo_compressor: tools/logo_compressor.c
+	$(NATIVECC) $< -o $@
+$(LOGO_BASE)%c $(LOGO_BASE)%h: logo_compressor
+	./logo_compressor $(LOGO_BASE).c $(LOGO_BASE).h
+
+#
 # Special ROM support
 #
 
@@ -1014,7 +1027,7 @@ mkrom: tools/mkrom.c
 # test target to build all tools that can be built by the Makefile
 .PHONY: tools
 NODEP += tools
-tools: bug draft erd grd ird localise mkflop mkrom mrd tos-lang-change
+tools: bug draft erd grd ird localise mkflop mkrom mrd tos-lang-change logo_compressor
 
 # user tool, not needed in EmuTOS building
 TOCLEAN += tos-lang-change
