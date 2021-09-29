@@ -53,7 +53,7 @@ static void startup(void);
 static void init_default_environment(void);
 static void init_memory(void);
 static void autoexec(void);
-static LONG apply_boot_settings(ULONG shiftbits);
+static void apply_boot_settings(ULONG shiftbits);
 
 void bdos_install_traps(void); /* in bdosmain.c */
 
@@ -156,8 +156,15 @@ static void startup(void)
     KDEBUG(("bootdev = %d\n", bootdev));
     KDEBUG(("bootflags = 0x%02x\n", bootflags));
 
-    /* Execute the bootsector code (if present) */
-    (*hdv_boot)();
+    /* If the user decided to skip AUTO programs, we don't attempt to execute the bootsector */
+    if (bootflags & ~BOOTFLAG_SKIP_AUTO_ACC)
+    {
+#ifdef DISABLE_HD_BOOT
+        if (bootdev < NUMFLOPPIES) /* don't attempt to boot from hard disk */
+#endif
+            /* Execute the bootsector code (if present) */
+            (*hdv_boot)();
+    }
 
     Dsetdrv(bootdev);           /* Set boot drive as current */
 
@@ -213,7 +220,7 @@ static void init_default_environment(void)
 /*
  * boot_from_block_device - boot from device in 'bootdev'
  */
-static LONG apply_boot_settings(ULONG shiftbits)
+static void apply_boot_settings(ULONG shiftbits)
 {
     if (shiftbits & MODE_ALT)
         bootflags |= BOOTFLAG_SKIP_HDD_BOOT;
@@ -224,15 +231,6 @@ static LONG apply_boot_settings(ULONG shiftbits)
     /* If the user decided to skip hard drive boot, we set the boot device to floppy A: */
     if (bootflags & BOOTFLAG_SKIP_HDD_BOOT)
         bootdev = FLOPPY_BOOTDEV;
-
-    /*If the user decided to skip AUTO programs, we don't attempt to execute the bootsector */
-    if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
-        return 0;
-
-#ifdef DISABLE_HD_BOOT
-    if (bootdev >= NUMFLOPPIES) /* don't attempt to boot from hard disk */
-        return 0;
-#endif
 }
 
 /*
