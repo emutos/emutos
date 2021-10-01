@@ -62,14 +62,8 @@ void set_cache(WORD enable);
 UBYTE *balloc_stram(ULONG size, BOOL top);
 
 /* Information about available ram */
-enum ram_type_t {
-	ST = 1,
-	ALT = 2,
-};
 struct memory_block_t {
 	struct memory_block_t *next;
-	enum ram_type_t type;
-	char* name;
 	void* start;
 	ULONG size;
 };

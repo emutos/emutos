@@ -107,8 +107,7 @@ static void init_memory(void)
     
         for (mem = bget_memory_info(); mem != NULL; mem = mem->next)
         {
-            if (mem->type == ALT)
-                xmaddalt((UBYTE*)mem->start, mem->size);
+            xmaddalt((UBYTE*)mem->start, mem->size);
         }
     }
 #endif

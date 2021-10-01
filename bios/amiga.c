@@ -404,7 +404,7 @@ static void add_slow_ram(void)
     if (size == 0)
         return;
 
-    bmem_register("Slow", ALT, start, size);
+    bmem_register(start, size);
 }
 
 /* Detect A3000/A4000 Processor Slot Fast RAM, a.k.a. Ramsey High MBRAM.
@@ -422,7 +422,7 @@ static void add_processor_slot_fast_ram(void)
     if (size == 0)
         return;
 
-    bmem_register("Processor Slot Fast", ALT, (void*)start, size);
+    bmem_register((void*)start, size);
 }
 
 /* Detect A3000/A4000 Motherboard Fast RAM, a.k.a. Ramsey Low MBRAM.
@@ -441,7 +441,7 @@ static void add_motherboard_fast_ram(void)
     if (size == 0)
         return;
 
-    bmem_register("Motherboard Fast", ALT, (void *)end - size, size);
+    bmem_register((void *)end - size, size);
 }
 
 /* Forward declarations */
@@ -476,7 +476,7 @@ static void add_alt_ram_from_loader(void)
     {
         UBYTE *address = altram_regions[i].address;
         ULONG size = altram_regions[i].size;
-        bmem_register("ALT", ALT, (void *)address, size);
+        bmem_register((void *)address, size);
     }
 }
 
@@ -1366,7 +1366,7 @@ static void add_uae_32bit_chip_ram(void)
 
     uae_getchipmemsize(&z3chipmem_start, &z3chipmem_size);
 
-    bmem_register("UAE 32-bit Chip", ALT, (void *)z3chipmem_start, z3chipmem_size);
+    bmem_register((void *)z3chipmem_start, z3chipmem_size);
 }
 
 /******************************************************************************/
@@ -2922,7 +2922,7 @@ static void add_ram_from_board(struct ConfigDev *configDev)
         configDev, configDev->cd_BoardAddr, configDev->cd_BoardSize));
 
     /* Register this Alt-RAM to the OS */
-    bmem_register("Expansion", ALT, configDev->cd_BoardAddr, configDev->cd_BoardSize);
+    bmem_register(configDev->cd_BoardAddr, configDev->cd_BoardSize);
 
     /* This board has been processed */
     configDev->cd_Flags |= CDF_PROCESSED;
