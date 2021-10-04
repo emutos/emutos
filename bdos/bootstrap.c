@@ -174,7 +174,8 @@ static void startup(void)
 #endif
 
 #if WITH_CLI
-    if (bootflags & BOOTFLAG_EARLY_CLI) {
+    if (bootflags & BOOTFLAG_EARLY_CLI)
+    {
         /* Run an early console, passing the default environment */
         PD *pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char *)PF_STANDARD, "", default_env);
         pd->p_tbase = (UBYTE *) coma_start;
@@ -187,10 +188,12 @@ static void startup(void)
     autoexec();
 
     /* Give control to next process to run */
-    if (cmdload != 0) {
+    if (cmdload != 0)
+    {
         /* Run COMMAND.PRG with an empty environment (like Atari TOS) */
         Pexec(PE_LOADGO, "COMMAND.PRG", "", NULL);
-    } else if (exec_os) {
+    } 
+    else if (exec_os) {
         /* Start the default (ROM) shell with the default environment (like Atari TOS) */
         PD *pd;
         pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char *)PF_STANDARD, "", default_env);
@@ -271,12 +274,11 @@ static void autoexec(void)
 
     Fsetdta(&dta);
     err = Fsfirst("\\AUTO\\*.PRG", 7);
-    while(err == 0) {
+    while(err == 0)
+    {
 #ifdef TARGET_PRG
         if (!strncmp(dta.d_fname, "EMUTOS", 6))
-        {
             KDEBUG(("Skipping %s from AUTO folder\n", dta.d_fname));
-        }
         else
 #endif
         {
@@ -303,7 +305,8 @@ static void autoexec(void)
  * Note: this is an undocumented feature of TOS that exists in all
  * versions of Atari TOS.
  */
-struct rrcode {
+struct rrcode
+{
     long magic;
     struct rrcode *pointer;
     char program[502];
