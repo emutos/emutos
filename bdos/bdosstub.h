@@ -26,13 +26,13 @@ void bdos_bootstrap(void);
 /* Pointer to the basepage of the current process.
  * Declared here because referenced by the BIOS OSHEADER,
  * and also by bios/kprint.c
- * TODO: this is dirty as it allwows the BIOS to access data from an upper layer
+ * TODO: this is dirty as it allows the BIOS to access data from an upper layer
  */
 extern PD *run;
 
 /* BDOS current date/time.
  * Declared here because also updated by XBIOS Settime()
- * TODO: this is dirty as it allwows the BIOS to access data from an upper layer
+ * TODO: this is dirty as it allows the BIOS to access data from an upper layer
  */
 extern UWORD current_date, current_time;
 
