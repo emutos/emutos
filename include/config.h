@@ -1923,6 +1923,13 @@
 # define MIDI_DEBUG_PRINT 0
 #endif
 
+/*
+ * Set DANA_DEBUG_PRINT to 1 to redirect debug prints to the Dana console.
+ */
+#ifndef DANA_DEBUG_PRINT
+# define DANA_DEBUG_PRINT 0
+#endif
+
 /* Determine if kprintf() is available */
 #if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || CONSOLE_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || DANA_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT || MIDI_DEBUG_PRINT
 #  define HAS_KPRINTF 1
