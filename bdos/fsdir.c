@@ -134,6 +134,8 @@
 
 #define ROOT_PSEUDO_CLUSTER 1   /* see comments in xrename() */
 
+#define DIR_FILE_LENGTH 0x7fffffffL     /* fake size for directories */
+
 /*
  * forward prototypes
  */
@@ -1018,7 +1020,7 @@ long xrename(int n, char *p1, char *p2)
          */
         fdparent = fd2->o_dirfil;           /* parent's OFD */
         if (att&FA_SUBDIR) {
-            fd2->o_fileln = 0x7fffffffL;    /* fake size for dirs */
+            fd2->o_fileln = DIR_FILE_LENGTH;/* fake size for dirs */
 
             /* set .. entry to point to new parent.
              * note that the root dir has a cluster# of zero.
@@ -1914,7 +1916,7 @@ OFD *makofd(DND *p)
     p->d_ofd = f;       /* update pointer in DND */
 
     f->o_strtcl = p->d_strtcl;
-    f->o_fileln = 0x7fffffffL;
+    f->o_fileln = DIR_FILE_LENGTH;
     f->o_dirfil = p->d_dirfil;
     f->o_dnode = p->d_parent;
     f->o_dirbyt = p->d_dirpos;

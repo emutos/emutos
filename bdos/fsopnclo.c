@@ -2,7 +2,7 @@
  * fsopnclo.c - open/close/create/delete routines for file system
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2020 The EmuTOS development team
+ *               2002-2021 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -69,9 +69,6 @@
  */
 static long ixopen(char *name, int mod);
 static long opnfil(FCB *f, DND *dn, int mod);
-static long makopn(FCB *f, DND *dn, int h, int mod);
-static FTAB *sftofdsrch(OFD *ofd);
-static void sftdel(FTAB *sftp);
 
 
 /*
@@ -83,7 +80,13 @@ static void sftdel(FTAB *sftp);
  */
 long xcreat(char *name, UBYTE attr)
 {
-    return ixcreat(name, attr & ~FA_SUBDIR);
+    long rc;
+
+    rc = ixcreat(name, attr & ~FA_SUBDIR);
+
+    KDEBUG(("xcreat(%s,0x%02x): rc=%ld\n",name,attr,rc));
+
+    return rc;    
 }
 
 
@@ -216,7 +219,13 @@ long ixcreat(char *name, UBYTE attr)
  */
 long xopen(char *name, int mod)
 {
-    return ixopen(name, mod&VALID_FOPEN_BITS);
+    long rc;
+
+    rc = ixopen(name, mod&VALID_FOPEN_BITS);
+
+    KDEBUG(("xopen(%s,%d): rc=%ld\n",name,mod,rc));
+
+    return rc;
 }
 
 /*
@@ -392,7 +401,7 @@ static void sftdel(FTAB *sftp)
  */
 long xclose(int h)
 {
-    int h0;
+    FTAB *ftab;
     OFD *fd;
     long rc;
 
@@ -402,31 +411,62 @@ long xclose(int h)
     if (h >= NUMHANDLES)            /* M01.01.1022.01 */
         return EIHNDL;
 
-    if ((h0 = h) < NUMSTD)
+    /*
+     * for a standard handle:
+     *  . revert it to the default character device
+     *  . if the original was mapped to a character device, we're done
+     *  . otherwise it was Fforce'd: as long as it wasn't mapped to
+     *    another standard handle (which would be illegal), we continue
+     *    on to close the non-standard handle
+     *
+     * for a non-standard handle:
+     *  . if it's mapped to a character device, decrement the usage, then we're done
+     *  . otherwise we continue on to close the non-standard handle
+     */
+    if (h < NUMSTD)
     {
-        h = run->p_uft[h];
-        run->p_uft[h0] = get_default_handle(h0);    /* revert to default */
-        if (h <= 0)                 /* M01.01.1023.01 */
+        int h0 = run->p_uft[h];     /* remember old mapping */
+        run->p_uft[h] = get_default_handle(h);  /* revert to default */
+        h = h0;
+        if (h < 0)                  /* M01.01.1023.01 */
             return E_OK;
+        if (h < NUMSTD)             /* "can't happen" (bug in Fforce()?) */
+            return EIHNDL;
     }
-    else if (((long) sft[h-NUMSTD].f_ofd) < 0L)
+    else
     {
-        if (!(--sft[h-NUMSTD].f_use))
-        {
-            sft[h-NUMSTD].f_ofd = 0;
-            sft[h-NUMSTD].f_own = 0;
-        }
+        ftab = &sft[h-NUMSTD];
 
-        return E_OK;
+        if ((long)ftab->f_ofd < 0L)
+        {
+            if (--ftab->f_use == 0)
+            {
+                ftab->f_ofd = 0;
+                ftab->f_own = 0;
+            }
+            return E_OK;
+        }
     }
 
+    /*
+     * we have a non-standard handle:
+     *  . check that it's valid
+     *  . if so, do a real close, updating the OFD, directory etc and
+     *    flushing buffers
+     */
     if (!(fd = getofd(h)))
         return EIHNDL;
 
     rc = ixclose(fd,0);
 
-    if (!(--sft[h-NUMSTD].f_use))
-        sftdel(&sft[h-NUMSTD]);
+    /*
+     * finally, decrement the usage and, if it is now zero, zero out the
+     * sft[] entry and, if there are no other entries with a pointer to
+     * the OFD for this handle, free up the OFD
+     */
+    ftab = &sft[h-NUMSTD];
+    if (--ftab->f_use == 0)
+        sftdel(ftab);
 
     return rc;
 }
@@ -518,13 +558,9 @@ long ixclose(OFD *fd, int part)
 
 
 /*
- *  xunlink - unlink (delete) a file
- *
- *  Function 0x41   Fdelete
- *
- *  returns     EFILNF, EACCDN, ixdel()
+ *  ixunlink - do the work for xunlink
  */
-long xunlink(char *name)
+static long ixunlink(char *name)
 {
     DND *dn;
     FCB *f;
@@ -549,6 +585,25 @@ long xunlink(char *name)
     pos -= sizeof(FCB);
 
     return ixdel(dn,f,pos);
+}
+
+
+/*
+ *  xunlink - unlink (delete) a file
+ *
+ *  Function 0x41   Fdelete
+ *
+ *  returns     EFILNF, EACCDN
+ */
+long xunlink(char *name)
+{
+    long rc;
+
+    rc = ixunlink(name);
+
+    KDEBUG(("xunlink(%s): rc=%ld\n",name,rc));
+
+    return rc;
 }
 
 

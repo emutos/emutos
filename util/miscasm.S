@@ -2,7 +2,7 @@
  * miscasm.S - Some small helper functions in assembler
  *
  * Copyright (C) 2001 by following authors
- * Copyright (C) 2013-2019 by The EmuTOS development team.
+ * Copyright (C) 2013-2021 by The EmuTOS development team.
  *
  * Authors:
  *  SCC     Steven C. Cavender
@@ -193,3 +193,78 @@ mdrminus:
         asr.w   #1,d0           // d0 = ((mult1 * mult2 * 2) / divisor - 1) / 2
         rts
 #endif
+
+/* ==== Glue for external vectors ===========================================
+ *
+ * EmuTOS uses d0-d1/a0-a1 as scratch registers. However the original TOS
+ * used d0-d2/a0-a2 as scratch registers. For this reason, when jumping into
+ * external user-supplied code we need to save/restore d2/a2. The routines
+ * below provide the necessary assembler support.
+ */
+
+        .globl   _protect_v
+        .globl   _protect_w
+        .globl   _protect_ww
+        .globl   _protect_wlwwwl
+
+/*
+ * LONG protect_v(LONG (*func)(void));
+ */
+_protect_v:
+        move.l   4(sp),a0
+        move.l   a2,-(sp)
+        move.l   d2,-(sp)
+        jsr      (a0)
+        move.l   (sp)+,d2
+        move.l   (sp)+,a2
+        rts
+
+/*
+ * LONG protect_w(LONG (*func)(WORD), WORD);
+ */
+_protect_w:
+        move.l   4(sp),a0
+        move.w   8(sp),d0
+        move.l   a2,-(sp)
+        move.l   d2,-(sp)
+        move.w   d0,-(sp)
+        jsr      (a0)
+        addq.l   #2,sp
+        move.l   (sp)+,d2
+        move.l   (sp)+,a2
+        rts
+
+/*
+ * LONG protect_ww(LONG (*func)(WORD), WORD, WORD);
+ */
+_protect_ww:
+        move.l   4(sp),a0
+        move.l   8(sp),d0
+        move.l   a2,-(sp)
+        move.l   d2,-(sp)
+        move.l   d0,-(sp)
+        jsr      (a0)
+        addq.l   #4,sp
+        move.l   (sp)+,d2
+        move.l   (sp)+,a2
+        rts
+
+/*
+ * LONG protect_wlwwwl(LONG (*func)(), WORD, LONG, WORD, WORD, WORD, LONG);
+ */
+_protect_wlwwwl:
+        movem.l  8(sp),d0-d1/a0-a1
+        move.l   a2,-(sp)
+        move.l   d2,-(sp)
+#ifdef __mcoldfire__
+        lea      -16(sp),sp
+        movem.l  d0-d1/a0-a1,(sp)
+#else
+        movem.l  d0-d1/a0-a1,-(sp)
+#endif
+        move.l   28(sp),a0
+        jsr      (a0)
+        lea      16(sp),sp
+        move.l   (sp)+,d2
+        move.l   (sp)+,a2
+        rts

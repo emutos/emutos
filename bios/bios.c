@@ -1206,8 +1206,6 @@ static LONG bios_b(WORD flag)
  * bios_vecs - the table of bios command vectors.
  */
 
-/* PFLONG defined in bios/vectors.h */
-
 #if DBGBIOS
 #define VEC(wrapper, direct) (PFLONG) wrapper
 #else
