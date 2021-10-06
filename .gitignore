@@ -12,6 +12,8 @@
 /*.rom
 /*.dc42
 /*.map
+# Visual Studio stuff
+.vs
 #/localconf.h
 /makefile.dep
 /needcountry.tmp
