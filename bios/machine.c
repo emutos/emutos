@@ -813,3 +813,8 @@ const char * machine_name(void)
     return guess_machine_name();
 #endif
 }
+
+BOOL is_first_boot(void)
+{
+    return FIRST_BOOT;
+}

@@ -37,7 +37,7 @@
 #define LEN_OSM_BLOCK   (2+64)      /* in bytes */
 /* size of os memory pool, in words: */
 #define LENOSM          (LEN_OSM_BLOCK*NUM_OSM_BLOCKS/sizeof(WORD))
-
+#define MAXQUICK 5
 
 /*
  *  local typedefs

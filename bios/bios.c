@@ -29,7 +29,6 @@
 #include "lineavars.h"
 #include "vt52.h"
 #include "processor.h"
-#include "initinfo.h"
 #include "machine.h"
 #include "has.h"
 #include "cookie.h"
@@ -59,24 +58,14 @@
 #include "memory.h"
 #include "nova.h"
 #include "tosvars.h"
+#include "version.h"
 #include "amiga.h"
 #include "lisa.h"
 #include "coldfire.h"
-#if WITH_CLI
-#include "../cli/clistub.h"
-#endif
-
-
 
 /*==== Defines ============================================================*/
 
 #define DBGBIOS 0               /* If you want to enable debug wrappers */
-#define ENABLE_RESET_RESIDENT 0 /* enable to run "reset-resident" code (see below) */
-
-#define ENV_SIZE    12          /* sufficient for standard PATH=^X:\^^ (^=nul byte) */
-#define DEF_PATH    "A:\\"      /* default value for path */
-
-static char default_env[ENV_SIZE];  /* default environment area */
 
 /*==== External declarations ==============================================*/
 
@@ -99,8 +88,7 @@ extern UBYTE osxhbootdelay;         /* defined in OSXH header in startup.S */
 /* used by kprintf() */
 WORD boot_status;               /* see kprint.h for bit flags */
 
-/* Boot flags */
-UBYTE bootflags;
+static void display_startup_msg(void);
 
 /* Non-Atari hardware vectors */
 #if !CONF_WITH_MFP
@@ -495,24 +483,11 @@ static void bios_init(void)
     nls_set_lang(get_lang_name());
 #endif
 
-    /* Set start of user interface.
-     * No need to check if os_header.os_magic->gm_magic == GEM_MUPB_MAGIC,
-     * as this is always true. */
-    exec_os = os_header.os_magic->gm_init;
-
-    KDEBUG(("osinit_before_xmaddalt()\n"));
-    osinit_before_xmaddalt();   /* initialize BDOS (part 1) */
-    KDEBUG(("after osinit_before_xmaddalt()\n"));
-
 #if CONF_WITH_ALT_RAM
-    /* Add Alt-RAM to BDOS pool */
+    /* Detect Alt-RAM */
     KDEBUG(("altram_init()\n"));
     altram_init();
 #endif
-
-    KDEBUG(("osinit_after_xmaddalt()\n"));
-    osinit_after_xmaddalt();    /* initialize BDOS (part 2) */
-    KDEBUG(("after osinit_after_xmaddalt()\n"));
     boot_status |= DOS_AVAILABLE;   /* track progress */
 
     /* Enable VBL processing */
@@ -542,9 +517,10 @@ static void bios_init(void)
     KDEBUG(("bios_init() end\n"));
 }
 
+
 #if DETECT_NATIVE_FEATURES
 
-static void bootstrap(void)
+void natfeat_bootstrap(const char *env)
 {
     /* start the kernel provided by the emulator */
     PD *pd;
@@ -556,7 +532,7 @@ static void bootstrap(void)
     nf_getbootstrap_args(args, sizeof(args));
 
     /* allocate space */
-    pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, default_env);
+    pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char*)PF_STANDARD, args, env);
 
     /* get the TOS executable from the emulator */
     length = nf_bootstrap(pd->p_lowtpa + sizeof(PD), pd->p_hitpa - pd->p_lowtpa);
@@ -566,7 +542,7 @@ static void bootstrap(void)
         goto err;
 
     /* relocate the loaded executable */
-    r = Pexec(PE_RELOCATE, (char *)length, (char *)pd, default_env);
+    r = Pexec(PE_RELOCATE, (char *)length, (char *)pd, env);
     if (r != (LONG)pd)
         goto err;
 
@@ -574,7 +550,7 @@ static void bootstrap(void)
     bootdev = nf_getbootdrive();
 
     /* execute the relocated process */
-    Pexec(PE_GO, "", (char *)pd, default_env);
+    Pexec(PE_GO, "", (char *)pd, env);
 
 err:
     Mfree(pd->p_env); /* Mfree() the environment */
@@ -582,118 +558,6 @@ err:
 }
 
 #endif /* DETECT_NATIVE_FEATURES */
-
-/*
- * Build the default environment string: "PATH=^X:\^^" [where ^=nul]
- */
-static void init_default_environment(void)
-{
-    char *p;
-
-    strcpy(default_env,PATH_ENV);
-    p = default_env + sizeof(PATH_ENV); /* point to first byte of path string */
-    strcpy(p,DEF_PATH);
-    *p += bootdev;                      /* fix up drive letter */
-    p += sizeof(DEF_PATH);
-    *p = '\0';                          /* terminate with double nul */
-}
-
-#if ENABLE_RESET_RESIDENT
-/*
- * run_reset_resident - run "reset-resident" code
- *
- * "Reset-resident" code is code that has been loaded into RAM prior
- * to a warm boot.  It has a special header with a magic number, it
- * is 512 bytes long (aligned on a 512-byte boundary), and it has a
- * specific checksum (calculated on a word basis).
- *
- * Note: this is an undocumented feature of TOS that exists in all
- * versions of Atari TOS.
- */
-struct rrcode {
-    long magic;
-    struct rrcode *pointer;
-    char program[502];
-    short chksumfix;
-};
-#define RR_MAGIC    0x12123456L
-#define RR_CHKSUM   0x5678
-
-static void run_reset_resident(void)
-{
-    const struct rrcode *p = (const struct rrcode *)phystop;
-
-    for (--p; p > (struct rrcode *)&etv_timer; p--)
-    {
-        if (p->magic != RR_MAGIC)
-            continue;
-        if (p->pointer != p)
-            continue;
-        if (compute_cksum((const UWORD *)p) != RR_CHKSUM)
-            continue;
-        regsafe_call(p->program);
-    }
-}
-#endif
-
-/*
- * autoexec - run programs in auto folder
- *
- * Skip this if user holds the Control key down.
- *
- * Note that GEMDOS already created a default basepage so it is safe
- * to use GEMDOS calls here!
- */
-
-static void run_auto_program(const char* filename)
-{
-    char path[30];
-
-    strcpy(path, "\\AUTO\\");
-    strcat(path, filename);
-
-    KDEBUG(("Loading %s ...\n", path));
-    Pexec(PE_LOADGO, path, "", NULL);
-    KDEBUG(("[OK]\n"));
-}
-
-static void autoexec(void)
-{
-    DTA dta;
-    WORD err;
-
-    /* check if the user does not want to run AUTO programs */
-    if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
-        return;
-
-#if DETECT_NATIVE_FEATURES
-    bootstrap();                        /* try to boot the new OS kernel directly */
-#endif
-
-    if(!blkdev_avail(bootdev))          /* check, if bootdev available */
-        return;
-
-    Fsetdta(&dta);
-    err = Fsfirst("\\AUTO\\*.PRG", 7);
-    while(err == 0) {
-#ifdef TARGET_PRG
-        if (!strncmp(dta.d_fname, "EMUTOS", 6))
-        {
-            KDEBUG(("Skipping %s from AUTO folder\n", dta.d_fname));
-        }
-        else
-#endif
-        {
-            run_auto_program(dta.d_fname);
-
-            /* Setdta. BetaDOS corrupted the AUTO load if the Setdta
-             * not repeated here */
-            Fsetdta(&dta);
-        }
-
-        err = Fsnext();
-    }
-}
 
 #if CONF_WITH_SHUTDOWN
 
@@ -743,90 +607,14 @@ BOOL can_shutdown(void)
 
 void biosmain(void)
 {
-    BOOL show_initinfo;         /* TRUE if welcome screen must be displayed */
-    ULONG shiftbits;
-
     bios_init();                /* Initialize the BIOS */
 
-    /* Steem needs this to initialize its GEMDOS hard disk emulation.
-     * This may change drvbits. See Steem sources:
-     * File steem/code/emulator.cpp, function intercept_bios(). */
-    Drvmap();
+    /* Set start of user interface.
+     * No need to check if os_header.os_magic->gm_magic == GEM_MUPB_MAGIC,
+     * as this is always true. */
+    exec_os = os_header.os_magic->gm_init;
 
-    /*
-     * if it's not the first boot, we use the existing bootdev.
-     * this allows a boot device that was selected via the welcome
-     * screen to persist across warm boots.
-     */
-    if (FIRST_BOOT)
-        bootdev = blkdev_avail(DEFAULT_BOOTDEV) ? DEFAULT_BOOTDEV : FLOPPY_BOOTDEV;
-
-#if INITINFO_DURATION == 0
-    show_initinfo = FALSE;
-#elif ALWAYS_SHOW_INITINFO
-    show_initinfo = TRUE;
-#else
-    show_initinfo = FIRST_BOOT;
-#endif
-
-    if (show_initinfo)
-        bootdev = initinfo(&shiftbits); /* show the welcome screen */
-    else
-        shiftbits = kbshift(-1);
-
-    KDEBUG(("bootdev = %d\n", bootdev));
-
-    if (shiftbits & MODE_ALT)
-        bootflags |= BOOTFLAG_SKIP_HDD_BOOT;
-
-    if (shiftbits & MODE_CTRL)
-        bootflags |= BOOTFLAG_SKIP_AUTO_ACC;
-
-    KDEBUG(("bootflags = 0x%02x\n", bootflags));
-
-    /* boot eventually from a block device (floppy or harddisk) */
-    blkdev_boot();
-
-    Dsetdrv(bootdev);           /* Set boot drive */
-    init_default_environment(); /* Build default environment string */
-
-#if ENABLE_RESET_RESIDENT
-    run_reset_resident();       /* see comments above */
-#endif
-
-#if WITH_CLI
-    if (bootflags & BOOTFLAG_EARLY_CLI) {
-        /*
-         * run an early console, passing the default environment
-         */
-        PD *pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char *)PF_STANDARD, "", default_env);
-        pd->p_tbase = (UBYTE *) coma_start;
-        pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        Pexec(PE_GOTHENFREE, "", (char *)pd, default_env);
-    }
-#endif
-
-    autoexec();                 /* autoexec PRGs from AUTO folder */
-
-    /* clear commandline */
-
-    if(cmdload != 0) {
-        /*
-         * Pexec a program called COMMAND.PRG
-         * like Atari TOS, it inherits an empty environment
-         */
-        Pexec(PE_LOADGO, "COMMAND.PRG", "", NULL);
-    } else if (exec_os) {
-        /*
-         * start the default (ROM) shell
-         * like Atari TOS, we pass the default environment
-         */
-        PD *pd;
-        pd = (PD *) Pexec(PE_BASEPAGEFLAGS, (char *)PF_STANDARD, "", default_env);
-        pd->p_tbase = (UBYTE *) exec_os;
-        pd->p_tlen = pd->p_dlen = pd->p_blen = 0;
-        Pexec(PE_GO, "", (char *)pd, default_env);
-    }
+    bdos_bootstrap();
 
 #if CONF_WITH_SHUTDOWN
     /* try to shutdown the machine / close the emulator */
@@ -839,7 +627,6 @@ void biosmain(void)
     kcprintf(_("System halted!\n"));
     halt();
 }
-
 
 
 /**
@@ -1022,7 +809,6 @@ static LONG bios_4(WORD r_w, UBYTE *adr, WORD numb, WORD first, WORD drive, LONG
     return ret;
 }
 #endif
-
 
 
 /**
@@ -1239,3 +1025,8 @@ BOOL is_text_pointer(const void *p)
 }
 
 #endif /* CONF_WITH_EXTENDED_MOUSE */
+
+static void display_startup_msg(void)
+{
+    cprintf("EmuTOS Version %s\r\n", version);
+}

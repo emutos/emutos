@@ -13,6 +13,7 @@
 /* #define ENABLE_KDEBUG */
 
 #include "emutos.h"
+#include "biosmem.h"
 #include "memory.h"
 #include "tosvars.h"
 #include "machine.h"
@@ -115,22 +116,43 @@ void ttram_detect(void)
     KDEBUG(("ttram_detect(): ramtop=%p\n", ramtop));
 }
 
+
+/* List of information about available physical memory */
+static struct memory_block_t *memory_info = NULL;
+
+/* Returns the information about the memory detected by the BIOS */
+struct memory_block_t *bget_memory_info(void)
+{
+    return memory_info;
+}
+
+/* Registers detected memory to the BIOS */
+void bmem_register(const void *start, ULONG size)
+{
+    struct memory_block_t *new;
+
+    new = (void*)balloc_stram((ULONG)sizeof(struct memory_block_t), FALSE);
+    if (new == NULL)
+        KDEBUG(("Failed to register memory at %p, size:%lu\n", start, size));
+    new->start = (void*)start;
+    new->size = size;
+    new->next = memory_info;
+    memory_info = new;
+    KDEBUG(("Registered memory: at %p, size:%lu\n", name, type, start, size));
+}
+
 #if CONF_WITH_ALT_RAM
 
-/* Initialize all Alt-RAM */
 void altram_init(void)
 {
 #if CONF_WITH_STATIC_ALT_RAM && defined(STATIC_ALT_RAM_SIZE)
-    KDEBUG(("xmaddalt() static adr=%p size=%ld\n",
-        (UBYTE *)STATIC_ALT_RAM_ADDRESS, STATIC_ALT_RAM_SIZE));
-    xmaddalt((UBYTE *)STATIC_ALT_RAM_ADDRESS, STATIC_ALT_RAM_SIZE);
-    return;
+    bmem_register((void*)STATIC_ALT_RAM_ADDRESS, STATIC_ALT_RAM_SIZE);
 #endif
 
 #if CONF_WITH_TTRAM
     /* Add eventual TT-RAM to BDOS pool */
     if (ramtop != NULL)
-        xmaddalt(TTRAM_START, ramtop - TTRAM_START);
+        bmem_register(TTRAM_START, ramtop - TTRAM_START);
 #endif
 
 #if CONF_WITH_MONSTER
@@ -150,8 +172,7 @@ void altram_init(void)
         /* Register write sequence: read - write - write */
         *(volatile unsigned short *)MONSTER_REG = monster_reg;
         *(volatile unsigned short *)MONSTER_REG = monster_reg;
-        KDEBUG(("xmaddalt()\n"));
-        xmaddalt((UBYTE *)0x400000L, monster_reg*0x100000L);
+        bmem_register((void *)0x400000L, monster_reg*0x100000L);
     }
 #endif
 
@@ -194,8 +215,7 @@ void altram_init(void)
         if (*((volatile short *)0x400000L) != magnum_check1)
             magnum_ram = 0;
 
-        KDEBUG(("xmaddalt()\n"));
-        xmaddalt((UBYTE *)0x400000L, magnum_ram*0x100000L);
+        bmem_register((void *)0x400000L, magnum_ram*0x100000L);
     }
 #endif  /* CONF_WITH_MAGNUM */
 

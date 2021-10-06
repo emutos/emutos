@@ -190,7 +190,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     /* first branch - actions that do not require loading files */
     switch(flag) {
 #if DETECT_NATIVE_FEATURES
-    case PE_RELOCATE:   /* internal use only, see bootstrap() in bios/bios.c */
+    case PE_RELOCATE:   /* internal use only, see natfeat_bootstrap() in bdos/bootstrap.c */
         p = (PD *) tail;
         rc = kpgm_relocate(p, (long)path);
         if (rc) {

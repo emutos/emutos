@@ -32,6 +32,7 @@
 #include "string.h"
 #include "bdosstub.h"
 #include "tosvars.h"
+#include "biosext.h"
 
 /*
 **  externals
@@ -67,18 +68,6 @@ static long xgetver(void);
  *  devices redirected to files
  */
 #define EOF_INDICATOR   0x0000ff1aL
-
-
-/*
- * the basepage for the initial process
- *
- * this used to be obtained via MGET, but that was a bit pointless,
- * since it was never freed
- */
-static PD initial_basepage;
-
-/* initial environment string */
-static const char double_nul[2] __attribute__ ((aligned (2))) = { 0, 0 };
 
 
 /*
@@ -292,6 +281,20 @@ static const FND funcs[] =
 
 
 /*
+ * install trap handlers
+ */
+void bdos_install_traps(void);
+void bdos_install_traps(void)
+{
+    /* Take over the handling of TRAP #1 */
+    Setexc(0x21, (long)enter);
+
+    /* Intercept TRAP #2 only for xterm(), keeping the old value
+     * so that our trap handler can call the old one */
+    old_trap2 = (PFVOID) Setexc(0x22, (long)bdos_trap2);
+}
+
+/*
  *  xgetver -
  *      return current version number
  */
@@ -308,47 +311,6 @@ static long ni(void)
 {
     return EINVFN;
 }
-
-
-/*
- *  osinit - the bios calls this routine to initialize the os
- */
-
-void osinit_before_xmaddalt(void)
-{
-    /* take over the handling of TRAP #1 */
-    Setexc(0x21, (long)enter);
-
-    /*
-     * intercept TRAP #2 only for xterm(), keeping the old value
-     * so that our trap handler can call the old one
-     */
-    old_trap2 = (PFVOID) Setexc(0x22, (long)bdos_trap2);
-
-    bufl_init();    /* initialize BDOS buffer list */
-
-    osmem_init();
-    umem_init();
-}
-
-/* BIOS may call xmaddalt() between those two calls */
-
-void osinit_after_xmaddalt(void)
-{
-    /* Set up initial process. Required by Malloc() */
-    run = &initial_basepage;
-    run->p_flags = PF_STANDARD;
-    run->p_env = CONST_CAST(char *,double_nul);
-
-    time_init();
-
-    KDEBUG(("BDOS: address of basepage = %p\n", run));
-
-    stdhdl_init();  /* set up system initial standard handles */
-
-    KDEBUG(("BDOS: cinit - osinit successful ...\n"));
-}
-
 
 /*
  *  freetree -  free the directory node tree

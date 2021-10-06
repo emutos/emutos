@@ -98,6 +98,7 @@ typedef struct _bpb BPB;
                         /* key is released, even if the Alt key is released first.   */
 #define MODE_HOME   0x20        /* Clr/Home is down        */
 #define MODE_INSERT 0x40        /* Insert is down          */
+#define MODE_SHIFT  (MODE_RSHIFT|MODE_LSHIFT)   /* shifted (convenience */
 
 /*
  * Struct returned by Kbdvbase()

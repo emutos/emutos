@@ -240,3 +240,14 @@ long log_media(BPB *b, int drv)
 
     return E_OK;
 }
+
+/*
+ * is_drive_available - Check drive availability
+ *
+ * Returns 0, if drive not available
+ */
+
+LONG is_drive_available(WORD dev)
+{
+    return((1L << dev) & drvbits);
+}

@@ -35,10 +35,6 @@
 
 #define CRITIC_RETRY_REQUEST 0x00010000L    /* special value returned by etv_critic */
 
-#define FLOPPY_BOOTDEV      0   /* i.e. A: */
-#define HARDDISK_BOOTDEV    2   /* i.e. C: */
-#define DEFAULT_BOOTDEV     HARDDISK_BOOTDEV
-
 /* Original FAT12 bootsector */
 struct bs {
   /*   0 */  UBYTE bra[2];
@@ -106,7 +102,6 @@ void blkdev_init(void);
 LONG blkdev_boot(void);
 LONG blkdev_getbpb(WORD dev);
 LONG blkdev_drvmap(void);
-LONG blkdev_avail(WORD dev);
 UWORD compute_cksum(const UWORD *buf);
 WORD get_shift(ULONG blocksize);
 
