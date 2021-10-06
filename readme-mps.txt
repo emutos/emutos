@@ -2,6 +2,13 @@ This is a hacked EmuTOS with some goodies to make it cooler.
 It is specifically targetted for the stock Atari ST/STe.
 
 Changelog:
+2021-Oct06 VB:
+	* Refactor BIOS-BDOS dependencies so BDOS doesn't directly call BIOS. The separation is
+	  not very clean and the BDOS requires some things for which the BIOS has no API. These
+	  this are in include/biosext.h
+	* The logo displayed during boot is now compressed by a tool logo_compressor so if we
+	  create a bigger logo for bigger resolutions, it doesn't uses crazy space.
+
 2021-Mar-09 VB: 
 	* EmuCON recognizes the PATH environnement variable that is provided to the AES (if any).
 	* Sound is played at boot time using the PSG. The sound is different for cold and warm boot.
