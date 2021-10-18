@@ -676,7 +676,7 @@ void vdi_vst_height(Vwk * vwk)
     const Fonthead *test_font, *single_font;
     WORD font_id;
     UWORD test_height;
-    char found;
+    BOOL found;
 
     font_id = vwk->cur_font->font_id;
     vwk->pts_mode = FALSE;
@@ -684,10 +684,11 @@ void vdi_vst_height(Vwk * vwk)
     /* Find the smallest font in the requested face */
     chain_ptr = font_ring;
 
-    found = 0;
+    found = FALSE;
     while (!found && (test_font = *chain_ptr++)) {
         do {
-            found = (test_font->font_id == font_id);
+            if (test_font->font_id == font_id)
+                found = TRUE;
         } while (!found && (test_font = test_font->next_font));
     }
 
@@ -814,17 +815,18 @@ void vdi_vst_point(Vwk * vwk)
     const Fonthead **chain_ptr, *double_font;
     const Fonthead *test_font, *single_font;
     WORD test_height, h;
-    char found;
+    BOOL found;
 
     font_id = vwk->cur_font->font_id;
     vwk->pts_mode = TRUE;
 
     /* Find the smallest font in the requested face */
     chain_ptr = font_ring;
-    found = 0;
+    found = FALSE;
     while (!found && (test_font = *chain_ptr++)) {
         do {
-            found = (test_font->font_id == font_id);
+            if (test_font->font_id == font_id)
+                found = TRUE;
         } while (!found && (test_font = test_font->next_font));
     }
 
@@ -931,7 +933,7 @@ void vdi_vst_font(Vwk * vwk)
     WORD *old_intin, point, *old_ptsout, dummy[4], *old_ptsin;
     WORD face;
     const Fonthead *test_font, **chain_ptr;
-    char found;
+    BOOL found;
 
     test_font = vwk->cur_font;
     point = test_font->point;
@@ -940,10 +942,11 @@ void vdi_vst_font(Vwk * vwk)
 
     chain_ptr = font_ring;
 
-    found = 0;
+    found = FALSE;
     while (!found && (test_font = *chain_ptr++)) {
         do {
-            found = (test_font->font_id == face);
+            if (test_font->font_id == face)
+                found = TRUE;
         } while (!found && (test_font = test_font->next_font));
     }
 
@@ -1092,7 +1095,7 @@ void vdi_vqt_name(Vwk * vwk)
     const char *name;
     WORD *int_out;
     const Fonthead *tmp_font;
-    char found;
+    BOOL found;
 
     const Fonthead **chain_ptr;
 
@@ -1101,13 +1104,13 @@ void vdi_vqt_name(Vwk * vwk)
     i = 0;
     current_font_id = -1;
 
-    found = 0;
+    found = FALSE;
     while (!found && (tmp_font = *chain_ptr++)) {
         do {
             if (tmp_font->font_id != current_font_id) {
                 current_font_id = tmp_font->font_id;    /* remember current id */
                 if ((++i) == element)
-                    found = 1;
+                    found = TRUE;
             }
         } while (!found && (tmp_font = tmp_font->next_font));
     }
