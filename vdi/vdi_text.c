@@ -1088,7 +1088,7 @@ void vdi_vqt_width(Vwk * vwk)
 
 void vdi_vqt_name(Vwk * vwk)
 {
-    WORD i, element;
+    WORD i, element, current_font_id;
     const char *name;
     WORD *int_out;
     const Fonthead *tmp_font;
@@ -1099,12 +1099,16 @@ void vdi_vqt_name(Vwk * vwk)
     element = INTIN[0];
     chain_ptr = font_ring;
     i = 0;
+    current_font_id = -1;
 
     found = 0;
     while (!found && (tmp_font = *chain_ptr++)) {
         do {
-            if ((++i) == element)
-                found = 1;
+            if (tmp_font->font_id != current_font_id) {
+                current_font_id = tmp_font->font_id;    /* remember current id */
+                if ((++i) == element)
+                    found = 1;
+            }
         } while (!found && (tmp_font = tmp_font->next_font));
     }
 
