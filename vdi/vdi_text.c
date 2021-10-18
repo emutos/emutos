@@ -1096,7 +1096,6 @@ void vdi_vqt_name(Vwk * vwk)
     WORD *int_out;
     const Fonthead *tmp_font;
     BOOL found;
-
     const Fonthead **chain_ptr;
 
     element = INTIN[0];
@@ -1121,8 +1120,9 @@ void vdi_vqt_name(Vwk * vwk)
 
     int_out = INTOUT;
     *int_out++ = tmp_font->font_id;
-    for (i = 1, name = tmp_font->name; (*int_out++ = *name++); i++);
-    while (i < 33) {
+    for (i = 0, name = tmp_font->name; (*int_out++ = *name++); i++)
+        ;
+    while (i < FONT_NAME_LEN) {
         *int_out++ = 0;
         i++;
     }
