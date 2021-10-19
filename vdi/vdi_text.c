@@ -1122,10 +1122,8 @@ void vdi_vqt_name(Vwk * vwk)
     *int_out++ = tmp_font->font_id;
     for (i = 0, name = tmp_font->name; (*int_out++ = *name++); i++)
         ;
-    while (i < FONT_NAME_LEN) {
+    while (i++ < FONT_NAME_LEN)
         *int_out++ = 0;
-        i++;
-    }
 }
 
 
