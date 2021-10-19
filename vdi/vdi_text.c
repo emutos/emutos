@@ -1094,9 +1094,8 @@ void vdi_vqt_name(Vwk * vwk)
     WORD i, element, current_font_id;
     const char *name;
     WORD *int_out;
-    const Fonthead *tmp_font;
+    const Fonthead *tmp_font, **chain_ptr;
     BOOL found;
-    const Fonthead **chain_ptr;
 
     element = INTIN[0];
     chain_ptr = font_ring;
