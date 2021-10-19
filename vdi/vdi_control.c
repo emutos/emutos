@@ -571,9 +571,6 @@ void vdi_vq_extnd(Vwk * vwk)
     WORD i;
     WORD *dst, *src;
 
-    CONTRL[2] = 6;
-    CONTRL[4] = 45;
-
     flip_y = 1;
     dst = PTSOUT;
     if (*(INTIN) == 0) {
