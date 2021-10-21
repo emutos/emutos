@@ -439,7 +439,7 @@ static ULONG check_for_no_partitions(UBYTE *sect)
 #define MAXPHYSSECTSIZE 512
 typedef union
 {
-    u8 sect[MAXPHYSSECTSIZE];
+    UBYTE sect[MAXPHYSSECTSIZE];
     struct rootsector rs;
     MBR mbr;
 } PHYSSECT;
@@ -462,7 +462,7 @@ static void byteswap(UBYTE *buffer, ULONG size)
 
 static void maybe_fix_byteswap(UWORD unit, PHYSSECT *pphyssect)
 {
-    u8* sect = pphyssect->sect;
+    UBYTE *sect = pphyssect->sect;
     MBR *mbr = &pphyssect->mbr;
 
     if (mbr->bootsig == 0xaa55)
@@ -485,12 +485,12 @@ static void maybe_fix_byteswap(UWORD unit, PHYSSECT *pphyssect)
  */
 static int atari_partition(UWORD unit,LONG *devices_available)
 {
-    u8* sect = physsect.sect;
+    UBYTE *sect = physsect.sect;
     struct rootsector *rs = &physsect.rs;
     struct partition_info *pi;
     MBR *mbr = &physsect.mbr;
-    u32 extensect;
-    u32 hd_size;
+    ULONG extensect;
+    ULONG hd_size;
     int major = unit - NUMFLOPPIES;
 #ifdef ICD_PARTS
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
@@ -525,14 +525,14 @@ static int atari_partition(UWORD unit,LONG *devices_available)
         int i;
 
         /* offset to current extended boot record if != 0 */
-        u32 extended_offs = 0;
+        ULONG extended_offs = 0;
 
         /* start sector of first(!) extended boot record;
          * this is required to traverse the list of linked extended partitions
          */
-        u32 first_extended = 0;
+        ULONG first_extended = 0;
         /* start sector of next extended boot record */
-        u32 next_extended;
+        ULONG next_extended;
 
         do {
             /* start sector of next extended boot record, if present */
@@ -541,8 +541,8 @@ static int atari_partition(UWORD unit,LONG *devices_available)
             KINFO((" MBR at %lu", extended_offs));
 
             for (i = 0; i < 4; i++) {
-                u32 start, size;
-                u8 type = mbr->entry[i].type;
+                ULONG start, size;
+                UBYTE type = mbr->entry[i].type;
                 char pid[3];
 
                 if (type == 0) {
