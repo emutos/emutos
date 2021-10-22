@@ -1263,16 +1263,10 @@
  *      0x0330      AES 3.30, indicates the availability of wind_set(WF_COLOR/WF_DCOLOR)
  *      0x0340      AES 3.40, used by TOS v4.04
  * Do not change this arbitrarily, as each value implies the presence or
- * absence of certain AES functions ... but note that we currently define
- * AES 3.30/3.40 even though we do not (yet) support certain menu_xxx()
- * functions that were introduced in AES 3.30.
+ * absence of certain AES functions ... 
  */
 #ifndef AES_VERSION
-# if CONF_WITH_3D_OBJECTS && CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
-#  define AES_VERSION 0x0340
-# elif CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
-#  define AES_VERSION 0x0330
-# elif CONF_WITH_GRAF_MOUSE_EXTENSION
+# if CONF_WITH_GRAF_MOUSE_EXTENSION
 #  define AES_VERSION 0x0320
 # else
 #  define AES_VERSION 0x0140
