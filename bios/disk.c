@@ -452,7 +452,7 @@ PHYSSECT physsect, physsect2;
  * This function is only used during byteswap detection.
  * Subsequent byteswap will be performed by the IDE driver itself.
  */
-static void byteswap(UBYTE *buffer, ULONG size)
+static void byteswap(void *buffer, ULONG size)
 {
     UWORD *p;
 
@@ -460,21 +460,18 @@ static void byteswap(UBYTE *buffer, ULONG size)
         swpw(*p);
 }
 
-static void maybe_fix_byteswap(UWORD unit)
+/*
+ * detect byteswapped disk
+ */
+static BOOL unit_is_byteswapped(UWORD unit)
 {
-    UBYTE *sect = physsect.sect;
-    MBR *mbr = &physsect.mbr;
-
-    if (mbr->bootsig == 0xaa55)
+    if (physsect.mbr.bootsig == 0xaa55)
     {
         KINFO(("DOS MBR byteswapped signature detected: enabling byteswap\n"));
-
-        /* Fix loaded physical sector */
-        byteswap(sect, SECTOR_SIZE);
-
-        /* Enable byteswap in the IDE driver for subsequent access */
-        units[unit].byteswap = 1;
+        return TRUE;
     }
+
+    return FALSE;
 }
 
 #endif /* CONF_WITH_IDE */
@@ -614,8 +611,10 @@ static int atari_partition(UWORD unit,LONG *devices_available)
 
 #if CONF_WITH_IDE
     /* IDE drives may be byteswapped if partitioned on foreign hardware */
-    if (IS_IDE_DEVICE(major))
-        maybe_fix_byteswap(unit);
+    if (IS_IDE_DEVICE(major) && unit_is_byteswapped(unit)) {
+        byteswap(&physsect, SECTOR_SIZE);   /* fix loaded physical sector */
+        units[unit].byteswap = 1;           /* let driver know for subsequent accesses */
+    }
 #endif /* CONF_WITH_IDE */
 
     /* check for DOS disk without partitions */
