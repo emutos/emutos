@@ -460,10 +460,10 @@ static void byteswap(UBYTE *buffer, ULONG size)
         swpw(*p);
 }
 
-static void maybe_fix_byteswap(UWORD unit, PHYSSECT *pphyssect)
+static void maybe_fix_byteswap(UWORD unit)
 {
-    UBYTE *sect = pphyssect->sect;
-    MBR *mbr = &pphyssect->mbr;
+    UBYTE *sect = physsect.sect;
+    MBR *mbr = &physsect.mbr;
 
     if (mbr->bootsig == 0xaa55)
     {
@@ -615,7 +615,7 @@ static int atari_partition(UWORD unit,LONG *devices_available)
 #if CONF_WITH_IDE
     /* IDE drives may be byteswapped if partitioned on foreign hardware */
     if (IS_IDE_DEVICE(major))
-        maybe_fix_byteswap(unit, &physsect);
+        maybe_fix_byteswap(unit);
 #endif /* CONF_WITH_IDE */
 
     /* check for DOS disk without partitions */
