@@ -465,9 +465,28 @@ static void byteswap(void *buffer, ULONG size)
  */
 static BOOL unit_is_byteswapped(UWORD unit)
 {
+    char partid[3];
+
     if (physsect.mbr.bootsig == 0xaa55)
     {
         KINFO(("DOS MBR byteswapped signature detected: enabling byteswap\n"));
+        return TRUE;
+    }
+
+    /*
+     * there is no 100% guaranteed way of detecting a byteswapped disk with
+     * Atari partitioning, but the following should be reasonably safe.
+     *
+     * we byteswap the first entry in the Atari partition table, and then check
+     * for a valid id
+     */
+    partid[0] = physsect.rs.part[0].flg;
+    partid[1] = physsect.rs.part[0].id[2];
+    partid[2] = physsect.rs.part[0].id[1];
+
+    if (OK_id(partid))
+    {
+        KINFO(("Atari-style byteswapped root sector detected: enabling byteswap\n"));
         return TRUE;
     }
 
