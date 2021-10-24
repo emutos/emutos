@@ -439,7 +439,7 @@ static ULONG check_for_no_partitions(UBYTE *sect)
 #define MAXPHYSSECTSIZE 512
 typedef union
 {
-    u8 sect[MAXPHYSSECTSIZE];
+    UBYTE sect[MAXPHYSSECTSIZE];
     struct rootsector rs;
     MBR mbr;
 } PHYSSECT;
@@ -452,7 +452,7 @@ PHYSSECT physsect, physsect2;
  * This function is only used during byteswap detection.
  * Subsequent byteswap will be performed by the IDE driver itself.
  */
-static void byteswap(UBYTE *buffer, ULONG size)
+static void byteswap(void *buffer, ULONG size)
 {
     UWORD *p;
 
@@ -460,24 +460,131 @@ static void byteswap(UBYTE *buffer, ULONG size)
         swpw(*p);
 }
 
-static void maybe_fix_byteswap(UWORD unit, PHYSSECT *pphyssect)
+/*
+ * detect byteswapped disk
+ */
+static BOOL unit_is_byteswapped(UWORD unit)
 {
-    u8* sect = pphyssect->sect;
-    MBR *mbr = &pphyssect->mbr;
-
-    if (mbr->bootsig == 0xaa55)
+    if (physsect.mbr.bootsig == 0xaa55)
     {
         KINFO(("DOS MBR byteswapped signature detected: enabling byteswap\n"));
-
-        /* Fix loaded physical sector */
-        byteswap(sect, SECTOR_SIZE);
-
-        /* Enable byteswap in the IDE driver for subsequent access */
-        units[unit].byteswap = 1;
+        return TRUE;
     }
+
+    return FALSE;
 }
 
 #endif /* CONF_WITH_IDE */
+
+/*
+ * process DOS-style MBR
+ *
+ * returns
+ *  -1  the maximum number of partitions is exceeded
+ *   1  otherwise
+ */
+static WORD process_dos_mbr(UWORD unit, LONG *devices_available)
+{
+    UBYTE *sect = physsect.sect;
+    MBR *mbr = &physsect.mbr;
+    ULONG extended_offs = 0;    /* offset to current extended boot record if != 0 */
+    ULONG first_extended = 0;   /* start sector of first(!) extended boot record; required */
+                                /*  to traverse the list of linked extended partitions */
+    ULONG next_extended;        /* start sector of next extended boot record */
+    int i;
+
+    do {
+        /* start sector of next extended boot record, if present */
+        next_extended = 0;
+
+        KINFO((" MBR at %lu", extended_offs));
+
+        for (i = 0; i < 4; i++) {
+            ULONG start, size;
+            UBYTE type = mbr->entry[i].type;
+            char pid[3];
+
+            if (type == 0) {
+                KDEBUG((" empty partition entry ignored\n"));
+                continue;
+            }
+
+            pid[0] = 0;
+            pid[1] = 'D';
+            pid[2] = type;
+
+            start = mbr->entry[i].start;    /* little-endian */
+            swpl(start);
+
+            size = mbr->entry[i].size;      /* little-endian */
+            swpl(size);
+
+            if (size == 0UL) {
+                KDEBUG((" entry for zero-length partition ignored\n"));
+                continue;
+            }
+
+            KDEBUG(("DOS partition detected: start=%lu, size=%lu, type=$%02x\n",
+                    start, size, type));
+
+            switch(type) {
+            case 0x05:
+            case 0x0f:
+                if (next_extended != 0) {
+                    KDEBUG((" more than one extended partition: ignored, not yet supported\n"));
+                } else {
+                    /* extended partition found, will read partition table later.
+                     * note that for the linked list of extended partitions, the
+                     * start sector in this case is always relative to the first(!)
+                     * extended boot record and not to the current one
+                     */
+                    next_extended = start + first_extended;
+                }
+                break;
+            case 0x0b:
+            case 0x0c:
+            case 0x83:      /* any Linux partition, including ext2 */
+                /*
+                 * note that FAT32 & Linux partitions occupy drive letters,
+                 * but are not yet accessible to EmuTOS.  however, we allow
+                 * access via XHDI for MiNT's benefit.
+                 */
+                KDEBUG((" %s partition: not yet supported\n",(type==0x83)?"Linux":"FAT32"));
+                FALLTHROUGH;
+            case 0x01:
+            case 0x04:
+            case 0x06:
+            case 0x0e:
+                if (add_partition(unit,devices_available,pid,start+extended_offs,size) < 0)
+                    return -1;
+                KINFO((" $%02x", type));
+                break;
+            default:
+                KDEBUG((" unrecognised partition type: ignored\n"));
+                break;
+            }
+        }
+
+        KINFO(("\n"));
+
+        /* read next extended boot record */
+        if (next_extended != 0) {
+            /* save offset of first extended partition to later traverse linked list */
+            if (first_extended == 0) {
+                first_extended = next_extended;
+            }
+
+            if (disk_rw(unit, RW_READ, next_extended, 1, sect)) {
+                extended_offs = next_extended = 0; /* could not read table */
+            } else {
+                extended_offs = next_extended;
+            }
+        }
+
+    } while (next_extended != 0);
+
+    return 1;
+}
 
 /*
  * scans for Atari partitions on unit and adds them to blkdev array
@@ -485,12 +592,12 @@ static void maybe_fix_byteswap(UWORD unit, PHYSSECT *pphyssect)
  */
 static int atari_partition(UWORD unit,LONG *devices_available)
 {
-    u8* sect = physsect.sect;
+    UBYTE *sect = physsect.sect;
     struct rootsector *rs = &physsect.rs;
     struct partition_info *pi;
     MBR *mbr = &physsect.mbr;
-    u32 extensect;
-    u32 hd_size;
+    ULONG extensect;
+    ULONG hd_size;
     int major = unit - NUMFLOPPIES;
 #ifdef ICD_PARTS
     int part_fmt = 0; /* 0:unknown, 1:AHDI, 2:ICD/Supra */
@@ -504,8 +611,10 @@ static int atari_partition(UWORD unit,LONG *devices_available)
 
 #if CONF_WITH_IDE
     /* IDE drives may be byteswapped if partitioned on foreign hardware */
-    if (IS_IDE_DEVICE(major))
-        maybe_fix_byteswap(unit, &physsect);
+    if (IS_IDE_DEVICE(major) && unit_is_byteswapped(unit)) {
+        byteswap(&physsect, SECTOR_SIZE);   /* fix loaded physical sector */
+        units[unit].byteswap = 1;           /* let driver know for subsequent accesses */
+    }
 #endif /* CONF_WITH_IDE */
 
     /* check for DOS disk without partitions */
@@ -521,110 +630,7 @@ static int atari_partition(UWORD unit,LONG *devices_available)
 
     /* check for DOS master boot record */
     if (mbr->bootsig == 0x55aa) {
-        /* follow DOS PTBL */
-        int i;
-
-        /* offset to current extended boot record if != 0 */
-        u32 extended_offs = 0;
-
-        /* start sector of first(!) extended boot record;
-         * this is required to traverse the list of linked extended partitions
-         */
-        u32 first_extended = 0;
-        /* start sector of next extended boot record */
-        u32 next_extended;
-
-        do {
-            /* start sector of next extended boot record, if present */
-            next_extended = 0;
-
-            KINFO((" MBR at %lu", extended_offs));
-
-            for (i = 0; i < 4; i++) {
-                u32 start, size;
-                u8 type = mbr->entry[i].type;
-                char pid[3];
-
-                if (type == 0) {
-                    KDEBUG((" empty partition entry ignored\n"));
-                    continue;
-                }
-
-                pid[0] = 0;
-                pid[1] = 'D';
-                pid[2] = type;
-
-                start = mbr->entry[i].start;    /* little-endian */
-                swpl(start);
-
-                size = mbr->entry[i].size;      /* little-endian */
-                swpl(size);
-
-                if (size == 0UL) {
-                    KDEBUG((" entry for zero-length partition ignored\n"));
-                    continue;
-                }
-
-                KDEBUG(("DOS partition detected: start=%lu, size=%lu, type=$%02x\n",
-                        start, size, type));
-
-                switch(type) {
-                case 0x05:
-                case 0x0f:
-                    if (next_extended != 0) {
-                        KDEBUG((" more than one extended partition: ignored, not yet supported\n"));
-                    } else {
-                        /* extended partition found, will read partition table later
-                         * note that for the linked list of extended partitions,
-                         * the start sector in this case is always relative to the first(!)
-                         * extended boot record and not to the current one
-                         */
-                        next_extended = start + first_extended;
-                    }
-                    break;
-                case 0x0b:
-                case 0x0c:
-                case 0x83:      /* any Linux partition, including ext2 */
-                    /*
-                     * note that FAT32 & Linux partitions occupy drive letters,
-                     * but are not yet accessible to EmuTOS.  however, we allow
-                     * access via XHDI for MiNT's benefit.
-                     */
-                    KDEBUG((" %s partition: not yet supported\n",(type==0x83)?"Linux":"FAT32"));
-                    FALLTHROUGH;
-                case 0x01:
-                case 0x04:
-                case 0x06:
-                case 0x0e:
-                    if (add_partition(unit,devices_available,pid,start+extended_offs,size) < 0)
-                        return -1;
-                    KINFO((" $%02x", type));
-                    break;
-                default:
-                    KDEBUG((" unrecognised partition type: ignored\n"));
-                    break;
-                }
-            }
-
-            KINFO(("\n"));
-
-            /* read next extended boot record */
-            if (next_extended != 0) {
-                /* save offset of first extended partition to later traverse linked list */
-                if (first_extended == 0) {
-                    first_extended = next_extended;
-                }
-
-                if (disk_rw(unit, RW_READ, next_extended, 1, sect)) {
-                    extended_offs = next_extended = 0; /* could not read table */
-                } else {
-                    extended_offs = next_extended;
-                }
-            }
-
-        } while (next_extended != 0);
-
-        return 1;
+        return process_dos_mbr(unit, devices_available);
     }
 
     hd_size = rs->hd_siz;
