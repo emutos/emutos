@@ -245,7 +245,7 @@ static WORD menu_down(WORD ititle)
 
 WORD mn_do(WORD *ptitle, WORD *pitem)
 {
-    OBJECT  *tree, *cur_tree, *last_tree;
+    OBJECT  *tree;
     LONG    buparm;
     WORD    mnu_flags, done;
     WORD    cur_menu, cur_item, last_item;
@@ -267,13 +267,12 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     done = FALSE;
     buparm = 0x00010101L;
     cur_title = cur_menu = cur_item = NIL;
-    cur_tree = tree = gl_mntree;
+    tree = gl_mntree;
 
     while (!done)
     {
         /* assume menustate is the OUTTITLE case */
         mnu_flags = MU_KEYBD | MU_BUTTON | MU_M1;
-        last_tree = tree;
         last_item = cur_title;
         theval = TRUE;
         switch(menu_state)
@@ -288,7 +287,6 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             theval = FALSE;
             break;
         case OUTITEM:
-            last_tree = cur_tree;
             last_item = cur_item;
             buparm = (button & 0x0001) ? 0x00010100L : 0x00010101L;
             break;
@@ -299,12 +297,11 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             last_item = THEBAR;
         if (mnu_flags & MU_M2)
         {
-            rect_change(last_tree, &p2mor, last_item, theval);
-            last_tree = tree;
+            rect_change(tree, &p2mor, last_item, theval);
             last_item = THEACTIVE;
             theval = FALSE;
         }
-        rect_change(last_tree, &p1mor, last_item, theval);
+        rect_change(tree, &p1mor, last_item, theval);
 
         /* wait for something */
         rets[5] = 0;
@@ -350,7 +347,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
                 }
                 else
                 {
-                    cur_item = ob_find(cur_tree, cur_menu, 1, rets[0], rets[1]);
+                    cur_item = ob_find(tree, cur_menu, 1, rets[0], rets[1]);
                     if (cur_item != NIL)
                         menu_state = OUTITEM;
                     else
@@ -368,18 +365,17 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
                 }
             }
             /* unhilite old item */
-            menu_set(cur_tree, last_item, cur_item, FALSE);
+            menu_set(tree, last_item, cur_item, FALSE);
             /* unhilite old title & pull up old menu */
             if (menu_set(tree, last_title, cur_title, FALSE))
-                menu_sr(FALSE, cur_tree, cur_menu);
+                menu_sr(FALSE, tree, cur_menu);
             /* hilite new title & pull down new menu */
             if (menu_set(tree, cur_title, last_title, TRUE))
             {
                 cur_menu = menu_down(cur_title);
-                cur_tree = gl_mntree;
             }
             /* hilite new item */
-            menu_set(cur_tree, cur_item, last_item, TRUE);
+            menu_set(tree, cur_item, last_item, TRUE);
         }
     }
 
@@ -387,8 +383,8 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     done = FALSE;
     if (cur_title != NIL)
     {
-        menu_sr(FALSE, cur_tree, cur_menu);
-        if ((cur_item != NIL) && do_chg( cur_tree, cur_item, SELECTED, FALSE, FALSE, TRUE))
+        menu_sr(FALSE, tree, cur_menu);
+        if ((cur_item != NIL) && do_chg(tree, cur_item, SELECTED, FALSE, FALSE, TRUE))
         {
             /* only return TRUE when item is enabled and is not NIL */
             *ptitle = cur_title;
