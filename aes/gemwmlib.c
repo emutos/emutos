@@ -180,7 +180,7 @@ static WORD adj_hbox;
 #endif
 
 
-void w_nilit(WORD num, OBJECT olist[])
+static void w_nilit(WORD num, OBJECT olist[])
 {
     while(num--)
     {
