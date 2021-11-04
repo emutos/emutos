@@ -247,13 +247,13 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 {
     OBJECT  *tree;
     LONG    buparm;
-    WORD    mnu_flags, done;
+    WORD    mnu_flags, done, main_rect;
     WORD    cur_menu, cur_item, last_item;
     WORD    cur_title, last_title;
     UWORD   ev_which;
     MOBLK   p1mor, p2mor;
     WORD    menu_state;
-    BOOL    theval;
+    BOOL    leave_flag;
     WORD    rets[6];
     OBJECT  *obj;
 
@@ -279,24 +279,24 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             /* secondary wait for mouse to leave THEBAR */
             mnu_flags |= MU_M2;
             rect_change(tree, &p2mor, THEBAR, TRUE);
-            last_item = THEACTIVE;
-            theval = FALSE;
+            main_rect = THEACTIVE;
+            leave_flag = FALSE;
             break;
         case INBARECT:
             /* secondary wait for mouse to enter cur_menu */
             mnu_flags |= MU_M2;
             rect_change(tree, &p2mor, cur_menu, FALSE);
-            last_item = THEACTIVE;
-            theval = FALSE;
+            main_rect = THEACTIVE;
+            leave_flag = FALSE;
             break;
         case OUTITEM:
-            last_item = cur_item;
+            main_rect = cur_item;
             buparm = (button & 0x0001) ? 0x00010100L : 0x00010101L;
-            theval = TRUE;
+            leave_flag = TRUE;
             break;
         default:    /* OUTTITLE */
-            last_item = cur_title;
-            theval = TRUE;
+            main_rect = cur_title;
+            leave_flag = TRUE;
             break;
         }
 
@@ -305,7 +305,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
          * . for OUTTITLE/OUTITEM, wait for mouse to leave cur_title/cur_item
          * . for INBAR/INBARECT, wait for mouse to enter THEACTIVE
          */
-        rect_change(tree, &p1mor, last_item, theval);
+        rect_change(tree, &p1mor, main_rect, leave_flag);
 
         /* wait for something */
         rets[5] = 0;
