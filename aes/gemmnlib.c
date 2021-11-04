@@ -271,34 +271,40 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 
     while (!done)
     {
-        /* assume menustate is the OUTTITLE case */
         mnu_flags = MU_KEYBD | MU_BUTTON | MU_M1;
-        last_item = cur_title;
-        theval = TRUE;
+
         switch(menu_state)
         {
         case INBAR:
+            /* secondary wait for mouse to leave THEBAR */
             mnu_flags |= MU_M2;
-            last_item = THEBAR;
+            rect_change(tree, &p2mor, THEBAR, TRUE);
+            last_item = THEACTIVE;
+            theval = FALSE;
             break;
         case INBARECT:
+            /* secondary wait for mouse to enter cur_menu */
             mnu_flags |= MU_M2;
-            last_item = cur_menu;
+            rect_change(tree, &p2mor, cur_menu, FALSE);
+            last_item = THEACTIVE;
             theval = FALSE;
             break;
         case OUTITEM:
             last_item = cur_item;
             buparm = (button & 0x0001) ? 0x00010100L : 0x00010101L;
+            theval = TRUE;
+            break;
+        default:    /* OUTTITLE */
+            last_item = cur_title;
+            theval = TRUE;
             break;
         }
 
-        /* set up rectangles to wait for */
-        if (mnu_flags & MU_M2)
-        {
-            rect_change(tree, &p2mor, last_item, theval);
-            last_item = THEACTIVE;
-            theval = FALSE;
-        }
+        /*
+         * primary mouse rectangle wait:
+         * . for OUTTITLE/OUTITEM, wait for mouse to leave cur_title/cur_item
+         * . for INBAR/INBARECT, wait for mouse to enter THEACTIVE
+         */
         rect_change(tree, &p1mor, last_item, theval);
 
         /* wait for something */
