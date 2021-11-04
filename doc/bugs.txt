@@ -1,10 +1,15 @@
 Video problems:
 
 Atari Falcon / TOS v4 compatibility bugs:
-+ Videl Inside causes a desktop crash if a resolution is selected that
-  requires more than the standard EmuTOS Falcon video memory allocation
-  (see FALCON_VRAM_SIZE in bios/screen.h).  It should be able to detect
-  or avoid this situation but does not.
++ Certain versions of Hatari (including 2.3.0) in Falcon emulation mode
+  may issue the following message (or similar) when EmuTOS switches to
+  monochrome mode:
+    WARN : Strange screen size 160x400 -> aspect corrected by 4x1!
+  This is because of the method that EmuTOS uses to bypass a potential
+  Falcon hardware problem (see the relevant code in bios/videl.c), which
+  puts the screen into a nonstandard resolution for one frame.  This
+  method works without problems on real Falcons, and the message may
+  safely be ignored when running under Hatari.
 
 Problems that also occur in Atari TOS:
 + BIOS: Startup time can be slow on a floppy-only system.  You can speed

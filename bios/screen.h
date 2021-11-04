@@ -99,7 +99,7 @@ void screen_get_current_mode_info(UWORD *planes, UWORD *hz_rez, UWORD *vt_rez);
 const UBYTE *physbase(void);
 UBYTE *logbase(void);
 WORD getrez(void);
-void setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode);
+WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode);
 void setpalette(const UWORD *palettePtr);
 WORD setcolor(WORD colorNum, WORD color);
 void vsync(void);

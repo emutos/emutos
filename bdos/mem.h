@@ -68,8 +68,19 @@ long xmfree(void *addr);
 long xsetblk(int n, void *blk, long len);
 /* mxalloc */
 void *xmxalloc(long amount, int mode);
+
+#if CONF_WITH_ALT_RAM
+/* Register an Alt-RAM region */
+long xmaddalt(UBYTE *start, long size);
+
+/* Get the total size of Alt-RAM regions */
+long total_alt_ram(void);
+#endif /* CONF_WITH_ALT_RAM */
+
+#if CONF_WITH_VIDEL
 /* srealloc */
 void *srealloc(long amount);
+#endif
 
 /* init user memory */
 void umem_init(void);

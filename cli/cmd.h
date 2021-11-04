@@ -237,7 +237,6 @@ void errmsg(LONG rc);
 void escape(char c);
 WORD getcookie(LONG cookie,LONG *pvalue);
 WORD getword(char *buf);
-WORD get_path_component(const char **pp,char *dest);
 WORD has_wildcard(const char *name);
 void message(const char *msg);
 void messagenl(const char *msg);

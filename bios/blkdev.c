@@ -219,38 +219,6 @@ static void bus_init(void)
 }
 
 /*
- * blkdev_boot - boot from device in 'bootdev'
- */
-LONG blkdev_boot(void)
-{
-    KDEBUG(("drvbits = %08lx\n",drvbits));
-
-    /*
-     * if the user decided to skip hard drive boot, we set the
-     * boot device to floppy A:
-     */
-    if (bootflags & BOOTFLAG_SKIP_HDD_BOOT)
-        bootdev = FLOPPY_BOOTDEV;
-
-    /*
-     * if the user decided to skip AUTO programs, we don't
-     * attempt to execute the bootsector
-     */
-    if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
-        return 0;
-
-#ifdef DISABLE_HD_BOOT
-    if (bootdev >= NUMFLOPPIES) /* don't attempt to boot from hard disk */
-        return 0;
-#endif
-
-    /*
-     * execute the bootsector code (if present)
-     */
-    return blkdev_hdv_boot();
-}
-
-/*
  * blkdev_hdv_boot - BIOS boot vector
  */
 static LONG blkdev_hdv_boot(void)
@@ -569,7 +537,7 @@ LONG blkdev_getbpb(WORD dev)
     BLKDEV *bdev = blkdev + dev;
     struct bs *b;
     struct fat16_bs *b16;
-    ULONG tmp;
+    ULONG tmp, clsizb;
     LONG ret;
     UWORD reserved, recsiz;
     int n, unit;
@@ -577,7 +545,10 @@ LONG blkdev_getbpb(WORD dev)
     KDEBUG(("blkdev_getbpb(%d)\n",dev));
 
     if ((dev < 0 ) || (dev >= BLKDEVNUM) || !(bdev->flags&DEVICE_VALID))
+    {
+        KDEBUG(("device is invalid\n"));
         return 0L;  /* unknown device */
+    }
 
     unit = bdev->unit;
 
@@ -605,7 +576,10 @@ LONG blkdev_getbpb(WORD dev)
 
     /* check if this device supports GetBPB() */
     if (!(bdev->flags & GETBPB_ALLOWED))
+    {
+        KDEBUG(("device does not support Getbpb()\n"));
         return 0L;              /* no can do */
+    }
 
     /*
      * now we can read the bootsector using the physical mode.  for
@@ -621,29 +595,45 @@ LONG blkdev_getbpb(WORD dev)
     } while(ret == CRITIC_RETRY_REQUEST);
 
     if (ret < 0L)
+    {
+        KDEBUG(("can't read boot sector\n"));
         return 0L;  /* error */
+    }
 
     b = (struct bs *)dskbufp;
     b16 = (struct fat16_bs *)dskbufp;
 
-    if (b->spc == 0)
-        return 0L;
-
     /* don't login a disk if the logical sector size is too large */
     recsiz = getiword(b->bps);
     if (recsiz > pun_info.max_sect_siz)
+    {
+        KDEBUG(("recsiz %u is too large (max recsiz = %u)\n",
+                recsiz,pun_info.max_sect_siz));
         return 0L;
+    }
+
+    /* don't login a disk if the cluster size (in bytes) is invalid */
+    clsizb = (ULONG)b->spc * recsiz;
+    if ((clsizb == 0UL) || (clsizb > MAX_CLUSTER_SIZE))
+    {
+        KDEBUG(("invalid cluster size (%lu bytes): spc=%u, recsiz=%u\n",
+                clsizb,b->spc,recsiz));
+        return 0L;
+    }
 
     /* don't login a disk if the number of FATs is unsupported */
     if ((b->fat != 1) && (b->fat != 2))
+    {
+        KDEBUG(("invalid FAT count %u\n",b->fat));
         return 0L;
+    }
 
     KDEBUG(("bootsector[dev=%d] = {\n  ...\n  res = %d;\n  hid = %d;\n}\n",
             dev,getiword(b->res),getiword(b->hid)));
 
     bdev->bpb.recsiz = recsiz;
     bdev->bpb.clsiz = b->spc;
-    bdev->bpb.clsizb = bdev->bpb.clsiz * bdev->bpb.recsiz;
+    bdev->bpb.clsizb = clsizb;
 
     /*
      * determine the number of root directory sectors
@@ -787,15 +777,3 @@ LONG blkdev_drvmap(void)
     return(drvbits);
 }
 
-
-
-/*
- * blkdev_avail - Check drive availability
- *
- * Returns 0, if drive not available
- */
-
-LONG blkdev_avail(WORD dev)
-{
-    return((1L << dev) & drvbits);
-}

@@ -12,31 +12,28 @@
 
 #include "bdosdefs.h"
 
-/* BDOS initialization, called after BIOS initialization.
- * This is done in 2 parts: before and after Alt-RAM is available */
-void osinit_before_xmaddalt(void);
-void osinit_after_xmaddalt(void);
+/* Boot flags.
+ * TODO: this should be private to the BDOS
+ */
+extern UBYTE bootflags;
+#define BOOTFLAG_EARLY_CLI     0x01
+#define BOOTFLAG_SKIP_HDD_BOOT 0x02
+#define BOOTFLAG_SKIP_AUTO_ACC 0x04
 
-#if CONF_WITH_ALT_RAM
-/* Register an Alt-RAM region to BDOS */
-long xmaddalt(UBYTE *start, long size);
-
-/* Get the total size of Alt-RAM regions */
-long total_alt_ram(void);
-#endif /* CONF_WITH_ALT_RAM */
-
-/* BDOS quick pool.
- * Declared here because referenced by the BIOS OSHEADER */
-#define MAXQUICK 5
-extern WORD *root[MAXQUICK];
+/* Start the BDOS */
+void bdos_bootstrap(void);
 
 /* Pointer to the basepage of the current process.
  * Declared here because referenced by the BIOS OSHEADER,
- * and also by bios/kprint.c */
+ * and also by bios/kprint.c
+ * TODO: this is dirty as it allows the BIOS to access data from an upper layer
+ */
 extern PD *run;
 
 /* BDOS current date/time.
- * Declared here because also updated by XBIOS Settime() */
+ * Declared here because also updated by XBIOS Settime()
+ * TODO: this is dirty as it allows the BIOS to access data from an upper layer
+ */
 extern UWORD current_date, current_time;
 
 #endif /* _BDOSSTUB_H */

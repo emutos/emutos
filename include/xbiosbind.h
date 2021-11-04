@@ -60,6 +60,7 @@
 #define EsetColor(a,b) xbios_w_ww(83,a,b)
 #define VsetMode(a) xbios_w_w(88,a)
 #define VgetMonitor() xbios_w_v(89)
+#define VgetSize(a) xbios_l_w(91,a)
 #define VsetRGB(a,b,c) xbios_v_wwl(93,a,b,c)
 #define VgetRGB(a,b,c) xbios_v_wwl(94,a,b,c)
 

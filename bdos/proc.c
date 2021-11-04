@@ -25,7 +25,6 @@
 #include "string.h"
 #include "biosext.h"
 #include "asm.h"
-#include "tosvars.h"
 #include "has.h"
 
 
@@ -112,10 +111,6 @@ static void ixterm(PD *r)
     WORD h;
     WORD i;
 
-    /* call process termination vector (last chance for user cleanup) */
-
-    etv_term();
-
     /* check the standard devices in both file tables  */
 
     for (i = 0; i < NUMSTD; i++)
@@ -195,7 +190,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     /* first branch - actions that do not require loading files */
     switch(flag) {
 #if DETECT_NATIVE_FEATURES
-    case PE_RELOCATE:   /* internal use only, see bootstrap() in bios/bios.c */
+    case PE_RELOCATE:   /* internal use only, see natfeat_bootstrap() in bdos/bootstrap.c */
         p = (PD *) tail;
         rc = kpgm_relocate(p, (long)path);
         if (rc) {
@@ -592,9 +587,11 @@ void x0term(void)
  */
 void xterm(UWORD rc)
 {
+    PFVOID userterm;
     PD *p = run;
 
-    (* (WORD(*)(void)) Setexc(0x102, (long)-1L))(); /*  call user term handler */
+    userterm = (PFVOID)Setexc(0x102, (long)-1L);  /* get user term handler address */
+    protect_v((PFLONG)userterm);    /* call it, protecting d2/a2 from modification */
 
     run = run->p_parent;
     ixterm(p);

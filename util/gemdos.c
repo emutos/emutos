@@ -42,121 +42,6 @@ WORD pgmld(WORD handle, char *pname, LONG **ldaddr)
     return 0;
 }
 
-
-LONG dos_rawcin(void)
-{
-    return Crawcin();
-}
-
-
-void dos_conws(char *string)
-{
-    Cconws(string);
-}
-
-
-WORD dos_conis(void)
-{
-    return Cconis();
-}
-
-
-WORD dos_gdrv(void)
-{
-    return Dgetdrv();
-}
-
-
-void dos_sdta(void *ldta)
-{
-    Fsetdta(ldta);
-}
-
-
-void *dos_gdta(void)
-{
-    return (void *)Fgetdta();
-}
-
-
-WORD dos_sfirst(char *pspec, WORD attr)
-{
-    return Fsfirst(pspec,attr);
-}
-
-
-WORD dos_snext(void)
-{
-    return Fsnext();
-}
-
-
-LONG dos_open(char *pname, WORD access)
-{
-    return Fopen(pname,access);
-}
-
-
-WORD dos_close(WORD handle)
-{
-    return Fclose(handle);
-}
-
-
-LONG dos_read(WORD handle, LONG cnt, void *pbuffer)
-{
-    return Fread(handle,cnt,pbuffer);
-}
-
-
-LONG dos_write(WORD handle, LONG cnt, void *pbuffer)
-{
-    return Fwrite(handle,cnt,pbuffer);
-}
-
-
-LONG dos_lseek(WORD handle, WORD smode, LONG sofst)
-{
-    return Fseek(sofst, handle, smode);
-}
-
-
-LONG dos_chdir(char *pdrvpath)
-{
-    return Dsetpath(pdrvpath);
-}
-
-
-WORD dos_gdir(WORD drive, char *pdrvpath)
-{
-    return Dgetpath(pdrvpath,drive);
-}
-
-
-LONG dos_sdrv(WORD newdrv)
-{
-    return Dsetdrv(newdrv);
-}
-
-
-LONG dos_create(char *name, WORD attr)
-{
-    return Fcreate(name,attr);
-}
-
-
-WORD dos_mkdir(char *path)
-{
-    return Dcreate(path);
-}
-
-
-WORD dos_chmod(char *name, WORD wrt, WORD mod)
-{
-    return Fattrib(name,wrt,mod);
-}
-
-
 WORD dos_setdt(UWORD h, UWORD time, UWORD date)
 {
     UWORD   buf[2];
@@ -185,12 +70,6 @@ WORD dos_label(char drive, char *plabel)
 }
 
 
-LONG dos_delete(char *name)
-{
-    return Fdelete(name);
-}
-
-
 void dos_space(WORD drv, LONG *ptotal, LONG *pavail)
 {
     LONG    buf[4];
@@ -204,18 +83,6 @@ void dos_space(WORD drv, LONG *ptotal, LONG *pavail)
     mult = buf[3] * buf[2];
     *ptotal = mult * buf[1];
     *pavail = mult * buf[0];
-}
-
-
-WORD dos_rename(char *p1, char *p2)
-{
-    return Frename(p1,p2);
-}
-
-
-WORD dos_rmdir(char *path)
-{
-    return Ddelete(path);
 }
 
 

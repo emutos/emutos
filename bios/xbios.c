@@ -116,21 +116,35 @@ static WORD xbios_4(void)
 
 
 /*
- * xbios_5 - (setScreen) Set the screen locations
+ * xbios_5 - (Setscreen) Set the screen locations
  *
  * Set the logical screen location (logLoc), the physical screen location
- * (physLoc), and the physical screen resolution. Negative parameters are
- * ignored (making it possible, for instance, to set screen resolution without
- * changing anything else). When resolution is changed, the screen is cleared,
- * the cursor is homed, and the VT52 terminal emulator state is reset.
+ * (physLoc), and the physical screen resolution (rez).  To change videl
+ * mode on videl-capable systems, 'rez' is set to 3 and the mode (videlmode)
+ * is passed as an additional parameter.
+ *
+ * Setting a parameter to a negative value will cause it to be ignored
+ * (making it possible, for example, to set screen resolution without
+ * changing anything else).  In addition, on videl-capable systems, NULL
+ * values in both 'logLoc' and 'physLOC' will cause screen memory to be
+ * reallocated if possible.
+ *
+ * When resolution is changed, the screen is cleared, the cursor is homed,
+ * and the VT52 terminal emulator state is reset.
+ *
+ * NOTE: This function is everywhere documented to return void.  However,
+ * for TOS 4 compatibility, EmuTOS returns a WORD:
+ *      -1 if 'rez' is invalid or Srealloc() failed
+ *      else, for falcon resolutions, the previous videl mode
+ *      else 0
  */
 
 #if DBG_XBIOS
-static void xbios_5(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
+static WORD xbios_5(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 {
     kprintf("XBIOS: SetScreen(log = %p, phys = %p, rez = 0x%04x)\n",
            logLoc, physLoc, rez);
-    setscreen(logLoc, physLoc, rez, videlmode);
+    return setscreen(logLoc, physLoc, rez, videlmode);
 }
 #endif
 
@@ -1253,8 +1267,6 @@ LONG supexec(PFLONG);       /* defined in vectors.S */
 /*
  * xbios_vecs - the table of xbios command vectors.
  */
-
-/* PFLONG defined in bios/vectors.h */
 
 #if DBG_XBIOS
 #define VEC(wrapper, direct) (PFLONG) wrapper

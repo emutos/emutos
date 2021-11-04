@@ -649,13 +649,21 @@ WORD rs_free(AESGLOBAL *pglobal)
 
     rs_sglobe(pglobal);
 
+    if (rs_hdr)
+    {
+
 #if CONF_WITH_COLOUR_ICONS
-    if (free_cicon_buffers(rs_hdr) < 0)
-        rc = 0;
+        if (free_cicon_buffers(rs_hdr) < 0)
+            rc = 0;
 #endif
 
-    if (dos_free(rs_global->ap_rscmem))
+        if (dos_free(rs_global->ap_rscmem))
+            rc = 0;
+    }
+    else
+    {
         rc = 0;
+    }
 
     return rc;
 }
