@@ -355,16 +355,6 @@ WORD menu_unregister(WORD mid)
 */
 
 
-/* unused
-WORD menu_click(WORD click, WORD setit)
-{
-    MN_CLICK = click;
-    MN_SETIT = setit;
-    return gem_if(AES_CTRL_CODE(MENU_CLICK, 2, 1, 0));
-}
-*/
-
-
 /*
  *  Object Manager
  */

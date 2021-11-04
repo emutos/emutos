@@ -58,7 +58,6 @@ WORD menu_tnormal(OBJECT *tree, WORD titlenum, WORD normalit);
 /* WORD menu_text(OBJECT *tree, WORD inum, const char *ptext); */
 /* WORD menu_register(WORD pid, const char *pstr); */
 /* WORD menu_unregister(WORD mid); */
-/* WORD menu_click(WORD click, WORD setit); */
 
 
 /*

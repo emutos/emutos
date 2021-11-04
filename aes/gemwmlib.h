@@ -15,7 +15,6 @@
 extern WORD     gl_wtop;
 extern OBJECT   *gl_awind;
 
-void w_nilit(WORD num, OBJECT olist[]);
 void w_getsize(WORD which, WORD w_handle, GRECT *pt);
 void w_drawdesk(GRECT *pc);
 void w_setactive(void);

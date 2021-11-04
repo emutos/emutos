@@ -40,7 +40,6 @@
 #define MENU_TEXT       34
 #define MENU_REGISTER   35
 #define MENU_UNREGISTER 36      /* PC-GEM function */
-#define MENU_CLICK      37      /* PC-GEM function */
 #define MENU_POPUP      36      /* AES 3.30 function */
 #define MENU_ATTACH     37      /* AES 3.30 function */
 #define MENU_ISTART     38      /* AES 3.30 function */
