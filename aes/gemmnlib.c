@@ -271,7 +271,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 
     while (!done)
     {
-        mnu_flags = MU_KEYBD | MU_BUTTON | MU_M1;
+        mnu_flags = MU_BUTTON | MU_M1;
 
         switch(menu_state)
         {
