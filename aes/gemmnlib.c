@@ -314,68 +314,64 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         if (ev_which & MU_BUTTON)
         {
             if (menu_state != OUTTITLE)
-                done = TRUE;
-            else
-                buparm ^= 0x00000001;
+                break;
+            buparm ^= 0x00000001;
         }
 
-        /* if not done then do menus */
-        if (!done)
+        /* do menus */
+
+        /* save old values      */
+        last_title = cur_title;
+        last_item = cur_item;
+
+        /* see if mouse cursor is over the bar  */
+        cur_title = ob_find(tree, THEACTIVE, 1, rets[0], rets[1]);
+        if ((cur_title != NIL) && (cur_title != THEACTIVE))
         {
-            /* save old values      */
-            last_title = cur_title;
-            last_item = cur_item;
-            /* see if over the bar  */
-            cur_title = ob_find(tree, THEACTIVE, 1, rets[0], rets[1]);
-            if ((cur_title != NIL) && (cur_title != THEACTIVE))
+            menu_state = OUTTITLE;
+            cur_item = NIL;
+        }
+        else
+        {
+            cur_title = last_title;
+            /* if menu never shown, nothing selected */
+            if (cur_menu == NIL)
+                cur_title = NIL;
+            /* if nothing selected, get out */
+            if (cur_title == NIL)
             {
-                menu_state = OUTTITLE;
-                cur_item = NIL;
+                done = TRUE;
             }
             else
             {
-                cur_title = last_title;
-                /* if menu never shown, nothing selected */
-                if (cur_menu == NIL)
-                    cur_title = NIL;
-                /* if nothing selected, get out */
-                if (cur_title == NIL)
-                {
-                    menu_state = INBAR;
-                    done = TRUE;
-                }
+                cur_item = ob_find(tree, cur_menu, 1, rets[0], rets[1]);
+                if (cur_item != NIL)
+                    menu_state = OUTITEM;
                 else
                 {
-                    cur_item = ob_find(tree, cur_menu, 1, rets[0], rets[1]);
-                    if (cur_item != NIL)
-                        menu_state = OUTITEM;
-                    else
+                    obj = tree + cur_title;
+                    if (obj->ob_state & DISABLED)
                     {
-                        obj = tree + cur_title;
-                        if (obj->ob_state & DISABLED)
-                        {
-                            menu_state = INBAR;
-                            cur_title = NIL;
-                            done = TRUE;
-                        }
-                        else
-                            menu_state = INBARECT;
+                        cur_title = NIL;
+                        done = TRUE;
                     }
+                    else
+                        menu_state = INBARECT;
                 }
             }
-            /* unhilite old item */
-            menu_set(tree, last_item, cur_item, FALSE);
-            /* unhilite old title & pull up old menu */
-            if (menu_set(tree, last_title, cur_title, FALSE))
-                menu_sr(FALSE, tree, cur_menu);
-            /* hilite new title & pull down new menu */
-            if (menu_set(tree, cur_title, last_title, TRUE))
-            {
-                cur_menu = menu_down(cur_title);
-            }
-            /* hilite new item */
-            menu_set(tree, cur_item, last_item, TRUE);
         }
+        /* unhilite old item */
+        menu_set(tree, last_item, cur_item, FALSE);
+        /* unhilite old title & pull up old menu */
+        if (menu_set(tree, last_title, cur_title, FALSE))
+            menu_sr(FALSE, tree, cur_menu);
+        /* hilite new title & pull down new menu */
+        if (menu_set(tree, cur_title, last_title, TRUE))
+        {
+            cur_menu = menu_down(cur_title);
+        }
+        /* hilite new item */
+        menu_set(tree, cur_item, last_item, TRUE);
     }
 
     /* decide what should be cleaned up and returned */
