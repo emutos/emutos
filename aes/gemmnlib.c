@@ -293,8 +293,6 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         }
 
         /* set up rectangles to wait for */
-        if (last_item == NIL)
-            last_item = THEBAR;
         if (mnu_flags & MU_M2)
         {
             rect_change(tree, &p2mor, last_item, theval);
@@ -310,7 +308,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         /* if it's a button and not in a title then done, else flip state */
         if (ev_which & MU_BUTTON)
         {
-            if ((menu_state != OUTTITLE) && (buparm & 0x00000001))
+            if (menu_state != OUTTITLE)
                 done = TRUE;
             else
                 buparm ^= 0x00000001;
