@@ -310,8 +310,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         /* if it's a button and not in a title then done, else flip state */
         if (ev_which & MU_BUTTON)
         {
-            if ( (menu_state != OUTTITLE) &&
-                 ((buparm & 0x00000001) || (gl_mnclick != 0)) )
+            if ((menu_state != OUTTITLE) && (buparm & 0x00000001))
                 done = TRUE;
             else
                 buparm ^= 0x00000001;
@@ -328,10 +327,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             if ((cur_title != NIL) && (cur_title != THEACTIVE))
             {
                 menu_state = OUTTITLE;
-                if ((gl_mnclick == 0) || (rets[5] == 1))
-                    cur_item = NIL;
-                else
-                    cur_title = last_title;
+                cur_item = NIL;
             }
             else
             {

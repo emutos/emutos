@@ -10,8 +10,6 @@
 #ifndef GEMSUPER_H
 #define GEMSUPER_H
 
-extern WORD     gl_mnclick;
-
 typedef struct aespb {
     WORD *control;
     WORD *global;
