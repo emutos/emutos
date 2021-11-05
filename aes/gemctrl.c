@@ -317,24 +317,22 @@ static void hctl_rect(void)
     {
         if ( mn_do(&title, &item) )
         {
-            owner = gl_mnppd;
-            mesag = MN_SELECTED;
             /* check system menu:   */
-            if ( title == THEDESK )
+            if ((title == THEDESK) && (item >= gl_dafirst))
             {
-                if (item > 2)
-                {
-                    item -= 3;
-                    mn_getownid(&owner,&item,item); /* get accessory owner & menu id */
-                    do_chg(gl_mntree, title, SELECTED, FALSE, TRUE, TRUE);
+                item -= gl_dafirst;
+                mn_getownid(&owner,&item,item); /* get accessory owner & menu id */
+                do_chg(gl_mntree, title, SELECTED, FALSE, TRUE, TRUE);
 
-                    if (gl_wtop >= 0)
-                        perform_untop(gl_wtop);
+                if (gl_wtop >= 0)
+                    perform_untop(gl_wtop);
 
-                    mesag = AC_OPEN;
-                }
-                else
-                    item += gl_dabox;
+                mesag = AC_OPEN;
+            }
+            else
+            {
+                owner = gl_mnppd;
+                mesag = MN_SELECTED;
             }
             /*
              * application menu item has been selected so send it

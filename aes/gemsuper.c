@@ -49,8 +49,6 @@
 
 LONG super(WORD cx, AESPB *pcrys_blk);  /* called only from gemdosif.S */
 
-GLOBAL WORD     gl_mnclick;
-
 static void     *ad_rso;
 
 
@@ -183,17 +181,6 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         if (IN_LEN == 1)
             mn_unregister( MM_MID );
         else
-#endif
-            unsupported = TRUE;
-        break;
-    case MENU_CLICK:
-        /* distinguish between menu_click() and menu_attach() */
-#if CONF_WITH_PCGEM
-        if (IN_LEN == 2) {
-            if (MN_SETIT)
-                gl_mnclick = MN_CLICK;
-            ret = gl_mnclick;
-        } else
 #endif
             unsupported = TRUE;
         break;

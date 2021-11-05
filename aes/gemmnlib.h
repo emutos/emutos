@@ -14,7 +14,7 @@
 extern OBJECT   *gl_mntree;
 extern AESPD    *gl_mnppd;
 
-extern WORD     gl_dabox;
+extern WORD     gl_dafirst;
 
 
 BOOL do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
