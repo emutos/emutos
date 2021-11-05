@@ -75,13 +75,11 @@ static WORD     acc_display[NUM_ACCS];
 GLOBAL WORD     gl_dafirst;     /* object # of first DA entry */
 
 
-static WORD menu_sub(OBJECT **ptree, WORD ititle)
+static WORD menu_sub(OBJECT *tree, WORD ititle)
 {
-    OBJECT  *tree;
     WORD    themenus, imenu;
     WORD    i;
 
-    tree = *ptree;
     themenus = (tree+THESCREEN)->ob_tail;
 
     /* correlate title # to menu subtree # */
@@ -222,16 +220,14 @@ static void menu_sr(WORD saveit, OBJECT *tree, WORD imenu)
  *  Routine to pull a menu down.  This involves saving the data
  *  underneath the menu and drawing in the proper menu sub-tree.
  */
-static WORD menu_down(WORD ititle)
+static WORD menu_down(OBJECT *tree, WORD ititle)
 {
-    OBJECT  *tree;
     WORD    imenu;
 
-    tree = gl_mntree;
-    imenu = menu_sub(&tree, ititle);
+    imenu = menu_sub(tree, ititle);
 
     /* draw title selected */
-    if (do_chg(gl_mntree, ititle, SELECTED, TRUE, TRUE, TRUE))
+    if (do_chg(tree, ititle, SELECTED, TRUE, TRUE, TRUE))
     {
         /* save area underneath the menu */
         menu_sr(TRUE, tree, imenu);
@@ -368,7 +364,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         /* hilite new title & pull down new menu */
         if (menu_set(tree, cur_title, last_title, TRUE))
         {
-            cur_menu = menu_down(cur_title);
+            cur_menu = menu_down(tree, cur_title);
         }
         /* hilite new item */
         menu_set(tree, cur_item, last_item, TRUE);
@@ -413,9 +409,9 @@ void mn_bar(OBJECT *tree, WORD showit)
         menu_fixup();
         obj = tree + 1;
         obj->ob_width = gl_width - obj->ob_x;
-        ob_actxywh(gl_mntree, THEACTIVE, &gl_ctwait.m_gr);
+        ob_actxywh(tree, THEACTIVE, &gl_ctwait.m_gr);
         gsx_sclip(&gl_rzero);
-        ob_draw(gl_mntree, THEBAR, MAX_DEPTH);
+        ob_draw(tree, THEBAR, MAX_DEPTH);
         /* ensure the separator line is drawn in black in replace mode */
         gsx_attr(FALSE, MD_REPLACE, BLACK);
         gsx_cline(0, gl_hbox - 1, gl_width - 1, gl_hbox - 1);
