@@ -2,7 +2,12 @@ This is a hacked EmuTOS with some goodies to make it cooler.
 It is specifically targetted for the stock Atari ST/STe.
 
 Changelog:
-2021-Oct06 VB:
+2021-Nov-05 VB:
+	* When building 256 or 192, copy the generated file as mpts256xx.img or mpts192xx.img
+	  Having a different name helps distinguish this customized MPS EMUTOS when registered
+	  e.g. in STEEM.
+
+2021-Oct-06 VB:
 	* Refactor BIOS-BDOS dependencies so BDOS doesn't directly call BIOS. The separation is
 	  not very clean and the BDOS requires some things for which the BIOS has no API. These
 	  this are in include/biosext.h

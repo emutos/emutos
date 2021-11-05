@@ -502,6 +502,7 @@ NODEP += 192
 $(ROM_192): ROMSIZE = 192
 $(ROM_192): emutos.img mkrom
 	./mkrom pad $(ROMSIZE)k $< $(ROM_192)
+	@cp etos192$(UNIQUE).img mpts192$(UNIQUE).img
 
 #
 # 256kB Image
@@ -519,6 +520,7 @@ NODEP += 256
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS206))) bytes more than TOS 2.06)"
 	@printf "$(LOCALCONFINFO)"
+	@cp etos256$(UNIQUE).img mpts256$(UNIQUE).img
 
 $(ROM_256): ROMSIZE = 256
 $(ROM_256): emutos.img mkrom
