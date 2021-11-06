@@ -802,6 +802,7 @@ void gem_main(void)
         n = 0L;
     infbuf[n] = '\0';           /* terminate input data */
 
+    /* Handle any resolution change */
     if (gl_changerez == NO_RES_CHANGE) /* can't be here because of rez change,       */
         process_inf_res_change();         /*  so see if .inf says we need to change rez */
 
@@ -829,13 +830,11 @@ void gem_main(void)
          */
         dos_sdrv(bootdev);
     }
-
-    /* form library initialization */
-    fm_init();
-
     gl_changerez = NO_RES_CHANGE;
 
-    mn_init();                      /* initialise variables for menu_register() */
+    /* initialise AES libraries */
+    fm_init();
+    mn_init();
 
     num_accs = count_accs();        /* puts ACC names in acc[].name */
 
