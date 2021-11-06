@@ -10,10 +10,11 @@
 #ifndef GEMFMLIB_H
 #define GEMFMLIB_H
 
-extern WORD   ml_ocnt;
+#include "emutos.h"
 
-
+void fm_init(void);
 void fm_own(WORD beg_ownit);
+BOOL fm_lock_exists(void);
 
 WORD fm_keybd(OBJECT *tree, WORD obj, WORD *pchar, WORD *pnew_obj);
 WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj);

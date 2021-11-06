@@ -1841,7 +1841,7 @@ void wm_new(void)
     int wh;
 
     /* Remove locks: */
-    while(ml_ocnt > 0)
+    while(fm_lock_exists())
         wm_update(END_MCTRL);
     while(wind_spb.sy_tas > 0)
         wm_update(END_UPDATE);

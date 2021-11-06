@@ -48,11 +48,8 @@
 #define DEFLT 2
 
 
-/* Global variables: */
-WORD     ml_ocnt;    /* Needs to be 0 initially! */
-
-
 /* Local variables: */
+static WORD     ml_ocnt;
 static OBJECT   *ml_mnhold;
 static GRECT    ml_ctrl;
 static AESPD    *ml_pmown;
@@ -78,6 +75,15 @@ static const WORD ml_pwlv[] =
     {0x0102,0x0102,0x0102,0x0101,0x0002,0x0001};
 
 
+void fm_init(void)
+{
+    ml_ocnt = 0;
+}
+
+BOOL fm_lock_exists(void)
+{
+    return ml_ocnt > 0 ? TRUE : FALSE;
+}
 
 void fm_own(WORD beg_ownit)
 {
