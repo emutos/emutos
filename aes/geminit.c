@@ -110,11 +110,6 @@ static ACC      acc[NUM_ACCS];
 static char    *accpath;                /* used to read the ACCPATH env var, empty string if var is not present */
 static char     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
 
-#if CONF_WITH_BACKGROUNDS
-static BOOL     bgfound;                /* 'Q' line found in EMUDESK.INF? */
-static WORD     bg[3];                  /* desktop backgrounds (1, 2, >2 planes) */
-#endif
-
 /* Some global variables: */
 
 GLOBAL WORD     totpds;
@@ -367,10 +362,6 @@ static void process_inf1(void)
 
     gl_changerez = NO_RES_CHANGE; /* assume no change */
 
-#if CONF_WITH_BACKGROUNDS
-    bgfound = FALSE;            /* assume 'Q' not found */
-#endif
-
     for (pcurr = infbuf; *pcurr; )
     {
         if ( *pcurr++ != '#' )
@@ -398,15 +389,36 @@ static void process_inf1(void)
                 gl_nextrez = (mode & 0x00ff) + 2;
             }
             break;
-#if CONF_WITH_BACKGROUNDS
-        case 'Q':               /* background colour, e.g. #Q 41 40 42 40 43 40 */
-            for (i = 0; i < 3; i++)
-                pcurr = scan_2(pcurr, &bg[i]) + 3;  /* desktop background */
-            bgfound = TRUE;                         /* indicate bg[N] are valid */
-            break;
-#endif
         }
     }
+}
+
+static void process_inf_bgcolor(void)
+{
+#if CONF_WITH_BACKGROUNDS
+    char *pcurr = infbuf;
+    int i;
+    WORD bg[3]; /* desktop backgrounds (1, 2, >2 planes) */
+
+    for (pcurr = infbuf; *pcurr; )
+    {
+        if ( *pcurr++ != '#' )
+            continue;
+        if (*pcurr++ == 'Q' )
+        {
+            /* background colour, e.g. #Q 41 40 42 40 43 40 */
+            for (i = 0; i < 3; i++)
+                pcurr = scan_2(pcurr, &bg[i]) + 3;  /* desktop background */
+
+            /*
+            * set colour of root DESKTOP object: this affects the colour
+            * background when a program is launched
+            */
+            WORD n = (gl_nplanes > 2) ? 2 : gl_nplanes-1;
+            set_aes_background(bg[n]&0xff);
+        }
+    }
+#endif
 }
 
 
@@ -735,15 +747,7 @@ void run_accs_and_desktop(void)
     tree[ROOT].ob_height = gl_rscreen.g_h;
 
 #if CONF_WITH_BACKGROUNDS
-    /*
-     * set colour of root DESKTOP object: this affects the colour
-     * background when a program is launched
-     */
-    if (bgfound)        /* we found a 'Q' line */
-    {
-        WORD n = (gl_nplanes > 2) ? 2 : gl_nplanes-1;
-        set_aes_background(bg[n]&0xff);
-    }
+    process_inf_bgcolor();
 #endif
 
     wm_start();                     /* initialise window vars */
