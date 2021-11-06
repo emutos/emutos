@@ -349,16 +349,12 @@ static LONG readfile(char *filename, LONG count, char *buf)
  *
  *  The main function is to determine (from #E) if we need to change
  *  resolution.  If so, we set gl_changerez and gl_nextrez appropriately.
- *
- *  If CONF_WITH_BACKGOUNDS is specified, we also get the desktop background
- *  colours (from #Q) & save them for use when initialising the desktop.
  */
-static void process_inf1(void)
+static void process_inf_res_change(void)
 {
     WORD    env1, env2;
     WORD    mode, i;
     char    *pcurr;
-    MAYBE_UNUSED(i);
 
     gl_changerez = NO_RES_CHANGE; /* assume no change */
 
@@ -366,18 +362,19 @@ static void process_inf1(void)
     {
         if ( *pcurr++ != '#' )
             continue;
-        switch(*pcurr++) {
-        case 'E':               /* desktop environment, e.g. #E 3A 11 FF 02 */
+        if (*pcurr++ == 'E')
+        {
+            /* desktop environment, e.g. #E 3A 11 FF 02 */
             pcurr += 6;                 /* skip over non-video preferences */
             if (*pcurr == '\r')         /* no video info saved */
-                break;
+                continue;
 
             pcurr = scan_2(pcurr, &env1);
             pcurr = scan_2(pcurr, &env2);
             mode = MAKE_UWORD(env1, env2);
             mode = check_moderez(mode);
             if (mode == 0)              /* no change required */
-                break;
+                continue;
             if (mode > 0)               /* need to set Falcon mode */
             {
                 gl_changerez = TO_FALCON_RES;
@@ -387,12 +384,16 @@ static void process_inf1(void)
             {
                 gl_changerez = TO_ST_RES;
                 gl_nextrez = (mode & 0x00ff) + 2;
-            }
-            break;
+            }            
         }
     }
 }
 
+/*
+ *  If CONF_WITH_BACKGOUNDS is specified, we also get the desktop background
+ *  colours (from #Q) & save them for use when initialising the desktop.
+ *  This needs to happens before the desktop is loaded.
+ */
 static void process_inf_bgcolor(void)
 {
 #if CONF_WITH_BACKGROUNDS
@@ -802,7 +803,7 @@ void gem_main(void)
     infbuf[n] = '\0';           /* terminate input data */
 
     if (!gl_changerez != NO_RES_CHANGE) /* can't be here because of rez change,       */
-        process_inf1();         /*  so see if .inf says we need to change rez */
+        process_inf_res_change();         /*  so see if .inf says we need to change rez */
 
     if (gl_changerez != NO_RES_CHANGE) {
         switch(gl_changerez) {
