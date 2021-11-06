@@ -168,4 +168,13 @@ struct fpd                  /* fork process descriptor */
         LONG    f_data;
 } ;
 
+
+typedef enum /* specify type of requested resolution change */
+{
+	NO_RES_CHANGE,
+	TO_ST_RES,
+	TO_FALCON_RES
+} RES_CHANGE_TYPE;
+
+
 #endif /* GEMSTRUCT_H */

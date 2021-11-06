@@ -95,7 +95,7 @@ static BOOL gl_shgem;                   /* TRUE iff currently in graphics mode *
  *      gl_changerez: 0=no change, 1=change ST resolution, 2=change Falcon resolution
  *      gl_nextrez: stores the resolution for Setscreen()
  */
-GLOBAL WORD gl_changerez;
+GLOBAL RES_CHANGE_TYPE gl_changerez;
 GLOBAL WORD gl_nextrez;
 
 

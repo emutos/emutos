@@ -10,10 +10,12 @@
 #ifndef GEMSHLIB_H
 #define GEMSHLIB_H
 
+#include "struct.h"
+
 extern char     *ad_stail;
 
-extern WORD     gl_changerez;
-extern WORD     gl_nextrez;
+extern RES_CHANGE_TYPE gl_changerez;
+extern WORD            gl_nextrez;
 
 void sh_read(char *pcmd, char *ptail);
 WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *ptail);

@@ -365,7 +365,7 @@ static void process_inf1(void)
     char    *pcurr;
     MAYBE_UNUSED(i);
 
-    gl_changerez = 0;           /* assume no change */
+    gl_changerez = NO_RES_CHANGE; /* assume no change */
 
 #if CONF_WITH_BACKGROUNDS
     bgfound = FALSE;            /* assume 'Q' not found */
@@ -389,12 +389,12 @@ static void process_inf1(void)
                 break;
             if (mode > 0)               /* need to set Falcon mode */
             {
-                gl_changerez = 2;
+                gl_changerez = TO_FALCON_RES;
                 gl_nextrez = mode;
             }
             else                        /* set ST/TT rez */
             {
-                gl_changerez = 1;
+                gl_changerez = TO_ST_RES;
                 gl_nextrez = (mode & 0x00ff) + 2;
             }
             break;
@@ -797,21 +797,23 @@ void gem_main(void)
         n = 0L;
     infbuf[n] = '\0';           /* terminate input data */
 
-    if (!gl_changerez)          /* can't be here because of rez change,       */
+    if (!gl_changerez != NO_RES_CHANGE) /* can't be here because of rez change,       */
         process_inf1();         /*  so see if .inf says we need to change rez */
 
-    if (gl_changerez) {
+    if (gl_changerez != NO_RES_CHANGE) {
         switch(gl_changerez) {
 #if CONF_WITH_ATARI_VIDEO
-        case 1:                     /* ST(e) or TT display */
+        case TO_ST_RES:         /* ST(e) or TT display */
             new_resolution(gl_nextrez-2, 0);
             break;
 #endif
 #if CONF_WITH_VIDEL || defined(MACHINE_AMIGA)
-        case 2:                     /* Falcon display */
+        case TO_FALCON_RES:          /* Falcon display */
             new_resolution(FALCON_REZ, gl_nextrez);
             break;
 #endif
+        default:
+            break;
         }
         gsx_wsclear();              /* avoid artifacts that may show briefly */
         /*
@@ -825,7 +827,7 @@ void gem_main(void)
 
     ml_ocnt = 0;
 
-    gl_changerez = FALSE;
+    gl_changerez = NO_RES_CHANGE;
 
     mn_init();                      /* initialise variables for menu_register() */
 
