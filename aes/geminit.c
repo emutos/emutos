@@ -783,6 +783,40 @@ static void new_resolution(WORD rez, WORD videlmode)
 }
 #endif
 
+/*
+ * Returns true if resolution was changed indeed.
+ */
+static BOOL handle_resolution_change(void)
+{
+    BOOL res_was_changed;
+
+    /* If we're not processing a user-initiated resolution change,
+     * find out the resolution to set from the config file. */
+    if (gl_changerez == NO_RES_CHANGE)
+        process_inf_res_change();
+    
+    if (res_was_changed = (gl_changerez != NO_RES_CHANGE)) {
+        switch(gl_changerez) {
+#if CONF_WITH_ATARI_VIDEO
+        case TO_ST_RES:         /* ST(e) or TT display */
+            new_resolution(gl_nextrez-2, 0);
+            break;
+#endif
+#if CONF_WITH_VIDEL || defined(MACHINE_AMIGA)
+        case TO_FALCON_RES:          /* Falcon display */
+            new_resolution(FALCON_REZ, gl_nextrez);            
+            break;
+#endif
+        default:
+            res_was_changed = FALSE;
+            break;
+        }
+    }
+    
+    gl_changerez = NO_RES_CHANGE;
+    return res_was_changed;
+}
+
 void gem_main(void)
 {
     LONG    n;
@@ -803,25 +837,9 @@ void gem_main(void)
     infbuf[n] = '\0';           /* terminate input data */
 
     /* Handle any resolution change */
-    if (gl_changerez == NO_RES_CHANGE) /* can't be here because of rez change,       */
-        process_inf_res_change();         /*  so see if .inf says we need to change rez */
+    if (handle_resolution_change()) {
+        gsx_wsclear();  /* avoid artifacts that may show briefly */
 
-    if (gl_changerez != NO_RES_CHANGE) {
-        switch(gl_changerez) {
-#if CONF_WITH_ATARI_VIDEO
-        case TO_ST_RES:         /* ST(e) or TT display */
-            new_resolution(gl_nextrez-2, 0);
-            break;
-#endif
-#if CONF_WITH_VIDEL || defined(MACHINE_AMIGA)
-        case TO_FALCON_RES:          /* Falcon display */
-            new_resolution(FALCON_REZ, gl_nextrez);
-            break;
-#endif
-        default:
-            break;
-        }
-        gsx_wsclear();              /* avoid artifacts that may show briefly */
         /*
          * resolution change always resets the default drive to the
          * boot device.  TOS3 issues a Dsetdrv() when this happens,
@@ -830,7 +848,6 @@ void gem_main(void)
          */
         dos_sdrv(bootdev);
     }
-    gl_changerez = NO_RES_CHANGE;
 
     /* initialise AES libraries */
     fm_init();
