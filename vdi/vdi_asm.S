@@ -150,7 +150,6 @@ no_ptsin:
 
         .extern _cur_ms_stat    // current mouse status
         .extern _draw_flag      // Non-zero means draw mouse form on vblank
-        .extern _mouse_flag     // Non-zero if mouse ints disabled
         .extern _newx           // New mouse x position
         .extern _newy           // New mouse y position
 
@@ -230,9 +229,6 @@ cl_done:
  * destroys:    nothing
  */
 _mouse_int:
-        tst.b   _mouse_flag     // If we are in a show/hide operation
-        jne     ms_exit         // just exit.
-
 #ifdef __mcoldfire__
         lea     -60(sp),sp
         movem.l d0-d7/a0-a6, (sp)       // save registers used
