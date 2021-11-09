@@ -10,6 +10,8 @@
 #ifndef OPTIMIZE_H
 #define OPTIMIZE_H
 
+#include "obdefs.h"
+
 char *filename_start(char *path);
 void fmt_str(const char *instr, char *outstr);
 void unfmt_str(const char *instr, char *outstr);

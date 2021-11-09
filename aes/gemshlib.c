@@ -98,6 +98,22 @@ static BOOL gl_shgem;                   /* TRUE iff currently in graphics mode *
 GLOBAL RES_CHANGE_TYPE gl_changerez;
 GLOBAL WORD gl_nextrez;
 
+/*
+ *  Routine to read in the start of a file
+ *
+ *  returns: >=0  number of bytes read
+ *           < 0  error code from dos_open()/dos_read()
+ */
+LONG sh_readfile(char *filename, LONG count, char *buf)
+{
+    char    tmpstr[MAX_LEN];
+
+    strcpy(tmpstr, filename);
+    tmpstr[0] += dos_gdrv();            /* set the drive letter */
+
+    return dos_load_file(tmpstr, count, buf);
+}
+
 
 void sh_read(char *pcmd, char *ptail)
 {
@@ -445,7 +461,7 @@ void sh_rdef(char *lpcmd, char *lpdir)
 
 
 /*
- *  Write the default application to invoke
+ *  Write the default application to invoke (autorun)
  */
 void sh_wdef(const char *lpcmd, const char *lpdir)
 {
@@ -530,7 +546,6 @@ static void set_default_desktop(SHELL *psh)
     strcpy(psh->sh_desk, DEF_DESKTOP);
     strcpy(psh->sh_cdir, D.s_cdir);
 }
-
 
 static WORD sh_ldapp(SHELL *psh)
 {
@@ -666,7 +681,7 @@ void sh_main(BOOL isauto, BOOL isgem)
         if (gl_shgem)
         {
             wm_init();                  /* re-init windows, without resetting colours */
-            ratinit();
+            ratinit();                  /* display the mouse */
             sh_draw(D.s_cmd, TRUE);     /* clear the screen */
         }
 

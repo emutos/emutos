@@ -32,6 +32,7 @@
 #include "../bdos/bdosstub.h"
 #include "biosext.h"
 
+#include "aescfg.h"
 #include "gemgsxif.h"
 #include "gemdosif.h"
 #include "gemctrl.h"
@@ -96,9 +97,6 @@ void gem_main(void);            /* called only from gemstart.S */
  */
 #define CP_SHELL_INIT   "#a000000\r\n"  /* initialisation string */
 
-#define INF_SIZE   300                  /* size of buffer used by sh_rdinf() */
-                                        /*  for start of EMUDESK.INF file    */
-
 #define WAIT_TIMEOUT 500                /* see wait_for_accs() */
 
 typedef struct {                     /* used by count_accs()/ldaccs() */
@@ -108,7 +106,6 @@ typedef struct {                     /* used by count_accs()/ldaccs() */
 
 static ACC      acc[NUM_ACCS];
 static char    *accpath;                /* used to read the ACCPATH env var, empty string if var is not present */
-static char     infbuf[INF_SIZE+1];     /* used to read part of EMUDESK.INF */
 
 /* Some global variables: */
 
@@ -328,23 +325,6 @@ static void sh_curdir(char *ppath)
 
 
 /*
- *  Routine to read in the start of a file
- *
- *  returns: >=0  number of bytes read
- *           < 0  error code from dos_open()/dos_read()
- */
-static LONG readfile(char *filename, LONG count, char *buf)
-{
-    char    tmpstr[MAX_LEN];
-
-    strcpy(tmpstr, filename);
-    tmpstr[0] += dos_gdrv();            /* set the drive letter */
-
-    return dos_load_file(tmpstr, count, buf);
-}
-
-
-/*
  *  Part 1 of early emudesk.inf processing
  *
  *  The main function is to determine (from #E) if we need to change
@@ -352,76 +332,24 @@ static LONG readfile(char *filename, LONG count, char *buf)
  */
 static void process_inf_res_change(void)
 {
-    WORD    env1, env2;
-    WORD    mode, i;
-    char    *pcurr;
-
-    gl_changerez = NO_RES_CHANGE; /* assume no change */
-
-    for (pcurr = infbuf; *pcurr; )
+    if (aes_configuration.flags & AES_CFG_PROVIDES_RESOLUTION)
     {
-        if ( *pcurr++ != '#' )
-            continue;
-        if (*pcurr++ == 'E')
-        {
-            /* desktop environment, e.g. #E 3A 11 FF 02 */
-            pcurr += 6;                 /* skip over non-video preferences */
-            if (*pcurr == '\r')         /* no video info saved */
-                continue;
+        WORD mode = check_moderez(aes_configuration.videomode);
 
-            pcurr = scan_2(pcurr, &env1);
-            pcurr = scan_2(pcurr, &env2);
-            mode = MAKE_UWORD(env1, env2);
-            mode = check_moderez(mode);
-            if (mode == 0)              /* no change required */
-                continue;
-            if (mode > 0)               /* need to set Falcon mode */
-            {
-                gl_changerez = TO_FALCON_RES;
-                gl_nextrez = mode;
-            }
-            else                        /* set ST/TT rez */
-            {
-                gl_changerez = TO_ST_RES;
-                gl_nextrez = (mode & 0x00ff) + 2;
-            }            
+        if (mode == 0)              /* no change required */
+            return;
+        else if (mode > 0)          /* need to set Falcon mode */
+        {
+            gl_changerez = TO_FALCON_RES;
+            gl_nextrez = mode;
+        }
+        else                        /* set ST/TT rez */
+        {
+            gl_changerez = TO_ST_RES;
+            gl_nextrez = (mode & 0x00ff) + 2;
         }
     }
 }
-
-/*
- *  If CONF_WITH_BACKGOUNDS is specified, we also get the desktop background
- *  colours (from #Q) & save them for use when initialising the desktop.
- *  This needs to happens before the desktop is loaded.
- */
-static void process_inf_bgcolor(void)
-{
-#if CONF_WITH_BACKGROUNDS
-    char *pcurr = infbuf;
-    int i;
-    WORD bg[3]; /* desktop backgrounds (1, 2, >2 planes) */
-
-    for (pcurr = infbuf; *pcurr; )
-    {
-        if ( *pcurr++ != '#' )
-            continue;
-        if (*pcurr++ == 'Q' )
-        {
-            /* background colour, e.g. #Q 41 40 42 40 43 40 */
-            for (i = 0; i < 3; i++)
-                pcurr = scan_2(pcurr, &bg[i]) + 3;  /* desktop background */
-
-            /*
-            * set colour of root DESKTOP object: this affects the colour
-            * background when a program is launched
-            */
-            WORD n = (gl_nplanes > 2) ? 2 : gl_nplanes-1;
-            set_aes_background(bg[n]&0xff);
-        }
-    }
-#endif
-}
-
 
 /*
  *  Part 2 of early emudesk.inf processing
@@ -437,65 +365,42 @@ static void process_inf_bgcolor(void)
  */
 static BOOL process_inf2(BOOL *isauto)
 {
-    WORD    env, isgem = TRUE;
-    char    *pcurr;
-    char    tmp;
-
     *isauto = FALSE;                /* assume no autorun program */
 
-    pcurr = infbuf;
-    while (*pcurr)
-    {
-        if ( *pcurr++ != '#' )
-            continue;
-        tmp = *pcurr;
-        if (tmp == 'E')             /* #E 3A 11 vv vv 00            */
-        {                           /* desktop environment          */
-            pcurr += 2;
-            pcurr = scan_2(pcurr, &env);
-            ev_dclick(env & 0x07, TRUE);
-            pcurr = scan_2(pcurr, &env);    /* get desired blitter state */
+    if (aes_configuration.flags & AES_CFG_PROVIDES_DCLICK_SPEED)
+        ev_dclick(aes_configuration.double_click_rate, TRUE);
+
 #if MPS_BLITTER_ALWAYS_ON
-	    Blitmode(1);
+    Blitmode(1);
 #else
   #if CONF_WITH_BLITTER
-            if (has_blitter)
-                Blitmode((env&0x80)?1:0);
+    if (aes_configuration.flags & AES_CFG_PROVIDES_BLITTER && has_blitter)
+        Blitmode(aes_configuration.blitter_on);
   #endif
 #endif // MPS_BLITTER_ALWAYS_ON
+
 #if CONF_WITH_CACHE_CONTROL
-            pcurr = scan_2(pcurr, &env);    /* skip over video bytes if present */
-            pcurr = scan_2(pcurr, &env);
-            scan_2(pcurr, &env);            /* get desired cache state */
-            set_cache((env&0x08)?0:1);
+    if (aes_configuration.flags & AES_CFG_PROVIDES_CPUCACHE)
+        set_cache(aes_configuration.cpu_cache_on);
 #endif
-        }
-        else if (tmp == 'Z')        /* something like "#Z 01 C:\THING.APP@" */
-        {
-            char *tmpptr1, *tmpptr2;
-            pcurr += 2;
-            scan_2(pcurr, &isgem);  /* 00 => not GEM, otherwise GEM */
-            pcurr += 3;
-            tmpptr1 = pcurr;
-            while (*pcurr && (*pcurr != '@'))
-                ++pcurr;
-            *pcurr = 0;
-            tmpptr2 = sh_name(tmpptr1);
-            *(tmpptr2-1) = 0;
-            KDEBUG(("Found #Z entry in EMUDESK.INF: path=%s, prg=%s\n",tmpptr1,tmpptr2));
 
-            if (!(bootflags & BOOTFLAG_SKIP_AUTO_ACC))
-            {
-                /* run autorun program */
-                sh_wdef(tmpptr2, tmpptr1);
-                *isauto = TRUE;
-            }
+    *isauto = !(bootflags & BOOTFLAG_SKIP_AUTO_ACC) && (aes_configuration.flags & AES_CFG_PROVIDES_AUTOSTART);   
+    if (isauto)
+    {
+        char path[MAXPATHLEN];
+        char *filename;
 
-            ++pcurr;
-        }
+        strcpy(path, aes_configuration.autostart); /* autostart is actually the absolute file name (including path) */
+        filename = sh_name(path);
+        *(filename-1) = 0;
+        KDEBUG(("Found #Z entry in EMUDESK.INF: path=%s, prg=%s\n", path, filename));
+
+        /* Run autorun program */
+        sh_wdef(filename, path);
+
+        return aes_configuration.autostart_is_gem;
     }
-
-    return (*isauto && !isgem) ? FALSE : TRUE;
+    return TRUE;
 }
 
 
@@ -573,7 +478,7 @@ static void setup_mouse_cursors(void)
     if (!buf)
         return;
 
-    rc = readfile(CURSOR_RSC_NAME, CURSOR_RSC_SIZE, buf);
+    rc = sh_readfile(CURSOR_RSC_NAME, CURSOR_RSC_SIZE, buf);
     if (rc >= 0)
         rc = load_mouse_cursors(buf);
 
@@ -665,7 +570,7 @@ void wait_for_accs(WORD bitmask)
 
 #if CONF_WITH_BACKGROUNDS
 /*
- *  Set AES desktop background pattern/colour
+ *  Set AES's root DESKTOP object's background pattern/colour
  */
 void set_aes_background(UBYTE patcol)
 {
@@ -748,17 +653,26 @@ void run_accs_and_desktop(void)
     tree[ROOT].ob_height = gl_rscreen.g_h;
 
 #if CONF_WITH_BACKGROUNDS
-    process_inf_bgcolor();
+    /*
+    *  If CONF_WITH_BACKGOUNDS is specified, we also get the desktop background
+    *  colours (from #Q) & save them for use when initialising the desktop.
+    *  This needs to happens before the desktop is loaded.
+    */
+    if (aes_configuration.flags & AES_CFG_PROVIDES_BACKGROUND)
+    {
+        WORD n = (gl_nplanes > 2) ? 2 : gl_nplanes-1;
+        set_aes_background(aes_configuration.desktop_background[n] & 0xff);
+    }
 #endif
 
     wm_start();                     /* initialise window vars */
     fs_start();                     /* startup gem libs */
     sh_curdir(D.s_cdir);            /* remember current desktop directory */
+
     isgem = process_inf2(&isauto);  /* process emudesk.inf part 2 */
 
     dsptch();                       /* off we go !!! */
     wait_for_accs(AP_MESAG);        /* wait until DAs have initialised */
-
     sh_main(isauto, isgem);         /* main shell loop */
 
     free_accs(num_accs);            /* free DA memory */
@@ -794,8 +708,7 @@ static BOOL handle_resolution_change(void)
      * find out the resolution to set from the config file. */
     if (gl_changerez == NO_RES_CHANGE)
         process_inf_res_change();
-    
-    if (res_was_changed = (gl_changerez != NO_RES_CHANGE)) {
+    if ((res_was_changed = (gl_changerez != NO_RES_CHANGE))) {
         switch(gl_changerez) {
 #if CONF_WITH_ATARI_VIDEO
         case TO_ST_RES:         /* ST(e) or TT display */
@@ -819,7 +732,6 @@ static BOOL handle_resolution_change(void)
 
 void gem_main(void)
 {
-    LONG    n;
     WORD    i;
 
     /*
@@ -829,12 +741,8 @@ void gem_main(void)
      */
     dos_conws("\033f\033E");    /* cursor off, clear screen */
 
-    /* read in first part of emudesk.inf */
-    n = readfile(INF_FILE_NAME, INF_SIZE, infbuf);
-
-    if (n < 0L)
-        n = 0L;
-    infbuf[n] = '\0';           /* terminate input data */
+    /* Read config */
+    aescfg_read();
 
     /* Handle any resolution change */
     if (handle_resolution_change()) {

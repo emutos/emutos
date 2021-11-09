@@ -17,6 +17,7 @@ extern char     *ad_stail;
 extern RES_CHANGE_TYPE gl_changerez;
 extern WORD            gl_nextrez;
 
+LONG sh_readfile(char *filename, LONG count, char *buf);
 void sh_read(char *pcmd, char *ptail);
 WORD sh_write(WORD doex, WORD isgem, WORD isover, const char *pcmd, const char *ptail);
 void sh_get(void *pbuffer, WORD len);
