@@ -2,6 +2,11 @@ This is a hacked EmuTOS with some goodies to make it cooler.
 It is specifically targetted for the stock Atari ST/STe.
 
 Changelog:
+2021-Nov-09 VB:
+	* Move AES configuration parsing into a separate file aescfg.c, so we can later
+	* improve things there by allowing more user friendly command than these cryptic
+	* '#x' codes.
+
 2021-Nov-05 VB:
 	* When building 256 or 192, copy the generated file as mpts256xx.img or mpts192xx.img
 	  Having a different name helps distinguish this customized MPS EMUTOS when registered
