@@ -612,17 +612,22 @@ AES v1.40 (TOS >= v1.04):
  T  91  fsel_exinput
  t 109  wind_new
 
-AES v3.30 (TOS > v3.06):
+AES v3.20 (TOS v2.06 & v3.06)
+ T  78  graf_mouse extensions
+
+AES v3.30 (TOS >= v3.06):
+ T 105  wind_set extensions
+
+AES v3.40 (TOS v4.04)
  -  36  menu_popup
  -  37  menu_attach
  -  38  menu_istart
  -  39  menu_settings
-
-AES v3.40 (TOS >= v4):
- -  48  objc_sysvar         (3D look)
+ T  48  objc_sysvar
 
 TOS v4 extended AES functionality:
  T      RSC file color icon support
+ T      3D object support
 
 
  Misc desktop functions
