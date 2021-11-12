@@ -34,36 +34,36 @@
 #include "rectfunc.h"
 
 
-GLOBAL WORD     gl_width;
-GLOBAL WORD     gl_height;
+GLOBAL WORD     gl_width;       /* screen width */
+GLOBAL WORD     gl_height;      /* screen height */
 
-GLOBAL WORD     gl_wchar;
-GLOBAL WORD     gl_hchar;
+GLOBAL WORD     gl_wchar;       /* width of character cell (normal font) */
+GLOBAL WORD     gl_hchar;       /* height of character cell (normal font) */
 
-GLOBAL WORD     gl_wschar;
-GLOBAL WORD     gl_hschar;
+GLOBAL WORD     gl_wschar;      /* width of character cell (small font) */
+GLOBAL WORD     gl_hschar;      /* height of character cell (small font) */
 
-GLOBAL WORD     gl_wbox;
-GLOBAL WORD     gl_hbox;
+GLOBAL WORD     gl_wbox;        /* box width */
+GLOBAL WORD     gl_hbox;        /* box height */
 
 GLOBAL GRECT    gl_clip;        /* global clipping rectangle */
 
-GLOBAL WORD     gl_nplanes;
-GLOBAL WORD     gl_handle;
+GLOBAL WORD     gl_nplanes;     /* number of bit planes */
+GLOBAL WORD     gl_handle;      /* physical workstation handle */
 
 GLOBAL FDB      gl_src;
 GLOBAL FDB      gl_dst;
 
-GLOBAL WS       gl_ws;
+GLOBAL WS       gl_ws;          /* work_out[] for physical workstation */
 GLOBAL WORD     contrl[12];
 GLOBAL WORD     intin[128];
 GLOBAL WORD     ptsin[20];
 
-GLOBAL GRECT    gl_rscreen;
-GLOBAL GRECT    gl_rfull;
-GLOBAL GRECT    gl_rzero;
-GLOBAL GRECT    gl_rcenter;
-GLOBAL GRECT    gl_rmenu;
+GLOBAL GRECT    gl_rscreen;     /* the entire screen */
+GLOBAL GRECT    gl_rfull;       /* the screen except the menu bar */
+GLOBAL GRECT    gl_rzero;       /* 0,0,0,0 */
+GLOBAL GRECT    gl_rcenter;     /* a box centered in the 'gl_rfull' area */
+GLOBAL GRECT    gl_rmenu;       /* the menu bar */
 
 
 /*
@@ -77,11 +77,11 @@ static WORD     gl_fis;         /* interior type (vsf_interior) */
 static WORD     gl_patt;        /* style of fill pattern (vsf_style) */
 static WORD     gl_font;        /* font type (IBM/SMALL) for v_gtext */
 
-static WORD     gl_wptschar;
-static WORD     gl_hptschar;
+static WORD     gl_wptschar;    /* width of character (normal font) */
+static WORD     gl_hptschar;    /* height of character (normal font) */
 
-static WORD     gl_wsptschar;
-static WORD     gl_hsptschar;
+static WORD     gl_wsptschar;   /* width of character (small font) */
+static WORD     gl_hsptschar;   /* height of character (small font) */
 
 
 /*
