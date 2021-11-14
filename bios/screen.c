@@ -979,8 +979,11 @@ static void atari_setrez(WORD rez, WORD videlmode)
     }
 #if CONF_WITH_VIDEL
     else if (has_videl) {
-        if ((rez >= 0) && (rez <= 3))
+        if ((rez >= 0) && (rez <= 3)) {
             videl_setrez(rez, videlmode);   /* sets 'sshiftmod' */
+            /* Atari TOS 4 re-inits the palette */
+            initialise_falcon_palette(videlmode);
+        }
     }
 #endif
 #if CONF_WITH_TT_SHIFTER
