@@ -32,6 +32,7 @@
 #include "gemgsxif.h"
 #include "gemgrlib.h"
 #include "gemoblib.h"
+#include "gemobjop.h"
 #include "gemasm.h"
 #include "rectfunc.h"
 #include "gemctrl.h"
@@ -312,6 +313,9 @@ static void hctl_rect(void)
     WORD    title, item;
     WORD    mesag;
     AESPD   *owner;
+#if CONF_WITH_MENU_EXTENSION
+    WORD    treehi, treelo, parent, dummy;
+#endif
 
     if ( gl_mntree )
     {
@@ -328,16 +332,28 @@ static void hctl_rect(void)
                     perform_untop(gl_wtop);
 
                 mesag = AC_OPEN;
+#if CONF_WITH_MENU_EXTENSION
+                treehi = treelo = parent = 0;
+#endif
             }
             else
             {
                 owner = gl_mnppd;
                 mesag = MN_SELECTED;
+#if CONF_WITH_MENU_EXTENSION
+                treehi = HIWORD(gl_mntree);
+                treelo = LOWORD(gl_mntree);
+                parent = get_par(gl_mntree, item, &dummy);
+#endif
             }
             /*
              * application menu item has been selected so send it
              */
+#if CONF_WITH_MENU_EXTENSION
+            ct_msgup(mesag, owner, title, item, treehi, treelo, parent);
+#else
             ct_msgup(mesag, owner, title, item, 0, 0, 0);
+#endif
         }
     }
 }

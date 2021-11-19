@@ -1230,6 +1230,16 @@
 #endif
 
 /*
+ * Set CONF_WITH_MENU_EXTENSION to 1 to include AES support for
+ * menu_popup(), menu_attach(), menu_istart(), menu_settings().
+ *
+ * NOTE: this is still under development!
+ */
+#ifndef CONF_WITH_MENU_EXTENSION
+# define CONF_WITH_MENU_EXTENSION 0
+#endif
+
+/*
  * Set CONF_WITH_NICELINES to use a drawn line instead of dashes for
  * separators in menus
  */
