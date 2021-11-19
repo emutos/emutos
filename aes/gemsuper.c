@@ -30,6 +30,7 @@
 #include "gemaplib.h"
 #include "geminit.h"
 #include "gemevlib.h"
+#include "gemmnext.h"
 #include "gemmnlib.h"
 #include "gemoblib.h"
 #include "gemobed.h"
@@ -175,6 +176,14 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
     case MENU_REGISTER:
         ret = mn_register(MM_PID, (char *)MM_PSTR);
         break;
+#if CONF_WITH_MENU_EXTENSION
+    case MENU_POPUP:
+        ret = mn_popup((MENU *)MPOP_IN, MPOP_XPOS, MPOP_YPOS, (MENU *)MPOP_OUT);
+        break;
+    case MENU_SETTINGS:
+        mn_settings(MSET_FLAG, (MN_SET *)MSET_SET);
+        break;
+#endif
 
     /* Object Manager */
     case OBJC_ADD:

@@ -46,6 +46,7 @@
 #include "gemasm.h"
 #include "gemaplib.h"
 #include "geminput.h"
+#include "gemmnext.h"
 #include "gemmnlib.h"
 #include "gemoblib.h"
 #include "geminit.h"
@@ -684,6 +685,10 @@ void run_accs_and_desktop(void)
     D.g_scrap[0] = dos_gdrv() + 'A';/* set up scrap dir path */
 
     gsx_init();                     /* do gsx open work station */
+
+#if CONF_WITH_MENU_EXTENSION
+    mnext_init();                   /* initialise menu library extension variables */
+#endif
 
 #if CONF_WITH_3D_OBJECTS
     init_3d();                      /* initialise 3D-related variables */
