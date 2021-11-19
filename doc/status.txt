@@ -547,7 +547,6 @@ All AES versions:
  X  33  menu_tnormal
  X  34  menu_text
  t  35  menu_register
- X  36  menu_unregister     (PC-GEM call)
 
  X  40  objc_add
  X  41  objc_delete

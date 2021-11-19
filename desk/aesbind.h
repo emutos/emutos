@@ -57,7 +57,6 @@ WORD menu_ienable(OBJECT *tree, WORD itemnum, WORD enableit);
 WORD menu_tnormal(OBJECT *tree, WORD titlenum, WORD normalit);
 /* WORD menu_text(OBJECT *tree, WORD inum, const char *ptext); */
 /* WORD menu_register(WORD pid, const char *pstr); */
-/* WORD menu_unregister(WORD mid); */
 
 
 /*

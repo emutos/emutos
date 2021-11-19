@@ -25,7 +25,6 @@ void mn_bar(OBJECT *tree, WORD showit);
 void mn_clsda(void);
 void mn_init(void);
 WORD mn_register(WORD pid, char *pstr);
-void mn_unregister(WORD da_id);
 void mn_getownid(AESPD **owner,WORD *id,WORD item);
 
 

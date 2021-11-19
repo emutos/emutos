@@ -346,15 +346,6 @@ WORD menu_register(WORD pid, const char *pstr)
 */
 
 
-/* unused
-WORD menu_unregister(WORD mid)
-{
-    MM_MID = mid;
-    return gem_if(AES_CTRL_CODE(MENU_UNREGISTER, 1, 1, 0));
-}
-*/
-
-
 /*
  *  Object Manager
  */

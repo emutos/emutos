@@ -175,15 +175,6 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
     case MENU_REGISTER:
         ret = mn_register(MM_PID, (char *)MM_PSTR);
         break;
-    case MENU_UNREGISTER:
-#if CONF_WITH_PCGEM
-        /* distinguish between menu_unregister() and menu_popup() */
-        if (IN_LEN == 1)
-            mn_unregister( MM_MID );
-        else
-#endif
-            unsupported = TRUE;
-        break;
 
     /* Object Manager */
     case OBJC_ADD:

@@ -500,26 +500,6 @@ WORD mn_register(WORD pid, char *pstr)
         return -1;
 }
 
-#if CONF_WITH_PCGEM
-/*
- *  Routine to unregister a desk accessory item on the menu bar
- */
-void mn_unregister(WORD da_id)
-{
-    if ((D.g_accreg > 0) && (da_id >= 0) && (da_id < NUM_ACCS))
-    {
-        if (D.g_acctitle[da_id])
-        {
-            D.g_accreg--;
-            desk_ppd[da_id] = NULL;
-            D.g_acctitle[da_id] = NULL;
-            build_menuid_lookup();
-        }
-    }
-    menu_fixup();
-}
-#endif
-
 /*
  *  Routine to reset all variables related to menu registration
  */
