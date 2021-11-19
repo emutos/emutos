@@ -42,6 +42,7 @@
 #define MENU_POPUP      36      /* AES 3.30 function */
 #define MENU_ATTACH     37      /* AES 3.30 function */
 #define MENU_ISTART     38      /* AES 3.30 function */
+#define MENU_SETTINGS   39      /* AES 3.30 function */
 
 /* Object Manager */
 #define OBJC_ADD        40
@@ -263,7 +264,7 @@
 /*
  * menu library parameters
  */
-#define MM_ITREE    addr_in[0]              /* ienable, icheck, tnorm */
+#define MM_ITREE    addr_in[0]              /* ienable, icheck, tnormal */
 
 #define MM_PSTR     addr_in[0]
 
@@ -273,13 +274,10 @@
 
 #define ITEM_NUM    int_in[0]               /* icheck, ienable */
 #define MM_PID      int_in[0]               /* register */
-#define MM_MID      int_in[0]               /* unregister */
 #define CHECK_IT    int_in[1]               /* icheck */
 #define ENABLE_IT   int_in[1]               /* ienable */
-#define MN_CLICK    int_in[0]
-#define MN_SETIT    int_in[1]
 
-#define TITLE_NUM   int_in[0]               /* tnorm */
+#define TITLE_NUM   int_in[0]               /* tnormal */
 #define NORMAL_IT   int_in[1]               /* tnormal */
 
 
