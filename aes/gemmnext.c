@@ -130,7 +130,7 @@ static void *popup_blit(OBJECT *tree, void *buf)
     GRECT t;
     BOOL save = buf ? FALSE : TRUE;
 
-    //do we need to set clip first?
+    /* do we need to set clip first? */
     ob_actxywh(tree, ROOT, &t);
     t.g_x -= MENU_THICKNESS;
     t.g_y -= MENU_THICKNESS;
@@ -300,11 +300,7 @@ WORD mn_popup(MENU *menu, WORD xpos, WORD ypos, MENU *mdata)
 
     wm_update(BEG_MCTRL);       /* take over the mouse */
 
-// see bottom for comments about 'gl_btrue'
-//    do {
-//        gr_mkstate(&dummy, &dummy, &buttons, &dummy);
-//    } while(buttons);           /* wait for button to come up */
-    ev_button(1, 0x00ff, 0x0000, rets);
+    ev_button(1, 0x00ff, 0x0000, rets); /* waot for button up */
 
     /*
      * position the parent box: note that xpos/ypos are the location of
@@ -341,16 +337,7 @@ WORD mn_popup(MENU *menu, WORD xpos, WORD ypos, MENU *mdata)
         rc = FALSE;
     }
 
-// there is a problem here somewhere with the button state.
-// I think we should go back to the simple loop, but using 'gl_btrue' instead of 'button'
-// and maybe gl_btrue should be volatile?
-
-//    do {
-//        gr_mkstate(&dummy, &dummy, &buttons, &dummy);
-//    } while(buttons);           /* wait for button to come up */
-//    while(button & 0x0001)      /* wait for button to come up */
-//        ;
-    ev_button(1, 0x00ff, 0x0000, rets);
+    ev_button(1, 0x00ff, 0x0000, rets); /* wait for button up */
 
     wm_update(END_MCTRL);       /* give back the mouse */
 
