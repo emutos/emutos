@@ -389,7 +389,6 @@ void ct_mouse(WORD grabit)
 {
     if (grabit)
     {
-        wm_update(BEG_UPDATE);
         gl_ctmown = TRUE;
         gl_mowner = rlr;
         set_mouse_to_arrow();
@@ -404,7 +403,6 @@ void ct_mouse(WORD grabit)
         gl_moff = gl_tmpmoff;
         gsx_mfset(&gl_mouse);
         gl_ctmown = FALSE;
-        wm_update(END_UPDATE);
     }
 }
 
@@ -445,7 +443,7 @@ void ctlmgr(void)
         ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
                                 0x0L, 0x0001ff01L, msgbuf, rets);
 
-        ct_mouse(TRUE);                 /* grab screen sink     */
+        wm_update(BEG_UPDATE);          /* take the screen */
         /*
          * button down over area ctrl mgr owns.  find out which
          * window the mouse clicked over and handle it
@@ -466,6 +464,6 @@ void ctlmgr(void)
             hctl_msg(msgbuf);
 #endif
 
-        ct_mouse(FALSE);                /* give up screen sink  */
+        wm_update(END_UPDATE);          /* give up the screen */
     }
 }

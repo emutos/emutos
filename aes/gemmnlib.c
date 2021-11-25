@@ -265,6 +265,8 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     cur_title = cur_menu = cur_item = NIL;
     tree = gl_mntree;
 
+    ct_mouse(TRUE);
+
     while (!done)
     {
         mnu_flags = MU_BUTTON | MU_M1;
@@ -385,6 +387,8 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         else
             do_chg(tree, cur_title, SELECTED, FALSE, TRUE, TRUE);
     }
+
+    ct_mouse(FALSE);
 
     return done;
 }
