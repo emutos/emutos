@@ -308,9 +308,21 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         /* wait for something */
         ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, 0x0L, buparm, NULL, rets);
 
-        /* if it's a button and not in a title then done, else flip state */
+        /*
+         * if it's a button. first check if we are still in the initial state (INBAR).
+         * if so, the user is just holding the button down in the bar, and we stay in
+         * the loop, doing nothing, not even checking where the mouse is.
+         *
+         * otherwise, check if we're in a title.  if not, exit this loop (and
+         * subsequently the function).
+         *
+         * if we are in a title, we flip the button state that we will wait for on
+         * the next time around, and continue with menu processing.
+         */
         if (ev_which & MU_BUTTON)
         {
+            if (menu_state == INBAR)
+                continue;
             if (menu_state != OUTTITLE)
                 break;
             buparm ^= 0x00000001;
