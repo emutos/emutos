@@ -335,10 +335,15 @@ void vdi_v_hide_c(Vwk * vwk)
  */
 void vdi_vq_mouse(Vwk * vwk)
 {
-    INTOUT[0] = MOUSE_BT;
+    WORD old_sr;
 
+    old_sr = set_sr(0x2700);    /* disable interrupts */
+
+    INTOUT[0] = MOUSE_BT;
     PTSOUT[0] = GCURX;
     PTSOUT[1] = GCURY;
+
+    set_sr(old_sr);             /* enable interrupts */
 }
 
 
