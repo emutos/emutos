@@ -449,7 +449,7 @@ void mn_bar(OBJECT *tree, WORD showit)
  *  - tell all DAs that the currently running application is about to terminate
  *  . free up the submenu array in the AESPD if necessary
  */
-void mn_clsda(void)
+void mn_cleanup(void)
 {
     WORD i;
 

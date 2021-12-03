@@ -22,7 +22,7 @@ BOOL do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
 WORD mn_do(WORD *ptitle, WORD *pitem);
 
 void mn_bar(OBJECT *tree, WORD showit);
-void mn_clsda(void);
+void mn_cleanup(void);
 void mn_init(void);
 WORD mn_register(WORD pid, char *pstr);
 void mn_getownid(AESPD **owner,WORD *id,WORD item);
