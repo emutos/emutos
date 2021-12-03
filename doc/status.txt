@@ -74,12 +74,12 @@ example, most GEMDOS/BIOS/XBIOS functions are known to work without
 problems.
 
 This is what the first field of the following table means:
-? status unknown
+? Status unknown
 - Not yet implemented
 > Partially implemented
 X Fully implemented and untested
 t Fully implemented and partially tested
-T tested and working on an emulator or real hardware
+T Tested and working on an emulator or real hardware
 
 
  Hardware initialization
