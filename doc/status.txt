@@ -431,7 +431,7 @@ GEMDOS v0.30 (TOS v4):
  T   5,14   v_rvoff
  T   5,15   vq_curaddress
  T   5,16   vq_tabstatus
- -   5,17   v_hardcopy
+ T   5,17   v_hardcopy
  T   5,18   v_dspcur            (Atari docs are incorrect for this call)
  T   5,19   v_rmcur             (Atari docs are incorrect for this call)
  -   5,xx   other subcodes are not implemented
