@@ -158,7 +158,7 @@ T Tested and working on an emulator or real hardware
  T ikbd key events
  T IKBD clock
  T mouse
- t joysticks
+ T joysticks
 
 
  BIOS Functions
@@ -248,11 +248,11 @@ TOS v4.00:
  T 0x58 Vsetmode        (for Falcon Videl only)
  T 0x59 Vmontype        (for Falcon Videl only)
  T 0x5a VsetSync        (for Falcon Videl only)
- t 0x5b VgetSize        (for Falcon Videl only)
+ T 0x5b VgetSize        (for Falcon Videl only)
  - 0x5c VsetVars        (for Falcon Videl only) - undocumented
  T 0x5d VsetRGB         (for Falcon Videl only)
  T 0x5e VgetRGB         (for Falcon Videl only)
- t 0x5f VcheckMode      (for Falcon Videl only) - undocumented
+ T 0x5f VcheckMode      (for Falcon Videl only) - undocumented
 
  - 0x96 VsetMask        (for Falcon Videl only) - relevant when 16-bit colour is supported
 
@@ -293,18 +293,18 @@ TOS v4.00:
 0x04 bit set in _SND:
  T 0x80 LockSnd
  T 0x81 UnlockSnd
- t 0x82 Soundcmd
- t 0x83 Setbuffer
- t 0x84 Setmode
- t 0x85 Settracks
- t 0x86 Setmontracks
- t 0x87 Setinterrupt
- t 0x88 Buffoper
- t 0x89 Dsptristate
- t 0x8a Gpio
+ T 0x82 Soundcmd
+ T 0x83 Setbuffer
+ T 0x84 Setmode
+ T 0x85 Settracks
+ T 0x86 Setmontracks
+ T 0x87 Setinterrupt
+ T 0x88 Buffoper
+ T 0x89 Dsptristate
+ T 0x8a Gpio
  T 0x8b Devconnect
- t 0x8c Sndstatus
- t 0x8d Buffptr
+ T 0x8c Sndstatus
+ T 0x8d Buffptr
 
 TOS v4 extended XBIOS functionality:
  t 16-bit Videl resolution setting
@@ -383,7 +383,7 @@ GEMDOS v0.19 (TOS v2/v3):
  (and Pexec mode 6)
 
 GEMDOS v0.30 (TOS v4):
- > 0x15 Srealloc        (undocumented by Atari)
+ T 0x15 Srealloc        (undocumented by Atari)
 
 
  Line-A functions
@@ -414,7 +414,7 @@ GEMDOS v0.30 (TOS v4):
  T   1      v_opnwk
  T   2      v_clswk
  T   3      v_clrwk
- -   4      v_updwk
+ -   4      v_updwk             (not supported by Atari TOS)
  T   5,1    vq_chcells
  T   5,2    v_exit_cur
  T   5,3    v_enter_cur
@@ -447,74 +447,74 @@ GEMDOS v0.30 (TOS v4):
  T  11,5    v_ellipse
  T  11,6    v_ellarc
  T  11,7    v_ellpie
- X  11,8    v_rbox
+ T  11,8    v_rbox
  T  11,9    v_rfbox
  T  11,10   v_justified
  T  12      vst_height
  T  13      vst_rotation
- >  14      vs_color
+ T  14      vs_color
  T  15      vsl_type
  T  16      vsl_width
- >  17      vsl_color
+ T  17      vsl_color
  T  18      vsm_type
  T  19      vsm_height
- >  20      vsm_color
- X  21      vst_font
- >  22      vst_color
+ T  20      vsm_color
+ T  21      vst_font
+ T  22      vst_color
  T  23      vsf_interior
  T  24      vsf_style
- t  25      vsf_color
- >  26      vq_color
+ T  25      vsf_color
+ T  26      vq_color
  -  27      vq_cellarray        (not supported by any current VDI driver)
- X  28      vrq_locator
- X  28      vsm_locator
- -  29      vrq_valuator
- -  29      vsm_valuator
- X  30      vrq_choice
- X  30      vsm_choice
- X  31      vrq_string
- X  31      vsm_string
+ T  28      vrq_locator
+ T  28      vsm_locator
+ T  29      vrq_valuator
+ T  29      vsm_valuator
+ T  30      vrq_choice
+ T  30      vsm_choice
+ T  31      vrq_string
+ T  31      vsm_string
  T  32      vswr_mode
- X  33      vsin_mode
+ T  33      vsin_mode
 
- >  35      vql_attributes
- >  36      vqm_attributes
- >  37      vqf_attributes
- >  38      vqt_attributes
+ T  35      vql_attributes
+ T  36      vqm_attributes
+ T  37      vqf_attributes
+ T  38      vqt_attributes
  T  39      vst_alignment
 
  T 100      v_opnvwk
  T 101      v_clsvwk
- t 102      vq_extnd
+ T 102      vq_extnd
  T 103      v_contourfill
  T 104      vsf_perimeter
- > 105      v_get_pixel
+ T 105      v_get_pixel
  T 106      vst_effects
  T 107      vst_point
  T 108      vsl_ends
- t 109      vro_cpyfm
+ T 109      vro_cpyfm
  T 110      vr_trnfm
- X 111      vsc_form
- X 112      vsf_udpat
- X 113      vsl_udsty
+ T 111      vsc_form
+ T 112      vsf_udpat
+ T 113      vsl_udsty
  T 114      vr_recfl
- X 115      vqin_mode
- > 116      vqt_extent
- X 117      vqt_width
- X 118      vex_timv
- > 119      vst_load_fonts      (stub, needs GDOS or equivalent)
- > 120      vst_unload_fonts    (stub, needs GDOS or equivalent)
- > 121      vrt_cpyfm
+ T 115      vqin_mode
+ T 116      vqt_extent
+ T 117      vqt_width
+ T 118      vex_timv
+ T 119      vst_load_fonts      (stub, needs GDOS or equivalent)
+ T 120      vst_unload_fonts    (stub, needs GDOS or equivalent)
+ t 121      vrt_cpyfm
  T 122      v_show_c
  T 123      v_hide_c
- X 124      vq_mouse
+ T 124      vq_mouse
  T 125      vex_butv
  T 126      vex_motv
  T 127      vex_curv
- X 128      vq_key_s
- t 129      vs_clip
- X 130      vqt_name
- X 131      vqt_fontinfo
+ T 128      vq_key_s
+ T 129      vs_clip
+ T 130      vqt_name
+ T 131      vqt_fontinfo
 
  TOS v4 extended VDI functionality:
  -          16-bit support for graphics functions (for now, use fVDI)
@@ -524,92 +524,92 @@ GEMDOS v0.30 (TOS v4):
  ----------------------------------------------------------------------------
 
 All AES versions:
- t  10  appl_init
- X  11  appl_read
- X  12  appl_write
+ T  10  appl_init
+ T  11  appl_read
+ t  12  appl_write
  t  13  appl_find
- t  14  appl_tplay
- X  15  appl_trecord
+ T  14  appl_tplay
+ T  15  appl_trecord
  X  17  appl_yield          (PC-GEM call)
- t  19  appl_exit
+ T  19  appl_exit
 
  X  20  evnt_keybd
- t  21  evnt_button
- X  22  evnt_mouse
+ T  21  evnt_button
+ t  22  evnt_mouse
  t  23  evnt_mesag
- X  24  evnt_timer
- t  25  evnt_multi
- X  26  evnt_dclick
+ T  24  evnt_timer
+ T  25  evnt_multi
+ T  26  evnt_dclick
 
- t  30  menu_bar
- t  31  menu_icheck
- X  32  menu_ienable
- X  33  menu_tnormal
- X  34  menu_text
- t  35  menu_register
+ T  30  menu_bar
+ T  31  menu_icheck
+ T  32  menu_ienable
+ T  33  menu_tnormal
+ T  34  menu_text
+ T  35  menu_register
 
- X  40  objc_add
- X  41  objc_delete
- t  42  objc_draw
- X  43  objc_find
- t  44  objc_offset
- X  45  objc_order
- X  46  objc_edit
- t  47  objc_change
+ T  40  objc_add
+ T  41  objc_delete
+ T  42  objc_draw
+ T  43  objc_find
+ T  44  objc_offset
+ T  45  objc_order
+ T  46  objc_edit
+ T  47  objc_change
 
- t  50  form_do
- t  51  form_dial
- t  52  form_alert
- X  53  form_error
- t  54  form_center
- X  55  form_keybd
- X  56  form_button
+ T  50  form_do
+ T  51  form_dial
+ T  52  form_alert
+ T  53  form_error
+ T  54  form_center
+ T  55  form_keybd
+ T  56  form_button
 
- t  70  graf_rubberbox
- X  71  graf_dragbox
- X  72  graf_movebox
+ T  70  graf_rubberbox
+ T  71  graf_dragbox
+ T  72  graf_movebox
  T  73  graf_growbox
  T  74  graf_shrinkbox
- X  75  graf_watchbox
- X  76  graf_slidebox
- t  77  graf_handle
- t  78  graf_mouse
- t  79  graf_mkstate
+ T  75  graf_watchbox
+ T  76  graf_slidebox
+ T  77  graf_handle
+ T  78  graf_mouse
+ T  79  graf_mkstate
 
- X  80  scrp_read
- X  81  scrp_write
+ T  80  scrp_read
+ T  81  scrp_write
  X  82  scrp_clear          (PC-GEM call)
 
- X  90  fsel_input
+ T  90  fsel_input
 
- t 100  wind_create
- t 101  wind_open
- t 102  wind_close
- t 103  wind_delete
- t 104  wind_get
- X 105  wind_set
- X 106  wind_find
- t 107  wind_update
- t 108  wind_calc
+ T 100  wind_create
+ T 101  wind_open
+ T 102  wind_close
+ T 103  wind_delete
+ T 104  wind_get
+ T 105  wind_set
+ T 106  wind_find
+ T 107  wind_update
+ T 108  wind_calc
 
- t 110  rsrc_load
- t 111  rsrc_free
- t 112  rsrc_gaddr
- X 113  rsrc_saddr
- t 114  rsrc_obfix
+ T 110  rsrc_load
+ T 111  rsrc_free
+ T 112  rsrc_gaddr
+ T 113  rsrc_saddr
+ T 114  rsrc_obfix
 
- X 120  shel_read
- X 121  shel_write
- X 122  shel_get
- X 123  shel_put
+ T 120  shel_read
+ T 121  shel_write
+ T 122  shel_get
+ T 123  shel_put
  T 124  shel_find
- X 125  shel_envrn
+ T 125  shel_envrn
  X 126  shel_rdef           (PC-GEM call)
- X 127  shel_wdef           (PC-GEM call)
+ T 127  shel_wdef           (PC-GEM call, but also used internally)
 
 AES v1.40 (TOS >= v1.04):
  T  91  fsel_exinput
- t 109  wind_new
+ T 109  wind_new
 
 AES v3.20 (TOS v2.06 & v3.06)
  T  78  graf_mouse extensions
