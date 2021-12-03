@@ -38,6 +38,7 @@
 #include "aesdefs.h"
 
 #include "aesext.h"
+#include "aesvars.h"
 #include "gemdos.h"
 #include "gemlib.h"
 #include "gemevlib.h"
@@ -49,6 +50,12 @@
 #include "gemoblib.h"
 #include "gemwmlib.h"
 #include "rectfunc.h"
+
+#include "string.h"
+
+/* submenu identification */
+#define SUBMENU_MARKER          0x03        /* right arrow */
+#define SUBMENU_MARKER_OFFSET   2           /* from end of string */
 
 static WORD keystate;
 
@@ -342,6 +349,240 @@ WORD mn_popup(MENU *menu, WORD xpos, WORD ypos, MENU *mdata)
     wm_update(END_MCTRL);       /* give back the mouse */
 
     return rc;
+}
+
+/*
+ * return ptr to submenu info, given ob_type field from main menu
+ */
+static SMIB *find_submenu_from_obtype(WORD ob_type)
+{
+    SMIB *submenu;
+    WORD n;
+
+    submenu = rlr->p_submenu;
+    if (!submenu)           /* any submenus yet? */
+        return NULL;
+
+    /* obtain index */
+    n = ((ob_type >> 8) & 0x00ff) - 128;
+    if ((n < 0)
+     || (n >= (rlr->p_submenu_hwm - rlr->p_submenu)))
+        return NULL;
+
+    return &submenu[n];
+}
+
+/*
+ * return ptr to submenu info, given submenu tree address
+ */
+static SMIB *find_submenu_from_tree(OBJECT *tree, WORD root)
+{
+    SMIB *submenu;
+
+    /* search submenu array */
+    for (submenu = rlr->p_submenu; submenu < rlr->p_submenu_hwm; submenu++)
+    {
+        if ((submenu->s_tree == tree)
+         && (submenu->s_menu == root))
+            return submenu;
+    }
+
+    return NULL;
+}
+
+/*
+ * query a submenu
+ *
+ * NOTE: although not specified by TOS, we tolerate the pointer to the
+ * return data to be NULL as a convenience
+ */
+static BOOL query_submenu(OBJECT *tree, WORD item, MENU *mdata)
+{
+    SMIB *info;
+    OBJECT *obj;
+    char *p;
+
+    obj = &tree[item];
+
+    /* menu item must have a submenu */
+    if (!(obj->ob_flags & SUBMENU))
+        return FALSE;
+
+    /* the submenu marker must be installed */
+    p = (char *)obj->ob_spec;
+    if (*(p+strlen(p)-SUBMENU_MARKER_OFFSET) != SUBMENU_MARKER)
+        return FALSE;
+
+    /* lookup in submenu table */
+    info = find_submenu_from_obtype(obj->ob_type);
+    if (!info)
+        return FALSE;
+
+    if (mdata)
+    {
+        mdata->mn_tree = info->s_tree;
+        mdata->mn_menu = info->s_menu;
+        mdata->mn_item = info->s_start;
+        mdata->mn_scroll = 0;
+        mdata->mn_keystate = 0;
+    }
+
+    return TRUE;
+}
+
+/*
+ * detach a submenu
+ */
+static void detach_submenu(OBJECT *tree, WORD item)
+{
+    SMIB *submenu;
+    OBJECT *obj;
+    char *p;
+
+    /* first, find the associated submenu */
+    submenu = find_submenu_from_obtype(tree[item].ob_type);
+
+    /* then remove the link from the main menu */
+    obj = &tree[item];
+    obj->ob_type &= 0x00ff;
+    obj->ob_flags &= ~SUBMENU;
+    p = (char *)obj->ob_spec;
+    *(p + strlen(p) - SUBMENU_MARKER_OFFSET) = ' ';
+
+    /* finally, clean up the submenu entry */
+    if (submenu)                    /* paranoia */
+    {
+        if (submenu->s_usage > 0)   /* likewise */
+            submenu->s_usage--;
+    }
+}
+
+/*
+ * attach a submenu
+ */
+static BOOL attach_submenu(OBJECT *tree, WORD item, MENU *mdata)
+{
+    SMIB *submenu;
+    OBJECT *obj;
+    char *p;
+
+    /* if the item already has a submenu, we must detach it first */
+    if (query_submenu(tree, item, NULL))
+    {
+        detach_submenu(tree, item);
+        if (!mdata)         /* if ME_REMOVE */
+            return TRUE;    /*  we're done  */
+    }
+
+    /* make sure a new submenu has been specified */
+    if (!mdata)
+        return FALSE;
+
+    /* initialise submenu array if necessary */
+    if (!rlr->p_submenu)    /* no array yet! */
+    {
+        rlr->p_submenu = dos_alloc_anyram(NUM_SMIBS*sizeof(SMIB));
+        if (!rlr->p_submenu)
+            return FALSE;
+        bzero(rlr->p_submenu, NUM_SMIBS*sizeof(SMIB));
+        rlr->p_submenu_hwm = rlr->p_submenu;
+    }
+
+    /* try to find existing entry in submenu array */
+    submenu = find_submenu_from_tree(mdata->mn_tree, mdata->mn_menu);
+
+    /* if not found, look for unused entry */
+    if (!submenu)
+    {
+        for (submenu = rlr->p_submenu; submenu < rlr->p_submenu_hwm; submenu++)
+            if (submenu->s_usage == 0)
+                break;
+    }
+
+    /*
+     * at this point, submenu points to an unused entry: it may be below
+     * or at the high water mark.  if it's above, we must reset the hwm
+     */
+    if (submenu >= rlr->p_submenu_hwm)
+    {
+        if (submenu >= rlr->p_submenu+NUM_SMIBS)    /* table is full ... */
+            return FALSE;
+        rlr->p_submenu_hwm++;
+    }
+
+    /* update submenu array */
+    submenu->s_usage++;
+    submenu->s_tree = mdata->mn_tree;
+    submenu->s_menu = mdata->mn_menu;
+    submenu->s_start = mdata->mn_item;
+
+    /* update menu item */
+    obj = &tree[item];
+    obj->ob_type |= ((submenu - rlr->p_submenu) + 128) << 8;
+    obj->ob_flags |= SUBMENU;
+    p = (char *)obj->ob_spec;
+    *(p + strlen(p) - SUBMENU_MARKER_OFFSET) = SUBMENU_MARKER;
+
+    return TRUE;
+}
+
+/*
+ * mn_attach: implements the menu_attach() function call
+ */
+WORD mn_attach(WORD flag, OBJECT *tree, WORD item, MENU *mdata)
+{
+    BOOL rc = FALSE;
+
+    /* a submenu can only be attached to a string item */
+    if ((tree[item].ob_type&0x00ff) != G_STRING)
+        return FALSE;
+
+    switch(flag)
+    {
+    case ME_INQUIRE:
+        rc = query_submenu(tree, item, mdata);
+        break;
+    case ME_ATTACH:
+        rc = attach_submenu(tree, item, mdata);
+        break;
+    case ME_REMOVE:
+        rc = attach_submenu(tree, item, NULL);
+        break;
+    }
+
+    return rc;
+}
+
+/*
+ * mn_istart: implements the menu_istart() function call
+ */
+WORD mn_istart(WORD flag, OBJECT *tree, WORD menu, WORD start)
+{
+    SMIB *submenu;
+    OBJECT *obj;
+
+    submenu = find_submenu_from_tree(tree, menu);
+    if (!submenu)
+        return FALSE;
+
+    switch(flag)
+    {
+    case 0:         /* inquire */
+        break;
+    case 1:         /* update */
+        /* clamp 'start' to valid range */
+        obj = &tree[menu];
+        if (start < obj->ob_head)
+            start = obj->ob_head;
+        else if (start > obj->ob_tail)
+            start = obj->ob_tail;
+        submenu->s_start = start;
+        break;
+    default:
+        return FALSE;
+    }
+
+    return submenu->s_start;
 }
 
 /*

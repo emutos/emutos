@@ -24,6 +24,7 @@
 #include "aesdefs.h"
 #include "aesext.h"
 #include "aesvars.h"
+#include "gemdos.h"
 #include "obdefs.h"
 #include "gemlib.h"
 
@@ -444,8 +445,9 @@ void mn_bar(OBJECT *tree, WORD showit)
 
 
 /*
- *  Routine to tell all desk accessories that the currently running
- *  application is about to terminate
+ *  Routine to cleanup some menu stuff:
+ *  - tell all DAs that the currently running application is about to terminate
+ *  . free up the submenu array in the AESPD if necessary
  */
 void mn_clsda(void)
 {
@@ -456,6 +458,15 @@ void mn_clsda(void)
         if (desk_ppd[i])
             ap_sendmsg(appl_msg, AC_CLOSE, desk_ppd[i], i, 0, 0, 0, 0);
     }
+
+#if CONF_WITH_MENU_EXTENSION
+    if (rlr->p_submenu)
+    {
+        dos_free(rlr->p_submenu);
+        rlr->p_submenu = NULL;
+        rlr->p_submenu_hwm = NULL;
+    }
+#endif
 }
 
 

@@ -33,6 +33,8 @@ typedef struct {
 } MN_SET;
 
 void mnext_init(void);
+WORD mn_attach(WORD flag, OBJECT *tree, WORD item, MENU *mdata);
+WORD mn_istart(WORD flag, OBJECT *tree, WORD menu, WORD start);
 WORD mn_popup(MENU *menu, WORD xpos, WORD ypos, MENU *mdata);
 void mn_settings(WORD flag, MN_SET *set);
 

@@ -180,8 +180,14 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
     case MENU_POPUP:
         ret = mn_popup((MENU *)MPOP_IN, MPOP_XPOS, MPOP_YPOS, (MENU *)MPOP_OUT);
         break;
+    case MENU_ATTACH:
+        ret = mn_attach(MPOP_FLAG, (OBJECT *)MPOP_IN, MPOP_ITEM, (MENU *)MPOP_OUT);
+        break;
+    case MENU_ISTART:
+        ret = mn_istart(MPOP_FLAG, (OBJECT *)MPOP_IN, MPOP_ITEM, MPOP_ITEM2);
+        break;
     case MENU_SETTINGS:
-        mn_settings(MSET_FLAG, (MN_SET *)MSET_SET);
+        mn_settings(MPOP_FLAG, (MN_SET *)MPOP_SET);
         break;
 #endif
 

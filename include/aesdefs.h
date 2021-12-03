@@ -280,13 +280,22 @@
 #define TITLE_NUM   int_in[0]               /* tnormal */
 #define NORMAL_IT   int_in[1]               /* tnormal */
 
-#define MPOP_IN     addr_in[0]              /* mn_popup() */
+#define MPOP_IN     addr_in[0]              /* menu library extensions */
 #define MPOP_OUT    addr_in[1]
 #define MPOP_XPOS   int_in[0]
 #define MPOP_YPOS   int_in[1]
 
-#define MSET_FLAG   int_in[0]               /* mn_settings() */
-#define MSET_SET    addr_in[0]
+#define MPOP_FLAG   int_in[0]
+#define MPOP_ITEM   int_in[1]
+#define MPOP_SET    addr_in[0]
+
+#define MPOP_ITEM2  int_in[2]
+
+/* flag: menu_attach() */
+#define ME_INQUIRE  0
+#define ME_ATTACH   1
+#define ME_REMOVE   2
+
 
 /*
  * form library parameters
