@@ -62,7 +62,7 @@ static const WORD SIZ_TAB_rom[12] = {
 
 /* Here's the template INQ_TAB, see lineavars.S for the normal INQ_TAB */
 static const WORD INQ_TAB_rom[45] = {
-    1,                  /* 0  - type of alpha/graphic controllers */
+    4,                  /* 0  - type of alpha/graphic controllers */
     1,                  /* 1  - number of background colors  */
     0x1F,               /* 2  - text styles supported        */
     0,                  /* 3  - scale rasters = false        */
