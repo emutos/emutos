@@ -451,7 +451,7 @@ static void bios_init(void)
     /* User configurable boot delay to allow harddisks etc. to get ready */
     if (FIRST_BOOT && osxhbootdelay)
     {
-        long end = hz_200 + (long)osxhbootdelay * 200UL;
+        long end = hz_200 + (long)osxhbootdelay * CLOCKS_PER_SEC;
         while (hz_200 < end)
         {
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
