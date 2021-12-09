@@ -71,8 +71,6 @@ static WORD keystate;
 
 static MN_SET settings;
 
-#define MENU_THICKNESS      1
-
 /*
  * clamp the range of values for menu height
  */

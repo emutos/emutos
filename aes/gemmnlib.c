@@ -42,8 +42,6 @@
 #include "geminit.h"
 
 
-#define MTH 1                                   /* menu thickness       */
-
 #define THESCREEN 0
 #define THEBAR 1
 #define THEACTIVE 2
@@ -207,9 +205,9 @@ static void menu_sr(WORD saveit, OBJECT *tree, WORD imenu)
     /* do the blit to save or restore */
     gsx_sclip(&gl_rzero);
     ob_actxywh(tree, imenu, &t);
-    t.g_x -= MTH;
-    t.g_w += 2*MTH;
-    t.g_h += 2*MTH;
+    t.g_x -= MENU_THICKNESS;
+    t.g_w += 2 * MENU_THICKNESS;
+    t.g_h += 2 * MENU_THICKNESS;
     if (saveit)
         bb_save(&t);
     else

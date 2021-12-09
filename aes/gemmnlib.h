@@ -10,6 +10,8 @@
 #ifndef GEMMNLIB_H
 #define GEMMNLIB_H
 
+/* thickness of menu outline */
+#define MENU_THICKNESS  1
 
 extern OBJECT   *gl_mntree;
 extern AESPD    *gl_mnppd;
