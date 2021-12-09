@@ -450,22 +450,14 @@ static void bios_init(void)
 
 #if CONF_WITH_MEMORY_TEST
     /*
-     * we only do this on cold boot, and never if we detect an emulator
+     * we only do this on cold boot
      */
     if (FIRST_BOOT)
     {
-#if DETECT_NATIVE_FEATURES
-        BOOL dotest = !has_natfeats();
-#else
-        BOOL dotest = TRUE;
-#endif
-        if (dotest)
-        {
-            BOOL ok;
-            cprintf("\n%s:\n",_("Memory test"));
-            ok = memory_test();         /* simple memory test, like Atari TOS */
-            cprintf("%s %s\n",_("Memory test"),ok?_("complete"):_("aborted"));
-        }
+        BOOL ok;
+        cprintf("\n%s:\n",_("Memory test"));
+        ok = memory_test();         /* simple memory test, like Atari TOS */
+        cprintf("%s %s\n",_("Memory test"),ok?_("complete"):_("aborted"));
     }
 #endif
 
