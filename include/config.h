@@ -167,6 +167,9 @@
 # ifndef CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
 #  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 1
 # endif
+# ifndef CONF_WITH_MEMORY_TEST
+#  define CONF_WITH_MEMORY_TEST 0
+# endif
 # ifndef INITINFO_DURATION
 #  define INITINFO_DURATION 8 /* Longer time for LCD monitors startup */
 # endif
@@ -291,6 +294,9 @@
 # endif
 # ifndef CONF_WITH_XHDI
 #  define CONF_WITH_XHDI 0
+# endif
+# ifndef CONF_WITH_MEMORY_TEST
+#  define CONF_WITH_MEMORY_TEST 0
 # endif
 # ifndef CONF_WITH_COLOUR_ICONS
 #  define CONF_WITH_COLOUR_ICONS 0
@@ -479,6 +485,9 @@
 # ifndef CONF_WITH_XHDI
 #  define CONF_WITH_XHDI 0
 # endif
+# ifndef CONF_WITH_MEMORY_TEST
+#  define CONF_WITH_MEMORY_TEST 0
+# endif
 # ifndef CONF_WITH_ICDRTC
 #  define CONF_WITH_ICDRTC 0
 # endif
@@ -596,6 +605,9 @@
 # endif
 # ifndef CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF
 #  define CONF_DETECT_FIRST_BOOT_WITHOUT_MEMCONF 1
+# endif
+# ifndef CONF_WITH_MEMORY_TEST
+#  define CONF_WITH_MEMORY_TEST 0
 # endif
 # ifndef ALWAYS_SHOW_INITINFO
 #  define ALWAYS_SHOW_INITINFO 1
@@ -1436,6 +1448,17 @@
  */
 #ifndef CONF_WITH_FRB
 # define CONF_WITH_FRB CONF_WITH_ALT_RAM
+#endif
+
+/*
+ * set CONF_WITH_MEMORY_TEST to 1 to do a memory test during a cold boot
+ */
+#ifndef CONF_WITH_MEMORY_TEST
+# if EMUTOS_LIVES_IN_RAM
+#  define CONF_WITH_MEMORY_TEST 0
+# else
+#  define CONF_WITH_MEMORY_TEST 1
+# endif
 #endif
 
 /*
