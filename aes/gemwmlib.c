@@ -1233,8 +1233,7 @@ static void w_owns(WINDOW *pwin, ORECT *po, GRECT *pt, GRECT *poutwds)
     {
         rc_copy(&po->o_gr, poutwds);
         pwin->w_rnext = po = po->o_link;
-        if ((rc_intersect(pt, poutwds)) &&
-            (rc_intersect(&gl_rfull, poutwds)))
+        if (rc_intersect(pt, poutwds))
             return;
     }
 
