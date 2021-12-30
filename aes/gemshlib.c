@@ -608,7 +608,7 @@ static WORD sh_ldapp(SHELL *psh)
         if (rlr->p_flags&AP_OPEN)
         {
             KDEBUG(("sh_ldapp: appl_init() without appl_exit()\n"));
-            mn_clsda();
+            mn_cleanup();
             if (rlr->p_qindex)
                 ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (WORD *)D.g_valstr);
             rlr->p_flags &= ~AP_OPEN;

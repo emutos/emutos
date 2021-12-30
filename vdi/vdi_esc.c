@@ -14,6 +14,7 @@
 #include "lineavars.h"
 #include "asm.h"
 #include "bdosbind.h"
+#include "xbiosbind.h"
 
 
 /* Local Constants */
@@ -251,10 +252,11 @@ static void escfn16(Vwk * vwk)
 /*
  * escfn17: v_hardcopy() - output screen to printer
  *
- * This function is currently just a stub.
+ * we call the standard xbios screen dump
  */
 static void escfn17(Vwk * vwk)
 {
+    Scrdmp();
 }
 
 

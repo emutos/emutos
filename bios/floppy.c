@@ -378,7 +378,7 @@ static void flop_add_drive(WORD dev)
     b->mediachange = MEDIACHANGE;
     b->start = 0;
     b->size = 0;                /* unknown size */
-    b->geometry.sides = 2;      /* default geometry of 3.5" DD */
+    b->geometry.sides = 1;      /* default geometry of 3.5" 1S DD */
     b->geometry.spt = 9;
     b->unit = dev;
     b->bpb.recsiz = SECTOR_SIZE;

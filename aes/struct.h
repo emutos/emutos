@@ -19,6 +19,7 @@
 #define GEMSTRUCT_H
 
 #include "aesdefs.h"
+#include "obdefs.h"
 
 typedef struct aespd   AESPD;           /* process descriptor           */
 typedef struct uda     UDA;             /* user stack data area         */
@@ -28,6 +29,7 @@ typedef struct evb     EVB;             /* event block                  */
 typedef struct cqueue  CQUEUE;          /* console kbd queue            */
 typedef struct spb     SPB;             /* sync parameter block         */
 typedef struct fpd     FPD;             /* fork process descriptor      */
+typedef struct smib    SMIB;            /* submenu information block    */
 
 typedef UWORD   EVSPEC;
 
@@ -42,6 +44,8 @@ typedef UWORD   EVSPEC;
  * run out of EVBs.
  */
 #define EVBS_PER_PD     6               /* EVBs per AES process */
+
+#define NUM_SMIBS   128                 /* SMIBs per process (when allocated) */
 
 #define KBD_SIZE 8
 #define QUEUE_SIZE 128
@@ -138,6 +142,11 @@ struct aespd                /* process descriptor */
         MFORM   p_mouse;        /* used by graf_mouse(SAVE,RESTORE) */
 #endif
 
+#if CONF_WITH_MENU_EXTENSION
+        SMIB    *p_submenu;     /* ptr to array of submenu info blocks */
+        SMIB    *p_submenu_hwm; /* high water mark of p_submenu[] */
+#endif
+
         char    *p_qaddr;       /* */
         WORD    p_qindex;       /* */
         char    p_queue[QUEUE_SIZE];    /* */
@@ -176,5 +185,12 @@ typedef enum /* specify type of requested resolution change */
 	TO_FALCON_RES
 } RES_CHANGE_TYPE;
 
+struct smib                 /* submenu info block */
+{
+        WORD    s_usage;        /* usage count */
+        OBJECT  *s_tree;
+        WORD    s_menu;
+        WORD    s_start;
+};
 
 #endif /* GEMSTRUCT_H */

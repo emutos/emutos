@@ -121,16 +121,18 @@ static const MFORM arrow_mform = {
  */
 static void dis_cur(void)
 {
-    mouse_flag += 1;            /* disable mouse redrawing */
-    HIDE_CNT -= 1;              /* decrement hide operations counter */
-    if (HIDE_CNT == 0) {
-        cur_display(&mouse_cdb, mcs_ptr, GCURX, GCURY);  /* display the cursor */
-        draw_flag = 0;          /* disable VBL drawing routine */
+    if (HIDE_CNT != 1)      /* if not about to be shown: */
+    {
+        HIDE_CNT--;             /* just decrement hide count */
+        if (HIDE_CNT < 0)       /* but make sure it doesn't go negative! */
+            HIDE_CNT = 0;
+        return;
     }
-    else if (HIDE_CNT < 0) {
-        HIDE_CNT = 0;           /* hide counter should not become negative */
-    }
-    mouse_flag -= 1;            /* re-enable mouse drawing */
+
+    /* HIDE_CNT is precisely 1 at this point */
+    cur_display(&mouse_cdb, mcs_ptr, GCURX, GCURY);  /* display the cursor */
+    draw_flag = 0;              /* disable VBL drawing routine */
+    HIDE_CNT--;
 }
 
 
@@ -149,8 +151,6 @@ static void dis_cur(void)
  */
 static void hide_cur(void)
 {
-    mouse_flag += 1;            /* disable mouse redrawing */
-
     /*
      * Increment the counter for the number of hide operations performed.
      * If this is the first one then remove the cursor from the screen.
@@ -161,8 +161,6 @@ static void hide_cur(void)
         cur_replace(mcs_ptr);   /* remove the cursor from screen */
         draw_flag = 0;          /* disable VBL drawing routine */
     }
-
-    mouse_flag -= 1;            /* re-enable mouse drawing */
 }
 
 
@@ -337,10 +335,15 @@ void vdi_v_hide_c(Vwk * vwk)
  */
 void vdi_vq_mouse(Vwk * vwk)
 {
-    INTOUT[0] = MOUSE_BT;
+    WORD old_sr;
 
+    old_sr = set_sr(0x2700);    /* disable interrupts */
+
+    INTOUT[0] = MOUSE_BT;
     PTSOUT[0] = GCURX;
     PTSOUT[1] = GCURY;
+
+    set_sr(old_sr);             /* enable interrupts */
 }
 
 
@@ -645,7 +648,8 @@ void vdimouse_exit(void)
  *         draw_flag - signals need to redraw cursor
  *         newx - new cursor x-coordinate
  *         newy - new cursor y-coordinate
- *         mouse_flag - cursor hide/show flag
+ *         mouse_flag - mouse cursor is being modified
+ *         HIDE_CNT - mouse cursor hide/show indicator
  *
  *      Outputs:
  *         draw_flag is cleared
@@ -658,17 +662,22 @@ void vdimouse_exit(void)
 
 static void vb_draw(void)
 {
-    WORD old_sr = set_sr(0x2700);       /* disable interrupts */
+    WORD old_sr, x, y;
+
+    /* if the cursor is being modified, or is hidden, just exit */
+    if (mouse_flag || HIDE_CNT)
+        return;
+
+    old_sr = set_sr(0x2700);        /* disable interrupts */
     if (draw_flag) {
         draw_flag = FALSE;
+        x = newx;                   /* get x/y for cur_display() atomically */
+        y = newy;
         set_sr(old_sr);
-        if (!mouse_flag) {
-            cur_replace(mcs_ptr);       /* remove the old cursor from the screen */
-            cur_display(&mouse_cdb, mcs_ptr, newx, newy);  /* display the cursor */
-        }
+        cur_replace(mcs_ptr);       /* remove the old cursor from the screen */
+        cur_display(&mouse_cdb, mcs_ptr, x, y); /* display the cursor */
     } else
         set_sr(old_sr);
-
 }
 
 

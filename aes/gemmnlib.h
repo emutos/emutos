@@ -10,6 +10,8 @@
 #ifndef GEMMNLIB_H
 #define GEMMNLIB_H
 
+/* thickness of menu outline */
+#define MENU_THICKNESS  1
 
 extern OBJECT   *gl_mntree;
 extern AESPD    *gl_mnppd;
@@ -22,10 +24,9 @@ BOOL do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
 WORD mn_do(WORD *ptitle, WORD *pitem);
 
 void mn_bar(OBJECT *tree, WORD showit);
-void mn_clsda(void);
+void mn_cleanup(void);
 void mn_init(void);
 WORD mn_register(WORD pid, char *pstr);
-void mn_unregister(WORD da_id);
 void mn_getownid(AESPD **owner,WORD *id,WORD item);
 
 

@@ -349,12 +349,10 @@ ret:
  *              normal GEMDOS memory pool.  returns NULL if the memory
  *              cannot be allocated.
  *
- *  notes:
+ *  note:
  *    . the actual amount of memory allocated (by EmuTOS and TOS4) is 256
  *      bytes more than specified, for compatibility with screen memory
  *      allocation in other versions of TOS.
- *    . this is not yet used by EmuTOS itself: video memory is always
- *      preallocated at the moment
  */
 #define FREESPACE_KLUDGE    256     /* see code below */
 void *srealloc(long amount)

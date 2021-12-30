@@ -244,7 +244,7 @@ WORD ap_trecd(EVNTREC *pbuff,WORD length)
 void ap_exit(void)
 {
     wm_update(BEG_UPDATE);
-    mn_clsda();
+    mn_cleanup();
     wait_for_accs(AP_ACCLOSE);  /* block until all DAs have seen AC_CLOSE */
     if (rlr->p_qindex)
         ap_rdwr(MU_MESAG, rlr, rlr->p_qindex, (WORD *)D.g_valstr);
