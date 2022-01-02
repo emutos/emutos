@@ -309,19 +309,19 @@ void post_keybd(CDA *c, UWORD ch)
 
 
 /*
- *  Routine to give mouse to right owner based on position.  Called
+ *  Return ptr to AESPD that owns the mouse, based on position.  Called
  *  when button initially goes down, or when the mouse is moved with
  *  the mouse button down.
  */
-static void chkown(void)
+static AESPD *chkown(void)
 {
     WORD val;
 
     val = chk_ctrl(xrat, yrat);
     if (val == 1)
-        gl_mowner = gl_cowner;
-    else
-        gl_mowner = (val == -1) ? ctl_pd : D.w_win[0].w_owner;
+        return gl_cowner;
+
+    return (val == -1) ? ctl_pd : D.w_win[0].w_owner;
 }
 
 
@@ -332,7 +332,7 @@ void bchange(LONG fdata)
 
     /* see if this button event causes an ownership change to or from ctrlmgr */
     if (!gl_ctmown && (new == MB_DOWN) && (button == 0))
-        chkown();
+        gl_mowner = chkown();
 
     mtrans++;
     pr_button = button;
