@@ -44,6 +44,7 @@
 #include "gemshlib.h"
 #include "gemfmalt.h"
 #include "gemasm.h"
+#include "gemctrl.h"
 
 #include "string.h"
 
@@ -283,7 +284,14 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = gl_handle;
         break;
     case GRAF_MOUSE:
-        gr_mouse(GR_MNUMBER, (MFORM *)GR_MADDR);
+        if (gl_ctmown)          /* if the ctlmgr owns the mouse, */
+        {                       /* give up control (temporarily) */
+            ct_mouse(FALSE);
+            gr_mouse(GR_MNUMBER, (MFORM *)GR_MADDR);
+            ct_mouse(TRUE);
+        }
+        else
+            gr_mouse(GR_MNUMBER, (MFORM *)GR_MADDR);
         break;
     case GRAF_MKSTATE:
         gr_mkstate(&GR_MX, &GR_MY, &GR_MSTATE, &GR_KSTATE);
