@@ -65,7 +65,8 @@ static WORD     gl_bpend;       /* number of pending events desiring */
                                 /*  more than a single click         */
 
 /* Prototypes: */
-static void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2);
+static void post_button(AESPD *pd, WORD new, WORD numclicks);
+static void post_mouse(AESPD *pd, WORD x, WORD y);
 
 
 /*
@@ -227,9 +228,9 @@ void set_mown(AESPD *mp)
          * pretend mouse moved to get the right form showing and
          * get the mouse event posted correctly
          */
-        post_mb(TRUE, gl_mowner->p_cda->c_msleep, xrat, yrat);
+        post_mouse(gl_mowner, xrat, yrat);
         /* post a button event in case the new owner was waiting */
-        post_mb(FALSE, gl_mowner->p_cda->c_bsleep, button, 1);
+        post_button(gl_mowner, button, 1);
     }
 }
 
@@ -340,7 +341,7 @@ void bchange(LONG fdata)
     pr_yrat = yrat;
     button = new;
     mclick = clicks;
-    post_mb(FALSE, gl_mowner->p_cda->c_bsleep, button, clicks);
+    post_button(gl_mowner, button, clicks);
 }
 
 
@@ -386,7 +387,7 @@ void mchange(LONG fdata)
      */
     if ( (gl_mowner != ctl_pd) && (button == 0) && gl_mntree && (in_mrect(&gl_ctwait)) )
         gl_mowner = ctl_pd;
-    post_mb(TRUE, gl_mowner->p_cda->c_msleep, xrat, yrat);
+    post_mouse(gl_mowner, xrat, yrat);
 }
 
 
@@ -437,36 +438,46 @@ static WORD inorout(EVB *e, WORD rx, WORD ry)
     return (mo.m_out != inside(rx, ry, &mo.m_gr));
 }
 
+
 /*
- *  Routine to walk the list of mouse or button events and remove
+ *  Routine to walk the list of mouse events and remove
  *  the ones that are satisfied
  */
-static void post_mb(WORD ismouse, EVB *elist, WORD parm1, WORD parm2)
+static void post_mouse(AESPD *pd, WORD x, WORD y)
+{
+    EVB     *e1, *e;
+
+    for (e = pd->p_cda->c_msleep; e; e = e1)
+    {
+        e1 = e->e_link;
+        if (inorout(e, x, y))
+            evremove(e, 0);
+    }
+}
+
+
+/*
+ *  Routine to walk the list of button events and remove
+ *  the ones that are satisfied
+ */
+static void post_button(AESPD *pd, WORD new, WORD numclicks)
 {
     EVB     *e1, *e;
     UWORD   clicks;
 
-    for (e = elist; e; e = e1)
+    for (e = pd->p_cda->c_bsleep; e; e = e1)
     {
         e1 = e->e_link;
-        if (ismouse)
+        if (downorup(new, e->e_parm))
         {
-            if (inorout(e, parm1, parm2))
-                evremove(e, 0);
-        }
-        else
-        {
-            if (downorup(parm1, e->e_parm))
-            {
-                /*
-                 * decrement counting semaphore if one of the multi-click
-                 * guys was satisfied
-                 */
-                clicks = LOBYTE((HIWORD(e->e_parm)));
-                if (clicks > 1)
-                    gl_bpend--;
-                evremove(e, (parm2 > clicks) ? clicks : parm2);
-            }
+            /*
+             * decrement counting semaphore if one of the multi-click
+             * guys was satisfied
+             */
+            clicks = LOBYTE((HIWORD(e->e_parm)));
+            if (clicks > 1)
+                gl_bpend--;
+            evremove(e, (numclicks > clicks) ? clicks : numclicks);
         }
     }
 }
