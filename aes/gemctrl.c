@@ -49,7 +49,7 @@
  */
 MOBLK   gl_ctwait;      /* MOBLK telling if menu bar is waiting */
                         /*  to be entered or exited by ctrl mgr */
-WORD    gl_ctmown;
+BOOL    gl_ctmown;
 
 WORD    appl_msg[8];
 

@@ -31,7 +31,7 @@ void gsx_wsclear(void);
 void ratinit(void);
 void ratexit(void);
 void gsx_init(void);
-void gsx_graphic(WORD tographic);
+void gsx_graphic(BOOL tographic);
 void bb_save(GRECT *ps);
 void bb_restore(GRECT *pr);
 

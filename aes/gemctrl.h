@@ -11,7 +11,7 @@
 #define GEMCTRL_H
 
 extern MOBLK    gl_ctwait;
-extern WORD     gl_ctmown;
+extern BOOL     gl_ctmown;
 extern WORD     appl_msg[8];
 
 void ct_chgown(AESPD *mpd, GRECT *pr);
