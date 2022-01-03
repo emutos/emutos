@@ -53,12 +53,6 @@
 
 #define DROP_SHADOW_SIZE    2   /* size of drop shadow on windows */
 
-#if CONF_WITH_3D_OBJECTS
-#define TGADGETS    (NAME | CLOSER | FULLER | MOVER)
-#define VGADGETS    (UPARROW | DNARROW | VSLIDE)
-#define HGADGETS    (LFARROW | RTARROW | HSLIDE)
-#endif
-
 GLOBAL WORD     gl_wtop;
 GLOBAL OBJECT   *gl_awind;
 

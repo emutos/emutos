@@ -40,9 +40,6 @@
 
 #define THEDESK 3       /* MUST be the same value as DESKMENU in desk/desk_rsc.h */
 
-#define TGADGETS    (NAME | CLOSER | FULLER | MOVER)
-#define VGADGETS    (UPARROW | DNARROW | VSLIDE)
-#define HGADGETS    (LFARROW | RTARROW | HSLIDE)
 
 /*
  * Global variables

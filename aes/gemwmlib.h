@@ -12,6 +12,11 @@
 
 #define DESKWH  0       /* window handle for desktop */
 
+/* gadgets classified by type (location) */
+#define TGADGETS    (NAME | CLOSER | FULLER | MOVER)    /* for 'top' window gadgets */
+#define VGADGETS    (UPARROW | DNARROW | VSLIDE)        /* for vertical scroll bar */
+#define HGADGETS    (LFARROW | RTARROW | HSLIDE)        /* for horizontal scroll bar */
+
 extern WORD     gl_wtop;
 extern OBJECT   *gl_awind;
 
