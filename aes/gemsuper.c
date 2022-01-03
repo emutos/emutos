@@ -286,9 +286,9 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
     case GRAF_MOUSE:
         if (gl_ctmown)          /* if the ctlmgr owns the mouse, */
         {                       /* give up control (temporarily) */
-            ct_mouse(FALSE);
+            ct_mouse(FALSE);    /* sets gl_ctmown = FALSE as byproduct */
             gr_mouse(GR_MNUMBER, (MFORM *)GR_MADDR);
-            ct_mouse(TRUE);
+            ct_mouse(TRUE);     /* restores gl_ctmown = TRUE as byproduct */
         }
         else
             gr_mouse(GR_MNUMBER, (MFORM *)GR_MADDR);
