@@ -1225,6 +1225,30 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
                 continue;
             }
         }
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        /*
+         * check if we are launching a program by dragging a
+         * desktop icon on to it
+         */
+        if (an_dest && (an_dest->a_aicon >= 0)) /* destination is application */
+        {
+            char diskname[4], *tail;
+            if (an_src->a_type == AT_ISDISK)    /* disk icon */
+            {
+                diskname[0] = an_src->a_letter;
+                diskname[1] = ':';
+                diskname[2] = '\\';
+                diskname[3] = '\0';
+                tail = diskname;
+            }
+            else                                /* desktop shortcut */
+            {
+                tail = an_src->a_pappl;
+            }
+            exit_desktop = do_aopen(an_dest, TRUE, dobj, wn_dest->w_pnode.p_spec, fn_dest->f_name, tail);
+            return;
+        }
+#endif
         copied = fun_file2any(sobj, wn_dest, an_dest, fn_dest, dobj, keystate);
         if (copied)
             fun_rebld(wn_dest->w_pnode.p_spec);
