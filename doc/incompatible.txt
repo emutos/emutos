@@ -265,6 +265,18 @@ Use a different program to manipulate the _FDC cookie, e.g., ACC.PRG
 by Steffen Engel.
 
 
+Program: Hypnosis 1.5
+---------------------
+Error: crash at start or corrupted display
+
+Bug analysis:
+The program was developed with Omikron BASIC and fails for similar reasons
+as the Omikron BASIC interpreter.  Among other things it expects A0 to
+point to an internal TOS variable upon return from the Mediach BIOS call.
+It also parses the bytes of the 0xA00A line-A routine for specific
+instructions that are only present in Atari TOS.
+
+
 Program: Luftschloss
 --------------------
 Error: Fails to load with an error message about the MPB variable.
@@ -302,8 +314,8 @@ Error: Panic (bus error) during start
 Bug analysis:
 The program relies on undocumented internal TOS variables at several
 points.  First, it expects A0 upon return from Mediach (BIOS function)
-to point to wplatch (floppy write protect latch variable).  On EmuTOS
-A0 is 0 and hence a bus error occurs when the program wants to modify
+to point to wplatch (floppy write protect latch variable).  On EmuTOS A0
+is undefined and hence a bus error can occur when the program modifies
 that variable.  Second, it parses the bytes of the 0xA00A (hide cursor)
 line-A routine to get the address of a variable reflecting the internal
 state of the mouse cursor.  This is done with the same code used in
@@ -331,6 +343,18 @@ resulting in a crash.
 Workaround:
 Use an alternate tracker program.  There are many Protracker variants and
 other module tracker programs which work fine with EmuTOS.
+
+
+Program: Quaderno 1.5
+---------------------
+Error: crash at start or corrupted display
+
+Bug analysis:
+The program was developed with Omikron BASIC and fails for similar reasons
+as the Omikron BASIC interpreter.  Among other things it expects A0 to
+point to an internal TOS variable upon return from the Mediach BIOS call.
+It also parses the bytes of the 0xA00A line-A routine for specific
+instructions that are only present in Atari TOS.
 
 
 Program: Ramses
