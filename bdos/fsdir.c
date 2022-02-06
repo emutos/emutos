@@ -1685,7 +1685,7 @@ static DND *dcrack(const char **np)
      */
 
     n = *np;                    /*  get ptr to name             */
-    if (n[1] == ':')            /*  if we start with drive spec */
+    if (n[0] && (n[1] == ':'))  /*  if we start with drive spec */
     {
         d = toupper(n[0]) - 'A';/*    compute drive number      */
         n += 2;                 /*    bump past drive number    */
