@@ -449,11 +449,9 @@ restrt:
 
             /* then, in with the new */
             b = (BPB *)Getbpb(errdrv);
-            if ((long)b <= 0)
+            if (!b)
             {
                 drvsel &= ~(1L<<errdrv);
-                if (b)
-                    return (long)b;
                 return rc;
             }
 

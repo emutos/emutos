@@ -98,9 +98,6 @@ long ckdrv(int d, BOOL checkrem)
         if (!b)
             return (mask&drvrem) ? EPTHNF : EDRIVE;
 
-        if ((long)b < 0)
-            return (long)b;
-
         if (log_media(b,d))
             return ENSMEM;
 
