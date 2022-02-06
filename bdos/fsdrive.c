@@ -68,9 +68,10 @@ LONG    drvsel;
  *
  *
  *      returns:
- *          ERR     if getbpb() failed
- *          ENSMEM  if log() failed
- *          EINTRN  if no room in dirtbl
+ *          EDRIVE  invalid drive specified
+ *          EPTHNF  unmounted removable drive specified
+ *          ENSMEM  if log_media() failed (with either EDRIVE or ENSMEM), or
+ *                  dirtbl[] is full
  *          drive nbr if success.
  */
 long ckdrv(int d, BOOL checkrem)
@@ -80,6 +81,13 @@ long ckdrv(int d, BOOL checkrem)
     BPB *b;
 
     KDEBUG(("ckdrv(%i)\n",d));
+
+    /*
+     * d mustn't be negative as shifting left by a negative amount
+     * is undefined in the C standard
+     */
+    if (d < 0)
+        return EDRIVE;
 
     mask = 1L << d;
 
