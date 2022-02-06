@@ -346,10 +346,10 @@ extern  FTAB    sft[];
  */
 
 /* check the drive, see if it needs to be logged in. */
-long ckdrv(int d, BOOL checkrem);
+WORD ckdrv(int d, BOOL checkrem);
 
 /* log in media 'b' on drive 'drv'. */
-long log_media(BPB *b, int drv);
+WORD log_media(BPB *b, int drv);
 
 /*
  * in fshand.c

@@ -74,7 +74,7 @@ LONG    drvsel;
  *                  dirtbl[] is full
  *          drive nbr if success.
  */
-long ckdrv(int d, BOOL checkrem)
+WORD ckdrv(int d, BOOL checkrem)
 {
     int curdir;
     LONG mask;
@@ -181,7 +181,7 @@ static int log2ul(unsigned long n)
 /* b: bios parm block for drive
  * drv: drive number
  */
-long log_media(BPB *b, int drv)
+WORD log_media(BPB *b, int drv)
 {
     OFD *fo, *f;                        /*  M01.01.03   */
     DND *d;

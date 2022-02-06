@@ -336,7 +336,7 @@ static CLNO countfree16(DMD *dm)
 long xgetfree(long *buf, int drv)
 {
     CLNO i, free;
-    long n;
+    WORD n;
     DMD *dm;
 
     drv = (drv ? drv-1 : run->p_curdrv);
