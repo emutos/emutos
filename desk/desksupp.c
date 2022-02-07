@@ -205,8 +205,9 @@ void do_wredraw(WORD w_handle, GRECT *gptr)
     if (w_handle != DESKWH)
     {
         pw = win_find(w_handle);
-        if (pw)
-            root = pw->w_root;
+        if (!pw)        /* window (no longer) exists */
+            return;
+        root = pw->w_root;
     }
 
     G.g_idt = Supexec((LONG)get_idt_cookie);    /* current _IDT for format_fnode() */
