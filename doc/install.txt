@@ -51,6 +51,30 @@ It is required to do "make clean" before switching to a different target,
 e.g., switching from 512k to 256k ROMs. The only change allowed without
 "make clean" is to build (with same target) for a different language.
 
+
+Customising EmuTOS
+==================
+The various binary targets are all built from the same EmuTOS sources by
+the use of different values for the 'configuration defines', which are
+found in include/config.h.  Apart from the source code itself, the usage
+of the configuration defines is best determined from the comments in that
+file.
+
+It is possible to build custom versions of EmuTOS by changing the values
+of the configuration defines.  To avoid having to change that file itself,
+you may create a localconf.h file in the root of the repository, and
+insert the appropriate #defines in that file.  Any #define in localconf.h
+will override the corresponding #define in config.h.
+
+Although customising EmuTOS in this way is relatively simple to do in a
+mechanical sense, you should be careful when doing this as it is quite
+possible to create a binary which will not work on your machine.  We
+recommend that the target you modify should be one that will run on your
+machine: for example, if you are customising for an STe, start with the
+256k (or larger) target.  Otherwise the automatic hardware detection and
+configuration code required for your machine may not be included.
+
+
 A complete list of targets
 ==========================
 
