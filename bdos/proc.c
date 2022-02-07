@@ -63,7 +63,8 @@ static jmp_buf bakbuf;         /* longjmp buffer */
  * memory internal routines
  *
  * These violate the encapsulation of the memory internal structure.
- * Could perhaps better go in the memory part.
+ * Could perhaps better go into a memory module; however, moving them to
+ * e.g. iumem.c would cost about 40 bytes of ROM space in the 192K ROMs.
  */
 static void free_all_owned(PD *p, MPB *mpb);
 static void reserve_blocks(PD *pd, MPB *mpb);
