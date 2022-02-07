@@ -1,31 +1,30 @@
-Installing:
-
+Installing the toolchain
+========================
 You will need a (cross-)GCC toolchain for TOS/MiNT.
 Currently, the only supported one is Vincent Rivière's m68k-atari-mint tools:
-http://vincent.riviere.free.fr/soft/m68k-atari-mint/
+  http://vincent.riviere.free.fr/soft/m68k-atari-mint/
+which is based on GCC 4.8.4.
 
 Other toolchains may also work.  However, you will not be able to use one
 based on GCC 2, for several reasons.  The most important of these is that
-the generated binaries are just too large.
+the generated binaries are just too large.  This is also the case for many
+binaries built with versions of GCC *later* than 4.8.4; in fact, as of the
+time of writing, 4.8.4 seems to produce the most compact binaries.
 
 You will also need GNU make (tested with make 3.81 & 4.2.1).
 
+
 Building EmuTOS
 ===============
-
 To build, first do:
-
     make help
-
 This will display the list of all possible targets.
 
 To build a multilanguage ROM, e.g. etos1024k.img, do
-
     make 1024
 
 To build EmuTOS for a different default country (changes the language and the
 keyboard), do
-
     make 1024 COUNTRY=en
 or
     make 1024 COUNTRY=fr
@@ -41,15 +40,15 @@ country in the TOS header.
 
 To build EmuTOS for a single country only, you must use UNIQUE instead of
 COUNTRY. This is used for the 192K/256K/512K targets. Example:
-
     make 256 UNIQUE=fr
 
 Many options are set via the configuration file include/config.h.  They can
 be overridden most easily via #defines in a user-created file localconf.h.
+See "Customising EmuTOS" below for further details.
 
-It is required to do "make clean" before switching to a different target,
-e.g., switching from 512k to 256k ROMs. The only change allowed without
-"make clean" is to build (with same target) for a different language.
+You must do a "make clean" before switching to a different target, e.g.
+switching from 512k to 256k ROMs.  The only build change allowed without
+a "make clean" is to build (with the same target) for a different language.
 
 
 Customising EmuTOS
@@ -77,7 +76,6 @@ configuration code required for your machine may not be included.
 
 A complete list of targets
 ==========================
-
 EmuTOS binaries
 ---------------
 192         etos192us.img, EmuTOS ROM padded to size 192 KB (starting at 0x00fc0000)
