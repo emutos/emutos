@@ -1,21 +1,20 @@
 General
 
 BIOS/XBIOS
-- reduce the number of 'extern' in .c files
 - misc. TODOs in floppy.c
 
 BDOS (GEMDOS)
 - move mem-only routines out of proc.c into umem.c or iumem.c
 
 VDI
-- The linemask for dashed lines is not calculated correct, depending on
+- The linemask for dashed lines is not calculated correctly, depending on
   the internal calculations of increase in x direction, like in original TOS.
 
 AES
-- Implement AES v3.x functions (TOS v3 menu functions and v4 3D look)
+- Implement AES v3.x functions (TOS v3 menu functions)
 
 DESK
 - Add a dialog for configuring the NVRAM (keyboard, languages, ...)
-- Support for loading DESKTOP.INF (needs remapping of the icon indexes)
+- Support for loading DESKTOP.INF?NEWDESK.INF? (needs remapping of the icon indexes)
 
 CLI
