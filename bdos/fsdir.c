@@ -132,6 +132,8 @@
 #include "string.h"
 #include "bdosstub.h"
 
+#include "miscutil.h"
+
 #define ROOT_PSEUDO_CLUSTER 1   /* see comments in xrename() */
 
 #define DIR_FILE_LENGTH 0x7fffffffL     /* fake size for directories */
@@ -1098,9 +1100,8 @@ long xchdir(char *p)
     if (contains_wildcard_characters(p))
         return EPTHNF;
 
-    if (p[1] == ':')
-        dlog = toupper(p[0]) - 'A';
-    else
+    dlog = extract_drive_number(p);
+    if (dlog < 0)
         dlog = run->p_curdrv;
 
     /*
@@ -1685,11 +1686,9 @@ static DND *dcrack(const char **np)
      */
 
     n = *np;                    /*  get ptr to name             */
-    if (n[0] && (n[1] == ':'))  /*  if we start with drive spec */
-    {
-        d = toupper(n[0]) - 'A';/*    compute drive number      */
+    d = extract_drive_number(n);
+    if (d >= 0)                 /*  valid drive ?               */
         n += 2;                 /*    bump past drive number    */
-    }
     else                        /*  otherwise                   */
         d = run->p_curdrv;      /*    assume default            */
 

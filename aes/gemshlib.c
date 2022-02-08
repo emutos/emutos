@@ -48,6 +48,7 @@
 #include "gemmnlib.h"
 
 #include "string.h"
+#include "miscutil.h"
 
 #include "gemshlib.h"
 #include "../desk/deskstub.h"
@@ -310,7 +311,7 @@ char *sh_name(char *ppath)
      * within the path, so we handle a path like X:AAAAAAAA.BBB before
      * calling the general function
      */
-    if (ppath[0] && (ppath[1] == ':'))
+    if (extract_drive_number(pname))    /* valid prefix exists */
         pname += 2;
 
     return filename_start(pname);
@@ -524,8 +525,11 @@ static void sh_chgrf(SHELL *psh)
 
 static void set_drvdir(char *path)
 {
-    if (path[1] == ':')     /* set default drive (if specified) */
-        dos_sdrv(path[0] - 'A');
+    WORD drive;
+
+    drive = extract_drive_number(path);
+    if (drive >= 0)         /* set default drive (if specified) */
+        dos_sdrv(drive);
     dos_chdir(path);        /* and default directory */
 }
 

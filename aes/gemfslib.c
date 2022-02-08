@@ -32,6 +32,7 @@
 #include "string.h"
 #include "intmath.h"
 #include "asm.h"
+#include "miscutil.h"
 
 #define NM_NAMES (F9NAME-F1NAME+1)
 #define NAME_OFFSET F1NAME
@@ -588,14 +589,11 @@ static WORD path_changed(char *path)
  */
 static WORD get_drive(char *path)
 {
-    char c;
+    WORD drive;
 
-    if (path[1] == ':')     /* drive letter is present */
-    {
-        c = toupper(path[0]);
-        if ((c >= 'A') && (c <= 'Z'))
-            return c - 'A';
-    }
+    drive = extract_drive_number(path);
+    if (drive >= 0)
+        return drive;
 
     return dos_gdrv();
 }
