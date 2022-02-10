@@ -537,7 +537,7 @@ static BOOL search_icon(WORD win, WORD curr, char *searchwild)
     case AT_ISDISK:
         p = pathname;
         *p++ = pa->a_letter;
-        *p++ = ':';
+        *p++ = DRIVESEP;
         *p = '\0';
         break;
     default:            /* do nothing for file, trash or printer icon */
@@ -1006,7 +1006,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
     char pathname[MAXPATHLEN];
     WORD operation, ret;
 
-    pathname[1] = ':';      /* set up everything except drive letter */
+    pathname[1] = DRIVESEP; /* set up everything except drive letter */
     strcpy(pathname+2, "\\*.*");
 
     operation = -1;
@@ -1236,7 +1236,7 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
             if (an_src->a_type == AT_ISDISK)    /* disk icon */
             {
                 diskname[0] = an_src->a_letter;
-                diskname[1] = ':';
+                diskname[1] = DRIVESEP;
                 diskname[2] = PATHSEP;
                 diskname[3] = '\0';
                 tail = diskname;

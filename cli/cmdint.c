@@ -172,7 +172,7 @@ const COMMAND *p;
      *  handle drive change
      */
     if ((argc == 1) && (strlen(argv[0]) == 2))
-        if (argv[0][1] == ':')
+        if (argv[0][1] == DRIVESEP)
             return run_setdrv;
 
     /*
@@ -235,7 +235,7 @@ WORD current_drive, temp_drive;
      * for that drive; else attempt to change the path on that drive
      */
     p = argv[1];
-    if (*(p+1) == ':') {
+    if (*(p+1) == DRIVESEP) {
         if (!is_valid_drive(*p))
             return EDRIVE;
         temp_drive = (*p|0x20) - 'a';
@@ -733,7 +733,7 @@ PRIVATE char *prev_dir(char *p)
 {
     /* don't backup past root! */
     if (*--p == PATHSEP)
-        if (*(p-1) == ':')
+        if (*(p-1) == DRIVESEP)
             return p+1;
 
     while(*--p != PATHSEP)
@@ -753,14 +753,14 @@ LONG rc = 0L;
     p = in;
     q = out;
 
-    /* set up initial drive letter and : separator */
-    if (*(p+1) == ':') {
+    /* set up initial drive letter and drive separator */
+    if (*(p+1) == DRIVESEP) {
         *q++ = toupper(*p);
         p += 2;
     } else {
         *q++ = Dgetdrv() + 'A';
     }
-    *q++ = ':';
+    *q++ = DRIVESEP;
 
     /* insert current path if specified path is relative */
     if (*p != PATHSEP) {
@@ -840,7 +840,7 @@ LONG bufsize, n, rc;
     outptr = extract_path(outname,fullname);
     if (output_is_dir) {
         outptr += strlen(outptr);
-        if ((*(outptr-1) != PATHSEP) && (*(outptr-1) != ':'))
+        if ((*(outptr-1) != PATHSEP) && (*(outptr-1) != DRIVESEP))
             *outptr++ = PATHSEP;
         *outptr = '\0';
     }
@@ -945,7 +945,7 @@ LONG rc;
 char *p = buf;
 
     *p++ = 'A' + (drive ? drive-1 : Dgetdrv());
-    *p++ = ':';
+    *p++ = DRIVESEP;
     *p = '\0';
 
     rc = Dgetpath(p,drive);
@@ -968,7 +968,7 @@ const char *p;
 char *q, *sep = dest;
 
     for (p = src, q = dest; *p; ) {
-        if ((*p == PATHSEP) || (*p == ':'))
+        if ((*p == PATHSEP) || (*p == DRIVESEP))
             sep = q + 1;
         *q++ = *p++;
     }
@@ -1051,7 +1051,7 @@ WORD drive;
         strcpy(filespec,"*.*");
     for (p = filespec; *p; p++)
         ;
-    if (*(p-1) == ':') {        /* add current path for drive */
+    if (*(p-1) == DRIVESEP) {   /* add current path for drive */
         drive = (*(p-2) | 0x20) - 'a';
         Dgetpath(p,drive+1);
         for ( ; *p; p++)
@@ -1146,7 +1146,7 @@ LONG rc;
      * if drive specified, validate it and check
      * for "X:" and "X:\" directory specifications
      */
-    if (component[1] == ':') {
+    if (component[1] == DRIVESEP) {
         if (!is_valid_drive(*component))
             return EDRIVE;
         p = component + 2;

@@ -113,7 +113,7 @@ static void sh_curdrvdir(char *ppath)
     /* remember current directory */
     drive = dos_gdrv();
     *ppath++ = drive + 'A';
-    *ppath++ = ':';
+    *ppath++ = DRIVESEP;
     *ppath = '\0';
     dos_gdir(drive+1, ppath);
     if (*ppath == '\0')
@@ -375,7 +375,7 @@ static char *sh_path(char *src, char *dest, char *pname)
     }
 
     /* see if extra path separator is needed */
-    if ((last != PATHSEP) && (last != ':'))
+    if ((last != PATHSEP) && (last != DRIVESEP))
         *dest++ = PATHSEP;
 
     /* append file name */

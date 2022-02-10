@@ -666,7 +666,7 @@ WORD inf_disk(char dr_id)
     tree = desk_rs_trees[ADDISKIN];
 
     srcpth[0] = dr_id;
-    srcpth[1] = ':';
+    srcpth[1] = DRIVESEP;
     strcpy(srcpth+2, "\\*.*");
     more = count_ffs(srcpth);
 

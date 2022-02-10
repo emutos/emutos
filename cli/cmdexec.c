@@ -143,7 +143,7 @@ LONG rc;
             dot = p;
             break;
         case PATHSEP:
-        case ':':
+        case DRIVESEP:
             dot = NULL;
             break;
         }

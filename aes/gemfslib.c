@@ -208,7 +208,7 @@ static char *fs_back(char *pstr, char *pend)
     {
         if (*p == PATHSEP)
             break;
-        if (*p == ':')
+        if (*p == DRIVESEP)
         {
             if (p == pstr+1)    /* X: at the start of the string */
             {
@@ -840,7 +840,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
             pstr = fs_back(locstr, NULL);
             if (pstr == locstr)             /* we have a locstr like '*.*',  */
                 break;                      /*  so do nothing, just like TOS */
-            if (*--pstr == ':')             /* at root of drive, */
+            if (*--pstr == DRIVESEP)        /* at root of drive, */
                 break;                      /*  so nothing to do */
             pstr = fs_pspec(locstr, pstr);  /* back up past folder */
             strcpy(pstr, mask);

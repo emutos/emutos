@@ -320,7 +320,7 @@ static void load_accs(WORD n)
 static void sh_curdir(char *ppath)
 {
     *ppath++ = dos_gdrv() + 'A';
-    *ppath++ = ':';
+    *ppath++ = DRIVESEP;
     *ppath++ = PATHSEP;
     *ppath = '\0';
 }

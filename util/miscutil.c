@@ -21,7 +21,7 @@ WORD extract_drive_number(const char *path)
 {
     char c;
 
-    if (path[0] && (path[1] == ':'))
+    if (path[0] && (path[1] == DRIVESEP))
     {
         c = toupper(path[0]);
         if ((c >= 'A') && (c <= 'Z'))

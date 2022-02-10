@@ -20,6 +20,7 @@
  #define MAXPATHLEN      256
  #define BLKDEVNUM       26
  /* sysconf.h */
+ #define DRIVESEP       ':'
  #define PATHSEP        '\\'
  /* nls.h */
  #define _(a) a
