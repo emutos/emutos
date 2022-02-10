@@ -219,7 +219,7 @@ BOOL add_one_level(char *pathname,char *folder)
     strcpy(filename,p);     /* save filename portion */
     strcpy(p,folder);       /* & copy in folder      */
     p += flen;
-    *p++ = '\\';            /* add the trailing path separator */
+    *p++ = PATHSEP;         /* add the trailing path separator */
     strcpy(p,filename);     /* & restore the filename          */
     return TRUE;
 }
@@ -242,7 +242,7 @@ static void remove_one_level(char *pathname)
         return;
 
     for (prev = filename-2; prev >= stop; prev--)
-        if (*prev == '\\')
+        if (*prev == PATHSEP)
             break;
 
     strcpy(prev+1,filename);
@@ -1237,7 +1237,7 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
             {
                 diskname[0] = an_src->a_letter;
                 diskname[1] = ':';
-                diskname[2] = '\\';
+                diskname[2] = PATHSEP;
                 diskname[3] = '\0';
                 tail = diskname;
             }

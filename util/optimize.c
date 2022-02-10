@@ -228,7 +228,7 @@ char *filename_start(char *path)
     char *start = path;
 
     while (*path)
-        if (*path++ == '\\')
+        if (*path++ == PATHSEP)
             start = path;
 
     return start;

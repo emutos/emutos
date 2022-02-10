@@ -19,6 +19,8 @@
  #define CONF_WITH_TT_SHIFTER   1
  #define MAXPATHLEN      256
  #define BLKDEVNUM       26
+ /* sysconf.h */
+ #define PATHSEP        '\\'
  /* nls.h */
  #define _(a) a
  #define N_(a) a

@@ -29,7 +29,6 @@
  *  constants
  */
 
-#define SLASH '\\'
 #define FNAMELEN    (LEN_ZNODE+LEN_ZEXT)    /* as found in dirs etc */
 
 /*

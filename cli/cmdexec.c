@@ -67,8 +67,8 @@ const char *q;
 
     for (p = path; *p; p++)
         ;
-    if (*(p-1) != '\\')
-        *p++ = '\\';
+    if (*(p-1) != PATHSEP)
+        *p++ = PATHSEP;
 
     for (q = name; *q; )
         *p++ = *q++;
@@ -142,7 +142,7 @@ LONG rc;
         case '.':
             dot = p;
             break;
-        case '\\':
+        case PATHSEP:
         case ':':
             dot = NULL;
             break;

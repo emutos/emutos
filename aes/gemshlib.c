@@ -118,7 +118,7 @@ static void sh_curdrvdir(char *ppath)
     dos_gdir(drive+1, ppath);
     if (*ppath == '\0')
     {
-        *ppath++ = '\\';
+        *ppath++ = PATHSEP;
         *ppath = '\0';
     }
 }
@@ -374,9 +374,9 @@ static char *sh_path(char *src, char *dest, char *pname)
         *dest++ = *p++;
     }
 
-    /* see if extra slash is needed */
-    if ((last != '\\') && (last != ':'))
-        *dest++ = '\\';
+    /* see if extra path separator is needed */
+    if ((last != PATHSEP) && (last != ':'))
+        *dest++ = PATHSEP;
 
     /* append file name */
     strcpy(dest, pname);
@@ -435,7 +435,7 @@ static WORD findfile(char *pspec)
     }
 
     /* (3) search in the root directory of the current drive */
-    D.g_work[0] = '\\';
+    D.g_work[0] = PATHSEP;
     strcpy(D.g_work+1, pname);
     if (dos_sfirst(D.g_work, FA_RO | FA_HIDDEN | FA_SYSTEM) == 0)   /* found */
     {
@@ -559,7 +559,7 @@ static void sh_chdef(SHELL *psh)
             strcpy(D.s_cmd, psh->sh_cdir);
             n = strlen(D.s_cmd);
             if (n)
-                D.s_cmd[n++] = '\\';
+                D.s_cmd[n++] = PATHSEP;
         }
         strcpy(D.s_cmd+n, psh->sh_desk);
         break;

@@ -187,14 +187,14 @@ static void centre_title(OBJECT *tree,WORD objnum)
 
 /*
  *  Routine to back off the end of a path string, stopping at either
- *  the first backslash or at the colon preceding the drive specifier.
+ *  the first path separator or at the colon preceding the drive specifier.
  *  The second argument specifies the end of the string; if NULL, the
  *  end is determined via strlen().  If the scan is stopped by a colon,
- *  the routine inserts a backslash in the string immediately following
+ *  the routine inserts a path separator in the string immediately following
  *  the colon.
  *
  *  Returns a pointer to the beginning of the string (if no colon or
- *  backslash found), or to the last backslash.
+ *  backslash found), or to the last path separator.
  */
 static char *fs_back(char *pstr, char *pend)
 {
@@ -203,16 +203,16 @@ static char *fs_back(char *pstr, char *pend)
     if (!pend)
         pend = pstr + strlen(pstr);
 
-    /* back off to last backslash (or colon) */
+    /* back off to last path separator (or colon) */
     for (p = pend; p != pstr; p--)
     {
-        if (*p == '\\')
+        if (*p == PATHSEP)
             break;
         if (*p == ':')
         {
             if (p == pstr+1)    /* X: at the start of the string */
             {
-                ins_char(++p,0,'\\',LEN_ZPATH-3);
+                ins_char(++p,0,PATHSEP,LEN_ZPATH-3);
                 break;
             }
         }
@@ -229,7 +229,7 @@ static char *fs_back(char *pstr, char *pend)
 static char *fs_pspec(char *pstr, char *pend)
 {
     pend = fs_back(pstr, pend);
-    if (*pend == '\\')
+    if (*pend == PATHSEP)
         pend++;
 
     return pend;
@@ -831,7 +831,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
                 pstr = fs_pspec(locstr, NULL);
                 unfmt_str(selname+1, pstr);
                 pstr += strlen(pstr);
-                *pstr++ = '\\';
+                *pstr++ = PATHSEP;
                 strcpy(pstr, mask);
                 newlist = TRUE;
             }

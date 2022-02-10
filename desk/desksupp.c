@@ -1021,7 +1021,7 @@ void build_root_path(char *path,WORD drive)
 
     *p++ = drive;
     *p++= ':';
-    *p++ = '\\';
+    *p++ = PATHSEP;
     *p = '\0';
 }
 

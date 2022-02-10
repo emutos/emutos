@@ -321,7 +321,7 @@ static void sh_curdir(char *ppath)
 {
     *ppath++ = dos_gdrv() + 'A';
     *ppath++ = ':';
-    *ppath++ = '\\';
+    *ppath++ = PATHSEP;
     *ppath = '\0';
 }
 

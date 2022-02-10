@@ -148,7 +148,7 @@ static void sub_path(char *path)
 
     /* now back up to previous directory in path */
     path -= 2;
-    while (*path != '\\')
+    while (*path != PATHSEP)
         path--;
 
     strcpy(path, "\\*.*");

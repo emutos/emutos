@@ -707,7 +707,7 @@ char *iobuf, *p;
 }
 
 /*
- *  extract next dirname from input path (includes any terminating backslash)
+ *  extract next dirname from input path (includes any terminating separator)
  *
  *  returns pointer to next starting point in input path
  */
@@ -715,7 +715,7 @@ PRIVATE char *next_dir(char *out,char *in)
 {
     while(*in) {
         *out++ = *in++;
-        if (*(in-1) == '\\')
+        if (*(in-1) == PATHSEP)
             break;
     }
     *out = '\0';
@@ -726,17 +726,17 @@ PRIVATE char *next_dir(char *out,char *in)
 /*
  *  back up one level of directory in an (assumed) absolute path
  *
- *  returns pointer to char following the backslash at the end of
+ *  returns pointer to char following the path separator at the end of
  *  the next higher level
  */
 PRIVATE char *prev_dir(char *p)
 {
     /* don't backup past root! */
-    if (*--p == '\\')
+    if (*--p == PATHSEP)
         if (*(p-1) == ':')
             return p+1;
 
-    while(*--p != '\\')
+    while(*--p != PATHSEP)
         ;
 
     return p+1;
@@ -763,22 +763,22 @@ LONG rc = 0L;
     *q++ = ':';
 
     /* insert current path if specified path is relative */
-    if (*p != '\\') {
+    if (*p != PATHSEP) {
         if (Dgetpath(temp,out[0]-'A'+1) != 0)   /* e.g. invalid drive */
             temp[0] = '\0';
         strcpy(q,temp);
         q += strlen(q);
     } else p++;
-    *q++ = '\\';
+    *q++ = PATHSEP;
 
     /* copy dirnames one at a time, with special processing for . and .. */
     while(*p) {
         p = next_dir(temp,p);
         if (temp[0] == '.') {
-            if ((temp[1] == '\\') || (temp[1] == '\0'))     /* got '.':       */
+            if ((temp[1] == PATHSEP) || (temp[1] == '\0'))  /* got '.':       */
                 continue;                                   /*  nothing to do */
             if ((temp[1] == '.')
-             && ((temp[2] == '\\') || (temp[2] == '\0'))) { /* got '..':         */
+             && ((temp[2] == PATHSEP) || (temp[2] == '\0'))) {  /* got '..':         */
                 q = prev_dir(q);                            /* move up one level */
                 continue;
             }
@@ -840,8 +840,8 @@ LONG bufsize, n, rc;
     outptr = extract_path(outname,fullname);
     if (output_is_dir) {
         outptr += strlen(outptr);
-        if ((*(outptr-1) != '\\') && (*(outptr-1) != ':'))
-            *outptr++ = '\\';
+        if ((*(outptr-1) != PATHSEP) && (*(outptr-1) != ':'))
+            *outptr++ = PATHSEP;
         *outptr = '\0';
     }
 
@@ -950,7 +950,7 @@ char *p = buf;
 
     rc = Dgetpath(p,drive);
     if (!*p) {          /* the root */
-        *p++ = '\\';
+        *p++ = PATHSEP;
         *p = '\0';
     }
 
@@ -968,7 +968,7 @@ const char *p;
 char *q, *sep = dest;
 
     for (p = src, q = dest; *p; ) {
-        if ((*p == '\\') || (*p == ':'))
+        if ((*p == PATHSEP) || (*p == ':'))
             sep = q + 1;
         *q++ = *p++;
     }
@@ -1056,17 +1056,17 @@ WORD drive;
         Dgetpath(p,drive+1);
         for ( ; *p; p++)
             ;
-        *p++ = '\\';
+        *p++ = PATHSEP;
         *p = '\0';
     }
-    if (*(p-1) == '\\') {
+    if (*(p-1) == PATHSEP) {
         strcpy(p,"*.*");
         p += 3;
     }
 
     strupper(filespec);
 
-    for (q = p; (*q != '\\') && (q >= filespec); q--)
+    for (q = p; (*q != PATHSEP) && (q >= filespec); q--)
         if (*q == '*')  /* wildcard, no more tweaks */
             return;
 
@@ -1150,7 +1150,7 @@ LONG rc;
         if (!is_valid_drive(*component))
             return EDRIVE;
         p = component + 2;
-        if (*p == '\\')
+        if (*p == PATHSEP)
             p++;
         if (!*p)              /* X: and X:\ are valid directories */
             return 0L;
@@ -1161,7 +1161,7 @@ LONG rc;
             return EPTHNF;
     }
 
-    if (*(p-1) == '\\')
+    if (*(p-1) == PATHSEP)
         fixup = 1;
     else fixup = 0;
 
@@ -1173,7 +1173,7 @@ LONG rc;
         rc = NOT_DIRECTORY;     /* a file, not a directory */
 
     if (fixup)
-        *p = '\\';
+        *p = PATHSEP;
 
     return rc;
 }

@@ -390,7 +390,7 @@ PRIVATE char *insertion_point(char *start)
 char *p, *ins = NULL;
 
     for (p = ins = start; *p; p++) {
-        if ((*p == ':') || (*p == '\\'))
+        if ((*p == ':') || (*p == PATHSEP))
             ins = p+1;
     }
 

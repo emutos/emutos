@@ -54,6 +54,8 @@
 #define LEN_ZEXT    3                   /* max extension length */
 #define MAXPATHLEN  (LEN_ZPATH+LEN_ZFNAME+1) /* convenient shorthand */
 
+#define PATHSEP     '\\'                /* standard Atari path separator */
+
 /*
  * Maximum coordinate supported (must fit in WORD)
  */
