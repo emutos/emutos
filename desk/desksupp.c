@@ -1014,20 +1014,6 @@ WORD do_aopen(ANODE *pa, BOOL isapp, WORD curr, char *pathname, char *pname, cha
 
 
 /*
- *  Build root path for specified drive
- */
-void build_root_path(char *path,WORD drive)
-{
-    char *p = path;
-
-    *p++ = drive;
-    *p++ = DRIVESEP;
-    *p++ = PATHSEP;
-    *p = '\0';
-}
-
-
-/*
  *  Open a disk
  *
  *  if curr >= 0, it is a screen object id; the disk letter will be

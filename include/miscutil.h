@@ -10,6 +10,7 @@
 #ifndef MISCUTIL_H
 #define MISCUTIL_H
 
+void build_root_path(char *path, char drive);
 WORD extract_drive_number(const char *path);
 void set_all_files(char *target);
 

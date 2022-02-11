@@ -11,6 +11,20 @@
 #include "miscutil.h"
 
 /*
+ *  builds root path for specified drive
+ */
+void build_root_path(char *path, char drive)
+{
+    char *p = path;
+
+    *p++ = drive;
+    *p++ = DRIVESEP;
+    *p++ = PATHSEP;
+    *p = '\0';
+}
+
+
+/*
  * returns the drive number corresponding to the drive prefix (X:) in
  * the passed string
  *

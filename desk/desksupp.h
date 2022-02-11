@@ -15,7 +15,6 @@
 #define CTL_Q   ('Q'-0x40)
 #define CTL_S   ('S'-0x40)
 
-void build_root_path(char *path, WORD drive);
 void deselect_all(OBJECT *tree);
 void desk_busy_off(void);
 void desk_busy_on(void);

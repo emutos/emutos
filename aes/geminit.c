@@ -30,6 +30,7 @@
 #include "xbiosbind.h"
 #include "has.h"
 #include "biosext.h"
+#include "miscutil.h"
 
 #include "gemgsxif.h"
 #include "gemdosif.h"
@@ -312,19 +313,6 @@ static void load_accs(WORD n)
     for (i = 0; i < n; i++)
         load_one_acc(&acc[i]);
 }
-
-
-/*
- *  Set default desktop path (root of current drive)
- */
-static void sh_curdir(char *ppath)
-{
-    *ppath++ = dos_gdrv() + 'A';
-    *ppath++ = DRIVESEP;
-    *ppath++ = PATHSEP;
-    *ppath = '\0';
-}
-
 
 /*
  *  Routine to read in the start of a file
@@ -742,7 +730,7 @@ void run_accs_and_desktop(void)
 
     wm_start();                     /* initialise window vars */
     fs_start();                     /* startup gem libs */
-    sh_curdir(D.s_cdir);            /* remember current desktop directory */
+    build_root_path(D.s_cdir, 'A'+dos_gdrv());  /* root of current drive */
     isgem = process_inf2(&isauto);  /* process emudesk.inf part 2 */
 
     dsptch();                       /* off we go !!! */
