@@ -715,7 +715,7 @@ WORD fun_mkdir(WNODE *pw_node)
         }
 
         len = strlen(path); /* before we restore old path */
-        restore_path(ptmp); /* restore original path */
+        set_all_files(ptmp);/* restore original path */
         if (len >= LEN_ZPATH-3)
         {
             fun_alert(1,STDEEPPA);
