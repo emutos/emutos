@@ -30,3 +30,12 @@ WORD extract_drive_number(const char *path)
 
     return -1;
 }
+
+
+/*
+ *  Copies "*.*" to the specified position in a path string
+ */
+void set_all_files(char *target)
+{
+    strcpy(target,"*.*");
+}

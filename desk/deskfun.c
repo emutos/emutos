@@ -26,6 +26,7 @@
 #include "obdefs.h"
 #include "gemdos.h"
 #include "optimize.h"
+#include "miscutil.h"
 
 #include "aesdefs.h"
 #include "deskbind.h"
@@ -456,7 +457,7 @@ static BOOL search_recursive(WORD curr, char *pathname, char *searchwild)
     p = filename_start(pathname);
     strcpy(p, searchwild);
     ret = dos_sfirst(pathname, DISPATTR);
-    strcpy(p, "*.*");
+    set_all_files(p);
     dos_sdta(save_dta); /* in case we must return */
 
     switch(ret) {
@@ -665,7 +666,7 @@ void fun_mask(WNODE *pw)
         }
         else    /* empty string => use the default of "*.*" */
         {
-            strcpy(maskptr, "*.*");
+            set_all_files(maskptr);
         }
         refresh_window(pw, FALSE);
     }
@@ -1027,7 +1028,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
 
             /* build pathname for do_aopen() */
             strcpy(pathname, an_dest->a_pappl);
-            strcpy(filename_start(pathname),"*.*");
+            del_fname(pathname);
 
             /* set global so desktop will exit if do_aopen() succeeds */
             exit_desktop = do_aopen(an_dest, TRUE, dobj, pathname, filename_start(an_dest->a_pappl), tail);
@@ -1106,7 +1107,7 @@ static WORD fun_file2win(PNODE *pn_src, char  *spec, ANODE *an_dest, FNODE *fn_d
     }
     else
     {
-        strcpy(p, "*.*");
+        set_all_files(p);
     }
 
     return fun_op(OP_COPY, -1, pn_src, pathname);

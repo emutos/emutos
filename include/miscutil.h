@@ -11,5 +11,6 @@
 #define MISCUTIL_H
 
 WORD extract_drive_number(const char *path);
+void set_all_files(char *target);
 
 #endif

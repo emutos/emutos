@@ -26,6 +26,7 @@
 #include "gemdos.h"
 #include "rectfunc.h"
 #include "optimize.h"
+#include "miscutil.h"
 #include "biosbind.h"
 #include "biosdefs.h"
 #include "xbiosbind.h"
@@ -1058,7 +1059,7 @@ WORD do_dopen(WORD curr)
     if (pw)
     {
         build_root_path(path,drv);
-        strcpy(path+3,"*.*");
+        set_all_files(path+3);
         if (!do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))
         {
             win_free(pw);
@@ -1117,7 +1118,7 @@ void do_fopen(WNODE *pw, WORD curr, char *pathname, WORD allow_new_win)
             remove_locate_shortcut(curr);
             return;
         }
-        strcpy(p,"*.*");
+        set_all_files(p);
         new_win = TRUE;
     }
     else
@@ -1318,7 +1319,7 @@ WORD do_info(WORD curr)
                 pf = &fn;
                 memcpy(&pf->f_attr, &dta->d_attrib, 23);
                 strcpy(pathname, pa->a_pappl);
-                strcpy(filename_start(pathname),"*.*");
+                del_fname(pathname);
                 pathptr = pathname;
             }
             else

@@ -25,6 +25,7 @@
 #include "obdefs.h"
 #include "gemdos.h"
 #include "optimize.h"
+#include "miscutil.h"
 
 #include "deskbind.h"
 #include "deskglob.h"
@@ -170,15 +171,6 @@ char *add_fname(char *path, char *new_name)
 
 
 /*
- *  Copies "*.*" to the specified position in a path string
- */
-void set_all_files(char *target)
-{
-    strcpy(target,"*.*");
-}
-
-
-/*
  *  test if specified file/folder exists
  */
 static WORD item_exists(char *path, BOOL is_folder)
@@ -208,7 +200,7 @@ static WORD item_exists(char *path, BOOL is_folder)
  */
 void del_fname(char *pstr)
 {
-    strcpy(filename_start(pstr), "*.*");
+    set_all_files(filename_start(pstr));
 }
 
 

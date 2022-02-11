@@ -280,7 +280,7 @@ static WORD fs_active(char *ppath, char *pspec, WORD *pcount)
 
     strcpy(allpath, ppath);         /* 'allpath' gets all files */
     fname = fs_pspec(allpath,NULL);
-    strcpy(fname,"*.*");
+    set_all_files(fname);
 
     user_dta = dos_gdta();          /* remember user's DTA */
     dos_sdta(&D.g_dta);
@@ -527,7 +527,7 @@ static void set_mask(char *mask, char *path)
 
     pend = fs_pspec(path, NULL);
     if (!*pend)                 /* if there's no mask, add one */
-        strcpy(pend, "*.*");
+        set_all_files(pend);
     strlcpy(mask, pend, LEN_ZPATH);
 }
 

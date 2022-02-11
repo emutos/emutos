@@ -25,7 +25,6 @@ typedef struct {    /* #files/#folders/total filesize of directory & its subdire
 void draw_fld(OBJECT *tree, WORD obj);
 void draw_dial(OBJECT *tree);
 char *add_fname(char *path, char *new_name);
-void set_all_files(char *target);
 void del_fname(char *pstr);
 void add_path(char *path, char *new_name);
 WORD d_doop(WORD level, WORD op, char *psrc_path, char *pdst_path, OBJECT *tree, DIRCOUNT *count);
