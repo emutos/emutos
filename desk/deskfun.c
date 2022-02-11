@@ -1156,7 +1156,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
     {
         ib_src = (ICONBLK *)G.g_screen[sobj].ob_spec;
         build_root_path(path, ib_src->ib_char);
-        strcat(path,"*.*");
+        set_all_files(path+3);
     }
 
     pn_src = pn_open(path, NULL);
@@ -1399,7 +1399,7 @@ void fun_del(WNODE *pw, WORD sobj)
                 break;
             case AT_ISDISK:
                 build_root_path(path, pa->a_letter);
-                strcat(path,"*.*");
+                set_all_files(path+3);
                 break;
             default:        /* "can't happen" */
                 continue;
