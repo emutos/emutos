@@ -297,12 +297,24 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             break;
         }
 
-        /*
-         * primary mouse rectangle wait:
-         * . for OUTTITLE/OUTITEM, wait for mouse to leave cur_title/cur_item
-         * . for INBAR/INBARECT, wait for mouse to enter THEACTIVE
-         */
+        /* set up primary mouse rectangle wait according to 'main_rect' set above */
         rect_change(tree, &p1mor, main_rect, leave_flag);
+
+        /*
+         * at this point the mouse rectangle waits are as follows:
+         * 1) INBAR
+         *      primary: wait for mouse to enter THEACTIVE
+         *      secondary: wait for mouse to leave INBAR
+         * 2) INBARECT:
+         *      primary: wait for mouse to enter THEACTIVE
+         *      secondary: wait for mouse to enter cur_menu
+         * 3) OUTITEM:
+         *      primary: wait for mouse to leave cur_item
+         *      secondary: unused
+         * 4) OUTTITLE:
+         *      primary: wait for mouse to leave cur_title
+         *      secondary: unused
+         */
 
         /* wait for something */
         ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, 0x0L, buparm, NULL, rets);
