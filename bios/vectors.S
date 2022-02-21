@@ -388,6 +388,17 @@ vbl_no_palette:
         move.l  _screenpt.w,d0
         jeq     vbl_no_screenpt
         move.l  d0,_v_bas_ad.w
+        // middle & high bytes of address are valid for all shifters
+#ifdef __mcoldfire__
+        lsr.l   #8,d0
+        move.b  d0,0xffff8203.w
+        lsr.l   #8,d0
+#else
+        lsr.w   #8,d0
+        move.b  d0,0xffff8203.w
+        swap    d0
+#endif
+        move.b  d0,0xffff8201.w
 #if CONF_WITH_VIDEL
         tst.w   _has_videl
         jne     set_video_low
@@ -403,19 +414,11 @@ vbl_no_palette:
 #if CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER || CONF_WITH_STE_SHIFTER
         jra     st_shifter
 set_video_low:
+        // this must be set *after* setting mid/hi bytes
+        move.l  _screenpt.w,d0              // recover low address byte
         move.b  d0,0xffff820d.w
 st_shifter:
 #endif
-#ifdef __mcoldfire__
-        lsr.l   #8,d0
-        move.b  d0,0xffff8203.w
-        lsr.l   #8,d0
-#else
-        lsr.w   #8,d0
-        move.b  d0,0xffff8203.w
-        swap    d0
-#endif
-        move.b  d0,0xffff8201.w
 vbl_no_screenpt:
 #endif /* CONF_WITH_ATARI_VIDEO */
 
