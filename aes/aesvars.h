@@ -26,7 +26,6 @@ extern UBYTE    indisp;
 extern WORD     fpt, fph, fpcnt;                /* forkq tail, head, count */
 
 extern SPB      wind_spb;
-extern CDA      *cda;
 extern WORD     curpid;
 
 #endif /* _AESVARS_H */
