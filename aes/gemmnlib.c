@@ -39,6 +39,7 @@
 #include "gempd.h"
 #include "rectfunc.h"
 #include "gemmnlib.h"
+#include "gemmnext.h"
 #include "geminit.h"
 
 
@@ -470,11 +471,11 @@ void mn_cleanup(void)
     }
 
 #if CONF_WITH_MENU_EXTENSION
-    if (rlr->p_submenu)
+    if (gl_submenu)
     {
-        dos_free(rlr->p_submenu);
-        rlr->p_submenu = NULL;
-        rlr->p_submenu_hwm = NULL;
+        dos_free(gl_submenu);
+        gl_submenu = NULL;
+        gl_submenu_hwm = NULL;
     }
 #endif
 }

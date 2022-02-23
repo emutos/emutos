@@ -32,6 +32,12 @@ typedef struct {
         WORD    height;         /* default scroll height (items) */
 } MN_SET;
 
+/*
+ * globals for SMIB array
+ */
+extern SMIB *gl_submenu;
+extern SMIB *gl_submenu_hwm;
+
 void mnext_init(void);
 WORD mn_attach(WORD flag, OBJECT *tree, WORD item, MENU *mdata);
 WORD mn_istart(WORD flag, OBJECT *tree, WORD menu, WORD start);

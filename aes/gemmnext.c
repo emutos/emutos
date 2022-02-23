@@ -53,6 +53,11 @@
 
 #include "string.h"
 
+/* globals */
+GLOBAL SMIB *gl_submenu;            /* ptr to array of submenu info blocks */
+GLOBAL SMIB *gl_submenu_hwm;        /* high water mark of gl_submenu[] */
+
+
 /* submenu identification */
 #define SUBMENU_MARKER          0x03        /* right arrow */
 #define SUBMENU_MARKER_OFFSET   2           /* from end of string */
@@ -354,20 +359,18 @@ WORD mn_popup(MENU *menu, WORD xpos, WORD ypos, MENU *mdata)
  */
 static SMIB *find_submenu_from_obtype(WORD ob_type)
 {
-    SMIB *submenu;
     WORD n;
 
-    submenu = rlr->p_submenu;
-    if (!submenu)           /* any submenus yet? */
+    if (!gl_submenu)        /* any submenus yet? */
         return NULL;
 
     /* obtain index */
     n = ((ob_type >> 8) & 0x00ff) - 128;
     if ((n < 0)
-     || (n >= (rlr->p_submenu_hwm - rlr->p_submenu)))
+     || (n >= (gl_submenu_hwm - gl_submenu)))
         return NULL;
 
-    return &submenu[n];
+    return &gl_submenu[n];
 }
 
 /*
@@ -378,7 +381,7 @@ static SMIB *find_submenu_from_tree(OBJECT *tree, WORD root)
     SMIB *submenu;
 
     /* search submenu array */
-    for (submenu = rlr->p_submenu; submenu < rlr->p_submenu_hwm; submenu++)
+    for (submenu = gl_submenu; submenu < gl_submenu_hwm; submenu++)
     {
         if ((submenu->s_tree == tree)
          && (submenu->s_menu == root))
@@ -477,13 +480,13 @@ static BOOL attach_submenu(OBJECT *tree, WORD item, MENU *mdata)
         return FALSE;
 
     /* initialise submenu array if necessary */
-    if (!rlr->p_submenu)    /* no array yet! */
+    if (!gl_submenu)        /* no array yet! */
     {
-        rlr->p_submenu = dos_alloc_anyram(NUM_SMIBS*sizeof(SMIB));
-        if (!rlr->p_submenu)
+        gl_submenu = dos_alloc_anyram(NUM_SMIBS*sizeof(SMIB));
+        if (!gl_submenu)
             return FALSE;
-        bzero(rlr->p_submenu, NUM_SMIBS*sizeof(SMIB));
-        rlr->p_submenu_hwm = rlr->p_submenu;
+        bzero(gl_submenu, NUM_SMIBS*sizeof(SMIB));
+        gl_submenu_hwm = gl_submenu;
     }
 
     /* try to find existing entry in submenu array */
@@ -492,20 +495,21 @@ static BOOL attach_submenu(OBJECT *tree, WORD item, MENU *mdata)
     /* if not found, look for unused entry */
     if (!submenu)
     {
-        for (submenu = rlr->p_submenu; submenu < rlr->p_submenu_hwm; submenu++)
+        for (submenu = gl_submenu; submenu < gl_submenu_hwm; submenu++)
             if (submenu->s_usage == 0)
                 break;
     }
 
     /*
-     * at this point, submenu points to an unused entry: it may be below
-     * or at the high water mark.  if it's above, we must reset the hwm
+     * at this point, submenu points to either a matching or (if no match
+     * found) an unused entry.  if the (unused) entry is above the high
+     * water mark, we must reset the hwm
      */
-    if (submenu >= rlr->p_submenu_hwm)
+    if (submenu >= gl_submenu_hwm)
     {
-        if (submenu >= rlr->p_submenu+NUM_SMIBS)    /* table is full ... */
+        if (submenu >= gl_submenu+NUM_SMIBS)    /* table is full ... */
             return FALSE;
-        rlr->p_submenu_hwm++;
+        gl_submenu_hwm++;
     }
 
     /* update submenu array */
@@ -516,7 +520,7 @@ static BOOL attach_submenu(OBJECT *tree, WORD item, MENU *mdata)
 
     /* update menu item */
     obj = &tree[item];
-    obj->ob_type |= ((submenu - rlr->p_submenu) + 128) << 8;
+    obj->ob_type |= ((submenu - gl_submenu) + 128) << 8;
     obj->ob_flags |= SUBMENU;
     p = (char *)obj->ob_spec;
     *(p + strlen(p) - SUBMENU_MARKER_OFFSET) = SUBMENU_MARKER;

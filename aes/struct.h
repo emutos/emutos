@@ -142,11 +142,6 @@ struct aespd                /* process descriptor */
         MFORM   p_mouse;        /* used by graf_mouse(SAVE,RESTORE) */
 #endif
 
-#if CONF_WITH_MENU_EXTENSION
-        SMIB    *p_submenu;     /* ptr to array of submenu info blocks */
-        SMIB    *p_submenu_hwm; /* high water mark of p_submenu[] */
-#endif
-
         char    *p_qaddr;       /* */
         WORD    p_qindex;       /* */
         char    p_queue[QUEUE_SIZE];    /* */
