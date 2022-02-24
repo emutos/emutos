@@ -180,11 +180,25 @@ BOOL do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
 
 
 /*
+ *  Test if an item number has changed
+ */
+static BOOL item_changed(WORD last_item, WORD cur_item)
+{
+    if (last_item == NIL)
+        return FALSE;
+
+    if (last_item == cur_item)
+        return FALSE;
+
+    return TRUE;
+}
+
+/*
  *  Set or reset the SELECTED flag of an item iff the item number has changed
  */
 static BOOL menu_select(OBJECT *tree, WORD last_item, WORD cur_item, WORD setit)
 {
-    if ((last_item != NIL) && (last_item != cur_item))
+    if (item_changed(last_item, cur_item))
     {
         return do_chg(tree, last_item, SELECTED, setit, TRUE, TRUE);
     }
