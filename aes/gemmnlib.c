@@ -180,10 +180,9 @@ BOOL do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
 
 
 /*
- *  Routine to set and reset values of certain items if they
- *  are not the current item
+ *  Set or reset the SELECTED flag of an item iff the item number has changed
  */
-static BOOL menu_set(OBJECT *tree, WORD last_item, WORD cur_item, WORD setit)
+static BOOL menu_select(OBJECT *tree, WORD last_item, WORD cur_item, WORD setit)
 {
     if ((last_item != NIL) && (last_item != cur_item))
     {
@@ -383,17 +382,17 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             }
         }
         /* unhilite old item */
-        menu_set(tree, last_item, cur_item, FALSE);
+        menu_select(tree, last_item, cur_item, FALSE);
         /* unhilite old title & pull up old menu */
-        if (menu_set(tree, last_title, cur_title, FALSE))
+        if (menu_select(tree, last_title, cur_title, FALSE))
             menu_sr(FALSE, tree, cur_menu);
         /* hilite new title & pull down new menu */
-        if (menu_set(tree, cur_title, last_title, TRUE))
+        if (menu_select(tree, cur_title, last_title, TRUE))
         {
             cur_menu = menu_down(tree, cur_title);
         }
         /* hilite new item */
-        menu_set(tree, cur_item, last_item, TRUE);
+        menu_select(tree, cur_item, last_item, TRUE);
     }
 
     /* decide what should be cleaned up and returned */
