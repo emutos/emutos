@@ -63,6 +63,7 @@ GLOBAL SMIB *gl_submenu_hwm;        /* high water mark of gl_submenu[] */
 #define SUBMENU_MARKER_OFFSET   2           /* from end of string */
 
 static WORD keystate;
+static void *blitsave;
 
 /*
  * values for 'settings' below
@@ -612,5 +613,79 @@ void mn_settings(WORD flag, MN_SET *set)
             settings.height = clamp_height(set->height);
         break;
     }
+}
+
+/*
+ * display_submenu: display a submenu
+ *
+ * input:   menu tree ptr / number of originating object (one with SUBMENU flag)
+ * returns: ptr to parent object within submenu
+ */
+OBJECT *display_submenu(OBJECT *tree, WORD objnum)
+{
+    SMIB *submenu;
+    OBJECT *origin = tree + objnum;
+    OBJECT *smtree, *smobj;
+    GRECT coords;
+
+    /* find the submenu info */
+    submenu = find_submenu_from_obtype(origin->ob_type);
+    if (!submenu)       /* "can't happen" */
+        return NULL;
+
+    /* get the coordinates of the originating object */
+    ob_actxywh(tree, objnum, &coords);
+
+    /*
+     * position the parent box
+     *
+     * x coordinate: the submenu box should be on the right of the
+     * originating object and should touch the "submenu arrow", unless
+     * this would cause the box to extend beyond the window area.  in
+     * this case the box should be on the left of the menu item and
+     * should just overlap it.
+     *
+     * y coordinate: the start item should have the same y position as
+     * the originating object, so to get the y position of the parent,
+     * we need to subtract the y offset of the start item.  then we must
+     * clamp the box to the screen area.
+     */
+    smtree = submenu->s_tree;
+    smobj = smtree + submenu->s_menu;
+    smobj->ob_x = coords.g_x + coords.g_w - gl_wchar;
+    if (smobj->ob_x + smobj->ob_width + MENU_THICKNESS > gl_width)
+        smobj->ob_x = coords.g_x - smobj->ob_width;
+    smobj->ob_y = coords.g_y - smtree[submenu->s_start].ob_y;
+    clamp_ypos(smobj);
+
+    /* save the background */
+    blitsave = popup_blit(smobj, NULL);
+
+    if (!blitsave)
+        return NULL;
+
+    /* display the submenu tree */
+    ob_draw(smtree, submenu->s_menu, MAX_DEPTH);
+
+    return smobj;
+}
+
+/*
+ * undisplay_submenu: remove a submenu display
+ */
+void undisplay_submenu(OBJECT *tree, WORD objnum)
+{
+    SMIB *submenu;
+    OBJECT *origin = tree + objnum;
+    OBJECT *smobj;
+
+    /* find the submenu */
+    submenu = find_submenu_from_obtype(origin->ob_type);
+    if (!submenu)       /* "can't happen" */
+        return;
+
+    /* restore the background */
+    smobj = submenu->s_tree + submenu->s_menu;
+    popup_blit(smobj, blitsave);
 }
 #endif

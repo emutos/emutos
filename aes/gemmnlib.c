@@ -254,7 +254,7 @@ static WORD menu_down(OBJECT *tree, WORD ititle)
 
 WORD mn_do(WORD *ptitle, WORD *pitem)
 {
-    OBJECT  *tree;
+    OBJECT  *tree, *smtree;
     LONG    buparm;
     WORD    mnu_flags, done, main_rect;
     WORD    cur_menu, cur_item, last_item;
@@ -395,6 +395,19 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
                 }
             }
         }
+
+#if CONF_WITH_MENU_EXTENSION
+        /* remove old submenu if appropriate */
+        if (item_changed(last_item, cur_item))
+        {
+            if (tree[last_item].ob_flags & SUBMENU)
+            {
+                if (smtree)
+                    undisplay_submenu(tree, last_item);
+            }
+        }
+#endif
+
         /* unhilite old item */
         menu_select(tree, last_item, cur_item, FALSE);
         /* unhilite old title & pull up old menu */
@@ -407,6 +420,17 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         }
         /* hilite new item */
         menu_select(tree, cur_item, last_item, TRUE);
+
+#if CONF_WITH_MENU_EXTENSION
+        /* display submenu if appropriate */
+        if (item_changed(cur_item, last_item))
+        {
+            if (tree[cur_item].ob_flags & SUBMENU)
+            {
+                smtree = display_submenu(tree, cur_item);
+            }
+        }
+#endif
     }
 
     /* decide what should be cleaned up and returned */
