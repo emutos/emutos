@@ -265,7 +265,7 @@ static WORD handle_popup(MENU *menu)
     {
         setup_moblk(&m, menu, mx, my);
 
-        events = ev_multi(MU_M1|MU_BUTTON, &m, NULL, 0L, 0x0001ff01L, NULL, rets);
+        events = ev_multi(MU_M1|MU_BUTTON, &m, NULL, NULL, 0L, 0x0001ff01L, NULL, rets);
 
         mx = rets[0];
         my = rets[1];

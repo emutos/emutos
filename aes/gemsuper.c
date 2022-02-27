@@ -147,8 +147,14 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         if (MU_FLAGS & MU_TIMER)
             count = MAKE_ULONG(MT_HICOUNT, MT_LOCOUNT);
         buparm = combine_cms(MB_CLICKS,MB_MASK,MB_STATE);
+#if CONF_WITH_MENU_EXTENSION
+        ret = ev_multi((MU_FLAGS & MU_TOSVALID),
+                        (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS, NULL,
+                        count, buparm, (WORD *)MME_PBUFF, &EV_MX);
+#else
         ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS,
                         count, buparm, (WORD *)MME_PBUFF, &EV_MX);
+#endif
         if ((ret & MU_MESAG) && (*(WORD *)MME_PBUFF == AC_CLOSE))
             rlr->p_flags |= AP_ACCLOSE;
         break;

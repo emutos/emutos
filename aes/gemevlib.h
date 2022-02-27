@@ -19,8 +19,13 @@ UWORD ev_button(WORD bflgclks, UWORD bmask, UWORD bstate, WORD rets[]);
 void ev_mesag(WORD *mebuff);
 void ev_mouse(MOBLK *pmo, WORD rets[]);
 void ev_timer(LONG count);
+#if CONF_WITH_MENU_EXTENSION
+WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, MOBLK *pmo3, LONG tmcount,
+              LONG buparm, WORD *mebuff, WORD prets[]);
+#else
 WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
               LONG buparm, WORD *mebuff, WORD prets[]);
+#endif
 WORD ev_dclick(WORD rate, WORD setit);
 
 /*

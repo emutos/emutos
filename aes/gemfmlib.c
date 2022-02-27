@@ -308,8 +308,13 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
             ob_edit(tree, edit_obj, 0, &idx, EDINIT);
         }
         /* wait for mouse or key */
+#if CONF_WITH_MENU_EXTENSION
+        which = ev_multi(MU_KEYBD | MU_BUTTON, NULL, NULL, NULL,
+                         0x0L, 0x0002ff01L, NULL, rets);
+#else
         which = ev_multi(MU_KEYBD | MU_BUTTON, NULL, NULL,
                          0x0L, 0x0002ff01L, NULL, rets);
+#endif
 
         /* handle keyboard event */
         if (which & MU_KEYBD)

@@ -334,7 +334,11 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
          */
 
         /* wait for something */
+#if CONF_WITH_MENU_EXTENSION
+        ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, NULL, 0x0L, buparm, NULL, rets);
+#else
         ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, 0x0L, buparm, NULL, rets);
+#endif
 
         /*
          * if it's a button. first check if we are still in the initial state (INBAR).

@@ -436,8 +436,14 @@ void ctlmgr(void)
 #endif
         if (gl_mntree)                  /* only wait on bar when there  */
             ev_which |= MU_M1;          /* is a menu                    */
+
+#if CONF_WITH_MENU_EXTENSION
+        ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait, NULL,
+                                0x0L, 0x0001ff01L, msgbuf, rets);
+#else
         ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
                                 0x0L, 0x0001ff01L, msgbuf, rets);
+#endif
 
         wm_update(BEG_UPDATE);          /* take the screen */
         /*

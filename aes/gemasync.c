@@ -156,6 +156,9 @@ EVSPEC iasync(WORD afunc, LONG aparm)
         break;
     case MU_M1:
     case MU_M2:
+#if CONF_WITH_MENU_EXTENSION
+    case MU_M3:
+#endif
         amouse(e,aparm);
         break;
     case MU_MESAG:
