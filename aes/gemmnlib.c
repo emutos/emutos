@@ -254,7 +254,7 @@ static WORD menu_down(OBJECT *tree, WORD ititle)
 
 WORD mn_do(WORD *ptitle, WORD *pitem)
 {
-    OBJECT  *tree, *smtree;
+    OBJECT  *tree;
     LONG    buparm;
     WORD    mnu_flags, done, main_rect;
     WORD    cur_menu, cur_item, last_item;
@@ -265,6 +265,9 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     BOOL    leave_flag;
     WORD    rets[6];
     OBJECT  *obj;
+#if CONF_WITH_MENU_EXTENSION
+    OBJECT  *smtree;
+#endif
 
     /*
      * initially wait to go into the active part of the bar,
