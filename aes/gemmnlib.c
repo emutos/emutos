@@ -49,21 +49,13 @@
 
 /*** STATE DEFINITIONS FOR menu_state ***********************************/
 
-#define INBAR   1       /* mouse position       outside menu bar & mo dn */
-                        /* multi wait           mo up | in menu bar     */
-                        /* moves                -> 5  ,  ->2            */
+#define START_STATE     1   /* mouse position: in menu bar, outside title part */
 
-#define OUTTITLE 2      /* mouse position       over title && mo dn     */
-                        /* multiwait            mo up | out title rect  */
-                        /* moves                -> 5  , ->1 ->2  ->3    */
+#define INTITLE_STATE   2   /* mouse position: inside title part of menu bar */
 
-#define OUTITEM 3       /* mouse position       over item && mo dn      */
-                        /* multi wait           mo up | out item rect   */
-                        /* moves                -> 5  , ->1 ->2 ->3 ->4 */
+#define INITEM_STATE    3   /* mouse position: inside menu item */
 
-#define INBARECT 4      /* mouse position       out menu rect && bar && mo dn*/
-                        /* multi wait   mo up | in menu rect | in menu bar */
-                        /* moves        -> 5  , -> 3         , -> 2     */
+#define OUTSIDE_STATE   4   /* mouse position: outside title bar & menu items */
 
 
 GLOBAL OBJECT   *gl_mntree;
@@ -274,7 +266,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
      * or for the button state to change, or to go out of the
      * bar when nothing is down
      */
-    menu_state = INBAR;
+    menu_state = START_STATE;
 
     done = FALSE;
     buparm = 0x00010101L;
@@ -289,26 +281,26 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 
         switch(menu_state)
         {
-        case INBAR:
+        case START_STATE:
             /* secondary wait for mouse to leave THEBAR */
             mnu_flags |= MU_M2;
             rect_change(tree, &p2mor, THEBAR, TRUE);
             main_rect = THEACTIVE;
             leave_flag = FALSE;
             break;
-        case INBARECT:
+        case OUTSIDE_STATE:
             /* secondary wait for mouse to enter cur_menu */
             mnu_flags |= MU_M2;
             rect_change(tree, &p2mor, cur_menu, FALSE);
             main_rect = THEACTIVE;
             leave_flag = FALSE;
             break;
-        case OUTITEM:
+        case INITEM_STATE:
             main_rect = cur_item;
             buparm = (button & 0x0001) ? 0x00010100L : 0x00010101L;
             leave_flag = TRUE;
             break;
-        default:    /* OUTTITLE */
+        default:    /* INTITLE_STATE */
             main_rect = cur_title;
             leave_flag = TRUE;
             break;
@@ -319,16 +311,16 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 
         /*
          * at this point the mouse rectangle waits are as follows:
-         * 1) INBAR
+         * 1) START_STATE
          *      primary: wait for mouse to enter THEACTIVE
-         *      secondary: wait for mouse to leave INBAR
-         * 2) INBARECT:
+         *      secondary: wait for mouse to leave THEBAR
+         * 2) OUTSIDE_STATE:
          *      primary: wait for mouse to enter THEACTIVE
          *      secondary: wait for mouse to enter cur_menu
-         * 3) OUTITEM:
+         * 3) INITEM_STATE:
          *      primary: wait for mouse to leave cur_item
          *      secondary: unused
-         * 4) OUTTITLE:
+         * 4) INTITLE_STATE:
          *      primary: wait for mouse to leave cur_title
          *      secondary: unused
          */
@@ -341,7 +333,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 #endif
 
         /*
-         * if it's a button. first check if we are still in the initial state (INBAR).
+         * if it's a button. first check if we are still in the initial state.
          * if so, the user is just holding the button down in the bar, and we stay in
          * the loop, doing nothing, not even checking where the mouse is.
          *
@@ -353,9 +345,9 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
          */
         if (ev_which & MU_BUTTON)
         {
-            if (menu_state == INBAR)
+            if (menu_state == START_STATE)
                 continue;
-            if (menu_state != OUTTITLE)
+            if (menu_state != INTITLE_STATE)
                 break;
             buparm ^= 0x00000001;
         }
@@ -370,7 +362,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         cur_title = ob_find(tree, THEACTIVE, 1, rets[0], rets[1]);
         if ((cur_title != NIL) && (cur_title != THEACTIVE))
         {
-            menu_state = OUTTITLE;
+            menu_state = INTITLE_STATE;
             cur_item = NIL;
         }
         else
@@ -388,7 +380,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             {
                 cur_item = ob_find(tree, cur_menu, 1, rets[0], rets[1]);
                 if (cur_item != NIL)
-                    menu_state = OUTITEM;
+                    menu_state = INITEM_STATE;
                 else
                 {
                     obj = tree + cur_title;
@@ -398,7 +390,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
                         done = TRUE;
                     }
                     else
-                        menu_state = INBARECT;
+                        menu_state = OUTSIDE_STATE;
                 }
             }
         }
