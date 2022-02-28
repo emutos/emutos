@@ -244,6 +244,7 @@ static WORD menu_down(OBJECT *tree, WORD ititle)
 }
 
 
+#if CONF_WITH_MENU_EXTENSION
 WORD mn_do(WORD *ptitle, WORD *pitem)
 {
     OBJECT  *tree;
@@ -257,9 +258,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     BOOL    leave_flag;
     WORD    rets[6];
     OBJECT  *obj;
-#if CONF_WITH_MENU_EXTENSION
     OBJECT  *smtree;
-#endif
 
     /*
      * initially wait to go into the active part of the bar,
@@ -326,11 +325,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
          */
 
         /* wait for something */
-#if CONF_WITH_MENU_EXTENSION
         ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, NULL, 0x0L, buparm, NULL, rets);
-#else
-        ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, 0x0L, buparm, NULL, rets);
-#endif
 
         /*
          * if it's a button. first check if we are still in the initial state.
@@ -395,7 +390,6 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             }
         }
 
-#if CONF_WITH_MENU_EXTENSION
         /* remove old submenu if appropriate */
         if (item_changed(last_item, cur_item))
         {
@@ -405,7 +399,6 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
                     undisplay_submenu(tree, last_item);
             }
         }
-#endif
 
         /* unhilite old item */
         menu_select(tree, last_item, cur_item, FALSE);
@@ -420,7 +413,6 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         /* hilite new item */
         menu_select(tree, cur_item, last_item, TRUE);
 
-#if CONF_WITH_MENU_EXTENSION
         /* display submenu if appropriate */
         if (item_changed(cur_item, last_item))
         {
@@ -429,7 +421,6 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
                 smtree = display_submenu(tree, cur_item);
             }
         }
-#endif
     }
 
     /* decide what should be cleaned up and returned */
@@ -452,7 +443,186 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
 
     return done;
 }
+#else
+WORD mn_do(WORD *ptitle, WORD *pitem)
+{
+    OBJECT  *tree;
+    LONG    buparm;
+    WORD    mnu_flags, done, main_rect;
+    WORD    cur_menu, cur_item, last_item;
+    WORD    cur_title, last_title;
+    UWORD   ev_which;
+    MOBLK   p1mor, p2mor;
+    WORD    menu_state;
+    BOOL    leave_flag;
+    WORD    rets[6];
+    OBJECT  *obj;
 
+    /*
+     * initially wait to go into the active part of the bar,
+     * or for the button state to change, or to go out of the
+     * bar when nothing is down
+     */
+    menu_state = START_STATE;
+
+    done = FALSE;
+    buparm = 0x00010101L;
+    cur_title = cur_menu = cur_item = NIL;
+    tree = gl_mntree;
+
+    ct_mouse(TRUE);
+
+    while (!done)
+    {
+        mnu_flags = MU_BUTTON | MU_M1;
+
+        switch(menu_state)
+        {
+        case START_STATE:
+            /* secondary wait for mouse to leave THEBAR */
+            mnu_flags |= MU_M2;
+            rect_change(tree, &p2mor, THEBAR, TRUE);
+            main_rect = THEACTIVE;
+            leave_flag = FALSE;
+            break;
+        case OUTSIDE_STATE:
+            /* secondary wait for mouse to enter cur_menu */
+            mnu_flags |= MU_M2;
+            rect_change(tree, &p2mor, cur_menu, FALSE);
+            main_rect = THEACTIVE;
+            leave_flag = FALSE;
+            break;
+        case INITEM_STATE:
+            main_rect = cur_item;
+            buparm = (button & 0x0001) ? 0x00010100L : 0x00010101L;
+            leave_flag = TRUE;
+            break;
+        default:    /* INTITLE_STATE */
+            main_rect = cur_title;
+            leave_flag = TRUE;
+            break;
+        }
+
+        /* set up primary mouse rectangle wait according to 'main_rect' set above */
+        rect_change(tree, &p1mor, main_rect, leave_flag);
+
+        /*
+         * at this point the mouse rectangle waits are as follows:
+         * 1) START_STATE
+         *      primary: wait for mouse to enter THEACTIVE
+         *      secondary: wait for mouse to leave THEBAR
+         * 2) OUTSIDE_STATE:
+         *      primary: wait for mouse to enter THEACTIVE
+         *      secondary: wait for mouse to enter cur_menu
+         * 3) INITEM_STATE:
+         *      primary: wait for mouse to leave cur_item
+         *      secondary: unused
+         * 4) INTITLE_STATE:
+         *      primary: wait for mouse to leave cur_title
+         *      secondary: unused
+         */
+
+        /* wait for something */
+        ev_which = ev_multi(mnu_flags, &p1mor, &p2mor, 0x0L, buparm, NULL, rets);
+
+        /*
+         * if it's a button. first check if we are still in the initial state.
+         * if so, the user is just holding the button down in the bar, and we stay in
+         * the loop, doing nothing, not even checking where the mouse is.
+         *
+         * otherwise, check if we're in a title.  if not, exit this loop (and
+         * subsequently the function).
+         *
+         * if we are in a title, we flip the button state that we will wait for on
+         * the next time around, and continue with menu processing.
+         */
+        if (ev_which & MU_BUTTON)
+        {
+            if (menu_state == START_STATE)
+                continue;
+            if (menu_state != INTITLE_STATE)
+                break;
+            buparm ^= 0x00000001;
+        }
+
+        /* do menus */
+
+        /* save old values      */
+        last_title = cur_title;
+        last_item = cur_item;
+
+        /* see if mouse cursor is over the bar  */
+        cur_title = ob_find(tree, THEACTIVE, 1, rets[0], rets[1]);
+        if ((cur_title != NIL) && (cur_title != THEACTIVE))
+        {
+            menu_state = INTITLE_STATE;
+            cur_item = NIL;
+        }
+        else
+        {
+            cur_title = last_title;
+            /* if menu never shown, nothing selected */
+            if (cur_menu == NIL)
+                cur_title = NIL;
+            /* if nothing selected, get out */
+            if (cur_title == NIL)
+            {
+                done = TRUE;
+            }
+            else
+            {
+                cur_item = ob_find(tree, cur_menu, 1, rets[0], rets[1]);
+                if (cur_item != NIL)
+                    menu_state = INITEM_STATE;
+                else
+                {
+                    obj = tree + cur_title;
+                    if (obj->ob_state & DISABLED)
+                    {
+                        cur_title = NIL;
+                        done = TRUE;
+                    }
+                    else
+                        menu_state = OUTSIDE_STATE;
+                }
+            }
+        }
+
+        /* unhilite old item */
+        menu_select(tree, last_item, cur_item, FALSE);
+        /* unhilite old title & pull up old menu */
+        if (menu_select(tree, last_title, cur_title, FALSE))
+            menu_sr(FALSE, tree, cur_menu);
+        /* hilite new title & pull down new menu */
+        if (menu_select(tree, cur_title, last_title, TRUE))
+        {
+            cur_menu = menu_down(tree, cur_title);
+        }
+        /* hilite new item */
+        menu_select(tree, cur_item, last_item, TRUE);
+    }
+
+    /* decide what should be cleaned up and returned */
+    done = FALSE;
+    if (cur_title != NIL)
+    {
+        menu_sr(FALSE, tree, cur_menu);
+        if ((cur_item != NIL) && do_chg(tree, cur_item, SELECTED, FALSE, FALSE, TRUE))
+        {
+            /* only return TRUE when item is enabled and is not NIL */
+            *ptitle = cur_title;
+            *pitem = cur_item;
+            done = TRUE;
+        }
+        else
+            do_chg(tree, cur_title, SELECTED, FALSE, TRUE, TRUE);
+    }
+
+    ct_mouse(FALSE);
+
+    return done;
+}
+#endif
 
 /*
  *  Routine to display the menu bar.  Clipping is turned completely
