@@ -353,15 +353,21 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         last_title = cur_title;
         last_item = cur_item;
 
-        /* see if mouse cursor is over the bar  */
-        cur_title = ob_find(tree, THEACTIVE, 1, rets[0], rets[1]);
-        if ((cur_title != NIL) && (cur_title != THEACTIVE))
+        /*
+         * switch to new state according to mouse action
+         * (the do-while avoids hard-to-follow indentation)
+         */
+        do
         {
-            menu_state = INTITLE_STATE;
-            cur_item = NIL;
-        }
-        else
-        {
+            /* see if mouse cursor is over the bar  */
+            cur_title = ob_find(tree, THEACTIVE, 1, rets[0], rets[1]);
+            if ((cur_title != NIL) && (cur_title != THEACTIVE))
+            {
+                menu_state = INTITLE_STATE;
+                cur_item = NIL;
+                continue;
+            }
+
             cur_title = last_title;
             /* if menu never shown, nothing selected */
             if (cur_menu == NIL)
@@ -370,25 +376,26 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
             if (cur_title == NIL)
             {
                 done = TRUE;
+                continue;
             }
-            else
+
+            cur_item = ob_find(tree, cur_menu, 1, rets[0], rets[1]);
+            if (cur_item != NIL)
             {
-                cur_item = ob_find(tree, cur_menu, 1, rets[0], rets[1]);
-                if (cur_item != NIL)
-                    menu_state = INITEM_STATE;
-                else
-                {
-                    obj = tree + cur_title;
-                    if (obj->ob_state & DISABLED)
-                    {
-                        cur_title = NIL;
-                        done = TRUE;
-                    }
-                    else
-                        menu_state = OUTSIDE_STATE;
-                }
+                menu_state = INITEM_STATE;
+                continue;
             }
-        }
+
+            obj = tree + cur_title;
+            if (obj->ob_state & DISABLED)
+            {
+                cur_title = NIL;
+                done = TRUE;
+                continue;
+            }
+
+            menu_state = OUTSIDE_STATE;
+        } while(0);
 
         /* remove old submenu if appropriate */
         if (item_changed(last_item, cur_item))
