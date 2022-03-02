@@ -619,9 +619,10 @@ void mn_settings(WORD flag, MN_SET *set)
  * display_submenu: display a submenu
  *
  * input:   menu tree ptr / number of originating object (one with SUBMENU flag)
- * returns: ptr to parent object within submenu
+ * returns: ptr to root of tree that submenu resides in
+ *          number of submenu root object within above tree
  */
-OBJECT *display_submenu(OBJECT *tree, WORD objnum)
+OBJECT *display_submenu(OBJECT *tree, WORD objnum, WORD *smroot)
 {
     SMIB *submenu;
     OBJECT *origin = tree + objnum;
@@ -667,7 +668,8 @@ OBJECT *display_submenu(OBJECT *tree, WORD objnum)
     /* display the submenu tree */
     ob_draw(smtree, submenu->s_menu, MAX_DEPTH);
 
-    return smobj;
+    *smroot = submenu->s_menu;
+    return smtree;
 }
 
 /*

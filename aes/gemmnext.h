@@ -44,7 +44,7 @@ WORD mn_istart(WORD flag, OBJECT *tree, WORD menu, WORD start);
 WORD mn_popup(MENU *menu, WORD xpos, WORD ypos, MENU *mdata);
 void mn_settings(WORD flag, MN_SET *set);
 
-OBJECT *display_submenu(OBJECT *tree, WORD objnum);
+OBJECT *display_submenu(OBJECT *tree, WORD objnum, WORD *smroot);
 void undisplay_submenu(OBJECT *tree, WORD objnum);
 
 #endif

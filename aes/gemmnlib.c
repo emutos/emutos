@@ -252,6 +252,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     WORD    mnu_flags, done, main_rect;
     WORD    cur_menu, cur_item, last_item;
     WORD    cur_title, last_title;
+    WORD    smroot;
     UWORD   ev_which;
     MOBLK   p1mor, p2mor;
     WORD    menu_state;
@@ -425,7 +426,7 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
         {
             if (tree[cur_item].ob_flags & SUBMENU)
             {
-                smtree = display_submenu(tree, cur_item);
+                smtree = display_submenu(tree, cur_item, &smroot);
             }
         }
     }
