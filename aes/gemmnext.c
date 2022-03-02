@@ -644,7 +644,8 @@ OBJECT *display_submenu(OBJECT *tree, WORD objnum, WORD *smroot)
      * originating object and should touch the "submenu arrow", unless
      * this would cause the box to extend beyond the window area.  in
      * this case the box should be on the left of the menu item and
-     * should just overlap it.
+     * should just overlap it.  if this causes it to extend past the
+     * left of the screen, we shift it right a character width at a time.
      *
      * y coordinate: the start item should have the same y position as
      * the originating object, so to get the y position of the parent,
@@ -655,7 +656,11 @@ OBJECT *display_submenu(OBJECT *tree, WORD objnum, WORD *smroot)
     smobj = smtree + submenu->s_menu;
     smobj->ob_x = coords.g_x + coords.g_w - gl_wchar;
     if (smobj->ob_x + smobj->ob_width + MENU_THICKNESS > gl_width)
+    {
         smobj->ob_x = coords.g_x - smobj->ob_width;
+        while(smobj->ob_x < 0)
+            smobj->ob_x += gl_wchar;
+    }
     smobj->ob_y = coords.g_y - smtree[submenu->s_start].ob_y;
     clamp_ypos(smobj);
 
