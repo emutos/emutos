@@ -246,7 +246,7 @@ static WORD menu_down(OBJECT *tree, WORD ititle)
 
 
 #if CONF_WITH_MENU_EXTENSION
-WORD mn_do(WORD *ptitle, WORD *pitem)
+WORD mn_do(WORD *ptitle, WORD *pitem, OBJECT **ptree)
 {
     OBJECT  *tree, *p1tree, *smtree;
     LONG    buparm;
@@ -485,13 +485,25 @@ WORD mn_do(WORD *ptitle, WORD *pitem)
     {
         /* remove submenu if present, then pull up menu */
         if (smtree)
+        {
+            do_chg(smtree, cur_submenu, SELECTED, FALSE, FALSE, TRUE);
             undisplay_submenu(tree, smparent);
+        }
         menu_sr(FALSE, tree, cur_menu);
         if ((cur_item != NIL) && do_chg(tree, cur_item, SELECTED, FALSE, FALSE, TRUE))
         {
             /* only return TRUE when item is enabled and is not NIL */
             *ptitle = cur_title;
-            *pitem = cur_item;
+            if (menu_state == SUBMENU_STATE)
+            {
+                *pitem = cur_submenu;
+                *ptree = smtree;
+            }
+            else
+            {
+                *pitem = cur_item;
+                *ptree = gl_mntree;
+            }
             done = TRUE;
         }
         else

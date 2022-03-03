@@ -21,7 +21,12 @@ extern WORD     gl_dafirst;
 
 BOOL do_chg(OBJECT *tree, WORD iitem, UWORD chgvalue,
              WORD dochg, WORD dodraw, WORD chkdisabled);
+
+#if CONF_WITH_MENU_EXTENSION
+WORD mn_do(WORD *ptitle, WORD *pitem, OBJECT **ptree);
+#else
 WORD mn_do(WORD *ptitle, WORD *pitem);
+#endif
 
 void mn_bar(OBJECT *tree, WORD showit);
 void mn_cleanup(void);

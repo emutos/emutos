@@ -311,12 +311,17 @@ static void hctl_rect(void)
     WORD    mesag;
     AESPD   *owner;
 #if CONF_WITH_MENU_EXTENSION
+    OBJECT *tree;
     WORD    treehi, treelo, parent, dummy;
 #endif
 
     if ( gl_mntree )
     {
+#if CONF_WITH_MENU_EXTENSION
+        if (mn_do(&title, &item, &tree))
+#else
         if ( mn_do(&title, &item) )
+#endif
         {
             /* check system menu:   */
             if ((title == THEDESK) && (item >= gl_dafirst))
@@ -338,9 +343,9 @@ static void hctl_rect(void)
                 owner = gl_mnppd;
                 mesag = MN_SELECTED;
 #if CONF_WITH_MENU_EXTENSION
-                treehi = HIWORD(gl_mntree);
-                treelo = LOWORD(gl_mntree);
-                parent = get_par(gl_mntree, item, &dummy);
+                treehi = HIWORD(tree);
+                treelo = LOWORD(tree);
+                parent = get_par(tree, item, &dummy);
 #endif
             }
             /*
