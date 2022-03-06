@@ -284,7 +284,6 @@ static void add_3d_effect(GRECT *pt, WORD obstate, WORD th, WORD color)
  */
 void ob_offset(OBJECT *tree, WORD obj, WORD *pxoff, WORD *pyoff)
 {
-    WORD   junk;
     OBJECT *treeptr = tree;
 
     *pxoff = *pyoff = 0;
@@ -292,7 +291,7 @@ void ob_offset(OBJECT *tree, WORD obj, WORD *pxoff, WORD *pyoff)
     {
         *pxoff += (treeptr+obj)->ob_x;  /* add in current object's offsets */
         *pyoff += (treeptr+obj)->ob_y;
-        obj = get_par(tree, obj, &junk);/* then get parent */
+        obj = get_par(tree, obj);       /* then get parent */
     } while (obj != NIL);
 }
 
@@ -961,7 +960,8 @@ void ob_draw(OBJECT *tree, WORD obj, WORD depth)
     WORD last, pobj;
     WORD sx, sy;
 
-    pobj = get_par(tree, obj, &last);
+    last = tree[obj].ob_next;
+    pobj = get_par(tree, obj);
 
     if (pobj != NIL)
         ob_offset(tree, pobj, &sx, &sy);
@@ -1014,7 +1014,7 @@ static WORD get_prev(OBJECT *tree, WORD parent, WORD obj)
 WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
 {
     WORD lastfound;
-    WORD dosibs, done, junk;
+    WORD dosibs, done;
     GRECT t, o;
     WORD parent, childobj, flags;
     OBJECT *objptr;
@@ -1025,7 +1025,7 @@ WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
         r_set(&o, 0, 0, 0, 0);
     else
     {
-        parent = get_par(tree, currobj, &junk);
+        parent = get_par(tree, currobj);
         ob_actxywh(tree, parent, &o);
     }
 
@@ -1134,7 +1134,8 @@ WORD ob_delete(OBJECT *tree, WORD obj)
     if (obj == ROOT)
         return 0;           /* can't delete the root object! */
 
-    parent = get_par(tree, obj, &nextsib);
+    nextsib = tree[obj].ob_next;
+    parent = get_par(tree, obj);
 
     parentptr = treeptr + parent;
 
@@ -1180,14 +1181,14 @@ WORD ob_delete(OBJECT *tree, WORD obj)
 BOOL ob_order(OBJECT *tree, WORD mov_obj, WORD new_pos)
 {
     WORD parent;
-    WORD chg_obj, ii, junk;
+    WORD chg_obj, ii;
     OBJECT *treeptr = tree;
     OBJECT *parentptr, *movptr, *chgptr;
 
     if (mov_obj == ROOT)
         return FALSE;
 
-    parent = get_par(tree, mov_obj, &junk);
+    parent = get_par(tree, mov_obj);
     parentptr = treeptr + parent;
     movptr = treeptr + mov_obj;
 

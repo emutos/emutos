@@ -16,7 +16,6 @@ char ob_sst(OBJECT *tree, WORD obj, LONG *pspec, WORD *pstate, WORD *ptype,
             WORD *pflags, GRECT *pt, WORD *pth);
 void everyobj(OBJECT *tree, WORD this, WORD last, EVERYOBJ_CALLBACK routine,
               WORD startx, WORD starty, WORD maxdep);
-WORD get_par(OBJECT *tree, WORD obj, WORD *pnobj);
-
+WORD get_par(OBJECT *tree, WORD obj);
 
 #endif

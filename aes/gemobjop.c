@@ -141,31 +141,22 @@ sibling:
  * Routine that will find the parent of a given object.  The
  * idea is to walk to the end of our siblings and return
  * our parent.  If object is the root then return NIL as parent.
- * Also have this routine return the immediate next object of
- * this object.
  */
-WORD get_par(OBJECT *tree, WORD obj, WORD *pnobj)
+WORD get_par(OBJECT *tree, WORD obj)
 {
-    WORD    pobj = NIL, nobj = NIL;
-    OBJECT  *objptr, *pobjptr;
+    WORD next;
 
-    if (obj != ROOT)
+    if (obj == ROOT)
+        return NIL;
+
+    while(1)
     {
-        while(1)
-        {
-            objptr = tree + obj;
-            pobj = objptr->ob_next;
-            if (nobj == NIL)        /* first time */
-                nobj = pobj;
-            if (pobj < ROOT)
-                break;
-            pobjptr = tree + pobj;
-            if ( pobjptr->ob_tail == obj )
-                break;
-            obj = pobj;
-        }
+        next = tree[obj].ob_next;
+        /* if the next object's tail points to us, it must be our parent */
+        if (tree[next].ob_tail == obj)
+            break;
+        obj = next;
     }
 
-    *pnobj = nobj;
-    return pobj;
+    return next;
 }

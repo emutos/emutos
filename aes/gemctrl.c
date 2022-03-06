@@ -312,7 +312,7 @@ static void hctl_rect(void)
     AESPD   *owner;
 #if CONF_WITH_MENU_EXTENSION
     OBJECT *tree;
-    WORD    treehi, treelo, parent, dummy;
+    WORD    treehi, treelo, parent;
 #endif
 
     if ( gl_mntree )
@@ -345,7 +345,7 @@ static void hctl_rect(void)
 #if CONF_WITH_MENU_EXTENSION
                 treehi = HIWORD(tree);
                 treelo = LOWORD(tree);
-                parent = get_par(tree, item, &dummy);
+                parent = get_par(tree, item);
 #endif
             }
             /*
