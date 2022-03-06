@@ -307,6 +307,9 @@
 # ifndef CONF_WITH_EXTENDED_OBJECTS
 #  define CONF_WITH_EXTENDED_OBJECTS 0
 # endif
+# ifndef CONF_WITH_MENU_EXTENSION
+#  define CONF_WITH_MENU_EXTENSION 0
+# endif
 # ifndef CONF_WITH_NICELINES
 #  define CONF_WITH_NICELINES 0
 # endif
@@ -423,6 +426,9 @@
 # endif
 # ifndef CONF_WITH_3D_OBJECTS
 #  define CONF_WITH_3D_OBJECTS 0
+# endif
+# ifndef CONF_WITH_MENU_EXTENSION
+#  define CONF_WITH_MENU_EXTENSION 0
 # endif
 # ifndef MAX_VERTICES
 #  define MAX_VERTICES 512
@@ -1233,10 +1239,11 @@
  * Set CONF_WITH_MENU_EXTENSION to 1 to include AES support for
  * menu_popup(), menu_attach(), menu_istart(), menu_settings().
  *
- * NOTE: this is still under development!
+ * See the source code comments for the limitations of the current
+ * implementation.
  */
 #ifndef CONF_WITH_MENU_EXTENSION
-# define CONF_WITH_MENU_EXTENSION 0
+# define CONF_WITH_MENU_EXTENSION 1
 #endif
 
 /*
