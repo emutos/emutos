@@ -65,6 +65,7 @@ help:
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
 	@echo "prg     emutos.prg, a RAM tos"
+	@echo "prg256  emu256.prg, a RAM tos for ST/STe systems"
 	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
 	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
 	@echo "all192  all 192 KB images"
@@ -72,6 +73,7 @@ help:
 	@echo "all512  all 512 KB images"
 	@echo "allpak3 all PAK/3 images"
 	@echo "allprg  all emutos*.prg"
+	@echo "allprg256 all emu256*.prg"
 	@echo "allflop all emutos*.st"
 	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
 	@echo "clean"
@@ -796,6 +798,29 @@ $(EMUTOS_PRG): obj/minicrt.o obj/boot.o obj/bootram.o obj/ramtos.o
 	$(LD) $+ -lgcc -o $@ -s
 
 #
+# emu256.prg
+#
+
+EMU256_PRG = emu256$(UNIQUE).prg
+TOCLEAN += emu256*.prg
+
+.PHONY: prg256
+prg256: $(EMU256_PRG)
+	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
+	echo "# RAM used: $$(($$MEMBOT)) bytes"
+	@printf "$(LOCALCONFINFO)"
+
+obj/boot.o: obj/ramtos.h
+# incbin dependencies are not automatically detected
+obj/ramtos.o: emutos.img
+
+$(EMU256_PRG): override DEF += -DTARGET_PRG
+$(EMU256_PRG): override DEF += -DTARGET_256
+$(EMU256_PRG): OPTFLAGS = $(SMALL_OPTFLAGS)
+$(EMU256_PRG): obj/minicrt.o obj/boot.o obj/bootram.o obj/ramtos.o
+	$(LD) $+ -lgcc -o $@ -s
+
+#
 # flop
 #
 
@@ -1080,6 +1105,17 @@ allprg:
 	  echo "sleep 1"; \
 	  sleep 1; \
 	  $(MAKE) prg UNIQUE=$$i || exit 1; \
+	done
+
+.PHONY: allprg256
+NODEP += allprg256
+allprg256:
+	@for i in $(COUNTRIES); \
+	do \
+	  echo; \
+	  echo "sleep 1"; \
+	  sleep 1; \
+	  $(MAKE) prg256 UNIQUE=$$i || exit 1; \
 	done
 
 .PHONY: allflop
