@@ -1021,7 +1021,7 @@ WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
 
     lastfound = NIL;
 
-    if (currobj == 0)
+    if (currobj == ROOT)
         r_set(&o, 0, 0, 0, 0);
     else
     {
