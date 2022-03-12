@@ -618,6 +618,9 @@
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
 # endif
+# ifndef CONF_WITH_SDMMC
+#  define CONF_WITH_SDMMC 1
+# endif
 # ifndef CONF_WITH_FLEXCAN
 #  define CONF_WITH_FLEXCAN 1
 # endif
