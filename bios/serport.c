@@ -606,7 +606,7 @@ static const WORD scc_timeconst[] = {
     /*    50 */  5032
 };
 
-static void write_scc(PORT *port,UBYTE reg,UBYTE data)
+static void write_scc(SCC_PORT *port,UBYTE reg,UBYTE data)
 {
     port->ctl = reg;
     RECOVERY_DELAY;
@@ -614,7 +614,7 @@ static void write_scc(PORT *port,UBYTE reg,UBYTE data)
     RECOVERY_DELAY;
 }
 
-static ULONG rsconf_scc(PORT *port,EXT_IOREC *iorec,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static ULONG rsconf_scc(SCC_PORT *port,EXT_IOREC *iorec,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
     ULONG old;
 

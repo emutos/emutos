@@ -22,10 +22,10 @@ typedef struct {
     volatile UBYTE ctl;
     UBYTE dum2;
     volatile UBYTE data;
-} PORT;
+} SCC_PORT;
 typedef struct {
-    PORT portA;
-    PORT portB;
+    SCC_PORT portA;
+    SCC_PORT portB;
 } SCC;
 #endif
 
