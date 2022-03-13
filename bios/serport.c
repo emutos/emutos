@@ -773,20 +773,7 @@ void scc_init(void)
      * Even though interrupts are not used here, other programs might
      * install their own interrupt handlers and expect the interrupt
      * to be available to them.
-     * Point interrupts to just_rte() in case a program enables them
-     * before setting its own handler.
      */
-
-     VEC_SCCB_TBE = just_rte;
-     VEC_SCCB_EXT = just_rte;
-     VEC_SCCB_RXA = just_rte;
-     VEC_SCCB_SRC = just_rte;
-
-     VEC_SCCA_TBE = just_rte;
-     VEC_SCCA_EXT = just_rte;
-     VEC_SCCA_RXA = just_rte;
-     VEC_SCCA_SRC = just_rte;
-
      if (HAS_VME)
         *(volatile char *)VME_INT_MASK |= VME_INT_SCC;
 }
@@ -878,6 +865,15 @@ void init_serport(void)
     memcpy(&iorecB,&iorec_init,sizeof(EXT_IOREC));
     iorecB.in.buf = ibufB;
     iorecB.out.buf = obufB;
+    /* point interrupts to just_rte() in case a program enables them
+     * before setting its own handler.
+     */
+    if (has_scc) {
+        VEC_SCCA_TBE = VEC_SCCB_TBE = just_rte;
+        VEC_SCCA_EXT = VEC_SCCB_EXT = just_rte;
+        VEC_SCCA_RXA = VEC_SCCB_RXA = just_rte;
+        VEC_SCCA_SRC = VEC_SCCB_SRC = just_rte;
+    }
 #endif  /* CONF_WITH_SCC */
 
 #if CONF_WITH_TT_MFP
