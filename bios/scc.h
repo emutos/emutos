@@ -27,6 +27,14 @@ typedef struct {
     SCC_PORT portA;
     SCC_PORT portB;
 } SCC;
+
+/*
+ * commands that can be written to WR0
+ */
+#define SCC_RESET_ES_INT    0x10
+#define SCC_RESET_TX_INT    0x28
+#define SCC_ERROR_RESET     0x30
+#define SCC_RESET_HIGH_IUS  0x38
 #endif
 
 #endif  /* _SCC_H */

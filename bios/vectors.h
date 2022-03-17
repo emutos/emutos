@@ -109,4 +109,13 @@ void mfp_tt_rx_interrupt(void);
 void mfp_tt_tx_interrupt(void);
 #endif
 
+#if CONF_WITH_SCC
+void scca_rx_interrupt(void);
+void scca_tx_interrupt(void);
+void scca_es_interrupt(void);
+void sccb_rx_interrupt(void);
+void sccb_tx_interrupt(void);
+void sccb_es_interrupt(void);
+#endif
+
 #endif /* VECTORS_H */

@@ -84,6 +84,9 @@ void push_serial_iorec(UBYTE data);
 #if CONF_WITH_SCC
 void scc_init(void);
 LONG bconoutB(WORD,WORD);
+void scc_rx_interrupt_handler(WORD portnum);
+void scc_tx_interrupt_handler(WORD portnum);
+void scc_es_interrupt_handler(WORD portnum);
 #endif
 
 #if CONF_WITH_MFP_RS232

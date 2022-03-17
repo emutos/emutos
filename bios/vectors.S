@@ -657,6 +657,139 @@ _mfp_tt_tx_interrupt:
 
 #endif
 
+#if CONF_WITH_SCC
+
+// ==== SCC interrupt handlers ============================================
+
+        .globl _scca_rx_interrupt
+        .globl _scca_tx_interrupt
+        .globl _scca_es_interrupt
+        .globl _sccb_rx_interrupt
+        .globl _sccb_tx_interrupt
+        .globl _sccb_es_interrupt
+
+_scca_rx_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        move.w  #0,-(sp)                // indicate port A
+        jbsr    _scc_rx_interrupt_handler
+        lea     2(sp),sp
+
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+_scca_tx_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        move.w  #0,-(sp)                // indicate port A
+        jbsr    _scc_tx_interrupt_handler
+        lea     2(sp),sp
+
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+_scca_es_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        move.w  #0,-(sp)                // indicate port A
+        jbsr    _scc_es_interrupt_handler
+        lea     2(sp),sp
+
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+_sccb_rx_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        move.w  #1,-(sp)                // indicate port B
+        jbsr    _scc_rx_interrupt_handler
+        lea     2(sp),sp
+
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+_sccb_tx_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        move.w  #1,-(sp)                // indicate port B
+        jbsr    _scc_tx_interrupt_handler
+        lea     2(sp),sp
+
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+_sccb_es_interrupt:
+#ifdef __mcoldfire__
+        lea     -16(sp),sp
+        movem.l d0-d1/a0-a1,(sp)
+#else
+        movem.l d0-d1/a0-a1,-(sp)
+#endif
+
+        move.w  #1,-(sp)                // indicate port B
+        jbsr    _scc_es_interrupt_handler
+        lea     2(sp),sp
+
+#ifdef __mcoldfire__
+        movem.l (sp),d0-d1/a0-a1
+        lea     16(sp),sp
+#else
+        movem.l (sp)+,d0-d1/a0-a1
+#endif
+        rte
+
+#endif  //CONF_WITH_SCC
+
 
 // ==== Critical error handler functions =====================================
 
