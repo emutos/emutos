@@ -883,7 +883,10 @@ void scc_init(void)
     recovery_loops = reset_recovery_loops / 2;      /* 4 cycles = 0.5 usec */
 
     /* issue hardware reset */
-    write_scc(&scc->portA,0x09,0xC0);
+    scc->portA.ctl = 0x09;
+    RECOVERY_DELAY;
+    scc->portA.ctl = 0xC0;
+    RESET_RECOVERY_DELAY;
 
     /* initialise channel A */
     for (p = SCC_init_string; *p >= 0; p++)
