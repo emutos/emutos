@@ -147,18 +147,21 @@ T Tested and working on an emulator or real hardware
  T 8 TT-MFP serial port (*)
  T 9 SCC channel A (*)
 
-(*)  Note: flow control is not implemented for serial ports
+(*) Note: serial port I/O is interrupt-driven, but flow control is not
+    yet implemented for serial ports
 
  ACIA interrupt handlers
  ----------------------------------------------------------------------------
 
- - midierr
- - ikbderr
- T midi input
- T ikbd key events
- T IKBD clock
- T mouse
- T joysticks
+ T MIDI input (midivec)
+ - IKBD error (vkbderr)
+ - MIDI error (vmiderr)
+ T IKBD status (statvec)
+ T IKBD mouse (mousevec)
+ T IKBD clock (clockvec)
+ T IKBD joystick (joyvec)
+ T main MIDI vector (midisys)
+ T main IKBD vector (ikbdsys)
 
 
  BIOS Functions
@@ -618,10 +621,10 @@ AES v3.30 (TOS >= v3.06):
  T 105  wind_set extensions
 
 AES v3.40 (TOS v4.04)
- -  36  menu_popup
- -  37  menu_attach
- -  38  menu_istart
- -  39  menu_settings
+ >T 36  menu_popup
+ >T 37  menu_attach
+ T  38  menu_istart
+ >T 39  menu_settings
  T  48  objc_sysvar
 
 TOS v4 extended AES functionality:
