@@ -154,8 +154,8 @@ T Tested and working on an emulator or real hardware
  ----------------------------------------------------------------------------
 
  T MIDI input (midivec)
- - IKBD error (vkbderr)
- - MIDI error (vmiderr)
+ t IKBD error (vkbderr)
+ t MIDI error (vmiderr)
  T IKBD status (statvec)
  T IKBD mouse (mousevec)
  T IKBD clock (clockvec)

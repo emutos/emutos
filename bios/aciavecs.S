@@ -301,10 +301,18 @@ int_acia_loop:
 _midisys:
         move.b  midi_acia_stat,d0
         jpl     midirts                 // not interrupting
-        // TODO (?): check errors (buffer full ?)
+        btst    #0,d0
+        jeq     midirts                 // no data there anyway
+        move.w  d0,-(sp)                // save status byte across midivec call
         move.b  midi_acia_data,d0
         move.l  midivec,a0
-        jmp     (a0)                    // stack is clean: no need to jsr.
+        jsr     (a0)                    // call midivec
+        move.w  (sp)+,d0                // d0 = status byte
+        btst    #5,d0                   // receiver overrun ?
+        jeq     midirts                 // no, done
+        move.b  midi_acia_data,d0       // get data byte again
+        move.l  vmiderr,a0
+        jsr     (a0)                    // call vmiderr
 midirts:
         rts
 
@@ -381,10 +389,21 @@ _ikbdsys:
         moveq   #0,d0
         move.b  ikbd_acia_stat,d1
         move.b  d1,d0
-        jpl     just_rts                // not interrupting
-        // TODO (?): check errors (buffer full ?)
+        jpl     ikbdrts                 // not interrupting
+        btst    #0,d0
+        jeq     ikbdrts                 // no data there anyway
+        move.w  d0,-(sp)                // save status byte across ikbdraw call
         move.b  ikbd_acia_data,d0
-        // Fall into ikbdraw
+        jsr     ikbdraw
+        move.w  (sp)+,d0                // d0 = status byte
+        btst    #5,d0                   // receiver overrun ?
+        jeq     ikbdrts                 // no, done
+        move.b  ikbd_acia_data,d0       // get data byte again
+        move.l  vkbderr,a0
+        jsr     (a0)                    // call vkbderr
+ikbdrts:
+        rts
+
 #endif /* CONF_WITH_IKBD_ACIA */
 
 // Process a raw byte received from IKBD protocol.
