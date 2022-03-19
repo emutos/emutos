@@ -29,8 +29,8 @@
 // } KBDVECS;
 //
 //- midivec is called with the received data byte in d0.
-//- If an overflow error occurred on either ACIA, vkbderr or vmiderr
-//  will be called, as appropriate by midisys or ikbdsys with the
+//- If an overrun error occurred on either ACIA, vkbderr or vmiderr
+//  will be called (by ikbdsys or midisys as appropriate) with the
 //  contents of the ACIA data register in d0.
 //- statvec, mousevec, clockvec, and joyvec all are called with
 //  the address of the packet in register a0.
@@ -68,8 +68,6 @@
  *
  * b) EmuTOS currently does not check errors at all. Atari TOS checks the
  * following errors:
- *  - if an interrupt request was received and no full byte is ready to be
- *    read, then TOS jumps to the error vector;
  *  - if a byte was read but an overrun occurred, then after having
  *    correctly processed the received byte, TOS reads the data register
  *    again, then jumps to the error vector.
