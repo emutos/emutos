@@ -58,19 +58,13 @@
 
 /* Known differences between this and Atari TOS:
  *
- * a) Buffer usage: both EmuTOS and Atari TOS use a separate buffer for
+ * Buffer usage: both EmuTOS and Atari TOS use a separate buffer for
  * joystick reports.  However EmuTOS uses kbdbuf to accumulate all other
  * IKBD packets, whereas Atari TOS uses four different buffers:
  *  . kbdbuf (for response 0xf6)
  *  . mousebuf (for response 0xf7)
  *  . relmousebuf (for response 0xf8-0xfb)
  *  . clockbuf (for response 0xfc)
- *
- * b) EmuTOS currently does not check errors at all. Atari TOS checks the
- * following errors:
- *  - if a byte was read but an overrun occurred, then after having
- *    correctly processed the received byte, TOS reads the data register
- *    again, then jumps to the error vector.
  */
 
 #include "asmdefs.h"
