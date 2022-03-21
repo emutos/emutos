@@ -59,7 +59,7 @@ struct _windnode
 {
         WNODE           *w_next;            /* -> next 'highest' window */
         UWORD           w_flags;                /* see above */
-        WORD            w_id;                   /* window handle id #   */
+        WORD            w_id;                   /* AES window handle (0 => not in use) */
         WORD            w_obid;                 /* desktop object id    */
         WORD            w_root;                 /* pseudo root object in G.g_screen */
                                                 /*  for this window's objects       */

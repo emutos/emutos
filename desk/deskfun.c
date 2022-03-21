@@ -156,7 +156,7 @@ void fun_rebld_marked(void)
     /* check all wnodes     */
     for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
     {
-        if (pwin->w_flags & WN_REBUILD)
+        if ( (pwin->w_id) && (pwin->w_flags & WN_REBUILD) )
         {
             rebuild_window(pwin);
             pwin->w_flags &= ~WN_REBUILD;
