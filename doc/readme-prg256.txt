@@ -42,6 +42,9 @@ Note that the emuicon.rsc file format differs from deskicon.rsc used by later
 versions of the Atari TOS desktop.
 
 Notes:
+- if you plan to run one of these programs from the AUTO folder, you MUST
+  rename it so the first 6 letters of the name are EMUTOS; otherwise EmuTOS
+  will continually reload itself each time it processes the AUTO folder
 - the language of the Norwegian/Swedish versions is English; however the
   keyboard layouts are Norwegian/Swedish
 - when using these versions with a Magnum ST/STE alt-RAM card, the Magnum
