@@ -65,7 +65,7 @@ help:
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
 	@echo "prg     emutos.prg, a RAM tos"
-	@echo "prg256  emu256.prg, a RAM tos for ST/STe systems"
+	@echo "prg256  $(EMU256_PRG), a RAM tos for ST/STe systems"
 	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
 	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
 	@echo "all192  all 192 KB images"
@@ -805,6 +805,7 @@ EMU256_PRG = emu256$(UNIQUE).prg
 TOCLEAN += emu256*.prg
 
 .PHONY: prg256
+prg256: $(eval UNIQUE := $(COUNTRY))
 prg256: $(EMU256_PRG)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes"
