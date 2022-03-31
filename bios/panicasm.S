@@ -85,7 +85,7 @@ haltloop:
         // endless loop
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
         stop    #0x2700
-        // only an NMI could theroretically wake up the CPU here
+        // only an NMI could theoretically wake up the CPU here
 #endif
         jra     haltloop
 
