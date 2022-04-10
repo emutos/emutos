@@ -44,6 +44,9 @@
 
 #if FULL_INITINFO
 
+#define ESC_ASCII   0x1b
+#define DEL_ASCII   0x7f
+
 #define INFO_LENGTH 40      /* width of info lines (must fit in low-rez) */
 #define LOGO_LENGTH 34      /* must equal length of strings in EmuTOS logo */
 
@@ -374,6 +377,10 @@ WORD initinfo(ULONG *pshiftbits)
      * pause for a short while, or longer if:
      *  . a Shift key is held down, or
      *  . the user selects an alternate boot drive
+     *
+     * if the user reboots using Ctrl+Alt+Shift+Delete,
+     * and keeps the keys pressed for too long, we might see a
+     * spurious Del key press, and ignore it.
      */
     while (1)
     {
@@ -410,8 +417,12 @@ WORD initinfo(ULONG *pshiftbits)
             int c = LOBYTE(bconin2());
 
             c = toupper(c);
+            if (c == DEL_ASCII) {
+                /* eat spurious Delete key press */
+                continue;
+            } else
 #if WITH_CLI
-            if (c == 0x1b) {
+            if (c == ESC_ASCII) {
                 bootflags |= BOOTFLAG_EARLY_CLI;
             } else
 #endif
