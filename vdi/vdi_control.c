@@ -26,6 +26,14 @@
 #define VDI_PHYS_HANDLE     FIRST_VDI_HANDLE
 
 /*
+ * Mxalloc() mode used when allocating the virtual workstation.  This
+ * is only significant when running under FreeMiNT, since EmuTOS ignores
+ * these bits of the mode field.
+ */
+#define MX_PRIVREAD         (4<<4)
+
+
+/*
  * ptr to current mouse cursor save area, based on v_planes
  */
 MCS *mcs_ptr;
@@ -405,8 +413,13 @@ void vdi_v_opnvwk(Vwk * vwk)
 
     /*
      * Allocate the memory for a virtual workstation
+     *
+     * The virtual workstations for all programs are chained together by
+     * build_vwk_chain(), because some programs (notably Warp9) expect this.
+     * To avoid problems when running FreeMiNT with memory protection, we
+     * must allocate the virtual workstations in private/readable memory.
      */
-    vwk = (Vwk *)Malloc(sizeof(Vwk));
+    vwk = (Vwk *)Mxalloc(sizeof(Vwk), MX_PRIVREAD);
     if (vwk == NULL) {
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
