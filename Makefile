@@ -68,22 +68,39 @@ help:
 	@echo "prg256  $(EMU256_PRG), a RAM tos for ST/STe systems"
 	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
 	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
-	@echo "all192  all 192 KB images"
-	@echo "all256  all 256 KB images"
-	@echo "all512  all 512 KB images"
-	@echo "allpak3 all PAK/3 images"
-	@echo "allprg  all emutos*.prg"
-	@echo "allprg256 all emu256*.prg"
-	@echo "allflop all emutos*.st"
 	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
-	@echo "clean"
-	@echo "expand  expand tabs to spaces"
-	@echo "crlf    convert all end of lines to LF"
-	@echo "charset check the charset of all the source files"
-	@echo "bugready set up files in preparation for 'bug update'"
-	@echo "gitready same as $(MAKE) expand crlf"
-	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
-	@echo "release build the release archives into $(RELEASE_DIR)"
+	@echo "clean   remove temporary files"
+	@echo "Use 'make help-develop' for development-oriented targets"
+	@echo "Use 'make help-multi' for multi-image targets"
+
+.PHONY: help-develop
+NODEP += help-develop
+help-develop:
+	@echo "target        meaning"
+	@echo "------        -------"
+	@echo "help-develop  this help message"
+	@echo "expand        expand tabs to spaces"
+	@echo "crlf          convert all end of lines to LF"
+	@echo "charset       check the charset of all the source files"
+	@echo "bugready      set up files in preparation for 'bug update'"
+	@echo "gitready      same as $(MAKE) expand crlf"
+	@echo "dsm           dsm.txt, an edited disassembly of emutos.img"
+	@echo "release       build the release archives into $(RELEASE_DIR)"
+	@echo "release-clean remove the release archives"
+
+.PHONY: help-multi
+NODEP += help-multi
+help-multi:
+	@echo "target     meaning"
+	@echo "------     -------"
+	@echo "help-multi this help message"
+	@echo "all192     all 192 KB images"
+	@echo "all256     all 256 KB images"
+	@echo "all512     all 512 KB images"
+	@echo "allpak3    all PAK/3 images"
+	@echo "allprg     all emutos*.prg"
+	@echo "allprg256  all emu256*.prg"
+	@echo "allflop    all emutos*.st"
 
 #
 # EmuTOS version
