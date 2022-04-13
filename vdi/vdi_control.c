@@ -30,7 +30,7 @@
  * is only significant when running under FreeMiNT, since EmuTOS ignores
  * these bits of the mode field.
  */
-#define MX_PRIVREAD         (4<<4)
+#define MX_SUPER            (3<<4)
 
 
 /*
@@ -417,9 +417,9 @@ void vdi_v_opnvwk(Vwk * vwk)
      * The virtual workstations for all programs are chained together by
      * build_vwk_chain(), because some programs (notably Warp9) expect this.
      * To avoid problems when running FreeMiNT with memory protection, we
-     * must allocate the virtual workstations in private/readable memory.
+     * must allocate the virtual workstations in supervisor-accessible memory.
      */
-    vwk = (Vwk *)Mxalloc(sizeof(Vwk), MX_PRIVREAD);
+    vwk = (Vwk *)Mxalloc(sizeof(Vwk), MX_SUPER);
     if (vwk == NULL) {
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
