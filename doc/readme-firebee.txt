@@ -1,37 +1,41 @@
 EmuTOS - FireBee version
 
-This ROM is suitable for FireBee hardware.  See:
+These ROMs are suitable for FireBee hardware.  See:
 http://firebee.org/
 
-emutosfb.s19 - Multilanguage
+The desktop features are comparable to Atari TOS 4.
+
+Each ROM contains a single language for display:
+
+emutosfbcz.s19 - Czech (PAL)
+emutosfbde.s19 - German (PAL)
+emutosfbes.s19 - Spanish (PAL)
+emutosfbfi.s19 - Finnish (PAL)
+emutosfbfr.s19 - French (PAL)
+emutosfbgr.s19 - Greek (PAL)
+emutosfbhu.s19 - Hungarian (PAL)
+emutosfbit.s19 - Italian (PAL)
+emutosfbnl.s19 - Dutch (PAL)
+emutosfbno.s19 - Norwegian (PAL)
+emutosfbpl.s19 - Polish (PAL)
+emutosfbru.s19 - Russian (PAL)
+emutosfbse.s19 - Swedish (PAL)
+emutosfbsg.s19 - Swiss German (PAL)
+emutosfbtr.s19 - Turkish (PAL)
+emutosfbus.s19 - English (NTSC)
+emutosfbuk.s19 - English (PAL)
+
+However, note that these ROMs will use the standard values from NVRAM
+for keyboard, date/time etc.
 
 The following optional files are also supplied:
 emuicon.rsc - contains additional icons for the desktop
 emuicon.def - definition file for the above
 
-Note that the emuicon.rsc file format differs from deskicon.rsc used by later
+Notes on possible points of confusion
+1. The emuicon.rsc file format differs from deskicon.rsc used by later
 versions of the Atari TOS desktop.
-
-The default language is English.
-Other supported languages are:
-- Czech
-- German
-- Spanish
-- Finnish
-- French
-- Greek
-- Hungarian
-- Italian
-- Dutch
-- Norwegian
-- Polish
-- Russian
-- Swedish
-- Swiss German
-- Turkish
-They can be used by setting the NVRAM appropriately.
-
-Note that selecting Norwegian/Swedish currently sets the language to English,
+2. Selecting Norwegian/Swedish currently sets the language to English,
 but the keyboard layout to Norwegian/Swedish.
 
 This ROM image can be flashed into the FireBee flash memory using any supported
@@ -66,6 +70,6 @@ The FireBee ROM features:
 - Longer welcome screen delay to allow monitors to recover from sleep modes
 - NVRAM boot resolution is currently ignored, 640x480x16 is always used
 
-This ROM image has been built using:
-make firebee
+These ROM images have been built using:
+make allfirebee
 

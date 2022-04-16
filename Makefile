@@ -101,6 +101,7 @@ help-multi:
 	@echo "allprg     all emutos*.prg"
 	@echo "allprg256  all emu256*.prg"
 	@echo "allflop    all emutos*.st"
+	@echo "allfirebee all FireBee srec files"
 
 #
 # EmuTOS version
@@ -719,16 +720,17 @@ $(SRECFILE): emutos.img
 	$(OBJCOPY) -I binary -O srec $(SREC_LEN_OPTION) --change-addresses $(LMA) --change-start $(ENTRY) $< $(SRECFILE)
 
 CPUFLAGS_FIREBEE = -mcpu=5474
-SREC_FIREBEE = emutosfb.s19
+SREC_FIREBEE = emutosfb$(UNIQUE).s19
 
 .PHONY: firebee
 NODEP += firebee
+firebee: UNIQUE = $(COUNTRY)
 firebee: OPTFLAGS = $(STANDARD_OPTFLAGS)
 firebee: override DEF += -DMACHINE_FIREBEE
 firebee: CPUFLAGS = $(CPUFLAGS_FIREBEE)
 firebee:
 	@echo "# Building FireBee EmuTOS into $(SREC_FIREBEE)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
@@ -1145,6 +1147,17 @@ allflop:
 	  echo "sleep 1"; \
 	  sleep 1; \
 	  $(MAKE) flop UNIQUE=$$i || exit 1; \
+	done
+
+.PHONY: allfirebee
+NODEP += allfirebee
+allfirebee:
+	@for i in $(COUNTRIES); \
+	do \
+	  echo; \
+	  echo "sleep 1"; \
+	  sleep 1; \
+	  $(MAKE) firebee UNIQUE=$$i || exit 1; \
 	done
 
 #

@@ -176,9 +176,9 @@ NODEP += release-firebee
 RELEASE_FIREBEE = emutos-firebee-$(VERSION)
 release-firebee:
 	$(MAKE) clean
-	$(MAKE) firebee
+	$(MAKE) allfirebee
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)
-	cp $(SREC_FIREBEE) $(RELEASE_DIR)/$(RELEASE_FIREBEE)
+	cp emutosfb*.s19 $(RELEASE_DIR)/$(RELEASE_FIREBEE)
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.rsc
 	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FIREBEE)/readme.txt
