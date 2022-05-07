@@ -1059,12 +1059,15 @@ mkrom: tools/mkrom.c
 # test target to build all tools that can be built by the Makefile
 .PHONY: tools
 NODEP += tools
-tools: bug draft erd grd ird localise mkflop mkrom mrd tos-lang-change
+tools: bug draft erd grd ird localise mkflop mkrom mrd tos-lang-change boot-delay
 
-# user tool, not needed in EmuTOS building
-TOCLEAN += tos-lang-change
-NODEP += tos-lang-change
+# user tools, not needed in EmuTOS building
+TOCLEAN += tos-lang-change boot-delay
+NODEP += tos-lang-change boot-delay
 tos-lang-change: tools/tos-lang-change.c
+	$(NATIVECC) $< -o $@
+
+boot-delay: tools/boot-delay.c
 	$(NATIVECC) $< -o $@
 
 # The sleep command in targets below ensure that all the generated sources
