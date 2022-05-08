@@ -202,7 +202,7 @@ int main(int argc, char *argv[])
                 return -1;
         }
         fclose(fp);
-        printf("\nOS conf variable updated to the TOS ROM file.\n");
+        printf("\nOS conf variable updated in TOS ROM file '%s'.\n", argv[1]);
 
         return 0;
 }
