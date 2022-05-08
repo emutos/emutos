@@ -26,11 +26,11 @@
 #define MAX_INPUTLEN    20      /* for user input country code */
 
 typedef struct {
-        uint16_t value;
+        int16_t value;
         const char *name;
 } country_t;
 
-#define COUNTRY_ERROR 255
+#define COUNTRY_ERROR   -1
 
 static country_t countries[] = {
         {  0, "USA" },
@@ -80,10 +80,24 @@ static const char *get_country_name(uint16_t value)
         return country->name;
 }
 
+/* return 1 iff passed value is in country table */
+static int valid_country_value(uint16_t value)
+{
+        country_t *country;
+
+        for (country = countries; country->name; country++) {
+                if (value == country->value) {
+                        return 1;
+                }
+        }
+
+        return 0;
+}
+
 /* show all the TOS country alternatives and ask user for a country code.
  * returns the user code if it's valid, otherwise COUNTRY_ERROR
  */
-static uint16_t get_new_country_value(void)
+static int16_t get_new_country_value(void)
 {
         char s[MAX_INPUTLEN];
         country_t *country;
@@ -98,17 +112,18 @@ static uint16_t get_new_country_value(void)
                 return COUNTRY_ERROR;
 
         if (sscanf(s, "%3hu\n", &value) == 1) {
-                return value;
-        } else {
-                fprintf(stderr, "Error: invalid code!\n");
-                return COUNTRY_ERROR;
+                if (valid_country_value(value))
+                        return value;
         }
+
+        fprintf(stderr, "Error: invalid code!\n");
+        return COUNTRY_ERROR;
 }
 
 /* gets current OS conf bits, returns new (user given) bits */
 static uint16_t get_new_conf_value(uint16_t conf)
 {
-        uint16_t value;
+        int16_t value;
         const char *name;
 
         value = conf2country(conf);
