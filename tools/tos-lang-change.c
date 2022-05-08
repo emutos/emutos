@@ -23,6 +23,8 @@
 
 #define TOS_CONF_OFFSET 0x1C
 
+#define MAX_INPUTLEN    20      /* for user input country code */
+
 typedef struct {
         uint16_t value;
         const char *name;
@@ -83,6 +85,7 @@ static const char *get_country_name(uint16_t value)
  */
 static uint16_t get_new_country_value(void)
 {
+        char s[MAX_INPUTLEN];
         country_t *country;
         uint16_t value;
 
@@ -91,10 +94,13 @@ static uint16_t get_new_country_value(void)
                 printf("%3hu) %s\n", country->value, country->name);
         }
         printf("> ");
-        if (scanf("%3hu", &value) == 1) {
+        if (!fgets(s, MAX_INPUTLEN, stdin))
+                return COUNTRY_ERROR;
+
+        if (sscanf(s, "%3hu\n", &value) == 1) {
                 return value;
         } else {
-                fprintf(stderr, "Error: code %ud is invalid!\n", value);
+                fprintf(stderr, "Error: invalid code!\n");
                 return COUNTRY_ERROR;
         }
 }
