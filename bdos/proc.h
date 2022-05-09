@@ -32,7 +32,7 @@ WORD xtermres(long blkln, WORD rc);
  * in kpgmld.c
  */
 
-LONG kpgmhdrld(char *s, PGMHDR01 *hd, FH *h);
+LONG kpgmhdrld(FH h, PGMHDR01 *hd);
 LONG kpgmld(PD *p, FH h, PGMHDR01 *hd);
 
 #if DETECT_NATIVE_FEATURES

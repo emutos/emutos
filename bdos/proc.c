@@ -260,13 +260,22 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         return EFILNF;      /*  file not found      */
     }
 
+    /* attempt to open the file */
+    rc = xopen(path, 0);
+    if (rc < 0) {
+        KDEBUG(("BDOS xexec: cannot open %s\n",path));
+        return rc;
+    }
+    fh = (FH) rc;
+
     /* load the header - if I/O error occurs now, the longjmp in rwabs will
      * jump directly back to bdosmain.c, which is not a problem because
      * we haven't allocated anything yet.
      */
-    rc = kpgmhdrld(path, &hdr, &fh);
+    rc = kpgmhdrld(fh, &hdr);
     if (rc) {
         KDEBUG(("BDOS xexec: kpgmhdrld returned %ld (0x%lx)\n",rc,rc));
+        xclose(fh);
         return rc;
     }
 
@@ -274,6 +283,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     env_ptr = alloc_env(hdr.h01_flags, env);
     if (env_ptr == NULL) {
         KDEBUG(("BDOS xexec: no memory for environment\n"));
+        xclose(fh);
         return ENSMEM;
     }
 
@@ -285,6 +295,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     if (p == NULL) {
         KDEBUG(("BDOS xexec: no memory for TPA\n"));
         xmfree(env_ptr);
+        xclose(fh);
         return ENSMEM;
     }
 
@@ -310,9 +321,10 @@ long xexec(WORD flag, char *path, char *tail, char *env)
 
         KDEBUG(("Error and longjmp in xexec()!\n"));
 
-        /* free any memory allocated yet */
+        /* free any memory allocated so far & close the file */
         xmfree(cur_p->p_env);
         xmfree(cur_p);
+        xclose(fh);
 
         /* we still have to jump back to bdosmain.c so that the proper error
          * handling can occur.
@@ -320,7 +332,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         longjmp(bakbuf, 1);
     }
 
-    /* now, load the rest of the program and perform relocation */
+    /* now, load the rest of the program, perform relocation, close the file */
     rc = kpgmld(cur_p, fh, &hdr);
     if (rc) {
         KDEBUG(("BDOS xexec: kpgmld returned %ld (0x%lx)\n",rc,rc));

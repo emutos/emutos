@@ -37,18 +37,12 @@ static LONG pgfix01(UBYTE *lastcp, LONG nrelbytes, PGMINFO *pi);
  * the flags and the amount of memory needed. Then, we actually load
  * the program.
  */
-LONG kpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
+LONG kpgmhdrld(FH h, PGMHDR01 *hd)
 {
     LONG r;
     WORD magic;
 
-    r = xopen(s, 0);            /* open file for read */
-    if (r < 0L)
-        return r;
-
-    *h = (FH) r ;               /* get file handle */
-
-    r = xread(*h, 2L, &magic);  /* read magic number */
+    r = xread(h, 2L, &magic);   /* read magic number */
     if (r < 0L)
         return r;
     if (r != 2)
@@ -57,12 +51,12 @@ LONG kpgmhdrld(char *s, PGMHDR01 *hd, FH *h)
     /* alternate executable formats will not be handled */
     if (magic != 0x601a)
     {
-        KDEBUG(("BDOS xpgmld: Unknown executable format!\n"));
+        KDEBUG(("BDOS kpgmhdrld: Unknown executable format!\n"));
         return EPLFMT;
     }
 
     /* read in the program header */
-    r = xread(*h, (LONG)sizeof(PGMHDR01), hd);
+    r = xread(h, (LONG)sizeof(PGMHDR01), hd);
     if (r < 0L)
         return r;
     if (r != (LONG)sizeof(PGMHDR01))
