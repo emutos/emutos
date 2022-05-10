@@ -1,0 +1,71 @@
+Two utilities are available to customize EmuTOS ROM images. These can
+be found in the tools directory of the source tree and are also provided
+as pre-built binaries at https://sourceforge.net/projects/emutos/tools.
+
+
+==== tos-lang-change ====
+
+The tos-lang-change tool runs on Windows, Linux, or macOS.  It allows
+you to change the display language and/or input keyboard layout in an
+EmuTOS ROM image. The precise effect varies depending on which of the
+following situations is in effect:
+
+1. Using a multilanguage EmuTOS ROM on a system with working NVRAM
+------------------------------------------------------------------
+EmuTOS always sets the language and keyboard according to NVRAM.  There
+is no need for the tos-lang-change tool.
+
+2. Using a multilanguage EmuTOS ROM on a system with no NVRAM
+-------------------------------------------------------------
+This could be the case, for example, when running under an emulator
+that provides an emulated ST(e) system.  In this situation, EmuTOS will
+normally use English as the output language, with US keyboard support.
+To use a different language/keyboard combo, run tos-lang-change as
+described below.
+
+3. Using a single-language EmuTOS ROM
+-------------------------------------
+EmuTOS can only display messages in the language it was compiled for.
+Normally, the corresponding keyboard layout will be used for input.
+However, you can use the keyboard layout for a different language by
+using the tos-lang-change tool (see below).
+
+4. How to use tos-lang-change
+-----------------------------
+a) obtain the appropriate EmuTOS ROM image
+b) at the command line prompt of your native operating system, enter
+	tos-lang-change <rom_image_name>
+    (e.g. tos-lang-change etos1024k.img)
+c) you'll be prompted with the currently supported language code and
+    a list of possible new codes
+d) enter the desired new language code; the ROM image will be updated
+e) you may now use the modified ROM image
+
+NOTE: the type of video is always set according to the display language:
+NTSC for US, PAL for everyone else.
+
+
+==== boot-delay ====
+
+During bootup, most Atari TOS versions provide a boot delay to allow
+slow hard disk devices to come up to speed.  Because EmuTOS frequently
+runs on emulators or with fast devices, it normally does not have a
+builtin boot delay.
+
+If you are running on real hardware with slower devices, you may wish
+to add a boot delay.  The boot-delay tool allows you to set a boot
+delay value (or display the current boot delay value) in an EmuTOS
+ROM image.  The boot-delay tool runs on Windows, Linux, or macOS.
+
+How to use boot-delay
+---------------------
+a) obtain the desired EmuTOS ROM image
+b) at the command line prompt of your native operating system, enter
+	boot-delay <rom_image_name>
+to display the current delay value, or
+	boot-delay <rom_image_name> <new-delay>
+to change the value, where
+	<rom_image_name> is the filename of the image to be changed
+	<new delay> is the desired delay in seconds (1-255) or 0 to disable
+c) you may now use the modified ROM image
+
