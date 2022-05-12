@@ -21,6 +21,7 @@ jobs:
       run: .scripts/install_ssh_id.sh
     - name: Install packages
       run: |
+        sudo apt-get update
         sudo apt-get install gcc-i686-linux-gnu gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu zip
     - name: Build binaries
       run: |
@@ -73,6 +74,7 @@ jobs:
       run: .scripts/install_ssh_id.sh
     - name: Install packages
       run: |
+        sudo apt-get update
         sudo apt-get install gcc-mingw-w64 zip
     - name: Build binaries
       run: |
