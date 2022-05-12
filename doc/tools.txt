@@ -23,12 +23,13 @@ normally use English as the output language, with US keyboard support.
 To use a different language/keyboard combo, run tos-lang-change as
 described below.
 
-3. Using a single-language EmuTOS ROM
--------------------------------------
+3. Using a single-language 512K EmuTOS ROM
+------------------------------------------
 EmuTOS can only display messages in the language it was compiled for.
 Normally, the corresponding keyboard layout will be used for input.
-However, you can use the keyboard layout for a different language by
-using the tos-lang-change tool (see below).
+However, although the 512K ROM images are single-language, they contain
+multiple input keyboard layouts, and you can change the keyboard layout
+to a different language by using the tos-lang-change tool (see below).
 
 4. How to use tos-lang-change
 -----------------------------
