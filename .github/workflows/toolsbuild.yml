@@ -53,6 +53,7 @@ jobs:
         tar -czvf ../tools-${{github.job}}-${{env.VERSION}}.tar.gz *
     - name: Deploy to SourceForce
       run: |
+        scp -o StrictHostKeyChecking=no doc/tools.txt $SSH_USER@$SSH_HOST:$SSH_PATH/README.txt
         cd tools
         scp -o StrictHostKeyChecking=no *.tar.gz $SSH_USER@$SSH_HOST:$SSH_PATH
 #    - name: Save binaries as build artifacts
