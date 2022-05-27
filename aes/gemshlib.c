@@ -677,23 +677,15 @@ static WORD sh_ldapp(SHELL *psh)
             wm_new();
 
         KDEBUG(("sh_ldapp: %s exited with rc=%ld\n",D.s_cmd,ret));
-        switch(ret)
-        {
-        case EFILNF:
-        case EPTHNF:
-            ret = AL18ERR;      /* "This application cannot find ..." */
-            break;
-        default:
-            if (ret < 0L)
-                ret = AL08ERR;  /* "There is not enough memory ..." */
-            else
-                ret = 0L;
-        }
-        return ret;
+
+        if (ret < 0)
+            return ret;
+        else
+            return 0;
     }
 
     set_default_desktop(psh);   /* ensure something valid will run */
-    return AL18ERR;
+    return EFILNF;
 }
 
 
@@ -727,8 +719,8 @@ void sh_main(BOOL isauto, BOOL isgem)
             sh_draw(D.s_cmd, TRUE);     /* clear the screen */
         }
 
-        if (rc)                         /* display alert for most recent error */
-            fm_show(rc, NULL, 1);
+        if (rc && !IS_BIOS_ERROR(rc))   /* display alert for most recent error */
+            fm_error(-rc-31);
 
         rc = sh_ldapp(psh);             /* run the desktop/console/app */
 
