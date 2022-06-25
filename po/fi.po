@@ -1659,3 +1659,15 @@ msgstr "wrong number of arguments"
 msgid "error code %ld"
 msgstr "error code %ld"
 
+#: bios/bios.c
+msgid "Memory test"
+msgstr "Muisti-testi"
+
+#: bios/bios.c
+msgid "complete"
+msgstr "valmis"
+
+#: bios/bios.c
+msgid "aborted"
+msgstr "keskeytetty"
+
