@@ -1671,3 +1671,15 @@ msgstr "неверное количество аргументов"
 msgid "error code %ld"
 msgstr "код ошибки %ld"
 
+#: bios/bios.c
+msgid "Memory test"
+msgstr "ѕроверка пам€ти"
+
+#: bios/bios.c
+msgid "complete"
+msgstr "завершена"
+
+#: bios/bios.c
+msgid "aborted"
+msgstr "прервана"
+
