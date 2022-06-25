@@ -108,7 +108,7 @@ msgid "[1]["
 "physically write-protected.]"
 "[Cancel|Retry]"
 msgstr "[1]["
-"A %c: meghajtóban lévõ lemez|"
+"A(z) %c: meghajtóban lévõ lemez|"
 "írásvédett.]"
 "[Mégse|Ismét]"
 
@@ -119,7 +119,7 @@ msgid "[2]["
 "or insert a disk.]"
 "[Cancel|Retry]"
 msgstr "[2]["
-"A %c: meghajtó nem válaszol.|"
+"A(z) %c: meghajtó nem válaszol.|"
 "Ellenõrizze a meghajtót vagy|"
 "helyezzen be egy lemezt.]"
 "[Mégse|Ismét]"
@@ -130,7 +130,7 @@ msgid "[1]["
 "may be damaged.]"
 "[Cancel|Retry]"
 msgstr "[1]["
-"A %c: meghajtó |"
+"A(z) %c: meghajtó |"
 "adata megsérülhetett.]"
 "[Mégse|Ismét]"
 
@@ -140,7 +140,7 @@ msgid "[2]["
 "data on the disk in drive %c:.]"
 "[Cancel|Retry]"
 msgstr "[2]["
-"A program nem tud a %c:|"
+"A program nem tud a(z) %c:|"
 "meghajtóról olvasni.]"
 "[Mégse|Ismét]"
 
@@ -960,7 +960,7 @@ msgid "[2]["
 "the files on drive %c: ?]"
 "[Yes| No ]"
 msgstr "[2]["
-"Törli a %c: meghajtó|"
+"Törli a(z) %c: meghajtó|"
 "összes fájlját?]"
 "[ OK| Mégse ]"
 
@@ -994,8 +994,8 @@ msgid "[1]["
 "operation.]"
 "[  OK  ]"
 msgstr "[1]["
-"A %c: meghajtón nincs elég hely|"
-"ehhez a mûvelethez.]"
+"A(z) %c: meghajtón nincs elég|"
+"hely ehhez a mûvelethez.]"
 "[  OK  ]"
 
 #: desk/desk_rsc.c
@@ -1157,7 +1157,7 @@ msgid "[1]["
 "Drive %s: does not exist.]"
 "[ Cancel ]"
 msgstr "[1]["
-"A %s: meghajtó nem létezik.]"
+"A(z) %s: meghajtó nem létezik.]"
 "[Mégse]"
 
 #: desk/desk_rsc.c
@@ -1652,4 +1652,16 @@ msgstr "paraméterek száma nem megfelelõ"
 #: cli/cmdutil.c
 msgid "error code %ld"
 msgstr "%ld hibakód"
+
+#: bios/bios.c
+msgid "Memory test"
+msgstr "Memória teszt"
+
+#: bios/bios.c
+msgid "complete"
+msgstr "Kész!"
+
+#: bios/bios.c
+msgid "aborted"
+msgstr "Megszakítva!"
 
