@@ -54,7 +54,7 @@
 **
 **                      SCC     Made above actual changes from JSL's notes.
 **
-**      27 Mar 85       SCC     Modifed dcrack() and findit() to terminate with
+**      27 Mar 85       SCC     Modified dcrack() and findit() to terminate with
 **                              indication of no file found if bad return from
 **                              ckdrv().
 **

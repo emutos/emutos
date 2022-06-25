@@ -2835,7 +2835,7 @@ void amiga_autoconfig(void)
         AddConfigDev(configDev);
     }
 
-    /* Intialize internal drivers for detected boards */
+    /* Initialize internal drivers for detected boards */
     init_expansion_drivers();
 
     KDEBUG(("**************** AUTOCONFIG DONE ****************\n"));

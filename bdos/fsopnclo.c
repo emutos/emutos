@@ -94,7 +94,7 @@ long xcreat(char *name, UBYTE attr)
 **  ixcreat - internal routine for creating files
 */
 /*  name: path name of file
- *  attr: atttributes
+ *  attr: attributes
  */
 long ixcreat(char *name, UBYTE attr)
 {
