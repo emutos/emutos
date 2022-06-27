@@ -1671,3 +1671,15 @@ msgstr "número de argumentos inválido"
 msgid "error code %ld"
 msgstr "código de error %ld"
 
+#: bios/bios.c
+msgid "Memory test"
+msgstr "Test de memoria"
+
+#: bios/bios.c
+msgid "complete"
+msgstr "completo"
+
+#: bios/bios.c
+msgid "aborted"
+msgstr "anulado"
+
