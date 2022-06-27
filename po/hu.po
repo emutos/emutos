@@ -994,8 +994,8 @@ msgid "[1]["
 "operation.]"
 "[  OK  ]"
 msgstr "[1]["
-"A(z) %c: meghajtón nincs elég|"
-"hely ehhez a mûvelethez.]"
+"A(z) %c: meghajtón|"
+"nincs elegendo hely.]"
 "[  OK  ]"
 
 #: desk/desk_rsc.c
