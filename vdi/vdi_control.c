@@ -484,7 +484,7 @@ void vdi_v_opnwk(Vwk * vwk)
 #endif
        ) {
         if (newrez != Getrez()) {
-            Setscreen(0L, 0L, newrez, 0);
+            Setscreen(-1L, -1L, newrez, 0);
         }
     }
 #if CONF_WITH_VIDEL

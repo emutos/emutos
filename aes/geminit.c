@@ -752,10 +752,24 @@ void run_accs_and_desktop(void)
 #if CONF_WITH_ATARI_VIDEO || defined(MACHINE_AMIGA)
 /*
  * change resolution & reinitialise the palette registers
+ *
+ * note: passing a screen address of 0L to Setscreen() means reallocate
+ * screen memory.  on non-Falcon systems (where the size of screen memory
+ * is fixed), this is effectively the same as passing an address of -1L,
+ * and our implementation of Setscreen() handles this without problems.
+ *
+ * however, if someone has hooked Setscreen() and does not understand
+ * this, passing a screen address of 0L will set the screen address to
+ * NULL, and the system will crash.  this happens, for example, when
+ * running NVDI 4.11 on a Mega ST.
+ *
+ * therefore, for safety, we only use 0L on explicitly Falcon resolutions.
  */
 static void new_resolution(WORD rez, WORD videlmode)
 {
-    Setscreen(0L, 0L, rez, videlmode);          /* change resolution */
+    LONG addr = (rez==FALCON_REZ) ? 0L : -1L;
+
+    Setscreen(addr, addr, rez, videlmode);      /* change resolution */
     initialise_palette_registers(rez, videlmode);
 }
 #endif
