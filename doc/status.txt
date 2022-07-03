@@ -11,7 +11,7 @@ a ROM version of EmuTOS.
   --------------------+-------+-----+-------------+----------------
   Emulators           |       |     |             |
   ARAnyM 1.1.0        |  yes  | VRI |  2 Jul 2021 |
-  Hatari v2.3.1       |  yes  | VRI |  2 Jul 2021 |
+  Hatari v2.3.1       |  yes  | CZ  |  2 Jul 2022 |
   PaCifiST v0.48      |   no  | (7) | 21 Jul 2021 | see (B)
   SainT v2.40         |  yes  | RFB | 29 Aug 2020 | 192k ROM only
   Steem SSE 4.1.0 R7  |  yes  | VRI |  2 Jul 2021 | (Win 64 D3D)
@@ -23,12 +23,12 @@ a ROM version of EmuTOS.
   WinUAE 4.4.0        |  yes  | VRI |  2 Jul 2021 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
-  STf & STfm          |  yes  | CZ  | 03 Jul 2021 |
-  Mega ST             |  yes  | (6) |  3 Jul 2021 | tested with PRG
+  STf & STfm          |  yes  | CZ  |  2 Jul 2022 |
+  Mega ST             |  yes  | CZ  |  3 Jul 2022 | tested with PRG
   STe                 |  yes  | CZ  | 03 Jul 2021 |
-  Mega STe            |  yes  | CZ  | 31 Aug 2020 |
-  TT030               |  yes  | CZ  | 03 Jul 2021 |
-  Falcon030           |  yes  | CZ  | 03 Jul 2021 |
+  Mega STe            |  yes  | CZ  |  3 Jul 2022 | tested with PRG
+  TT030               |  yes  | CZ  |  2 Jul 2022 |
+  Falcon030           |  yes  | CZ  |  3 Jul 2022 |
   Falcon030 + CT60    |  yes  | RFB | 03 Jul 2021 | tested with PRG
   Suska III-C (2K15B) |  yes  | (3) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
