@@ -1,7 +1,7 @@
 /*
  * blkdev.c - BIOS block device functions
  *
- * Copyright (C) 2002-2021 The EmuTOS development team
+ * Copyright (C) 2002-2022 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering

@@ -1,3 +1,10 @@
+/*
+ * atari_rootsec.h: Atari TOS root sector layout
+ *
+ * originally derived from Linux definitions (see below)
+ *
+ * Copyright (C) 2021 The EmuTOS development team
+ */
 #ifndef ATARI_ROOTSEC_H
 #define ATARI_ROOTSEC_H
 

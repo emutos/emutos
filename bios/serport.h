@@ -1,7 +1,7 @@
 /*
  * serport.h - header for serport.c
  *
- * Copyright (C) 2013-2021 The EmuTOS development team
+ * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

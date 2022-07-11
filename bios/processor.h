@@ -1,7 +1,7 @@
 /*
  * processor.h - declarations for processor type check
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2021 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering

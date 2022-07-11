@@ -1,7 +1,7 @@
 /*
  * panicasm.S - support routines for panic debug messages
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2022 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel

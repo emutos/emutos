@@ -1,7 +1,7 @@
 /*
  * gemmnext.c - support for AES 3.30 menu library extensions
  *
- * Copyright (C) 2021 The EmuTOS development team
+ * Copyright (C) 2021-2022 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

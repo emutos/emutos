@@ -1,7 +1,7 @@
 /*
  * amiga.c - Amiga specific functions
  *
- * Copyright (C) 2013-2020 The EmuTOS development team
+ * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

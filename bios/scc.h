@@ -1,7 +1,7 @@
 /*
  * scc.h - header for SCC chip
  *
- * Copyright (C) 2013-2019 The EmuTOS development team
+ * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
