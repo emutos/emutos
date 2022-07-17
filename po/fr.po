@@ -94,10 +94,6 @@ msgstr ""
 "Utilisez FOLDR100.PRG pour l'augmenter.\n"
 "Système stoppé !\n"
 
-#: aes/gem_rsc.c desk/desk_rsc.c
-msgid "Drive:"
-msgstr "Lecteur :"
-
 #: aes/gem_rsc.c
 msgid "Selection: ________.___"
 msgstr "Sélection : ________.___"
@@ -105,6 +101,10 @@ msgstr "Sélection : ________.___"
 #: aes/gem_rsc.c
 msgid "Directory:"
 msgstr "Dossier :"
+
+#: aes/gem_rsc.c desk/desk_rsc.c
+msgid "Drive:"
+msgstr "Lecteur :"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "OK"

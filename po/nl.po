@@ -11,6 +11,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: bios/bios.c
+msgid "Memory test"
+msgstr "Geheugen test"
+
+#: bios/bios.c
+msgid "complete"
+msgstr "klaar"
+
+#: bios/bios.c
+msgid "aborted"
+msgstr "afgebroken"
+
+#: bios/bios.c
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -82,10 +94,6 @@ msgstr ""
 "Gebruik FOLDR100.PRG om meer vrij te maken.\n"
 "Systeem gestopt!\n"
 
-#: aes/gem_rsc.c desk/desk_rsc.c
-msgid "Drive:"
-msgstr "Drive:"
-
 #: aes/gem_rsc.c
 msgid "Selection: ________.___"
 msgstr "Selectie: ________.___"
@@ -93,6 +101,10 @@ msgstr "Selectie: ________.___"
 #: aes/gem_rsc.c
 msgid "Directory:"
 msgstr "Directory:"
+
+#: aes/gem_rsc.c desk/desk_rsc.c
+msgid "Drive:"
+msgstr "Drive:"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "OK"
@@ -1658,16 +1670,4 @@ msgstr "verkeerd aantal argumenten"
 #: cli/cmdutil.c
 msgid "error code %ld"
 msgstr "fout code %ld"
-
-#: bios/bios.c
-msgid "Memory test"
-msgstr "Geheugen test"
-
-#: bios/bios.c
-msgid "complete"
-msgstr "klaar"
-
-#: bios/bios.c
-msgid "aborted"
-msgstr "afgebroken"
 

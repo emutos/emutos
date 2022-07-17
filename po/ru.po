@@ -10,6 +10,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: bios/bios.c
+msgid "Memory test"
+msgstr "Проверка памяти"
+
+#: bios/bios.c
+msgid "complete"
+msgstr "завершена"
+
+#: bios/bios.c
+msgid "aborted"
+msgstr "прервана"
+
+#: bios/bios.c
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -82,10 +94,6 @@ msgstr ""
 "чтобы увеличить память.\n"
 "Система остановлена!\n"
 
-#: aes/gem_rsc.c desk/desk_rsc.c
-msgid "Drive:"
-msgstr "Диск:"
-
 #: aes/gem_rsc.c
 msgid "Selection: ________.___"
 msgstr "Выбрать: ________.___"
@@ -93,6 +101,10 @@ msgstr "Выбрать: ________.___"
 #: aes/gem_rsc.c
 msgid "Directory:"
 msgstr "Директория:"
+
+#: aes/gem_rsc.c desk/desk_rsc.c
+msgid "Drive:"
+msgstr "Диск:"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "OK"
@@ -1670,16 +1682,4 @@ msgstr "неверное количество аргументов"
 #: cli/cmdutil.c
 msgid "error code %ld"
 msgstr "код ошибки %ld"
-
-#: bios/bios.c
-msgid "Memory test"
-msgstr "Проверка памяти"
-
-#: bios/bios.c
-msgid "complete"
-msgstr "завершена"
-
-#: bios/bios.c
-msgid "aborted"
-msgstr "прервана"
 
