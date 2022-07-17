@@ -3,7 +3,7 @@
  *
  * originally derived from Linux definitions (see below)
  *
- * Copyright (C) 2021 The EmuTOS development team
+ * Copyright (C) 2022 The EmuTOS development team
  */
 #ifndef ATARI_ROOTSEC_H
 #define ATARI_ROOTSEC_H

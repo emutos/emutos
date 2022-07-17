@@ -1,7 +1,7 @@
 /*
  * bdosbind.h - Bindings for BDOS system calls
  *
- * Copyright (C) 2019-2021 The EmuTOS development team
+ * Copyright (C) 2019-2022 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
