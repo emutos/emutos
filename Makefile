@@ -51,7 +51,7 @@ help:
 	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB"
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB"
 	@echo "1024    $(ROM_1024), EmuTOS ROM padded to size 1024 KB"
-	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
+	@echo "aranym  $(ROM_ARANYM), optimized for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"

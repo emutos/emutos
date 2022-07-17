@@ -82,7 +82,7 @@ EmuTOS binaries
 256         etos256us.img, EmuTOS ROM padded to size 256 KB (starting at 0x00e00000)
 512         etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0x00e00000)
 1024        etos1024k.img, EmuTOS ROM padded to size 1024 KB (starting at 0x00e00000)
-aranym      emutos-aranym.img, suitable for ARAnyM
+aranym      emutos-aranym.img, optimized for ARAnyM
 firebee     emutosfb.s19, to be flashed on the FireBee
 firebee-prg emutos.prg, a RAM tos for the FireBee
 amiga       emutos-amiga.rom, EmuTOS ROM for Amiga hardware
