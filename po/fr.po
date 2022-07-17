@@ -847,7 +847,7 @@ msgstr "Couleur :"
 
 #: desk/desk_rsc.c
 msgid " %ld bytes used in %d items."
-msgstr " %ld octets utilisés par %d éléments."
+msgstr " %ld octets utilisés par %d objets."
 
 #: desk/desk_rsc.c
 msgid " %ld bytes used in %d selected items."
