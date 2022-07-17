@@ -70,8 +70,8 @@ help:
 	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
 	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
 	@echo "clean   remove temporary files"
-	@echo "Use 'make help-develop' for development-oriented targets"
-	@echo "Use 'make help-multi' for multi-image targets"
+	@echo "Use '$(MAKE) help-develop' for development-oriented targets"
+	@echo "Use '$(MAKE) help-multi' for multi-image targets"
 
 .PHONY: help-develop
 NODEP += help-develop
