@@ -43,7 +43,7 @@ static void setphys(const UBYTE *addr);
 
 #if CONF_WITH_VIDEL
 LONG video_ram_size;        /* these are used by Srealloc() */
-void *video_ram_addr; 
+void *video_ram_addr;
 #endif
 
 #if CONF_WITH_ATARI_VIDEO

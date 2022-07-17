@@ -86,7 +86,7 @@ long xcreat(char *name, UBYTE attr)
 
     KDEBUG(("xcreat(%s,0x%02x): rc=%ld\n",name,attr,rc));
 
-    return rc;    
+    return rc;
 }
 
 

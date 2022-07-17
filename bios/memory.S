@@ -783,6 +783,6 @@ rnocarry:
         rts
 rerror:
         moveq   #0,d0                   // error, return FALSE
-        rts        
+        rts
 
 #endif

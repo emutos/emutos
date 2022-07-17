@@ -1308,7 +1308,7 @@
  *      0x0331      AES 3.31, used by TOS v4.01
  *      0x0340      AES 3.40, used by TOS v4.02 & v4.04
  * Do not change this arbitrarily, as each value implies the presence or
- * absence of certain AES functions ... 
+ * absence of certain AES functions ...
  */
 #ifndef AES_VERSION
 # if CONF_WITH_3D_OBJECTS && CONF_WITH_MENU_EXTENSION && CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
