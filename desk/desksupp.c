@@ -53,7 +53,7 @@
 #include "nls.h"
 #include "scancode.h"
 #include "biosext.h"
-#include "lineavars.h"      /* for MOUSE_BT */
+#include "lineavars.h"      /* for MOUSE_BT, V_REZ_HZ */
 
 /* Needed to force media change */
 #define MEDIACHANGE     0x02
@@ -249,9 +249,19 @@ static ICONBLK *get_iconblk_ptr(OBJECT olist[], WORD obj)
 }
 
 
+/*
+ * fix up the (x,y) positioning of a desktop window:
+ *  . it should be horizontally aligned on a 16-pixel boundary
+ *  . it must be below the menu bar
+ */
 void do_xyfix(WORD *px, WORD *py)
 {
-    *px = (*px + 8) & 0xfff0;   /* horizontally align to nearest word boundary */
+    *px = (*px + 8) & 0xfff0;   /* horizontally align to nearest 16-pixel boundary */
+#if CONF_WITH_3D_OBJECTS
+    /* ensure that we can still access the mover */
+    if (*px + gl_wbox + 2*ADJ3DSTD >= V_REZ_HZ)
+        *px -= 16;
+#endif
     if (*py < G.g_desk.g_y)     /* ensure it's below menu bar */
         *py = G.g_desk.g_y;
 }
