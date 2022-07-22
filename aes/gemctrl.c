@@ -221,9 +221,12 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         {
 #if CONF_WITH_3D_OBJECTS
             ob_change(gl_awind, gadget, selected, TRUE);
-#endif
+            /* prevent the mover gadget from being moved completely offscreen */
+            r_set(&f, 0, gl_hbox, gl_rscreen.g_w+w-gl_wbox-6-2*ADJ3DSTD, MAX_COORDINATE);
+#else
             /* prevent the mover gadget from being moved completely offscreen */
             r_set(&f, 0, gl_hbox, gl_rscreen.g_w+w-gl_wbox-6, MAX_COORDINATE);
+#endif
             gr_dragbox(w, h, x, y, &f, &x, &y);
             message = WM_MOVED;
         }
