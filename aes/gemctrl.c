@@ -21,6 +21,7 @@
 #include "emutos.h"
 #include "struct.h"
 #include "aesdefs.h"
+#include "aesext.h"
 #include "aesvars.h"
 #include "obdefs.h"
 
@@ -195,6 +196,12 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
     w_getsize(WS_CURR, w_handle, &t);
     r_get(&t, &x, &y, &w, &h);
     kind = pwin->w_kind;
+
+#if CONF_WITH_3D_OBJECTS
+    /* since we animate gadgets, we must set clipping here */
+    ob_actxywh(gl_awind, gadget, &f);
+    gsx_sclip(&f);
+#endif
 
     switch(cpt)
     {
