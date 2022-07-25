@@ -315,7 +315,7 @@ static BOOL write_read_equals(void *start, ULONG testval)
     invalidate_data_cache(start, sizeof(ULONG)*2);
 
     /* Note for WinUAE: there is an issue with the JIT compiler.
-     * http://eab.abime.net/showthread.php?t=97234
+     * https://eab.abime.net/showthread.php?t=97234
      * Even when JIT is enabled in the WinUAE settings, it is disabled by
      * default. It is actually enabled when the instruction cache is enabled
      * through CACR, which happens very early in EmuTOS initialization.
@@ -1757,7 +1757,7 @@ static WORD amiga_floppy_read_raw_track(void)
 /*
  * Accurate documentation about CRC-CCITT can be found there:
  * https://jlgconsult.pagesperso-orange.fr/Atari/diskette/diskette_en.htm#FDC_CRC_Computation
- * http://www.atari-forum.com/viewtopic.php?p=9497#p9497
+ * https://www.atari-forum.com/viewtopic.php?p=9497#p9497
  */
 
 /* Precompute a CRC-CCITT table */

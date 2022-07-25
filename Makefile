@@ -1406,7 +1406,7 @@ clean:
 # They are not generated automatically.
 # To regenerate them, type "make coldfire-sources".
 # You will need the PortAsm/68K for ColdFire tool from MicroAPL.
-# See http://www.microapl.co.uk/Porting/ColdFire/pacf_download.html
+# See https://microapl.com/Porting/ColdFire/pacf_download.html
 #
 
 PORTASM = pacf
