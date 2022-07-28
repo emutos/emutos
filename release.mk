@@ -178,7 +178,7 @@ release-firebee:
 	$(MAKE) clean
 	$(MAKE) allfirebee
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)
-	cp emutosfb*.s19 $(RELEASE_DIR)/$(RELEASE_FIREBEE)
+	cp etosfb*.s19 $(RELEASE_DIR)/$(RELEASE_FIREBEE)
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.rsc
 	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FIREBEE)/readme.txt

@@ -7,23 +7,23 @@ The desktop features are comparable to Atari TOS 4.
 
 Each ROM contains a single language for display:
 
-emutosfbcz.s19 - Czech (PAL)
-emutosfbde.s19 - German (PAL)
-emutosfbes.s19 - Spanish (PAL)
-emutosfbfi.s19 - Finnish (PAL)
-emutosfbfr.s19 - French (PAL)
-emutosfbgr.s19 - Greek (PAL)
-emutosfbhu.s19 - Hungarian (PAL)
-emutosfbit.s19 - Italian (PAL)
-emutosfbnl.s19 - Dutch (PAL)
-emutosfbno.s19 - Norwegian (PAL)
-emutosfbpl.s19 - Polish (PAL)
-emutosfbru.s19 - Russian (PAL)
-emutosfbse.s19 - Swedish (PAL)
-emutosfbsg.s19 - Swiss German (PAL)
-emutosfbtr.s19 - Turkish (PAL)
-emutosfbus.s19 - English (NTSC)
-emutosfbuk.s19 - English (PAL)
+etosfbcz.s19 - Czech (PAL)
+etosfbde.s19 - German (PAL)
+etosfbes.s19 - Spanish (PAL)
+etosfbfi.s19 - Finnish (PAL)
+etosfbfr.s19 - French (PAL)
+etosfbgr.s19 - Greek (PAL)
+etosfbhu.s19 - Hungarian (PAL)
+etosfbit.s19 - Italian (PAL)
+etosfbnl.s19 - Dutch (PAL)
+etosfbno.s19 - Norwegian (PAL)
+etosfbpl.s19 - Polish (PAL)
+etosfbru.s19 - Russian (PAL)
+etosfbse.s19 - Swedish (PAL)
+etosfbsg.s19 - Swiss German (PAL)
+etosfbtr.s19 - Turkish (PAL)
+etosfbus.s19 - English (NTSC)
+etosfbuk.s19 - English (PAL)
 
 However, note that these ROMs will use the standard values from NVRAM
 for keyboard, date/time etc.
@@ -48,7 +48,8 @@ This tool runs on MS Windows and requires additional hardware.
 2) Didier Méquignon's FLASH060.PRG
 https://didierm.pagesperso-orange.fr/firebee.htm
 Get it from the tos060.lzh archive, in the tos060/flash.too folder.
-On your FireBee, start FireTOS, run FLASH060.PRG and flash emutosfb.s19.
+On your FireBee, start FireTOS, run FLASH060.PRG and flash etosfbXX.s19,
+where XX is the country code with the desired language.
 You can also use FLASH_CF.PRG from EmuTOS itself.
 
 In both cases, the correct EmuTOS flash parameters are prefilled,

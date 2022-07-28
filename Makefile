@@ -720,7 +720,7 @@ $(SRECFILE): emutos.img
 	$(OBJCOPY) -I binary -O srec $(SREC_LEN_OPTION) --change-addresses $(LMA) --change-start $(ENTRY) $< $(SRECFILE)
 
 CPUFLAGS_FIREBEE = -mcpu=5474
-SREC_FIREBEE = emutosfb$(UNIQUE).s19
+SREC_FIREBEE = etosfb$(UNIQUE).s19
 
 .PHONY: firebee
 NODEP += firebee
