@@ -80,7 +80,7 @@ EmuTOS binaries
 ---------------
 192         etos192us.img, EmuTOS ROM padded to size 192 KB (starting at 0x00fc0000)
 256         etos256us.img, EmuTOS ROM padded to size 256 KB (starting at 0x00e00000)
-512         etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0x00e00000)
+512         etos512us.img, EmuTOS ROM padded to size 512 KB (starting at 0x00e00000)
 1024        etos1024k.img, EmuTOS ROM padded to size 1024 KB (starting at 0x00e00000)
 aranym      emutos-aranym.img, optimized for ARAnyM
 firebee     etosfbus.s19, to be flashed on the FireBee
@@ -95,7 +95,8 @@ lisaflop    emutos.dc42, EmuTOS RAM as Apple Lisa boot floppy
 m548x-dbug  emutos-m548x-dbug.s19, EmuTOS for dBUG on ColdFire Evaluation Boards
 m548x-bas   emutos-m548x-bas.s19, EmuTOS for BaS_gcc on ColdFire Evaluation Boards
 m548x-prg   emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc
-prg         emutos.prg, a RAM tos
+prg         emutosus.prg, a RAM tos
+prg256      emu256us.prg, a RAM tos
 flop        emutosus.st, a bootable floppy with RAM tos
 pak3        etospak3us.img, suitable for PAK/3 systems
 cart        etoscart.img, EmuTOS as a diagnostic cartridge
@@ -131,9 +132,12 @@ Release-related targets
 -------------------
 all192      all 192 KB images
 all256      all 256 KB images
+all512      all 512 KB images
 allpak3     all PAK/3 images
 allprg      all emutos*.prg
+allprg256   all emu256*.prg
 allflop     all emutos*.st
+allfirebee  all etosfb*.s19
 release     build the release archives into release-archives
 
 
