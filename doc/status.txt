@@ -11,7 +11,7 @@ a ROM version of EmuTOS.
   --------------------+-------+-----+-------------+----------------
   Emulators           |       |     |             |
   ARAnyM 1.1.0        |  yes  | CZ  |  9 Jul 2022 |
-  Hatari v2.3.1       |  yes  | CZ  |  2 Jul 2022 |
+  Hatari v2.4.0       |  yes  | VRI | 31 Jul 2022 |
   PaCifiST v0.48      |   no  | (7) | 21 Jul 2021 | see (B)
   SainT v2.40         |  yes  | RFB | 29 Aug 2020 | 192k ROM only
   Steem SSE 4.1.2     |  yes  | CZ  |  9 Jul 2022 | (Win 32 D3D)
@@ -20,7 +20,7 @@ a ROM version of EmuTOS.
   STonX DOS           |  yes  | CZ  | 22 Jul 2021 | see (A)
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon v0.5        |   no  | RFB | 29 Aug 2020 |
-  WinUAE 4.4.0        |  yes  | VRI |  2 Jul 2021 |
+  WinUAE 4.4.0        |  yes  | VRI | 31 Jul 2022 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
   STf & STfm          |  yes  | CZ  |  2 Jul 2022 |
@@ -37,8 +37,8 @@ a ROM version of EmuTOS.
   Amiga 500 + Vampire |  yes  | VRI | 13 Oct 2019 | GOLD2.11
   Amiga 600 + Vampire |  yes  | (4) |    Mar 2017 |
   Amiga 1000          |  yes  | (2) |    Jul 2012 |
-  FireBee             |  yes  | VRI |  2 Jul 2021 |
-  M5484LITE           |  yes  | VRI |  2 Jul 2021 |
+  FireBee             |  yes  | VRI | 25 Jul 2022 |
+  M5484LITE           |  yes  | VRI | 25 Jul 2022 |
   Vampire V4          |  yes  | CZ  | 24 Aug 2020 |
   Apple Lisa          |  yes  | (8) |  4 Feb 2021 |
 
