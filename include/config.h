@@ -770,6 +770,9 @@
 # ifndef CONF_WITH_NOVA
 #  define CONF_WITH_NOVA 0
 # endif
+# ifndef CONF_WITH_3D_OBJECTS
+#  define CONF_WITH_3D_OBJECTS 0 /* Like ST, not Falcon */
+# endif
 #endif
 
 /*
