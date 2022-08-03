@@ -824,21 +824,17 @@ EMU256_PRG = emu256$(UNIQUE).prg
 TOCLEAN += emu256*.prg
 
 .PHONY: prg256
-prg256: $(eval UNIQUE := $(COUNTRY))
-prg256: $(EMU256_PRG)
-	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
-	echo "# RAM used: $$(($$MEMBOT)) bytes"
-	@printf "$(LOCALCONFINFO)"
+NODEP += prg256
+prg256: override DEF += -DTARGET_256
+prg256: UNIQUE = $(COUNTRY)
+prg256: EMUTOS_PRG = $(EMU256_PRG)
+prg256:
+	@echo "# Building $(EMUTOS_PRG)"
+	$(MAKE) DEF='$(DEF)' UNIQUE=$(UNIQUE) EMUTOS_PRG=$(EMUTOS_PRG) prg
 
 obj/boot.o: obj/ramtos.h
 # incbin dependencies are not automatically detected
 obj/ramtos.o: emutos.img
-
-$(EMU256_PRG): override DEF += -DTARGET_PRG
-$(EMU256_PRG): override DEF += -DTARGET_256
-$(EMU256_PRG): OPTFLAGS = $(SMALL_OPTFLAGS)
-$(EMU256_PRG): obj/minicrt.o obj/boot.o obj/bootram.o obj/ramtos.o
-	$(LD) $+ -lgcc -o $@ -s
 
 #
 # flop
