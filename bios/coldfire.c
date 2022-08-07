@@ -37,6 +37,8 @@ void coldfire_early_init(void)
 #endif
 }
 
+MCF_COOKIE cookie_mcf;
+
 #if CONF_WITH_COLDFIRE_RS232
 
 #define RS232_UART_PORT 0 /* PSC channel used as terminal */
@@ -80,12 +82,8 @@ void coldfire_init_system_timer(void)
     MCF_INTC_IMRH &= ~MCF_INTC_IMRH_INT_MASK61;
 
     /* Set the frequency to 200 Hz (SDCLK / PRE / CNT) */
-#ifdef SDCLK_FREQUENCY_MHZ
-    MCF_GPT1_GCIR = MCF_GPT_GCIR_PRE(SDCLK_FREQUENCY_MHZ) |
+    MCF_GPT1_GCIR = MCF_GPT_GCIR_PRE((ULONG)cookie_mcf.sysbus_frequency) |
                     MCF_GPT_GCIR_CNT(5000UL);
-#else
-# error Unknown SDCLK for this machine
-#endif
 
     /* Enable the timer */
     MCF_GPT1_GMS = MCF_GPT_GMS_CE       | /* Enable */
@@ -218,8 +216,6 @@ void coldfire_rs232_interrupt_handler(void)
     }
 }
 
-MCF_COOKIE cookie_mcf;
-
 void setvalue_mcf(void)
 {
     cookie_mcf.magic[0] = 0x4d; /* 'M' */
@@ -260,7 +256,8 @@ void setvalue_mcf(void)
             break;
         default:
             strcpy(cookie_mcf.device_name, "UNKNOWN");
-            cookie_mcf.sysbus_frequency = MCF_VALUE_UNKNOWN;
+            cookie_mcf.sysbus_frequency = 100;
+            KDEBUG(("Unknown ColdFire processor. Defaulting SDCLK to 100 MHz.\n"));
             break;
     }
 #endif

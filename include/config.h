@@ -122,9 +122,6 @@
  * Defaults for the FireBee target
  */
 #ifdef MACHINE_FIREBEE
-# ifndef SDCLK_FREQUENCY_MHZ
-#  define SDCLK_FREQUENCY_MHZ 132UL
-# endif
 # ifndef CONF_WITH_TT_MMU
 #  define CONF_WITH_TT_MMU 0
 # endif
@@ -606,9 +603,6 @@
  * Defaults for the M548x machine
  */
 #ifdef MACHINE_M548X
-# ifndef SDCLK_FREQUENCY_MHZ
-#  define SDCLK_FREQUENCY_MHZ 100UL
-# endif
 # ifndef CONF_ATARI_HARDWARE
 #  define CONF_ATARI_HARDWARE 0
 # endif
