@@ -138,6 +138,14 @@ void ev_timer(LONG count)
 
 /*
  *  Do a multi-wait on the specified events
+ *
+ *  The following values are returned in prets[]:
+ *      [0] mouse x position
+ *      [1] mouse y position
+ *      [2] mouse button state (1 => down)
+ *      [3] key state (as returned by vq_key_s())
+ *      [4] keyboard character (iff MU_KEYBD specified & character available)
+ *      [5] # mouse button clicks (iff MU_BUTTON specified & there are clicks)
  */
 WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
               LONG buparm, WORD *mebuff, WORD prets[])

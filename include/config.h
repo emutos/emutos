@@ -1230,6 +1230,16 @@
 #endif
 
 /*
+ * Set CONF_WITH_MENU_EXTENSION to 1 to include AES support for
+ * menu_popup(), menu_attach(), menu_istart(), menu_settings().
+ *
+ * NOTE: this is still under development!
+ */
+#ifndef CONF_WITH_MENU_EXTENSION
+# define CONF_WITH_MENU_EXTENSION 0
+#endif
+
+/*
  * Set CONF_WITH_NICELINES to use a drawn line instead of dashes for
  * separators in menus
  */
@@ -1260,13 +1270,18 @@
  *      0x0120      AES 1.20, used by TOS v1.02
  *      0x0140      AES 1.40, used by TOS v1.04 & v1.62
  *      0x0320      AES 3.20, used by TOS v2.06 & v3.06
- *      0x0330      AES 3.30, indicates the availability of wind_set(WF_COLOR/WF_DCOLOR)
- *      0x0340      AES 3.40, used by TOS v4.04
+ *      0x0330      AES 3.30, used by TOS v4.00
+ *      0x0331      AES 3.31, used by TOS v4.01
+ *      0x0340      AES 3.40, used by TOS v4.02 & v4.04
  * Do not change this arbitrarily, as each value implies the presence or
  * absence of certain AES functions ... 
  */
 #ifndef AES_VERSION
-# if CONF_WITH_GRAF_MOUSE_EXTENSION
+# if CONF_WITH_3D_OBJECTS && CONF_WITH_MENU_EXTENSION && CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
+#  define AES_VERSION 0x0340
+# elif CONF_WITH_MENU_EXTENSION && CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION
+#  define AES_VERSION 0x0330
+# elif CONF_WITH_GRAF_MOUSE_EXTENSION
 #  define AES_VERSION 0x0320
 # else
 #  define AES_VERSION 0x0140
@@ -1421,6 +1436,13 @@
  */
 #ifndef CONF_WITH_FRB
 # define CONF_WITH_FRB CONF_WITH_ALT_RAM
+#endif
+
+/*
+ * set CONF_WITH_MEMORY_TEST to 1 to do a memory test during a cold boot
+ */
+#ifndef CONF_WITH_MEMORY_TEST
+# define CONF_WITH_MEMORY_TEST 0
 #endif
 
 /*

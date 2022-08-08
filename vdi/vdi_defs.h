@@ -265,7 +265,7 @@ extern WORD HIDE_CNT;           /* Number of levels the mouse is hidden */
 extern WORD     newx;           /* new mouse x&y position */
 extern WORD     newy;           /* new mouse x&y position */
 extern UBYTE    draw_flag;      /* non-zero means draw mouse form on vblank */
-extern UBYTE    mouse_flag;     /* non-zero, if mouse ints disabled */
+extern UBYTE    mouse_flag;     /* non-zero while mouse cursor is being modified */
 extern UBYTE    cur_ms_stat;    /* current mouse status */
 
 

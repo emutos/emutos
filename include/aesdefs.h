@@ -39,10 +39,10 @@
 #define MENU_TNORMAL    33
 #define MENU_TEXT       34
 #define MENU_REGISTER   35
-#define MENU_UNREGISTER 36      /* PC-GEM function */
 #define MENU_POPUP      36      /* AES 3.30 function */
 #define MENU_ATTACH     37      /* AES 3.30 function */
 #define MENU_ISTART     38      /* AES 3.30 function */
+#define MENU_SETTINGS   39      /* AES 3.30 function */
 
 /* Object Manager */
 #define OBJC_ADD        40
@@ -264,7 +264,7 @@
 /*
  * menu library parameters
  */
-#define MM_ITREE    addr_in[0]              /* ienable, icheck, tnorm */
+#define MM_ITREE    addr_in[0]              /* ienable, icheck, tnormal */
 
 #define MM_PSTR     addr_in[0]
 
@@ -274,14 +274,27 @@
 
 #define ITEM_NUM    int_in[0]               /* icheck, ienable */
 #define MM_PID      int_in[0]               /* register */
-#define MM_MID      int_in[0]               /* unregister */
 #define CHECK_IT    int_in[1]               /* icheck */
 #define ENABLE_IT   int_in[1]               /* ienable */
-#define MN_CLICK    int_in[0]
-#define MN_SETIT    int_in[1]
 
-#define TITLE_NUM   int_in[0]               /* tnorm */
+#define TITLE_NUM   int_in[0]               /* tnormal */
 #define NORMAL_IT   int_in[1]               /* tnormal */
+
+#define MPOP_IN     addr_in[0]              /* menu library extensions */
+#define MPOP_OUT    addr_in[1]
+#define MPOP_XPOS   int_in[0]
+#define MPOP_YPOS   int_in[1]
+
+#define MPOP_FLAG   int_in[0]
+#define MPOP_ITEM   int_in[1]
+#define MPOP_SET    addr_in[0]
+
+#define MPOP_ITEM2  int_in[2]
+
+/* flag: menu_attach() */
+#define ME_INQUIRE  0
+#define ME_ATTACH   1
+#define ME_REMOVE   2
 
 
 /*

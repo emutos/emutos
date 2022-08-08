@@ -32,6 +32,7 @@
 #include "gemgsxif.h"
 #include "gemgrlib.h"
 #include "gemoblib.h"
+#include "gemobjop.h"
 #include "gemasm.h"
 #include "rectfunc.h"
 #include "gemctrl.h"
@@ -312,6 +313,9 @@ static void hctl_rect(void)
     WORD    title, item;
     WORD    mesag;
     AESPD   *owner;
+#if CONF_WITH_MENU_EXTENSION
+    WORD    treehi, treelo, parent, dummy;
+#endif
 
     if ( gl_mntree )
     {
@@ -328,16 +332,28 @@ static void hctl_rect(void)
                     perform_untop(gl_wtop);
 
                 mesag = AC_OPEN;
+#if CONF_WITH_MENU_EXTENSION
+                treehi = treelo = parent = 0;
+#endif
             }
             else
             {
                 owner = gl_mnppd;
                 mesag = MN_SELECTED;
+#if CONF_WITH_MENU_EXTENSION
+                treehi = HIWORD(gl_mntree);
+                treelo = LOWORD(gl_mntree);
+                parent = get_par(gl_mntree, item, &dummy);
+#endif
             }
             /*
              * application menu item has been selected so send it
              */
+#if CONF_WITH_MENU_EXTENSION
+            ct_msgup(mesag, owner, title, item, treehi, treelo, parent);
+#else
             ct_msgup(mesag, owner, title, item, 0, 0, 0);
+#endif
         }
     }
 }
@@ -373,7 +389,6 @@ void ct_mouse(WORD grabit)
 {
     if (grabit)
     {
-        wm_update(BEG_UPDATE);
         gl_ctmown = TRUE;
         gl_mowner = rlr;
         set_mouse_to_arrow();
@@ -388,7 +403,6 @@ void ct_mouse(WORD grabit)
         gl_moff = gl_tmpmoff;
         gsx_mfset(&gl_mouse);
         gl_ctmown = FALSE;
-        wm_update(END_UPDATE);
     }
 }
 
@@ -429,7 +443,7 @@ void ctlmgr(void)
         ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
                                 0x0L, 0x0001ff01L, msgbuf, rets);
 
-        ct_mouse(TRUE);                 /* grab screen sink     */
+        wm_update(BEG_UPDATE);          /* take the screen */
         /*
          * button down over area ctrl mgr owns.  find out which
          * window the mouse clicked over and handle it
@@ -450,6 +464,6 @@ void ctlmgr(void)
             hctl_msg(msgbuf);
 #endif
 
-        ct_mouse(FALSE);                /* give up screen sink  */
+        wm_update(END_UPDATE);          /* give up the screen */
     }
 }

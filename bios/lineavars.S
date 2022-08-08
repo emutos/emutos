@@ -151,7 +151,7 @@ _disab_cnt:     .ds.w   1       // -346 disable depth count. (>0 => disabled)
 _newx:          .ds.w   1       // -344 new mouse x&y position
 _newy:          .ds.w   1
 _draw_flag:     .ds.b   1       // -340 non-zero means draw mouse form on vblank
-_mouse_flag:    .ds.b   1       // -339 non-zero if mouse ints disabled
+_mouse_flag:    .ds.b   1       // -339 non-zero while mouse cursor is being modified
 
 _sav_cur_x:     .ds.w   1       // -338 save area for cursor cell coords.
 _sav_cur_y:     .ds.w   1       // -336 save area for cursor cell coords.

@@ -514,12 +514,15 @@ void detect_monster_rtc(void)
     /*
      * Check if there's a DS1307-compatible RTC connected.
      * If there isn't, any attempts to read from it will
-     * return all zeros. So we try to read the DAY register.
-     * If it's zero, there's either no RTC or it's not
+     * return either all zeros or all ones depending on the
+     * exact HW setup. So we try to read the DAY register.
+     * If it's 0 or 0xff, there's either no RTC or it's not
      * initialized. So we try to write to the DAY register
-     * and read back its value. If still zero, then no
-     * RTC is present.
+     * and read back its value. If it is still 0 or 0xff,
+     * then no RTC is present.
      */
+
+    UBYTE dayreg;
 
     /* Initialize I2C delay. */
     delay5us = loopcount_1_msec / 200;
@@ -527,11 +530,13 @@ void detect_monster_rtc(void)
     /* Detect presence of RTC. */
     has_monster_rtc = TRUE;
 
-    if (read_ds1307(4) == 0)
+    dayreg = read_ds1307(4);
+    if ((dayreg == 0) || (dayreg == 0xff))
     {
         write_ds1307(4, 1);
 
-        if (read_ds1307(4) == 0)
+        dayreg = read_ds1307(4);
+        if ((dayreg == 0) || (dayreg == 0xff))
             has_monster_rtc = FALSE;
         else
             /* RTC present, but not initialized. */
