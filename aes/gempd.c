@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2020 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -93,14 +93,14 @@ void p_setappdir(AESPD *pd, char *pfilespec)
     char *plast;
     char *pdest;
 
-    /* find the position *after* the last backslash */
-    for (p = plast = pfilespec; *p; )   /* assume no backslash */
+    /* find the position *after* the last path separator */
+    for (p = plast = pfilespec; *p; )   /* assume no path separator */
     {
-        if (*p++ == '\\')
-            plast = p;          /* after backslash ... */
+        if (*p++ == PATHSEP)
+            plast = p;          /* after path separator ... */
     }
 
-    /* copy the directory name including the final backslash */
+    /* copy the directory name including the final path separator */
     for (pdest = pd->p_appdir, p = pfilespec; p < plast; )
         *pdest++ = *p++;
     *pdest = '\0';

@@ -1,7 +1,7 @@
 /*
  * EmuCON2 builtin commands
  *
- * Copyright (C) 2013-2020 The EmuTOS development team
+ * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -173,7 +173,7 @@ const COMMAND *p;
      *  handle drive change
      */
     if ((argc == 1) && (strlen(argv[0]) == 2))
-        if (argv[0][1] == ':')
+        if (argv[0][1] == DRIVESEP)
             return run_setdrv;
 
     /*
@@ -236,7 +236,7 @@ WORD current_drive, temp_drive;
      * for that drive; else attempt to change the path on that drive
      */
     p = argv[1];
-    if (*(p+1) == ':') {
+    if (*(p+1) == DRIVESEP) {
         if (!is_valid_drive(*p))
             return EDRIVE;
         temp_drive = (*p|0x20) - 'a';
@@ -708,7 +708,7 @@ char *iobuf, *p;
 }
 
 /*
- *  extract next dirname from input path (includes any terminating backslash)
+ *  extract next dirname from input path (includes any terminating separator)
  *
  *  returns pointer to next starting point in input path
  */
@@ -716,7 +716,7 @@ PRIVATE char *next_dir(char *out,char *in)
 {
     while(*in) {
         *out++ = *in++;
-        if (*(in-1) == '\\')
+        if (*(in-1) == PATHSEP)
             break;
     }
     *out = '\0';
@@ -727,17 +727,17 @@ PRIVATE char *next_dir(char *out,char *in)
 /*
  *  back up one level of directory in an (assumed) absolute path
  *
- *  returns pointer to char following the backslash at the end of
+ *  returns pointer to char following the path separator at the end of
  *  the next higher level
  */
 PRIVATE char *prev_dir(char *p)
 {
     /* don't backup past root! */
-    if (*--p == '\\')
-        if (*(p-1) == ':')
+    if (*--p == PATHSEP)
+        if (*(p-1) == DRIVESEP)
             return p+1;
 
-    while(*--p != '\\')
+    while(*--p != PATHSEP)
         ;
 
     return p+1;
@@ -754,32 +754,32 @@ LONG rc = 0L;
     p = in;
     q = out;
 
-    /* set up initial drive letter and : separator */
-    if (*(p+1) == ':') {
+    /* set up initial drive letter and drive separator */
+    if (*(p+1) == DRIVESEP) {
         *q++ = toupper(*p);
         p += 2;
     } else {
         *q++ = Dgetdrv() + 'A';
     }
-    *q++ = ':';
+    *q++ = DRIVESEP;
 
     /* insert current path if specified path is relative */
-    if (*p != '\\') {
+    if (*p != PATHSEP) {
         if (Dgetpath(temp,out[0]-'A'+1) != 0)   /* e.g. invalid drive */
             temp[0] = '\0';
         strcpy(q,temp);
         q += strlen(q);
     } else p++;
-    *q++ = '\\';
+    *q++ = PATHSEP;
 
     /* copy dirnames one at a time, with special processing for . and .. */
     while(*p) {
         p = next_dir(temp,p);
         if (temp[0] == '.') {
-            if ((temp[1] == '\\') || (temp[1] == '\0'))     /* got '.':       */
+            if ((temp[1] == PATHSEP) || (temp[1] == '\0'))  /* got '.':       */
                 continue;                                   /*  nothing to do */
             if ((temp[1] == '.')
-             && ((temp[2] == '\\') || (temp[2] == '\0'))) { /* got '..':         */
+             && ((temp[2] == PATHSEP) || (temp[2] == '\0'))) {  /* got '..':         */
                 q = prev_dir(q);                            /* move up one level */
                 continue;
             }
@@ -841,8 +841,8 @@ LONG bufsize, n, rc;
     outptr = extract_path(outname,fullname);
     if (output_is_dir) {
         outptr += strlen(outptr);
-        if ((*(outptr-1) != '\\') && (*(outptr-1) != ':'))
-            *outptr++ = '\\';
+        if ((*(outptr-1) != PATHSEP) && (*(outptr-1) != DRIVESEP))
+            *outptr++ = PATHSEP;
         *outptr = '\0';
     }
 
@@ -946,12 +946,12 @@ LONG rc;
 char *p = buf;
 
     *p++ = 'A' + (drive ? drive-1 : Dgetdrv());
-    *p++ = ':';
+    *p++ = DRIVESEP;
     *p = '\0';
 
     rc = Dgetpath(p,drive);
     if (!*p) {          /* the root */
-        *p++ = '\\';
+        *p++ = PATHSEP;
         *p = '\0';
     }
 
@@ -969,7 +969,7 @@ const char *p;
 char *q, *sep = dest;
 
     for (p = src, q = dest; *p; ) {
-        if ((*p == '\\') || (*p == ':'))
+        if ((*p == PATHSEP) || (*p == DRIVESEP))
             sep = q + 1;
         *q++ = *p++;
     }
@@ -1052,22 +1052,22 @@ WORD drive;
         strcpy(filespec,"*.*");
     for (p = filespec; *p; p++)
         ;
-    if (*(p-1) == ':') {        /* add current path for drive */
+    if (*(p-1) == DRIVESEP) {        /* add current path for drive */
         drive = shellutl_get_drive_number(*(p-2));
         Dgetpath(p,drive+1);
         for ( ; *p; p++)
             ;
-        *p++ = '\\';
+        *p++ = PATHSEP;
         *p = '\0';
     }
-    if (*(p-1) == '\\') {
+    if (*(p-1) == PATHSEP) {
         strcpy(p,"*.*");
         p += 3;
     }
 
     strupper(filespec);
 
-    for (q = p; (*q != '\\') && (q >= filespec); q--)
+    for (q = p; (*q != PATHSEP) && (q >= filespec); q--)
         if (*q == '*')  /* wildcard, no more tweaks */
             return;
 
@@ -1147,11 +1147,11 @@ LONG rc;
      * if drive specified, validate it and check
      * for "X:" and "X:\" directory specifications
      */
-    if (component[1] == ':') {
+    if (component[1] == DRIVESEP) {
         if (!is_valid_drive(*component))
             return EDRIVE;
         p = component + 2;
-        if (*p == '\\')
+        if (*p == PATHSEP)
             p++;
         if (!*p)              /* X: and X:\ are valid directories */
             return 0L;
@@ -1162,7 +1162,9 @@ LONG rc;
             return EPTHNF;
     }
 
-    fixup = (*(p-1) == '\\');
+    if (*(p-1) == PATHSEP)
+        fixup = 1;
+    else fixup = 0;
 
     if (fixup)
         *--p = '\0';
@@ -1172,7 +1174,7 @@ LONG rc;
         rc = NOT_DIRECTORY;     /* a file, not a directory */
 
     if (fixup)
-        *p = '\\';
+        *p = PATHSEP;
 
     return rc;
 }

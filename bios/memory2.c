@@ -1,7 +1,7 @@
 /*
  * memory2.c - Memory functions
  *
- * Copyright (C) 2016-2021 The EmuTOS development team
+ * Copyright (C) 2016-2022 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

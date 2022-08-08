@@ -11,6 +11,18 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: bios/bios.c
+msgid "Memory test"
+msgstr "Bellek testi"
+
+#: bios/bios.c
+msgid "complete"
+msgstr "tamam"
+
+#: bios/bios.c
+msgid "aborted"
+msgstr "kesildi"
+
+#: bios/bios.c
 msgid ""
 "System halted!\n"
 msgstr ""
@@ -46,11 +58,11 @@ msgstr "Önyükleme zamaný"
 
 #: bios/initinfo.c
 msgid "Hold <Control> to skip AUTO/ACC"
-msgstr "AUTO/ACC atlamak için <Kontrol> tuþuna basýn"
+msgstr "<Kontrol> basarsanýz AUTO/ACC atlar"
 
 #: bios/initinfo.c
 msgid "Hold <Alternate> to skip HDD boot"
-msgstr "Sabit diskten yüklemeyi atlamak için <Alternate> tuþuna basýn"
+msgstr "<Alternate> basarsanýz HDD boot atlar"
 
 #: bios/initinfo.c
 msgid "Press key 'X' to boot from X:"
@@ -62,7 +74,7 @@ msgstr "Erken konsol için <Esc> tuþuna basýn"
 
 #: bios/initinfo.c
 msgid "Hold <Shift> to pause this screen"
-msgstr "Ekraný duraklatmak için <Shift> tuþuna basýn"
+msgstr "Duraklatmak için <Shift> tuþuna basýn"
 
 #: bios/kprint.c
 msgid ""
@@ -82,10 +94,6 @@ msgstr ""
 "Daha fazlasý için FOLDR100.PRG kullanýn.\n"
 "Sistem durdu!\n"
 
-#: aes/gem_rsc.c desk/desk_rsc.c
-msgid "Drive:"
-msgstr "Sürücü:"
-
 #: aes/gem_rsc.c
 msgid "Selection: ________.___"
 msgstr "Seçim: ________.___"
@@ -93,6 +101,10 @@ msgstr "Seçim: ________.___"
 #: aes/gem_rsc.c
 msgid "Directory:"
 msgstr "Dizin:"
+
+#: aes/gem_rsc.c desk/desk_rsc.c
+msgid "Drive:"
+msgstr "Sürücü:"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "OK"

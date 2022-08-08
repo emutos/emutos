@@ -1,7 +1,7 @@
 /*
  * vectors.h - exception vectors, interrupt routines and system hooks
  *
- * Copyright (C) 2001-2021 The EmuTOS development team
+ * Copyright (C) 2001-2022 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -107,6 +107,15 @@ void mfp_rs232_tx_interrupt(void);
 #if CONF_WITH_TT_MFP
 void mfp_tt_rx_interrupt(void);
 void mfp_tt_tx_interrupt(void);
+#endif
+
+#if CONF_WITH_SCC
+void scca_rx_interrupt(void);
+void scca_tx_interrupt(void);
+void scca_es_interrupt(void);
+void sccb_rx_interrupt(void);
+void sccb_tx_interrupt(void);
+void sccb_es_interrupt(void);
 #endif
 
 #endif /* VECTORS_H */

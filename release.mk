@@ -1,7 +1,7 @@
 #
 # release.mk - Makefile fragment for building releases
 #
-# Copyright (C) 2011-2021 The EmuTOS development team.
+# Copyright (C) 2011-2022 The EmuTOS development team.
 #
 # Authors:
 #  VRI      Vincent Rivière
@@ -176,9 +176,9 @@ NODEP += release-firebee
 RELEASE_FIREBEE = emutos-firebee-$(VERSION)
 release-firebee:
 	$(MAKE) clean
-	$(MAKE) firebee
+	$(MAKE) allfirebee
 	mkdir $(RELEASE_DIR)/$(RELEASE_FIREBEE)
-	cp $(SREC_FIREBEE) $(RELEASE_DIR)/$(RELEASE_FIREBEE)
+	cp etosfb*.s19 $(RELEASE_DIR)/$(RELEASE_FIREBEE)
 	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.def
 	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_FIREBEE)/emuicon.rsc
 	cat doc/readme-firebee.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_FIREBEE)/readme.txt
@@ -244,27 +244,6 @@ release-amiga-floppy:
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_AMIGA_FLOPPY).zip $(RELEASE_AMIGA_FLOPPY)
 	rm -r $(RELEASE_DIR)/$(RELEASE_AMIGA_FLOPPY)
 
-.PHONY: release-lisa
-NODEP += release-lisa
-RELEASE_LISA = emutos-lisa-$(VERSION)
-release-lisa:
-	$(MAKE) clean
-	$(MAKE) lisaflop
-	mkdir $(RELEASE_DIR)/$(RELEASE_LISA)
-	cp $(EMUTOS_DC42) $(RELEASE_DIR)/$(RELEASE_LISA)
-	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_LISA)/emuicon.def
-	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_LISA)/emuicon.rsc
-	cat doc/readme-lisa.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_LISA)/readme.txt
-	mkdir $(RELEASE_DIR)/$(RELEASE_LISA)/doc
-	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_LISA)/doc
-	mkdir $(RELEASE_DIR)/$(RELEASE_LISA)/extras
-	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_LISA)/extras
-	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_LISA)/extras/emucurs.def
-	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_LISA)/extras/emucurs.rsc
-	find $(RELEASE_DIR)/$(RELEASE_LISA) -name '*.txt' -exec unix2dos '{}' ';'
-	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_LISA).zip $(RELEASE_LISA)
-	rm -r $(RELEASE_DIR)/$(RELEASE_LISA)
-
 .PHONY: release-m548x-dbug
 NODEP += release-m548x-dbug
 RELEASE_M548X_DBUG = emutos-m548x-dbug-$(VERSION)
@@ -315,6 +294,27 @@ release-prg:
 	find $(RELEASE_DIR)/$(RELEASE_PRG) -name '*.txt' -exec unix2dos '{}' ';'
 	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_PRG).zip $(RELEASE_PRG)
 	rm -r $(RELEASE_DIR)/$(RELEASE_PRG)
+
+.PHONY: release-prg256
+NODEP += release-prg256
+RELEASE_PRG256 = emutos-prg256-$(VERSION)
+release-prg256:
+	$(MAKE) clean
+	$(MAKE) allprg256
+	mkdir $(RELEASE_DIR)/$(RELEASE_PRG256)
+	cp emu256*.prg $(RELEASE_DIR)/$(RELEASE_PRG256)
+	cp desk/icon.def $(RELEASE_DIR)/$(RELEASE_PRG256)/emuicon.def
+	cp desk/icon.rsc $(RELEASE_DIR)/$(RELEASE_PRG256)/emuicon.rsc
+	cat doc/readme-prg256.txt readme.txt >$(RELEASE_DIR)/$(RELEASE_PRG256)/readme.txt
+	mkdir $(RELEASE_DIR)/$(RELEASE_PRG256)/doc
+	cp $(DOCFILES) $(RELEASE_DIR)/$(RELEASE_PRG256)/doc
+	mkdir $(RELEASE_DIR)/$(RELEASE_PRG256)/extras
+	cp $(EXTRAFILES) $(RELEASE_DIR)/$(RELEASE_PRG256)/extras
+	cp aes/mform.def $(RELEASE_DIR)/$(RELEASE_PRG256)/extras/emucurs.def
+	cp aes/mform.rsc $(RELEASE_DIR)/$(RELEASE_PRG256)/extras/emucurs.rsc
+	find $(RELEASE_DIR)/$(RELEASE_PRG256) -name '*.txt' -exec unix2dos '{}' ';'
+	cd $(RELEASE_DIR) && zip -9 -r $(RELEASE_PRG256).zip $(RELEASE_PRG256)
+	rm -r $(RELEASE_DIR)/$(RELEASE_PRG256)
 
 .PHONY: release-floppy
 NODEP += release-floppy
@@ -377,8 +377,7 @@ NODEP += release
 release: clean release-clean release-mkdir \
   release-src release-1024k release-512k release-256k release-192k release-cartridge \
   release-aranym release-firebee release-amiga-rom release-amiga-floppy \
-  release-lisa \
-  release-m548x-dbug release-m548x-bas release-prg release-floppy \
+  release-m548x-dbug release-m548x-bas release-prg release-prg256 release-floppy \
   release-pak3 release-emucon
 	$(MAKE) clean
 	@echo '# Packages successfully generated inside $(RELEASE_DIR)'

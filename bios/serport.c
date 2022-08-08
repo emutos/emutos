@@ -3,7 +3,7 @@
  *
  * This file exists to centralise the handling of serial port hardware.
  *
- * Copyright (C) 2013-2021 The EmuTOS development team
+ * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -483,47 +483,42 @@ static ULONG rsconfTT(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD s
  */
 static LONG bconstatA(void)
 {
-    SCC *scc = (SCC *)SCC_BASE;
-    LONG rc;
-
-    rc = (scc->portA.ctl & 0x01) ? -1L : 0L;
-    RECOVERY_DELAY;
-
-    return rc;
+    return bconstat_iorec(&iorecA);
 }
 
 static LONG bconinA(void)
 {
-    SCC *scc = (SCC *)SCC_BASE;
-    LONG data;
-
-    while(!bconstatA())
-        ;
-    data = scc->portA.data & iorecA.datamask;
-    RECOVERY_DELAY;
-
-    return data;
+    return bconin_iorec(&iorecA);
 }
 
 static LONG bcostatA(void)
 {
-    SCC *scc = (SCC *)SCC_BASE;
-    LONG rc;
+    IOREC *out = &iorecA.out;
 
-    rc = (scc->portA.ctl & 0x04) ? -1L : 0L;
-    RECOVERY_DELAY;
-
-    return rc;
+    /* set the status according to buffer availability */
+    return (out->head == incr_tail(out)) ? 0L : -1L;
 }
 
 static LONG bconoutA(WORD dev, WORD b)
 {
     SCC *scc = (SCC *)SCC_BASE;
+    IOREC *out;
 
+    /* Wait for transmit buffer to become available */
     while(!bcostatA())
         ;
-    scc->portA.data = (UBYTE)b;
-    RECOVERY_DELAY;
+
+     /*
+     * If the buffer is empty & the port is empty, output directly.
+     * otherwise queue the data.
+     */
+    out = &iorecA.out;
+    if ((out->head == out->tail) && (scc->portA.ctl & 0x04)) {
+        scc->portA.data = (UBYTE)b;
+        RECOVERY_DELAY;
+    } else {
+        put_iorecbuf(out, b);
+    }
 
     return 1L;
 }
@@ -533,30 +528,22 @@ static LONG bconoutA(WORD dev, WORD b)
  */
 static LONG bconstatB(void)
 {
-    SCC *scc = (SCC *)SCC_BASE;
-    LONG rc;
-
-    rc = (scc->portB.ctl & 0x01) ? -1L : 0L;
-    RECOVERY_DELAY;
-
-    return rc;
+    return bconstat_iorec(&iorecB);
 }
 
 static LONG bconinB(void)
 {
-    SCC *scc = (SCC *)SCC_BASE;
-    LONG data;
-
-    while(!bconstatB())
-        ;
-    data = scc->portB.data & iorecB.datamask;
-    RECOVERY_DELAY;
-
-    return data;
+    return bconin_iorec(&iorecB);
 }
 
+/*
+ * Just like the MFP, when debug output is via the SCC serial port
+ * (e.g. on a Falcon), using interrupts can cause complications.
+ * So we avoid using interrupts in that situation.
+ */
 static LONG bcostatB(void)
 {
+#if SCC_DEBUG_PRINT
     SCC *scc = (SCC *)SCC_BASE;
     LONG rc;
 
@@ -564,19 +551,168 @@ static LONG bcostatB(void)
     RECOVERY_DELAY;
 
     return rc;
+#else
+    IOREC *out = &iorecB.out;
+
+    /* set the status according to buffer availability */
+    return (out->head == incr_tail(out)) ? 0L : -1L;
+#endif
 }
 
 /* note that bconoutB() is global to support SCC_DEBUG_PRINT */
 LONG bconoutB(WORD dev, WORD b)
 {
     SCC *scc = (SCC *)SCC_BASE;
+    IOREC *out;
+
+    MAYBE_UNUSED(out);
 
     while(!bcostatB())
         ;
+
+#if SCC_DEBUG_PRINT
     scc->portB.data = (UBYTE)b;
     RECOVERY_DELAY;
+#else
+    /*
+     * If the buffer is empty & the port is empty, output directly.
+     * otherwise queue the data.
+     */
+    out = &iorecB.out;
+    if ((out->head == out->tail) && (scc->portB.ctl & 0x04)) {
+        scc->portB.data = (UBYTE)b;
+        RECOVERY_DELAY;
+    } else {
+        put_iorecbuf(out, b);
+    }
+#endif
 
     return 1L;
+}
+
+/*
+ * general-purpose 'write to SCC register'
+ */
+static void write_scc(SCC_PORT *port, UBYTE reg, UBYTE data)
+{
+    port->ctl = reg;
+    RECOVERY_DELAY;
+    port->ctl = data;
+    RECOVERY_DELAY;
+}
+
+/*
+ * write to SCC register 0
+ */
+static void write_scc_reg0(SCC_PORT *port, UBYTE data)
+{
+    port->ctl = data;
+    RECOVERY_DELAY;
+}
+
+/*
+ * the following routines are called by assembler interrupt handlers.
+ * they run at interrupt level 5.
+ */
+void scc_rx_interrupt_handler(WORD portnum)
+{
+    SCC *scc = (SCC *)SCC_BASE;
+    EXT_IOREC *extiorec;
+    IOREC *in;
+    SCC_PORT *port;
+    UBYTE available;
+    WORD tail;
+
+    if (portnum == 0) {
+        extiorec = &iorecA;
+        port = &scc->portA;
+    } else {
+        extiorec = &iorecB;
+        port = &scc->portB;
+    }
+    in = &extiorec->in;
+
+    /* is there really data there? */
+    available = port->ctl & 0x01;
+    RECOVERY_DELAY;
+
+    if (available) {
+        UBYTE data = port->data & extiorec->datamask;
+        RECOVERY_DELAY;
+        tail = incr_tail(in);
+        if (tail != in->head) {
+            /* space available in iorec buffer */
+            *((UBYTE *)(in->buf + tail)) = data;
+            in->tail = tail;
+        }
+    }
+
+    /* do error reset in case we're here because of a 'special receive condition' */
+    write_scc_reg0(port, SCC_ERROR_RESET);
+
+    /* reset highest IUS, allows lower priority interrupts */
+    write_scc_reg0(port, SCC_RESET_HIGH_IUS);
+}
+
+void scc_tx_interrupt_handler(WORD portnum)
+{
+    SCC *scc = (SCC *)SCC_BASE;
+    EXT_IOREC *extiorec;
+    IOREC *out;
+    SCC_PORT *port;
+    UBYTE empty;
+
+    if (portnum == 0) {
+        extiorec = &iorecA;
+        port = &scc->portA;
+    } else {
+        extiorec = &iorecB;
+        port = &scc->portB;
+    }
+    out = &extiorec->out;
+
+    /* make sure TX buffer is empty ... unnecessary check? */
+    empty = port->ctl & 0x04;
+    RECOVERY_DELAY;
+    if (!empty)
+        return;
+
+    /*
+     * if there's any queued output data, send it
+     */
+    if (out->head != out->tail) {
+        port->data = *((UBYTE *)(out->buf + out->head));
+        RECOVERY_DELAY;
+        if (++out->head >= out->size)
+            out->head = 0;
+    }
+
+    /* reset TX interrupt pending */
+    write_scc_reg0(port, SCC_RESET_TX_INT);
+
+    /* reset highest IUS, allows lower priority interrupts */
+    write_scc_reg0(port, SCC_RESET_HIGH_IUS);
+}
+
+/*
+ * the external/status interrupt handler is only called for those
+ * events for which we set the corresponding bit in wr15.
+ *
+ * in preparation for future support of flow handling, we request
+ * interrupts for changes to CTS; but for now, we just ignore them.
+ */
+void scc_es_interrupt_handler(WORD portnum)
+{
+    SCC *scc = (SCC *)SCC_BASE;
+    SCC_PORT *port;
+
+    port = (portnum==0) ? &scc->portA : &scc->portB;
+
+    /* reset ext/status interrupts */
+    write_scc_reg0(port, SCC_RESET_ES_INT);
+
+    /* reset highest IUS, allows lower priority interrupts */
+    write_scc_reg0(port, SCC_RESET_HIGH_IUS);
 }
 
 /*
@@ -606,15 +742,7 @@ static const WORD scc_timeconst[] = {
     /*    50 */  5032
 };
 
-static void write_scc(PORT *port,UBYTE reg,UBYTE data)
-{
-    port->ctl = reg;
-    RECOVERY_DELAY;
-    port->ctl = data;
-    RECOVERY_DELAY;
-}
-
-static ULONG rsconf_scc(PORT *port,EXT_IOREC *iorec,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
+static ULONG rsconf_scc(SCC_PORT *port,EXT_IOREC *iorec,WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD scr)
 {
     ULONG old;
 
@@ -720,13 +848,13 @@ static ULONG rsconfB(WORD baud, WORD ctrl, WORD ucr, WORD rsr, WORD tsr, WORD sc
 
 static const WORD SCC_init_string[] = {
     0x0444,     /* x16 clock mode, 1 stop bit, no parity */
-    0x0104,     /* 'parity is special condition' */
+    0x0104,     /* 'parity is special condition', disable interrupts */
     0x0260,     /* interrupt vector #s start at 0x60 (lowmem 0x180) */
     0x03c0,     /* Rx 8 bits/char, disabled */
     0x05e2,     /* Tx 8 bits/char, disabled, DTR, RTS */
     0x0600,     /* SDLC (n/a) */
     0x0700,     /* SDLC (n/a) */
-    0x0901,     /* status low, vector includes status */
+    0x0901,     /* status low, vector includes status, master interrupt disable */
     0x0a00,     /* misc flags */
     0x0b50,     /* Rx/Tx clocks from baudrate generator output */
     0x0c18,     /* time const low = 24 | so rate = (24+2)*2/BR clock period */
@@ -738,9 +866,6 @@ static const WORD SCC_init_string[] = {
     0x0f20,     /* CTS interrupt enable */
     0x0010,     /* reset external/status interrupts */
     0x0010,     /* reset again (necessary, see manual) */
-    0x0117,     /* interrupts for Rx, Tx, special condition; parity is special */
-    0x0901,     /* status low, master interrupt disable */
-                /* NOTE: change above to 0x0909 to enable interrupts! */
     0xffff      /* end of table marker */
 };
 
@@ -766,30 +891,20 @@ void scc_init(void)
     /* initialise channel A */
     for (p = SCC_init_string; *p >= 0; p++)
         write_scc(&scc->portA,HIBYTE(*p),LOBYTE(*p));
+    write_scc(&scc->portA, 1, 0x17);    /* enable all interrupts */
 
     /* initialise channel B */
     for (p = SCC_init_string; *p >= 0; p++)
         write_scc(&scc->portB,HIBYTE(*p),LOBYTE(*p));
+#if SCC_DEBUG_PRINT
+    write_scc(&scc->portB, 1, 0x10);    /* enable RX interrupt only */
+#else
+    write_scc(&scc->portB, 1, 0x17);    /* enable all interrupts */
+#endif
 
     /*
      * Enable routing of the SCC interrupt through the SCU like TOS does.
-     * Even though interrupts are not used here, other programs might
-     * install their own interrupt handlers and expect the interrupt
-     * to be available to them.
-     * Point interrupts to just_rte() in case a program enables them
-     * before setting its own handler.
      */
-
-     VEC_SCCB_TBE = just_rte;
-     VEC_SCCB_EXT = just_rte;
-     VEC_SCCB_RXA = just_rte;
-     VEC_SCCB_SRC = just_rte;
-
-     VEC_SCCA_TBE = just_rte;
-     VEC_SCCA_EXT = just_rte;
-     VEC_SCCA_RXA = just_rte;
-     VEC_SCCA_SRC = just_rte;
-
      if (HAS_VME)
         *(volatile char *)VME_INT_MASK |= VME_INT_SCC;
 }
@@ -881,6 +996,20 @@ void init_serport(void)
     memcpy(&iorecB,&iorec_init,sizeof(EXT_IOREC));
     iorecB.in.buf = ibufB;
     iorecB.out.buf = obufB;
+    if (has_scc) {
+        SCC *scc = (SCC *)SCC_BASE;
+        VEC_SCCB_TBE = sccb_tx_interrupt;
+        VEC_SCCB_EXT = sccb_es_interrupt;
+        VEC_SCCB_RXA = sccb_rx_interrupt;
+        VEC_SCCB_SRC = sccb_rx_interrupt;
+        VEC_SCCA_TBE = scca_tx_interrupt;
+        VEC_SCCA_EXT = scca_es_interrupt;
+        VEC_SCCA_RXA = scca_rx_interrupt;
+        VEC_SCCA_SRC = scca_rx_interrupt;
+        rsconfA(DEFAULT_BAUDRATE, 0, 0x88, 1, 1, 0);    /* set default initial */
+        rsconfB(DEFAULT_BAUDRATE, 0, 0x88, 1, 1, 0);    /*  values in hardware */
+        write_scc(&scc->portA, 9, 0x09);        /* set Master Interrupt Enable */
+    }
 #endif  /* CONF_WITH_SCC */
 
 #if CONF_WITH_TT_MFP

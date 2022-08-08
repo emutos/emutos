@@ -1,0 +1,149 @@
+name: Manual build of auxiliary tools
+
+on: workflow_dispatch
+
+# Deployment target
+env:
+  SSH_USER: czietz,emutos
+  SSH_HOST: frs.sourceforge.net
+  SSH_PATH: /home/pfs/p/emutos/tools
+
+jobs:
+  linux:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install SSH keys
+      env:
+        SSH_ID: ${{ secrets.SSH_ID }}
+      run: .scripts/install_ssh_id.sh
+    - name: Install packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc-i686-linux-gnu gcc-arm-linux-gnueabihf gcc-aarch64-linux-gnu zip
+    - name: Build binaries
+      run: |
+        export VERSION=$(date -u +%Y%m%d)-$(git rev-parse --short ${GITHUB_SHA})
+        echo VERSION=$VERSION >> $GITHUB_ENV
+        echo VERSION=$VERSION
+        cd tools
+        # Linux x86 64-bit (native)
+        make clean
+        make install ARCH=linux64
+        # Linux x86 32-bit
+        export CC=i686-linux-gnu-gcc
+        make clean
+        make install ARCH=linux32
+        # Linux ARM 32-bit
+        export CC=arm-linux-gnueabihf-gcc
+        make clean
+        make install ARCH=linux-arm
+        # Linux ARM AArch64
+        export CC=aarch64-linux-gnu-gcc
+        make clean
+        make install ARCH=linux-aarch64
+    - name: Display resulting tree
+      run: ls -lR tools/dist/
+    - name: Package binaries
+      run: |
+        cp doc/tools.txt doc/license.txt tools/dist/
+        cd tools/dist
+        tar -czvf ../tools-${{github.job}}-${{env.VERSION}}.tar.gz *
+    - name: Deploy to SourceForce
+      run: |
+        scp -o StrictHostKeyChecking=no doc/tools.txt $SSH_USER@$SSH_HOST:$SSH_PATH/README.txt
+        cd tools
+        scp -o StrictHostKeyChecking=no *.tar.gz $SSH_USER@$SSH_HOST:$SSH_PATH
+#    - name: Save binaries as build artifacts
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: tools-${{github.job}}-${{env.VERSION}}
+#        path: tools/*.tar.gz
+
+
+  windows:
+
+    runs-on: ubuntu-20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install SSH keys
+      env:
+        SSH_ID: ${{ secrets.SSH_ID }}
+      run: .scripts/install_ssh_id.sh
+    - name: Install packages
+      run: |
+        sudo apt-get update
+        sudo apt-get install gcc-mingw-w64 zip
+    - name: Build binaries
+      run: |
+        export VERSION=$(date -u +%Y%m%d)-$(git rev-parse --short ${GITHUB_SHA})
+        echo VERSION=$VERSION >> $GITHUB_ENV
+        echo VERSION=$VERSION
+        cd tools
+        # Windows 32-bit
+        export CC=i686-w64-mingw32-gcc
+        make clean
+        make install ARCH=win32 LDFLAGS=-s LDLIBS=-lws2_32 SUFFIX=.exe
+        # Windows 64-bit
+        export CC=x86_64-w64-mingw32-gcc
+        make clean
+        make install ARCH=win64 LDFLAGS=-s LDLIBS=-lws2_32 SUFFIX=.exe
+    - name: Display resulting tree
+      run: ls -lR tools/dist/
+    - name: Package binaries
+      run: |
+        cp doc/tools.txt doc/license.txt tools/dist/
+        cd tools/dist
+        zip -r ../tools-${{github.job}}-${{env.VERSION}}.zip *
+    - name: Deploy to SourceForce
+      run: |
+        cd tools
+        scp -o StrictHostKeyChecking=no *.zip $SSH_USER@$SSH_HOST:$SSH_PATH
+#    - name: Save binaries as build artifacts
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: tools-${{github.job}}-${{env.VERSION}}
+#        path: tools/*.zip
+
+
+  macos:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Install SSH keys
+      env:
+        SSH_ID: ${{ secrets.SSH_ID }}
+      run: .scripts/install_ssh_id.sh
+    - name: Build binaries
+      run: |
+        export VERSION=$(date -u +%Y%m%d)-$(git rev-parse --short ${GITHUB_SHA})
+        echo VERSION=$VERSION >> $GITHUB_ENV
+        echo VERSION=$VERSION
+        cd tools
+        # macOS native x86_64
+        make clean
+        make install ARCH=macos-intel
+        # macOS Aarch64 / Apple Silicon
+        make clean
+        make install ARCH=macos-aarch64 CFLAGS='-target arm64-apple-macos'
+    - name: Display resulting tree
+      run: ls -lR tools/dist/
+    - name: Package binaries
+      run: |
+        cp doc/tools.txt doc/license.txt tools/dist/
+        cd tools/dist
+        tar -czvf ../tools-${{github.job}}-${{env.VERSION}}.tar.gz *
+    - name: Deploy to SourceForce
+      run: |
+        cd tools
+        scp -o StrictHostKeyChecking=no *.tar.gz $SSH_USER@$SSH_HOST:$SSH_PATH
+#    - name: Save binaries as build artifacts
+#      uses: actions/upload-artifact@v2
+#      with:
+#        name: tools-${{github.job}}-${{env.VERSION}}
+#        path: tools/*.tar.gz

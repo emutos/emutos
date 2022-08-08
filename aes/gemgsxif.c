@@ -1,7 +1,7 @@
 /*
  * gemgsxif.c - AES's interface to VDI (gsx)
  *
- * Copyright 2002-2021 The EmuTOS development team
+ * Copyright 2002-2022 The EmuTOS development team
  *           1999, Caldera Thin Clients, Inc.
  *           1987, Digital Research Inc.
  *
@@ -79,7 +79,7 @@ static FDB   gl_tmp;
 static PFVOID old_mcode;
 static PFVOID old_bcode;
 static LONG  gl_mlen;
-static WORD  gl_graphic;
+static BOOL  gl_graphic;
 
 
 /* Some local Prototypes: */
@@ -293,7 +293,7 @@ void gsx_init(void)
 
 
 
-void gsx_graphic(WORD tographic)
+void gsx_graphic(BOOL tographic)
 {
     if (gl_graphic != tographic)
     {

@@ -2,7 +2,7 @@
  * fsdrive.c - physical drive routines for file system
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2019 The EmuTOS development team
+ *               2002-2022 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -68,18 +68,26 @@ LONG    drvsel;
  *
  *
  *      returns:
- *          ERR     if getbpb() failed
- *          ENSMEM  if log() failed
- *          EINTRN  if no room in dirtbl
+ *          EDRIVE  invalid drive specified
+ *          EPTHNF  unmounted removable drive specified
+ *          ENSMEM  if log_media() failed (with either EDRIVE or ENSMEM), or
+ *                  dirtbl[] is full
  *          drive nbr if success.
  */
-long ckdrv(int d, BOOL checkrem)
+WORD ckdrv(int d, BOOL checkrem)
 {
     int curdir;
     LONG mask;
     BPB *b;
 
     KDEBUG(("ckdrv(%i)\n",d));
+
+    /*
+     * d mustn't be negative as shifting left by a negative amount
+     * is undefined in the C standard
+     */
+    if (d < 0)
+        return EDRIVE;
 
     mask = 1L << d;
 
@@ -89,9 +97,6 @@ long ckdrv(int d, BOOL checkrem)
 
         if (!b)
             return (mask&drvrem) ? EPTHNF : EDRIVE;
-
-        if ((long)b < 0)
-            return (long)b;
 
         if (log_media(b,d))
             return ENSMEM;
@@ -176,7 +181,7 @@ static int log2ul(unsigned long n)
 /* b: bios parm block for drive
  * drv: drive number
  */
-long log_media(BPB *b, int drv)
+WORD log_media(BPB *b, int drv)
 {
     OFD *fo, *f;                        /*  M01.01.03   */
     DND *d;

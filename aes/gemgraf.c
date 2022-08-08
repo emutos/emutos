@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2021 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -749,7 +749,7 @@ void gr_gicon(WORD state, ICONBLK *ib, CICON *cicon)
     {
         /* NOTE: this may need to be modified for 16-bit colour */
         gr_gblt(pmask, pi, bgcol, fgcol);
-        /* do not draw backround rectangle for icon text if the string is empty */
+        /* do not draw background rectangle for icon text if the string is empty */
         if (ib->ib_ptext[0])
         {
             if (cicon && (state & SELECTED))

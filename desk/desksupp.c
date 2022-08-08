@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2021 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -26,6 +26,7 @@
 #include "gemdos.h"
 #include "rectfunc.h"
 #include "optimize.h"
+#include "miscutil.h"
 #include "biosbind.h"
 #include "biosdefs.h"
 #include "xbiosbind.h"
@@ -52,7 +53,7 @@
 #include "nls.h"
 #include "scancode.h"
 #include "biosext.h"
-#include "lineavars.h"      /* for MOUSE_BT */
+#include "lineavars.h"      /* for MOUSE_BT, V_REZ_HZ */
 
 /* Needed to force media change */
 #define MEDIACHANGE     0x02
@@ -205,8 +206,9 @@ void do_wredraw(WORD w_handle, GRECT *gptr)
     if (w_handle != DESKWH)
     {
         pw = win_find(w_handle);
-        if (pw)
-            root = pw->w_root;
+        if (!pw)        /* window (no longer) exists */
+            return;
+        root = pw->w_root;
     }
 
     G.g_idt = Supexec((LONG)get_idt_cookie);    /* current _IDT for format_fnode() */
@@ -247,9 +249,19 @@ static ICONBLK *get_iconblk_ptr(OBJECT olist[], WORD obj)
 }
 
 
+/*
+ * fix up the (x,y) positioning of a desktop window:
+ *  . it should be horizontally aligned on a 16-pixel boundary
+ *  . it must be below the menu bar
+ */
 void do_xyfix(WORD *px, WORD *py)
 {
-    *px = (*px + 8) & 0xfff0;   /* horizontally align to nearest word boundary */
+    *px = (*px + 8) & 0xfff0;   /* horizontally align to nearest 16-pixel boundary */
+#if CONF_WITH_3D_OBJECTS
+    /* ensure that we can still access the mover */
+    if (*px + gl_wbox + 2*ADJ3DSTD >= V_REZ_HZ)
+        *px -= 16;
+#endif
     if (*py < G.g_desk.g_y)     /* ensure it's below menu bar */
         *py = G.g_desk.g_y;
 }
@@ -1012,20 +1024,6 @@ WORD do_aopen(ANODE *pa, BOOL isapp, WORD curr, char *pathname, char *pname, cha
 
 
 /*
- *  Build root path for specified drive
- */
-void build_root_path(char *path,WORD drive)
-{
-    char *p = path;
-
-    *p++ = drive;
-    *p++= ':';
-    *p++ = '\\';
-    *p = '\0';
-}
-
-
-/*
  *  Open a disk
  *
  *  if curr >= 0, it is a screen object id; the disk letter will be
@@ -1057,7 +1055,7 @@ WORD do_dopen(WORD curr)
     if (pw)
     {
         build_root_path(path,drv);
-        strcpy(path+3,"*.*");
+        set_all_files(path+3);
         if (!do_diropen(pw, TRUE, curr, path, (GRECT *)&G.g_screen[pw->w_root].ob_x, TRUE))
         {
             win_free(pw);
@@ -1116,7 +1114,7 @@ void do_fopen(WNODE *pw, WORD curr, char *pathname, WORD allow_new_win)
             remove_locate_shortcut(curr);
             return;
         }
-        strcpy(p,"*.*");
+        set_all_files(p);
         new_win = TRUE;
     }
     else
@@ -1317,7 +1315,7 @@ WORD do_info(WORD curr)
                 pf = &fn;
                 memcpy(&pf->f_attr, &dta->d_attrib, 23);
                 strcpy(pathname, pa->a_pappl);
-                strcpy(filename_start(pathname),"*.*");
+                del_fname(pathname);
                 pathptr = pathname;
             }
             else

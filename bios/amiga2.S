@@ -1,7 +1,7 @@
 /*
  * amiga2.S - Amiga specific assembler functions
  *
- * Copyright (C) 2013-2020 The EmuTOS development team
+ * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -51,7 +51,7 @@ delay:  subq.l  #1,D0                   // Delay loop.
 /******************************************************************************/
 /* memconf                                                                    */
 /* Freely inspired from Markus Wandel's Exec disassembly                      */
-/* http://wandel.ca/homepage/execdis/exec_disassembly.txt                     */
+/* https://wandel.ca/homepage/execdis/exec_disassembly.txt                     */
 /******************************************************************************/
 
         .globl  amiga_memconf

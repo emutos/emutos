@@ -2,7 +2,7 @@
  * fs.h - file system defines
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2020 The EmuTOS development team
+ *               2002-2022 The EmuTOS development team
  *
  * Authors:
  *  JSL   Jason S. Loveman
@@ -29,7 +29,6 @@
  *  constants
  */
 
-#define SLASH '\\'
 #define FNAMELEN    (LEN_ZNODE+LEN_ZEXT)    /* as found in dirs etc */
 
 /*
@@ -353,10 +352,10 @@ extern  FTAB    sft[];
  */
 
 /* check the drive, see if it needs to be logged in. */
-long ckdrv(int d, BOOL checkrem);
+WORD ckdrv(int d, BOOL checkrem);
 
 /* log in media 'b' on drive 'drv'. */
-long log_media(BPB *b, int drv);
+WORD log_media(BPB *b, int drv);
 
 LONG is_drive_available(WORD dev);
 

@@ -10,26 +10,26 @@ a ROM version of EmuTOS.
   system              |  ok?  | who |   date      |  details
   --------------------+-------+-----+-------------+----------------
   Emulators           |       |     |             |
-  ARAnyM 1.1.0        |  yes  | VRI |  2 Jul 2021 |
-  Hatari v2.3.1       |  yes  | VRI |  2 Jul 2021 |
+  ARAnyM 1.1.0        |  yes  | CZ  |  9 Jul 2022 |
+  Hatari v2.4.0       |  yes  | VRI | 31 Jul 2022 |
   PaCifiST v0.48      |   no  | (7) | 21 Jul 2021 | see (B)
   SainT v2.40         |  yes  | RFB | 29 Aug 2020 | 192k ROM only
-  Steem SSE 4.1.0 R7  |  yes  | VRI |  2 Jul 2021 | (Win 64 D3D)
+  Steem SSE 4.1.2     |  yes  | CZ  |  9 Jul 2022 | (Win 32 D3D)
   STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   STonX DOS           |  yes  | CZ  | 22 Jul 2021 | see (A)
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon v0.5        |   no  | RFB | 29 Aug 2020 |
-  WinUAE 4.4.0        |  yes  | VRI |  2 Jul 2021 |
+  WinUAE 4.4.0        |  yes  | VRI | 31 Jul 2022 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
-  STf & STfm          |  yes  | CZ  | 03 Jul 2021 |
-  Mega ST             |  yes  | (6) |  3 Jul 2021 | tested with PRG
-  STe                 |  yes  | CZ  | 03 Jul 2021 |
-  Mega STe            |  yes  | CZ  | 31 Aug 2020 |
-  TT030               |  yes  | CZ  | 03 Jul 2021 |
-  Falcon030           |  yes  | CZ  | 03 Jul 2021 |
-  Falcon030 + CT60    |  yes  | RFB | 03 Jul 2021 | tested with PRG
+  STf & STfm          |  yes  | CZ  |  2 Jul 2022 |
+  Mega ST             |  yes  | CZ  |  3 Jul 2022 | tested with PRG
+  STe                 |  yes  | CZ  |  9 Jul 2022 |
+  Mega STe            |  yes  | CZ  |  3 Jul 2022 | tested with PRG
+  TT030               |  yes  | CZ  |  2 Jul 2022 |
+  Falcon030           |  yes  | CZ  |  3 Jul 2022 |
+  Falcon030 + CT60    |  yes  | RFB |  3 Jul 2022 | tested with PRG
   Suska III-C (2K15B) |  yes  | (3) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
   Other systems       |       |     |             |
@@ -37,8 +37,8 @@ a ROM version of EmuTOS.
   Amiga 500 + Vampire |  yes  | VRI | 13 Oct 2019 | GOLD2.11
   Amiga 600 + Vampire |  yes  | (4) |    Mar 2017 |
   Amiga 1000          |  yes  | (2) |    Jul 2012 |
-  FireBee             |  yes  | VRI |  2 Jul 2021 |
-  M5484LITE           |  yes  | VRI |  2 Jul 2021 |
+  FireBee             |  yes  | VRI | 25 Jul 2022 |
+  M5484LITE           |  yes  | VRI | 25 Jul 2022 |
   Vampire V4          |  yes  | CZ  | 24 Aug 2020 |
   Apple Lisa          |  yes  | (8) |  4 Feb 2021 |
 
@@ -147,18 +147,21 @@ T Tested and working on an emulator or real hardware
  T 8 TT-MFP serial port (*)
  T 9 SCC channel A (*)
 
-(*)  Note: flow control is not implemented for serial ports
+(*) Note: serial port I/O is interrupt-driven, but flow control is not
+    yet implemented for serial ports
 
  ACIA interrupt handlers
  ----------------------------------------------------------------------------
 
- - midierr
- - ikbderr
- T midi input
- T ikbd key events
- T IKBD clock
- T mouse
- T joysticks
+ T MIDI input (midivec)
+ t IKBD error (vkbderr)
+ t MIDI error (vmiderr)
+ T IKBD status (statvec)
+ T IKBD mouse (mousevec)
+ T IKBD clock (clockvec)
+ T IKBD joystick (joyvec)
+ T main MIDI vector (midisys)
+ T main IKBD vector (ikbdsys)
 
 
  BIOS Functions
@@ -618,10 +621,10 @@ AES v3.30 (TOS >= v3.06):
  T 105  wind_set extensions
 
 AES v3.40 (TOS v4.04)
- -  36  menu_popup
- -  37  menu_attach
- -  38  menu_istart
- -  39  menu_settings
+ >T 36  menu_popup
+ >T 37  menu_attach
+ T  38  menu_istart
+ >T 39  menu_settings
  T  48  objc_sysvar
 
 TOS v4 extended AES functionality:

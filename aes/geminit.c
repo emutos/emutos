@@ -6,7 +6,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2021 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -31,6 +31,7 @@
 #include "has.h"
 #include "../bdos/bdosstub.h"
 #include "biosext.h"
+#include "miscutil.h"
 
 #include "aescfg.h"
 #include "gemgsxif.h"
@@ -311,19 +312,6 @@ static void load_accs(WORD n)
     for (i = 0; i < n; i++)
         load_one_acc(&acc[i]);
 }
-
-
-/*
- *  Set default desktop path (root of current drive)
- */
-static void sh_curdir(char *ppath)
-{
-    *ppath++ = dos_gdrv() + 'A';
-    *ppath++ = ':';
-    *ppath++ = '\\';
-    *ppath = '\0';
-}
-
 
 /*
  *  Part 1 of early emudesk.inf processing
@@ -672,8 +660,7 @@ void run_accs_and_desktop(void)
 
     wm_start();                     /* initialise window vars */
     fs_start();                     /* startup gem libs */
-    sh_curdir(D.s_cdir);            /* remember current desktop directory */
-
+    build_root_path(D.s_cdir, 'A'+dos_gdrv());  /* root of current drive */
     isgem = process_inf2(&isauto);  /* process emudesk.inf part 2 */
 
     dsptch();                       /* off we go !!! */
@@ -694,10 +681,24 @@ void run_accs_and_desktop(void)
 #if CONF_WITH_ATARI_VIDEO || defined(MACHINE_AMIGA)
 /*
  * change resolution & reinitialise the palette registers
+ *
+ * note: passing a screen address of 0L to Setscreen() means reallocate
+ * screen memory.  on non-Falcon systems (where the size of screen memory
+ * is fixed), this is effectively the same as passing an address of -1L,
+ * and our implementation of Setscreen() handles this without problems.
+ *
+ * however, if someone has hooked Setscreen() and does not understand
+ * this, passing a screen address of 0L will set the screen address to
+ * NULL, and the system will crash.  this happens, for example, when
+ * running NVDI 4.11 on a Mega ST.
+ *
+ * therefore, for safety, we only use 0L on explicitly Falcon resolutions.
  */
 static void new_resolution(WORD rez, WORD videlmode)
 {
-    Setscreen(0L, 0L, rez, videlmode);          /* change resolution */
+    LONG addr = (rez==FALCON_REZ) ? 0L : -1L;
+
+    Setscreen(addr, addr, rez, videlmode);      /* change resolution */
     initialise_palette_registers(rez, videlmode);
 }
 #endif

@@ -2,7 +2,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2021 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -37,13 +37,18 @@ typedef UWORD   EVSPEC;
 
 /*
  * EVBs are used to track events that an AES process is waiting on.  the
- * maximum number of events that a process can wait for is 6 (MU_KEYBD,
- * MU_BUTTON, MU_M1, MU_M2, MU_MESAG, MU_TIMER), when ev_multi() is used.
+ * maximum number of events per process is the number of unique bitmasks
+ * for ev_multi(): MU_KEYBD, MU_BUTTON, MU_M1, MU_M2, MU_MESAG, MU_TIMER
+ * (plus MU_M3 for menu extension support).
  *
- * therefore we create 6 EVBs per AES process and ensure that we cannot
- * run out of EVBs.
+ * therefore we create 6 (or 7) EVBs per AES process and ensure that we
+ * cannot run out of EVBs.
  */
+#if CONF_WITH_MENU_EXTENSION
+#define EVBS_PER_PD     7               /* EVBs per AES process */
+#else
 #define EVBS_PER_PD     6               /* EVBs per AES process */
+#endif
 
 #define NUM_SMIBS   128                 /* SMIBs per process (when allocated) */
 
@@ -140,11 +145,6 @@ struct aespd                /* process descriptor */
 
 #if CONF_WITH_GRAF_MOUSE_EXTENSION
         MFORM   p_mouse;        /* used by graf_mouse(SAVE,RESTORE) */
-#endif
-
-#if CONF_WITH_MENU_EXTENSION
-        SMIB    *p_submenu;     /* ptr to array of submenu info blocks */
-        SMIB    *p_submenu_hwm; /* high water mark of p_submenu[] */
 #endif
 
         char    *p_qaddr;       /* */

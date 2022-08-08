@@ -49,8 +49,19 @@
  * (between resolution changes) is a fixed size, the actual spacing
  * between desktop icons is adjusted for symmetrical spacing (both
  * horizontal & vertical).
+ *
+ * NOTE: the following tweak to horizontal spacing (in low-res when 3D
+ * objects are enabled) is only temporary.  it ensures that 4 columns of
+ * icons will be displayed in a full-size low-res desktop window, just
+ * like in Atari TOS.  the permanent fix will be to reduce the sizes of
+ * various window gadgets, increasing the window's work area size so
+ * that 4 columns will fit.
  */
+#if CONF_WITH_3D_OBJECTS
+#define SMALL_HSPC      3      /* horizontal, for ST low/medium, Falcon double-line */
+#else
 #define SMALL_HSPC      4      /* horizontal, for ST low/medium, Falcon double-line */
+#endif
 #define LARGE_HSPC      8      /* horizontal, for ST high, Falcon not-double-line */
 #define MIN_WINT        ((gl_height<=300)?SMALL_HSPC:LARGE_HSPC)
 #define MIN_HINT        2      /* vertical */

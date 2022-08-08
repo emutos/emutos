@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2021 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -52,12 +52,6 @@
 #define HFULL   (gl_height - gl_hbox)
 
 #define DROP_SHADOW_SIZE    2   /* size of drop shadow on windows */
-
-#if CONF_WITH_3D_OBJECTS
-#define TGADGETS    (NAME | CLOSER | FULLER | MOVER)
-#define VGADGETS    (UPARROW | DNARROW | VSLIDE)
-#define HGADGETS    (LFARROW | RTARROW | HSLIDE)
-#endif
 
 GLOBAL WORD     gl_wtop;
 GLOBAL OBJECT   *gl_awind;
@@ -1084,6 +1078,15 @@ static void draw_change(WORD w_handle, GRECT *pt)
                 pt->g_x, pt->g_y, pt->g_w, pt->g_h,
                 &pw->g_x, &pw->g_y, &pw->g_w, &pw->g_h);
 
+    /*
+     * if this window isn't open, we're done (we must not attempt
+     * to redraw the window tree).  this situation can occur when
+     * a wind_set(WF_CURRXYWH) is done for a window that has been
+     * created but not yet opened.
+     */
+    if ((D.w_win[w_handle].w_flags & VF_ISOPEN) == 0)
+        return;
+
     /* update rectangle lists */
     everyobj(gl_wtree, ROOT, NIL, (EVERYOBJ_CALLBACK)newrect, 0, 0, MAX_DEPTH);
 
@@ -1110,7 +1113,6 @@ static void draw_change(WORD w_handle, GRECT *pt)
         if ((pt->g_w == c.g_w) && (pt->g_h == c.g_h))
         {
             /* handle top request (sizes of prev and current are the same) */
-
             /* return if this isn't a top request */
             if ((w_handle != W_TREE[ROOT].ob_tail) || (w_handle == oldtop))
                 return;
@@ -1438,8 +1440,8 @@ BOOL wm_close(WORD w_handle)
     wm_update(BEG_UPDATE);
 
     ob_delete(gl_wtree, w_handle);
-    pwin->w_flags &= ~VF_ISOPEN;
     draw_change(w_handle, &t);
+    pwin->w_flags &= ~VF_ISOPEN;
 
     wm_update(END_UPDATE);
 

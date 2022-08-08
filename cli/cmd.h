@@ -1,7 +1,7 @@
 /*
  * EmuCON2 header
  *
- * Copyright (C) 2013-2021 The EmuTOS development team
+ * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -19,6 +19,9 @@
  #define CONF_WITH_TT_SHIFTER   1
  #define MAXPATHLEN      256
  #define BLKDEVNUM       26
+ /* sysconf.h */
+ #define DRIVESEP       ':'
+ #define PATHSEP        '\\'
  /* nls.h */
  #define _(a) a
  #define N_(a) a

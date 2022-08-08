@@ -1,31 +1,30 @@
-Installing:
-
+Installing the toolchain
+========================
 You will need a (cross-)GCC toolchain for TOS/MiNT.
 Currently, the only supported one is Vincent Rivière's m68k-atari-mint tools:
-http://vincent.riviere.free.fr/soft/m68k-atari-mint/
+  http://vincent.riviere.free.fr/soft/m68k-atari-mint/
+which is based on GCC 4.8.4.
 
 Other toolchains may also work.  However, you will not be able to use one
 based on GCC 2, for several reasons.  The most important of these is that
-the generated binaries are just too large.
+the generated binaries are just too large.  This is also the case for many
+binaries built with versions of GCC *later* than 4.8.4; in fact, as of the
+time of writing, 4.8.4 seems to produce the most compact binaries.
 
 You will also need GNU make (tested with make 3.81 & 4.2.1).
 
+
 Building EmuTOS
 ===============
-
 To build, first do:
-
     make help
-
 This will display the list of all possible targets.
 
 To build a multilanguage ROM, e.g. etos1024k.img, do
-
     make 1024
 
 To build EmuTOS for a different default country (changes the language and the
 keyboard), do
-
     make 1024 COUNTRY=en
 or
     make 1024 COUNTRY=fr
@@ -41,27 +40,50 @@ country in the TOS header.
 
 To build EmuTOS for a single country only, you must use UNIQUE instead of
 COUNTRY. This is used for the 192K/256K/512K targets. Example:
-
     make 256 UNIQUE=fr
 
 Many options are set via the configuration file include/config.h.  They can
 be overridden most easily via #defines in a user-created file localconf.h.
+See "Customising EmuTOS" below for further details.
 
-It is required to do "make clean" before switching to a different target,
-e.g., switching from 512k to 256k ROMs. The only change allowed without
-"make clean" is to build (with same target) for a different language.
+You must do a "make clean" before switching to a different target, e.g.
+switching from 512k to 256k ROMs.  The only build change allowed without
+a "make clean" is to build (with the same target) for a different language.
+
+
+Customising EmuTOS
+==================
+The various binary targets are all built from the same EmuTOS sources by
+the use of different values for the 'configuration defines', which are
+found in include/config.h.  Apart from the source code itself, the usage
+of the configuration defines is best determined from the comments in that
+file.
+
+It is possible to build custom versions of EmuTOS by changing the values
+of the configuration defines.  To avoid having to change that file itself,
+you may create a localconf.h file in the root of the repository, and
+insert the appropriate #defines in that file.  Any #define in localconf.h
+will override the corresponding #define in config.h.
+
+Although customising EmuTOS in this way is relatively simple to do in a
+mechanical sense, you should be careful when doing this as it is quite
+possible to create a binary which will not work on your machine.  We
+recommend that the target you modify should be one that will run on your
+machine: for example, if you are customising for an STe, start with the
+256k (or larger) target.  Otherwise the automatic hardware detection and
+configuration code required for your machine may not be included.
+
 
 A complete list of targets
 ==========================
-
 EmuTOS binaries
 ---------------
 192         etos192us.img, EmuTOS ROM padded to size 192 KB (starting at 0x00fc0000)
 256         etos256us.img, EmuTOS ROM padded to size 256 KB (starting at 0x00e00000)
-512         etos512k.img, EmuTOS ROM padded to size 512 KB (starting at 0x00e00000)
+512         etos512us.img, EmuTOS ROM padded to size 512 KB (starting at 0x00e00000)
 1024        etos1024k.img, EmuTOS ROM padded to size 1024 KB (starting at 0x00e00000)
-aranym      emutos-aranym.img, suitable for ARAnyM
-firebee     emutosfb.s19, to be flashed on the FireBee
+aranym      emutos-aranym.img, optimized for ARAnyM
+firebee     etosfbus.s19, to be flashed on the FireBee
 firebee-prg emutos.prg, a RAM tos for the FireBee
 amiga       emutos-amiga.rom, EmuTOS ROM for Amiga hardware
 amigakd     emutos-kickdisk.adf, EmuTOS as Amiga 1000 Kickstart disk
@@ -73,7 +95,8 @@ lisaflop    emutos.dc42, EmuTOS RAM as Apple Lisa boot floppy
 m548x-dbug  emutos-m548x-dbug.s19, EmuTOS for dBUG on ColdFire Evaluation Boards
 m548x-bas   emutos-m548x-bas.s19, EmuTOS for BaS_gcc on ColdFire Evaluation Boards
 m548x-prg   emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc
-prg         emutos.prg, a RAM tos
+prg         emutosus.prg, a RAM tos
+prg256      emu256us.prg, a RAM tos
 flop        emutosus.st, a bootable floppy with RAM tos
 pak3        etospak3us.img, suitable for PAK/3 systems
 cart        etoscart.img, EmuTOS as a diagnostic cartridge
@@ -109,9 +132,12 @@ Release-related targets
 -------------------
 all192      all 192 KB images
 all256      all 256 KB images
+all512      all 512 KB images
 allpak3     all PAK/3 images
 allprg      all emutos*.prg
+allprg256   all emu256*.prg
 allflop     all emutos*.st
+allfirebee  all etosfb*.s19
 release     build the release archives into release-archives
 
 

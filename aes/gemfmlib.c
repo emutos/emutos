@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2020 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -209,7 +209,7 @@ WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
     WORD    tobj;
     WORD    orword;
     WORD    parent, state, flags;
-    WORD    cont, junk, tstate, tflags;
+    WORD    cont, tstate, tflags;
     WORD    rets[6];
     OBJECT  *objptr;
 
@@ -233,7 +233,7 @@ WORD fm_button(OBJECT *tree, WORD new_obj, WORD clks, WORD *pnew_obj)
         if (flags & RBUTTON)
         {
             /* check siblings to find and turn off the old RBUTTON */
-            parent = get_par(tree, new_obj, &junk);
+            parent = get_par(tree, new_obj);
             objptr = tree + parent;
             tobj = objptr->ob_head;
             while (tobj != parent)
@@ -314,8 +314,13 @@ WORD fm_do(OBJECT *tree, WORD start_fld)
             ob_edit(tree, edit_obj, 0, &idx, EDINIT);
         }
         /* wait for mouse or key */
+#if CONF_WITH_MENU_EXTENSION
+        which = ev_multi(MU_KEYBD | MU_BUTTON, NULL, NULL, NULL,
+                         0x0L, 0x0002ff01L, NULL, rets);
+#else
         which = ev_multi(MU_KEYBD | MU_BUTTON, NULL, NULL,
                          0x0L, 0x0002ff01L, NULL, rets);
+#endif
 
         /* handle keyboard event */
         if (which & MU_KEYBD)

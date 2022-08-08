@@ -5,22 +5,32 @@
  *      gcc -o tos-lang-change -O -Wall tos-lang-change.c
  *
  * Copyright 2005-2016 Eero Tamminen
+ * Copyright 2022      Christian Zietz
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
 
 #include <stdio.h>
-#include <netinet/in.h> /* big endian (network) / host endian conversions */
+#include <stdint.h>
+
+/* big endian (network) / host endian conversions */
+#ifdef _WIN32
+#include <winsock.h>
+#else
+#include <netinet/in.h>
+#endif
 
 #define TOS_CONF_OFFSET 0x1C
 
+#define MAX_INPUTLEN    20      /* for user input country code */
+
 typedef struct {
-        uint16_t value;
+        int16_t value;
         const char *name;
 } country_t;
 
-#define COUNTRY_ERROR 255
+#define COUNTRY_ERROR   -1
 
 static country_t countries[] = {
         {  0, "USA" },
@@ -37,9 +47,10 @@ static country_t countries[] = {
         { 11, "Norway" },
         { 12, "Denmark" },
         { 13, "Saudi Arabia" },
-        { 14, "Holland" },
+        { 14, "Netherlands" },
         { 15, "Czech Republic" },
         { 16, "Hungary" },
+        { 17, "Poland" },
         { 19, "Russia" },
         { 31, "Greece" },
         {127, "Multilanguage (all countries are supported, TOS >= v4.0)" },
@@ -69,11 +80,26 @@ static const char *get_country_name(uint16_t value)
         return country->name;
 }
 
+/* return 1 iff passed value is in country table */
+static int valid_country_value(uint16_t value)
+{
+        country_t *country;
+
+        for (country = countries; country->name; country++) {
+                if (value == country->value) {
+                        return 1;
+                }
+        }
+
+        return 0;
+}
+
 /* show all the TOS country alternatives and ask user for a country code.
  * returns the user code if it's valid, otherwise COUNTRY_ERROR
  */
-static uint16_t get_new_country_value(void)
+static int16_t get_new_country_value(void)
 {
+        char s[MAX_INPUTLEN];
         country_t *country;
         uint16_t value;
 
@@ -82,18 +108,22 @@ static uint16_t get_new_country_value(void)
                 printf("%3hu) %s\n", country->value, country->name);
         }
         printf("> ");
-        if (scanf("%3hu", &value) == 1) {
-                return value;
-        } else {
-                fprintf(stderr, "Error: code %ud is invalid!\n", value);
+        if (!fgets(s, MAX_INPUTLEN, stdin))
                 return COUNTRY_ERROR;
+
+        if (sscanf(s, "%3hu\n", &value) == 1) {
+                if (valid_country_value(value))
+                        return value;
         }
+
+        fprintf(stderr, "Error: invalid code!\n");
+        return COUNTRY_ERROR;
 }
 
 /* gets current OS conf bits, returns new (user given) bits */
 static uint16_t get_new_conf_value(uint16_t conf)
 {
-        uint16_t value;
+        int16_t value;
         const char *name;
 
         value = conf2country(conf);
@@ -172,7 +202,7 @@ int main(int argc, char *argv[])
                 return -1;
         }
         fclose(fp);
-        printf("\nOS conf variable updated to the TOS ROM file.\n");
+        printf("\nOS conf variable updated in TOS ROM file '%s'.\n", argv[1]);
 
         return 0;
 }
