@@ -1,7 +1,7 @@
 #
 # Makefile - the EmuTOS overbloated Makefile
 #
-# Copyright (C) 2001-2021 The EmuTOS development team.
+# Copyright (C) 2001-2022 The EmuTOS development team.
 #
 # This file is distributed under the GPL, version 2 or at your
 # option any later version.  See doc/license.txt for details.
@@ -51,7 +51,7 @@ help:
 	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB"
 	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB"
 	@echo "1024    $(ROM_1024), EmuTOS ROM padded to size 1024 KB"
-	@echo "aranym  $(ROM_ARANYM), suitable for ARAnyM"
+	@echo "aranym  $(ROM_ARANYM), optimized for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
@@ -65,23 +65,43 @@ help:
 	@echo "m548x-bas  $(SREC_M548X_BAS), EmuTOS for BaS_gcc on ColdFire Evaluation Boards"
 	@echo "m548x-prg  emutos.prg, a RAM tos for ColdFire Evaluation Boards with BaS_gcc"
 	@echo "prg     emutos.prg, a RAM tos"
+	@echo "prg256  $(EMU256_PRG), a RAM tos for ST/STe systems"
 	@echo "flop    $(EMUTOS_ST), a bootable floppy with RAM tos"
 	@echo "pak3    $(ROM_PAK3), suitable for PAK/3 systems"
-	@echo "all192  all 192 KB images"
-	@echo "all256  all 256 KB images"
-	@echo "all512  all 512 KB images"
-	@echo "allpak3 all PAK/3 images"
-	@echo "allprg  all emutos*.prg"
-	@echo "allflop all emutos*.st"
 	@echo "cart    $(ROM_CARTRIDGE), EmuTOS as a diagnostic cartridge"
-	@echo "clean"
-	@echo "expand  expand tabs to spaces"
-	@echo "crlf    convert all end of lines to LF"
-	@echo "charset check the charset of all the source files"
-	@echo "bugready set up files in preparation for 'bug update'"
-	@echo "gitready same as $(MAKE) expand crlf"
-	@echo "dsm     dsm.txt, an edited disassembly of emutos.img"
-	@echo "release build the release archives into $(RELEASE_DIR)"
+	@echo "clean   remove temporary files"
+	@echo "Use '$(MAKE) help-develop' for development-oriented targets"
+	@echo "Use '$(MAKE) help-multi' for multi-image targets"
+
+.PHONY: help-develop
+NODEP += help-develop
+help-develop:
+	@echo "target        meaning"
+	@echo "------        -------"
+	@echo "help-develop  this help message"
+	@echo "expand        expand tabs to spaces"
+	@echo "crlf          convert all end of lines to LF"
+	@echo "charset       check the charset of all the source files"
+	@echo "bugready      set up files in preparation for 'bug update'"
+	@echo "gitready      same as $(MAKE) expand crlf"
+	@echo "dsm           dsm.txt, an edited disassembly of emutos.img"
+	@echo "release       build the release archives into $(RELEASE_DIR)"
+	@echo "release-clean remove the release archives"
+
+.PHONY: help-multi
+NODEP += help-multi
+help-multi:
+	@echo "target     meaning"
+	@echo "------     -------"
+	@echo "help-multi this help message"
+	@echo "all192     all 192 KB images"
+	@echo "all256     all 256 KB images"
+	@echo "all512     all 512 KB images"
+	@echo "allpak3    all PAK/3 images"
+	@echo "allprg     all emutos*.prg"
+	@echo "allprg256  all emu256*.prg"
+	@echo "allflop    all emutos*.st"
+	@echo "allfirebee all FireBee srec files"
 
 #
 # EmuTOS version
@@ -296,7 +316,7 @@ bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
 #
 
 util_src = cookie.c doprintf.c intmath.c langs.c memmove.S memset.S miscasm.S \
-           nls.c nlsasm.S setjmp.S string.c shellutl.c lisautil.S
+           nls.c nlsasm.S setjmp.S string.c lisautil.S miscutil.c
 
 # The functions in the following modules are used by the AES and EmuDesk
 ifeq ($(WITH_AES),1)
@@ -330,7 +350,7 @@ aes_src = gemasm.S gemstart.S gemdosif.S gemaplib.c gemasync.c gemctrl.c \
           gemfslib.c gemgraf.c gemgrlib.c gemgsxif.c geminit.c geminput.c \
           gemmnext.c gemmnlib.c gemobed.c gemobjop.c gemoblib.c gempd.c gemqueue.c \
           gemrslib.c gemsclib.c gemshlib.c gemsuper.c gemwmlib.c gemwrect.c \
-          gsx2.c gem_rsc.c mforms.c aescfg.c
+          gsx2.c gem_rsc.c mforms.c aescfg.c shellutl.c
 
 #
 # source code in desk/
@@ -702,16 +722,17 @@ $(SRECFILE): emutos.img
 	$(OBJCOPY) -I binary -O srec $(SREC_LEN_OPTION) --change-addresses $(LMA) --change-start $(ENTRY) $< $(SRECFILE)
 
 CPUFLAGS_FIREBEE = -mcpu=5474
-SREC_FIREBEE = emutosfb.s19
+SREC_FIREBEE = etosfb$(UNIQUE).s19
 
 .PHONY: firebee
 NODEP += firebee
+firebee: UNIQUE = $(COUNTRY)
 firebee: OPTFLAGS = $(STANDARD_OPTFLAGS)
 firebee: override DEF += -DMACHINE_FIREBEE
 firebee: CPUFLAGS = $(CPUFLAGS_FIREBEE)
 firebee:
 	@echo "# Building FireBee EmuTOS into $(SREC_FIREBEE)"
-	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
+	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) LMA=0xe0600000 SRECFILE=$(SREC_FIREBEE) $(SREC_FIREBEE)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
@@ -796,6 +817,26 @@ $(EMUTOS_PRG): override DEF += -DTARGET_PRG
 $(EMUTOS_PRG): OPTFLAGS = $(SMALL_OPTFLAGS)
 $(EMUTOS_PRG): obj/minicrt.o obj/boot.o obj/bootram.o obj/ramtos.o
 	$(LD) $+ -lgcc -o $@ -s
+
+#
+# emu256.prg
+#
+
+EMU256_PRG = emu256$(UNIQUE).prg
+TOCLEAN += emu256*.prg
+
+.PHONY: prg256
+NODEP += prg256
+prg256: override DEF += -DTARGET_256
+prg256: UNIQUE = $(COUNTRY)
+prg256: EMUTOS_PRG = $(EMU256_PRG)
+prg256:
+	@echo "# Building $(EMUTOS_PRG)"
+	$(MAKE) DEF='$(DEF)' UNIQUE=$(UNIQUE) EMUTOS_PRG=$(EMUTOS_PRG) prg
+
+obj/boot.o: obj/ramtos.h
+# incbin dependencies are not automatically detected
+obj/ramtos.o: emutos.img
 
 #
 # flop
@@ -1029,12 +1070,15 @@ mkrom: tools/mkrom.c
 # test target to build all tools that can be built by the Makefile
 .PHONY: tools
 NODEP += tools
-tools: bug draft erd grd ird localise mkflop mkrom mrd tos-lang-change logo_compressor
+tools: bug draft erd grd ird localise mkflop mkrom mrd boot-delay tos-lang-change
 
-# user tool, not needed in EmuTOS building
-TOCLEAN += tos-lang-change
-NODEP += tos-lang-change
+# user tools, not needed in EmuTOS building
+TOCLEAN += tos-lang-change boot-delay
+NODEP += tos-lang-change boot-delay
 tos-lang-change: tools/tos-lang-change.c
+	$(NATIVECC) $< -o $@
+
+boot-delay: tools/boot-delay.c
 	$(NATIVECC) $< -o $@
 
 # The sleep command in targets below ensure that all the generated sources
@@ -1097,6 +1141,17 @@ allprg:
 	  $(MAKE) prg UNIQUE=$$i || exit 1; \
 	done
 
+.PHONY: allprg256
+NODEP += allprg256
+allprg256:
+	@for i in $(COUNTRIES); \
+	do \
+	  echo; \
+	  echo "sleep 1"; \
+	  sleep 1; \
+	  $(MAKE) prg256 UNIQUE=$$i || exit 1; \
+	done
+
 .PHONY: allflop
 NODEP += allflop
 allflop:
@@ -1106,6 +1161,17 @@ allflop:
 	  echo "sleep 1"; \
 	  sleep 1; \
 	  $(MAKE) flop UNIQUE=$$i || exit 1; \
+	done
+
+.PHONY: allfirebee
+NODEP += allfirebee
+allfirebee:
+	@for i in $(COUNTRIES); \
+	do \
+	  echo; \
+	  echo "sleep 1"; \
+	  sleep 1; \
+	  $(MAKE) firebee UNIQUE=$$i || exit 1; \
 	done
 
 #
@@ -1351,7 +1417,7 @@ clean:
 # They are not generated automatically.
 # To regenerate them, type "make coldfire-sources".
 # You will need the PortAsm/68K for ColdFire tool from MicroAPL.
-# See http://www.microapl.co.uk/Porting/ColdFire/pacf_download.html
+# See https://microapl.com/Porting/ColdFire/pacf_download.html
 #
 
 PORTASM = pacf
