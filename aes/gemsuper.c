@@ -1,6 +1,6 @@
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2021 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -44,6 +44,7 @@
 #include "gemshlib.h"
 #include "gemfmalt.h"
 #include "gemasm.h"
+#include "gemctrl.h"
 
 #include "string.h"
 
@@ -146,8 +147,14 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         if (MU_FLAGS & MU_TIMER)
             count = MAKE_ULONG(MT_HICOUNT, MT_LOCOUNT);
         buparm = combine_cms(MB_CLICKS,MB_MASK,MB_STATE);
+#if CONF_WITH_MENU_EXTENSION
+        ret = ev_multi((MU_FLAGS & MU_TOSVALID),
+                        (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS, NULL,
+                        count, buparm, (WORD *)MME_PBUFF, &EV_MX);
+#else
         ret = ev_multi(MU_FLAGS, (MOBLK *)&MMO1_FLAGS, (MOBLK *)&MMO2_FLAGS,
                         count, buparm, (WORD *)MME_PBUFF, &EV_MX);
+#endif
         if ((ret & MU_MESAG) && (*(WORD *)MME_PBUFF == AC_CLOSE))
             rlr->p_flags |= AP_ACCLOSE;
         break;
@@ -283,7 +290,14 @@ static UWORD crysbind(WORD opcode, AESGLOBAL *pglobal, WORD control[], WORD int_
         ret = gl_handle;
         break;
     case GRAF_MOUSE:
-        gr_mouse(GR_MNUMBER, (MFORM *)GR_MADDR);
+        if (gl_ctmown)          /* if the ctlmgr owns the mouse, */
+        {                       /* give up control (temporarily) */
+            ct_mouse(FALSE);    /* sets gl_ctmown = FALSE as byproduct */
+            gr_mouse(GR_MNUMBER, (MFORM *)GR_MADDR);
+            ct_mouse(TRUE);     /* restores gl_ctmown = TRUE as byproduct */
+        }
+        else
+            gr_mouse(GR_MNUMBER, (MFORM *)GR_MADDR);
         break;
     case GRAF_MKSTATE:
         gr_mkstate(&GR_MX, &GR_MY, &GR_MSTATE, &GR_KSTATE);

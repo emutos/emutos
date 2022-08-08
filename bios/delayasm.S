@@ -1,10 +1,11 @@
 /*
  * delayasm.S - assembler functions for delay calibration
  *
- * Copyright (C) 2013-2019 The EmuTOS development team
+ * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows
+ *        Christian Zietz
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -40,7 +41,7 @@ _run_calibration:
 
         lea     MFP_TDDR,a0         //a0 -> TimerD data
         clr.b   (a0)                //set count = 256
-        move.l  TIMERD_VEC,d1       //save old TimerD vector in d1
+        move.l  TIMERD_VEC,a1       //save old TimerD vector in a1
         lea     handle_timer,a0
         move.l  a0,TIMERD_VEC       //set up new TimerD vector
         lea     MFP_IERB,a0
@@ -65,6 +66,14 @@ cal_loop:                           //just like asm.h inline function
         move.l  intcount,d0         //d0 = interrupt count
         move.l  d0,intsave          //save it
 
+        move    sr,d1
+        move    #0x2700,sr          //disable interrupts to avoid spurious irq
+
+        lea     MFP_IERB,a0
+        bclr.b  #4,(a0)             //reset interrupt enable bit
+        lea     MFP_IMRB,a0
+        bclr.b  #4,(a0)             //reset interrupt mask bit
+
         lea     MFP_TCDCR,a0        //a0 -> Timer C/D control reg
 #ifdef __mcoldfire__
         move.b  (a0),d0
@@ -74,7 +83,9 @@ cal_loop:                           //just like asm.h inline function
         andi.b  #0xf0,(a0)          //stop TimerD
 #endif
 
-        move.l  d1,TIMERD_VEC       //restore TimerD vector
+        move    d1,sr               //restore interrupt mask
+
+        move.l  a1,TIMERD_VEC       //restore TimerD vector
         move.l  intsave,d0          //return interrupt count
         rts
 

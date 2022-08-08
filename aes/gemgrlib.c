@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2021 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -58,8 +58,13 @@ static BOOL gr_stilldn(BOOL out, WORD x, WORD y, WORD w, WORD h)
     tmpmoblk.m_gr.g_w = w;
     tmpmoblk.m_gr.g_h = h;
 
+#if CONF_WITH_MENU_EXTENSION
+    which = ev_multi(MU_KEYBD | MU_BUTTON | MU_M1, &tmpmoblk, NULL,
+                    NULL, 0x0L, 0x0001ff00L, NULL, rets);
+#else
     which = ev_multi(MU_KEYBD | MU_BUTTON | MU_M1, &tmpmoblk,
                     NULL, 0x0L, 0x0001ff00L, NULL, rets);
+#endif
 
     if (which & MU_BUTTON)
         return FALSE;

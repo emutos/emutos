@@ -2,7 +2,7 @@
 /*      changed NUM_WOBS from 128 to 300        11/19/87        mdf     */
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2021 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -59,7 +59,7 @@ struct _windnode
 {
         WNODE           *w_next;            /* -> next 'highest' window */
         UWORD           w_flags;                /* see above */
-        WORD            w_id;                   /* window handle id #   */
+        WORD            w_id;                   /* AES window handle (0 => not in use) */
         WORD            w_obid;                 /* desktop object id    */
         WORD            w_root;                 /* pseudo root object in G.g_screen */
                                                 /*  for this window's objects       */

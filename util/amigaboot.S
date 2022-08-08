@@ -1,7 +1,7 @@
 /*
  * amigaboot.S - AmigaOS bootsector to load EmuTOS in RAM
  *
- * Copyright (C) 2016-2017 The EmuTOS development team
+ * Copyright (C) 2016-2022 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -114,7 +114,7 @@ bootmain:
 
 // Detect Alt-RAM //////////////////////////////////////////////////////////////
 // This code is inspired from Linux bootstrap
-// http://www.cs.albany.edu/~sdc/Linux/linux-2.0/arch/m68k/boot/amiga/bootstrap.c
+// https://www.cs.albany.edu/~sdc/Linux/linux-2.0/arch/m68k/boot/amiga/bootstrap.c
 
         move.l  a4,a1                       // Buffer
         adda.l  #OFFSETOF(ADR_ALTRAM_REGIONS),a1    // Alt-RAM region list

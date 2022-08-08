@@ -2,7 +2,7 @@
  * fsdir.c - directory routines for the file system
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2020 The EmuTOS development team
+ *               2002-2022 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -131,6 +131,8 @@
 #include "biosbind.h"
 #include "string.h"
 #include "bdosstub.h"
+
+#include "miscutil.h"
 
 #define ROOT_PSEUDO_CLUSTER 1   /* see comments in xrename() */
 
@@ -692,7 +694,7 @@ long xgsdtof(DOSTIME *buf, int h, int wrt)
 #define NEWCODE
 #ifdef  NEWCODE
 /*  M01.01.03  */
-#define isnotdelim(x)   ((x) && (x!='*') && (x!=SLASH) && (x!='.') && (x!=' '))
+#define isnotdelim(x)   ((x) && (x!='*') && (x!=PATHSEP) && (x!='.') && (x!=' '))
 
 /*
  *  builds - build a directory style file spec from a portion of a path name
@@ -702,14 +704,14 @@ long xgsdtof(DOSTIME *buf, int h, int wrt)
  *      into the form 'ffffffffeee' where 'ffffffff' is a non-terminated
  *      string of characters, padded on the right, specifying the filename
  *      portion of the file spec.  (The file spec terminates with the first
- *      occurrence of a SLASH or NULL, the filename portion of the file spec
- *      terminates with SLASH, NULL, PERIOD or WILDCARD-CHAR).  'eee' is the
+ *      occurrence of a PATHSEP or NULL, the filename portion of the file spec
+ *      terminates with PATHSEP, NULL, PERIOD or WILDCARD-CHAR).  'eee' is the
  *      file extension portion of the file spec, and is terminated with
  *      any of the above.  The file extension portion is left justified into
  *      the last three characters of the destination (11 char) buffer, but is
  *      padded on the right.  The padding character depends on whether or not
  *      the filename or file extension was terminated with a separator
- *      (NULL, SLASH, PERIOD) or a WILDCARD-CHAR.
+ *      (NULL, PATHSEP, PERIOD) or a WILDCARD-CHAR.
  *
  */
 
@@ -735,7 +737,7 @@ void builds(const char *s1, char *s2)
      */
 
     if (i == LEN_ZNODE)
-        while (*s1 && (*s1 != '.') && (*s1 != SLASH))
+        while (*s1 && (*s1 != '.') && (*s1 != PATHSEP))
             s1++;
 
     /*
@@ -791,12 +793,12 @@ void builds(const char *s1, char *s2)
     int i;
     char c;
 
-    for (i = 0; (i < LEN_ZNODE) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
+    for (i = 0; (i < LEN_ZNODE) && (*s1) && (*s1 != '*') && (*s1 != PATHSEP) &&
             (*s1 != '.') && (*s1 != ' '); i++)
         *s2++ = toupper(*s1++);
 
     if (i == LEN_ZNODE)
-        while (*s1 && (*s1 != '.') && (*s1 != SLASH))
+        while (*s1 && (*s1 != '.') && (*s1 != PATHSEP))
             s1++;
 
     c = (*s1 == '*') ? '?' : ' ';
@@ -810,7 +812,7 @@ void builds(const char *s1, char *s2)
     for ( ; i < LEN_ZNODE; i++)
         *s2++ = c;
 
-    for (i = 0; (i < LEN_ZEXT) && (*s1) && (*s1 != '*') && (*s1 != SLASH) &&
+    for (i = 0; (i < LEN_ZEXT) && (*s1) && (*s1 != '*') && (*s1 != PATHSEP) &&
             (*s1 != '.') && (*s1 != ' '); i++)
         *s2++ = toupper(*s1++);
 
@@ -1098,9 +1100,8 @@ long xchdir(char *p)
     if (contains_wildcard_characters(p))
         return EPTHNF;
 
-    if (p[1] == ':')
-        dlog = toupper(p[0]) - 'A';
-    else
+    dlog = extract_drive_number(p);
+    if (dlog < 0)
         dlog = run->p_curdrv;
 
     /*
@@ -1360,7 +1361,7 @@ static char *dopath(DND *p, char *buf, int *len)
             *buf++ = *tp++;
         else
         {
-            *buf++ = SLASH;
+            *buf++ = PATHSEP;
             break;
         }
     }
@@ -1685,11 +1686,9 @@ static DND *dcrack(const char **np)
      */
 
     n = *np;                    /*  get ptr to name             */
-    if (n[1] == ':')            /*  if we start with drive spec */
-    {
-        d = toupper(n[0]) - 'A';/*    compute drive number      */
+    d = extract_drive_number(n);
+    if (d >= 0)                 /*  valid drive ?               */
         n += 2;                 /*    bump past drive number    */
-    }
     else                        /*  otherwise                   */
         d = run->p_curdrv;      /*    assume default            */
 
@@ -1698,12 +1697,12 @@ static DND *dcrack(const char **np)
         return NULL;            /*    abort if error               */
 
     /*
-     *  if the pathspec begins with SLASH, then the first element is
+     *  if the pathspec begins with PATHSEP, then the first element is
      *  the root.  Otherwise, it is the current default directory.  Get
      *  the proper DND for this element
     */
 
-    if (*n == SLASH)
+    if (*n == PATHSEP)
     {   /* [D:]\path */
         p = drvtbl[d]->m_dtl;   /*  get root dir for log drive  */
         n++;                    /*  skip over slash             */
@@ -1731,8 +1730,8 @@ static DND *dcrack(const char **np)
  *  returns
  *      -1 if '.'
  *      -2 if '..'
- *       0 if p => name of a file (no trailing SLASH or !dirspec)
- *      >0 (nbr of chars in path element (up to SLASH)) && buffer 'd' filled.
+ *       0 if p => name of a file (no trailing PATHSEP or !dirspec)
+ *      >0 (nbr of chars in path element (up to PATHSEP)) && buffer 'd' filled.
  *
  */
 
@@ -1745,12 +1744,12 @@ static int getpath(const char *p, char *d, int dirspec)
     int i, i2;
     const char *p1;
 
-    for (i = 0, p1 = p; *p1 && (*p1 != SLASH); p1++, i++)
+    for (i = 0, p1 = p; *p1 && (*p1 != PATHSEP); p1++, i++)
         ;
 
     /*
      *  If the string we have just scanned over is a directory name, it
-     *  will either be terminated by a SLASH, or 'dirspec' will be set
+     *  will either be terminated by a PATHSEP, or 'dirspec' will be set
      *  indicating that we are dealing with a directory path only
      *  (no file name at the end).
      */

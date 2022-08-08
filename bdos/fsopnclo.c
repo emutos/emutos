@@ -2,7 +2,7 @@
  * fsopnclo.c - open/close/create/delete routines for file system
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2021 The EmuTOS development team
+ *               2002-2022 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -86,7 +86,7 @@ long xcreat(char *name, UBYTE attr)
 
     KDEBUG(("xcreat(%s,0x%02x): rc=%ld\n",name,attr,rc));
 
-    return rc;    
+    return rc;
 }
 
 
@@ -94,7 +94,7 @@ long xcreat(char *name, UBYTE attr)
 **  ixcreat - internal routine for creating files
 */
 /*  name: path name of file
- *  attr: atttributes
+ *  attr: attributes
  */
 long ixcreat(char *name, UBYTE attr)
 {

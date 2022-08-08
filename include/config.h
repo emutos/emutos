@@ -6,7 +6,7 @@
  * Defines that should *not* be overridden should appear in sysconf.h
  * (or deskconf.h if they apply to EmuDesk).
  *
- * Copyright (C) 2001-2021 The EmuTOS development team
+ * Copyright (C) 2001-2022 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -307,6 +307,9 @@
 # ifndef CONF_WITH_EXTENDED_OBJECTS
 #  define CONF_WITH_EXTENDED_OBJECTS 0
 # endif
+# ifndef CONF_WITH_MENU_EXTENSION
+#  define CONF_WITH_MENU_EXTENSION 0
+# endif
 # ifndef CONF_WITH_NICELINES
 #  define CONF_WITH_NICELINES 0
 # endif
@@ -424,6 +427,9 @@
 # ifndef CONF_WITH_3D_OBJECTS
 #  define CONF_WITH_3D_OBJECTS 0
 # endif
+# ifndef CONF_WITH_MENU_EXTENSION
+#  define CONF_WITH_MENU_EXTENSION 0
+# endif
 # ifndef MAX_VERTICES
 #  define MAX_VERTICES 512
 # endif
@@ -433,8 +439,20 @@
  * Defaults for the diagnostic cartridge target (maximum size 128K).
  * When this is selected, the Makefile excludes AES support in order
  * to reduce ROM size.  However this is still insufficient, so we
- * need to exclude some feature(s).  Since the cartridge is targeted
- * for ST/STe, we exclude SCSI support and TT video support.
+ * need to exclude some feature(s).  The cartridge will still run on
+ * standard Atari systems, with the following restrictions:
+ *  . for the TT:
+ *      . SCSI is not available, you must use ACSI or add-on IDE
+ *  . for the Falcon:
+ *      . SCSI is not available, you must use IDE
+ *      . DSP is not supported
+ *  . for all systems:
+ *      . DMA sound is not supported
+ *      . alternate/TT RAM is not supported
+ *      . the 68040 PMMU is not supported
+ *      . the Apollo 68080 is not supported
+ *      . support for add-on cards such as MonSTer, Magnum is disabled
+ *      . extended mouse functions (extra buttons etc) are not supported
  */
 #ifdef TARGET_CART
 # ifndef DIAGNOSTIC_CARTRIDGE
@@ -448,6 +466,12 @@
 # endif
 # ifndef CONF_WITH_CACHE_CONTROL
 #  define CONF_WITH_CACHE_CONTROL 0
+# endif
+# ifndef CONF_WITH_ALT_RAM
+#  define CONF_WITH_ALT_RAM 0
+# endif
+# ifndef CONF_WITH_TTRAM
+#  define CONF_WITH_TTRAM 0
 # endif
 # ifndef CONF_WITH_SCSI
 #  define CONF_WITH_SCSI 0
@@ -470,6 +494,9 @@
 # ifndef CONF_WITH_VDI_VERTLINE
 #  define CONF_WITH_VDI_VERTLINE 0
 # endif
+# ifndef CONF_WITH_DMASOUND
+#  define CONF_WITH_DMASOUND 0
+# endif
 # ifndef CONF_WITH_XBIOS_SOUND
 #  define CONF_WITH_XBIOS_SOUND 0
 # endif
@@ -485,6 +512,9 @@
 # ifndef CONF_WITH_ULTRASATAN_CLOCK
 #  define CONF_WITH_ULTRASATAN_CLOCK 0
 # endif
+# ifndef CONF_WITH_68040_PMMU
+#  define CONF_WITH_68040_PMMU 0
+# endif
 # ifndef CONF_WITH_SHUTDOWN
 #  define CONF_WITH_SHUTDOWN 0
 # endif
@@ -499,6 +529,9 @@
 # endif
 # ifndef MAX_VERTICES
 #  define MAX_VERTICES 512
+# endif
+# ifndef NUM_VDI_HANDLES
+#  define NUM_VDI_HANDLES 64
 # endif
 #endif
 
@@ -736,6 +769,12 @@
 # endif
 # ifndef CONF_WITH_NOVA
 #  define CONF_WITH_NOVA 0
+# endif
+# ifndef CONF_WITH_ALT_DESKTOP_GRAPHICS
+#  define CONF_WITH_ALT_DESKTOP_GRAPHICS 0 /* Like ST, not Falcon */
+# endif
+# ifndef CONF_WITH_3D_OBJECTS
+#  define CONF_WITH_3D_OBJECTS 0 /* Like ST, not Falcon */
 # endif
 #endif
 
@@ -1233,10 +1272,11 @@
  * Set CONF_WITH_MENU_EXTENSION to 1 to include AES support for
  * menu_popup(), menu_attach(), menu_istart(), menu_settings().
  *
- * NOTE: this is still under development!
+ * See the source code comments for the limitations of the current
+ * implementation.
  */
 #ifndef CONF_WITH_MENU_EXTENSION
-# define CONF_WITH_MENU_EXTENSION 0
+# define CONF_WITH_MENU_EXTENSION 1
 #endif
 
 /*
@@ -1274,7 +1314,7 @@
  *      0x0331      AES 3.31, used by TOS v4.01
  *      0x0340      AES 3.40, used by TOS v4.02 & v4.04
  * Do not change this arbitrarily, as each value implies the presence or
- * absence of certain AES functions ... 
+ * absence of certain AES functions ...
  */
 #ifndef AES_VERSION
 # if CONF_WITH_3D_OBJECTS && CONF_WITH_MENU_EXTENSION && CONF_WITH_WINDOW_COLOURS && CONF_WITH_GRAF_MOUSE_EXTENSION

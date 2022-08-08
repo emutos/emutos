@@ -1,7 +1,7 @@
 /*
  * EmuCON2: execute external programs
  *
- * Copyright (C) 2013-2019 The EmuTOS development team
+ * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -68,8 +68,8 @@ const char *q;
 
     for (p = path; *p; p++)
         ;
-    if (*(p-1) != '\\')
-        *p++ = '\\';
+    if (*(p-1) != PATHSEP)
+        *p++ = PATHSEP;
 
     for (q = name; *q; )
         *p++ = *q++;
@@ -144,8 +144,8 @@ LONG rc;
         case '.':
             dot = p;
             break;
-        case '\\':
-        case ':':
+        case PATHSEP:
+        case DRIVESEP:
             dot = NULL;
             break;
         }

@@ -3,7 +3,7 @@
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc.
- * Copyright 2002-2021 The EmuTOS development team.
+ * Copyright 2002-2022 The EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -24,6 +24,14 @@
 #define FIRST_VDI_HANDLE    1
 #define LAST_VDI_HANDLE     (FIRST_VDI_HANDLE+NUM_VDI_HANDLES-1)
 #define VDI_PHYS_HANDLE     FIRST_VDI_HANDLE
+
+/*
+ * Mxalloc() mode used when allocating the virtual workstation.  This
+ * is only significant when running under FreeMiNT, since EmuTOS ignores
+ * these bits of the mode field.
+ */
+#define MX_SUPER            (3<<4)
+
 
 /*
  * ptr to current mouse cursor save area, based on v_planes
@@ -404,8 +412,13 @@ void vdi_v_opnvwk(Vwk * vwk)
 
     /*
      * Allocate the memory for a virtual workstation
+     *
+     * The virtual workstations for all programs are chained together by
+     * build_vwk_chain(), because some programs (notably Warp9) expect this.
+     * To avoid problems when running FreeMiNT with memory protection, we
+     * must allocate the virtual workstations in supervisor-accessible memory.
      */
-    vwk = (Vwk *)Malloc(sizeof(Vwk));
+    vwk = (Vwk *)Mxalloc(sizeof(Vwk), MX_SUPER);
     if (vwk == NULL) {
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
@@ -470,7 +483,7 @@ void vdi_v_opnwk(Vwk * vwk)
 #endif
        ) {
         if (newrez != Getrez()) {
-            Setscreen(0L, 0L, newrez, 0);
+            Setscreen(-1L, -1L, newrez, 0);
         }
     }
 #if CONF_WITH_VIDEL

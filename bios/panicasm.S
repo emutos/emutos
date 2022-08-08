@@ -1,7 +1,7 @@
 /*
  * panicasm.S - support routines for panic debug messages
  *
- * Copyright (C) 2001-2019 The EmuTOS development team
+ * Copyright (C) 2001-2022 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -85,7 +85,7 @@ haltloop:
         // endless loop
 #if USE_STOP_INSN_TO_FREE_HOST_CPU
         stop    #0x2700
-        // only an NMI could theroretically wake up the CPU here
+        // only an NMI could theoretically wake up the CPU here
 #endif
         jra     haltloop
 

@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2021 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -147,8 +147,13 @@ void ev_timer(LONG count)
  *      [4] keyboard character (iff MU_KEYBD specified & character available)
  *      [5] # mouse button clicks (iff MU_BUTTON specified & there are clicks)
  */
+#if CONF_WITH_MENU_EXTENSION
+WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, MOBLK *pmo3, LONG tmcount,
+              LONG buparm, WORD *mebuff, WORD prets[])
+#else
 WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
               LONG buparm, WORD *mebuff, WORD prets[])
+#endif
 {
     QPB     m;
     EVSPEC  which;
@@ -200,6 +205,10 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
             what |= MU_M1;
         if ((flags & MU_M2) && in_mrect(pmo2))
             what |= MU_M2;
+#if CONF_WITH_MENU_EXTENSION
+        if ((flags & MU_M3) && in_mrect(pmo3))
+            what |= MU_M3;
+#endif
     }
 
     /* quick check timer */
@@ -232,6 +241,10 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
             iasync(MU_M1, (LONG)pmo1);
         if (flags & MU_M2)
             iasync(MU_M2, (LONG)pmo2);
+#if CONF_WITH_MENU_EXTENSION
+        if (flags & MU_M3)
+            iasync(MU_M3, (LONG)pmo3);
+#endif
         /* wait for message */
         if (flags & MU_MESAG)
         {
@@ -265,6 +278,10 @@ WORD ev_multi(WORD flags, MOBLK *pmo1, MOBLK *pmo2, LONG tmcount,
             apret(MU_M1);
         if (which & MU_M2)
             apret(MU_M2);
+#if CONF_WITH_MENU_EXTENSION
+        if (which & MU_M3)
+            apret(MU_M3);
+#endif
         if (which & MU_MESAG)
             apret(MU_MESAG);
         if (which & MU_TIMER)

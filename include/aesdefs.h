@@ -1,7 +1,7 @@
 /*
  * aesdefs.h - Public definitions for AES system calls
  *
- * Copyright (C) 2019-2021 The EmuTOS development team
+ * Copyright (C) 2019-2022 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -259,6 +259,8 @@
 #define MU_M2       0x0008
 #define MU_MESAG    0x0010
 #define MU_TIMER    0x0020
+#define MU_TOSVALID 0x003F      /* valid bits for TOS compatibility */
+#define MU_M3       0x0100      /* internal use only */
 
 
 /*

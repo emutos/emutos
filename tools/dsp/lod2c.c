@@ -1,7 +1,7 @@
 /*
  * lod2c: convert simple .LOD files to C array initialization string
  *
- * Copyright (C) 2020-2021 The EmuTOS Development Team
+ * Copyright (C) 2020-2022 The EmuTOS Development Team
  *
  * Authors:
  *  RFB   Roger Burrows
@@ -124,7 +124,7 @@ static void write_intro(char *filename)
     fprintf(outfp, "/*\n");
     fprintf(outfp, " * DSP binary file generated from %s\n", filename);
     fprintf(outfp, " *\n");
-    fprintf(outfp, " * Copyright (c) 2020-2021 by The EmuTOS Development Team\n");
+    fprintf(outfp, " * Copyright (c) 2020-2022 by The EmuTOS Development Team\n");
     fprintf(outfp, " *\n");
     fprintf(outfp, " * This file is distributed under the GPL, version 2 or at your\n");
     fprintf(outfp, " * option any later version.  See doc/license.txt for details.\n");

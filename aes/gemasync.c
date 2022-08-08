@@ -3,7 +3,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2019 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -156,6 +156,9 @@ EVSPEC iasync(WORD afunc, LONG aparm)
         break;
     case MU_M1:
     case MU_M2:
+#if CONF_WITH_MENU_EXTENSION
+    case MU_M3:
+#endif
         amouse(e,aparm);
         break;
     case MU_MESAG:

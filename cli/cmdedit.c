@@ -1,7 +1,7 @@
 /*
  * EmuCON2 command history handling
  *
- * Copyright (C) 2013-2021 The EmuTOS development team
+ * Copyright (C) 2013-2022 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -390,7 +390,7 @@ PRIVATE char *insertion_point(char *start)
 char *p, *ins = NULL;
 
     for (p = ins = start; *p; p++) {
-        if ((*p == ':') || (*p == '\\'))
+        if ((*p == DRIVESEP) || (*p == PATHSEP))
             ins = p+1;
     }
 

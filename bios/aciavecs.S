@@ -1,7 +1,7 @@
 /*
  * aciavecs.S - exception handling for ikbd/midi acias.
  *
- * Copyright (C) 2001-2021 The EmuTOS development team
+ * Copyright (C) 2001-2022 The EmuTOS development team
  *
  * Authors:
  *  LVL  Laurent Vogel
@@ -29,8 +29,8 @@
 // } KBDVECS;
 //
 //- midivec is called with the received data byte in d0.
-//- If an overflow error occurred on either ACIA, vkbderr or vmiderr
-//  will be called, as appropriate by midisys or ikbdsys with the
+//- If an overrun error occurred on either ACIA, vkbderr or vmiderr
+//  will be called (by ikbdsys or midisys as appropriate) with the
 //  contents of the ACIA data register in d0.
 //- statvec, mousevec, clockvec, and joyvec all are called with
 //  the address of the packet in register a0.
@@ -58,21 +58,13 @@
 
 /* Known differences between this and Atari TOS:
  *
- * a) Buffer usage: both EmuTOS and Atari TOS use a separate buffer for
+ * Buffer usage: both EmuTOS and Atari TOS use a separate buffer for
  * joystick reports.  However EmuTOS uses kbdbuf to accumulate all other
  * IKBD packets, whereas Atari TOS uses four different buffers:
  *  . kbdbuf (for response 0xf6)
  *  . mousebuf (for response 0xf7)
  *  . relmousebuf (for response 0xf8-0xfb)
  *  . clockbuf (for response 0xfc)
- *
- * b) EmuTOS currently does not check errors at all. Atari TOS checks the
- * following errors:
- *  - if an interrupt request was received and no full byte is ready to be
- *    read, then TOS jumps to the error vector;
- *  - if a byte was read but an overrun occurred, then after having
- *    correctly processed the received byte, TOS reads the data register
- *    again, then jumps to the error vector.
  */
 
 #include "asmdefs.h"
@@ -303,10 +295,18 @@ int_acia_loop:
 _midisys:
         move.b  midi_acia_stat,d0
         jpl     midirts                 // not interrupting
-        // TODO (?): check errors (buffer full ?)
+        btst    #0,d0
+        jeq     midirts                 // no data there anyway
+        move.w  d0,-(sp)                // save status byte across midivec call
         move.b  midi_acia_data,d0
         move.l  midivec,a0
-        jmp     (a0)                    // stack is clean: no need to jsr.
+        jsr     (a0)                    // call midivec
+        move.w  (sp)+,d0                // d0 = status byte
+        btst    #5,d0                   // receiver overrun ?
+        jeq     midirts                 // no, done
+        move.b  midi_acia_data,d0       // get data byte again
+        move.l  vmiderr,a0
+        jsr     (a0)                    // call vmiderr
 midirts:
         rts
 
@@ -383,10 +383,21 @@ _ikbdsys:
         moveq   #0,d0
         move.b  ikbd_acia_stat,d1
         move.b  d1,d0
-        jpl     just_rts                // not interrupting
-        // TODO (?): check errors (buffer full ?)
+        jpl     ikbdrts                 // not interrupting
+        btst    #0,d0
+        jeq     ikbdrts                 // no data there anyway
+        move.w  d0,-(sp)                // save status byte across ikbdraw call
         move.b  ikbd_acia_data,d0
-        // Fall into ikbdraw
+        jsr     ikbdraw
+        move.w  (sp)+,d0                // d0 = status byte
+        btst    #5,d0                   // receiver overrun ?
+        jeq     ikbdrts                 // no, done
+        move.b  ikbd_acia_data,d0       // get data byte again
+        move.l  vkbderr,a0
+        jsr     (a0)                    // call vkbderr
+ikbdrts:
+        rts
+
 #endif /* CONF_WITH_IKBD_ACIA */
 
 // Process a raw byte received from IKBD protocol.

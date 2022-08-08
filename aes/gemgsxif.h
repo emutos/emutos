@@ -1,7 +1,7 @@
 /*
  * gemgsxif.h - header for EmuTOS AES's interface to the VDI
  *
- * Copyright (C) 2002-2021 The EmuTOS development team
+ * Copyright (C) 2002-2022 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -31,7 +31,7 @@ void gsx_wsclear(void);
 void ratinit(void);
 void ratexit(void);
 void gsx_init(void);
-void gsx_graphic(WORD tographic);
+void gsx_graphic(BOOL tographic);
 void bb_save(GRECT *ps);
 void bb_restore(GRECT *pr);
 

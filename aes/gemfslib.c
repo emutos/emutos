@@ -2,7 +2,7 @@
  * gemfslib.c - the file selector
  *
  * Copyright 1999, Caldera Thin Clients, Inc.
- *           2002-2021 The EmuTOS development team
+ *           2002-2022 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -32,6 +32,7 @@
 #include "string.h"
 #include "intmath.h"
 #include "asm.h"
+#include "miscutil.h"
 
 #define NM_NAMES (F9NAME-F1NAME+1)
 #define NAME_OFFSET F1NAME
@@ -186,14 +187,14 @@ static void centre_title(OBJECT *tree,WORD objnum)
 
 /*
  *  Routine to back off the end of a path string, stopping at either
- *  the first backslash or at the colon preceding the drive specifier.
+ *  the first path separator or at the colon preceding the drive specifier.
  *  The second argument specifies the end of the string; if NULL, the
  *  end is determined via strlen().  If the scan is stopped by a colon,
- *  the routine inserts a backslash in the string immediately following
+ *  the routine inserts a path separator in the string immediately following
  *  the colon.
  *
  *  Returns a pointer to the beginning of the string (if no colon or
- *  backslash found), or to the last backslash.
+ *  backslash found), or to the last path separator.
  */
 static char *fs_back(char *pstr, char *pend)
 {
@@ -202,16 +203,16 @@ static char *fs_back(char *pstr, char *pend)
     if (!pend)
         pend = pstr + strlen(pstr);
 
-    /* back off to last backslash (or colon) */
+    /* back off to last path separator (or colon) */
     for (p = pend; p != pstr; p--)
     {
-        if (*p == '\\')
+        if (*p == PATHSEP)
             break;
-        if (*p == ':')
+        if (*p == DRIVESEP)
         {
             if (p == pstr+1)    /* X: at the start of the string */
             {
-                ins_char(++p,0,'\\',LEN_ZPATH-3);
+                ins_char(++p,0,PATHSEP,LEN_ZPATH-3);
                 break;
             }
         }
@@ -228,7 +229,7 @@ static char *fs_back(char *pstr, char *pend)
 static char *fs_pspec(char *pstr, char *pend)
 {
     pend = fs_back(pstr, pend);
-    if (*pend == '\\')
+    if (*pend == PATHSEP)
         pend++;
 
     return pend;
@@ -279,7 +280,7 @@ static WORD fs_active(char *ppath, char *pspec, WORD *pcount)
 
     strcpy(allpath, ppath);         /* 'allpath' gets all files */
     fname = fs_pspec(allpath,NULL);
-    strcpy(fname,"*.*");
+    set_all_files(fname);
 
     user_dta = dos_gdta();          /* remember user's DTA */
     dos_sdta(&D.g_dta);
@@ -526,7 +527,7 @@ static void set_mask(char *mask, char *path)
 
     pend = fs_pspec(path, NULL);
     if (!*pend)                 /* if there's no mask, add one */
-        strcpy(pend, "*.*");
+        set_all_files(pend);
     strlcpy(mask, pend, LEN_ZPATH);
 }
 
@@ -588,14 +589,11 @@ static WORD path_changed(char *path)
  */
 static WORD get_drive(char *path)
 {
-    char c;
+    WORD drive;
 
-    if (path[1] == ':')     /* drive letter is present */
-    {
-        c = toupper(path[0]);
-        if ((c >= 'A') && (c <= 'Z'))
-            return c - 'A';
-    }
+    drive = extract_drive_number(path);
+    if (drive >= 0)
+        return drive;
 
     return dos_gdrv();
 }
@@ -833,7 +831,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
                 pstr = fs_pspec(locstr, NULL);
                 unfmt_str(selname+1, pstr);
                 pstr += strlen(pstr);
-                *pstr++ = '\\';
+                *pstr++ = PATHSEP;
                 strcpy(pstr, mask);
                 newlist = TRUE;
             }
@@ -842,7 +840,7 @@ WORD fs_input(char *pipath, char *pisel, WORD *pbutton, char *pilabel)
             pstr = fs_back(locstr, NULL);
             if (pstr == locstr)             /* we have a locstr like '*.*',  */
                 break;                      /*  so do nothing, just like TOS */
-            if (*--pstr == ':')             /* at root of drive, */
+            if (*--pstr == DRIVESEP)        /* at root of drive, */
                 break;                      /*  so nothing to do */
             pstr = fs_pspec(locstr, pstr);  /* back up past folder */
             strcpy(pstr, mask);

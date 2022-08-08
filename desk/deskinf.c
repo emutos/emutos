@@ -4,7 +4,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*       Copyright (C) 2002-2021 The EmuTOS development team
+*       Copyright (C) 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -666,7 +666,7 @@ WORD inf_disk(char dr_id)
     tree = desk_rs_trees[ADDISKIN];
 
     srcpth[0] = dr_id;
-    srcpth[1] = ':';
+    srcpth[1] = DRIVESEP;
     strcpy(srcpth+2, "\\*.*");
     more = count_ffs(srcpth);
 

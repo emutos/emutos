@@ -2,7 +2,7 @@
  * fsmain.c - GEMDOS file system notes and misc routines
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2019 The EmuTOS development team
+ *               2002-2022 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -54,7 +54,7 @@
 **
 **                      SCC     Made above actual changes from JSL's notes.
 **
-**      27 Mar 85       SCC     Modifed dcrack() and findit() to terminate with
+**      27 Mar 85       SCC     Modified dcrack() and findit() to terminate with
 **                              indication of no file found if bad return from
 **                              ckdrv().
 **

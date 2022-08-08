@@ -1,7 +1,7 @@
 /*
  * desksupp.h - the header for EmuDesk's desksupp.c
  *
- * Copyright (C) 2002-2021 The EmuTOS development team
+ * Copyright (C) 2002-2022 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -15,7 +15,6 @@
 #define CTL_Q   ('Q'-0x40)
 #define CTL_S   ('S'-0x40)
 
-void build_root_path(char *path, WORD drive);
 void deselect_all(OBJECT *tree);
 void desk_busy_off(void);
 void desk_busy_on(void);

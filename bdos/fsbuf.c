@@ -2,7 +2,7 @@
  * fsbuf.c - buffer mgmt for file system
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2020 The EmuTOS development team
+ *               2002-2022 The EmuTOS development team
  *
  * Authors:
  *  SCC   Steve C. Cavender

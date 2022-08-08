@@ -1,7 +1,7 @@
 /*
  * gemctrl.h - header for EmuTOS AES control manager
  *
- * Copyright (C) 2002-2020 The EmuTOS development team
+ * Copyright (C) 2002-2022 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -11,7 +11,7 @@
 #define GEMCTRL_H
 
 extern MOBLK    gl_ctwait;
-extern WORD     gl_ctmown;
+extern BOOL     gl_ctmown;
 extern WORD     appl_msg[8];
 
 void ct_chgown(AESPD *mpd, GRECT *pr);

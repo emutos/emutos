@@ -2,7 +2,7 @@
  * bdosmain.c - GEMDOS main function dispatcher
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2002-2021 The EmuTOS development team
+ *               2002-2022 The EmuTOS development team
  *
  * Authors:
  *  EWF  Eric W. Fleischman
@@ -411,11 +411,9 @@ restrt:
 
             /* then, in with the new */
             b = (BPB *)Getbpb(errdrv);
-            if ((long)b <= 0)
+            if (!b)
             {
                 drvsel &= ~(1L<<errdrv);
-                if (b)
-                    return (long)b;
                 return rc;
             }
 

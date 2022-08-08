@@ -268,7 +268,7 @@ Ingo Uhlemann
 - Support for Vampire V4 Standalone (Amiga)
 
 Stefan Haubenthal
-- EmuTOS packaging on Aminet: http://aminet.net/package/misc/emu/emutos
+- EmuTOS packaging on Aminet: https://aminet.net/package/misc/emu/emutos
 
 Christian Quante
 - New desktop icons and mouse cursors

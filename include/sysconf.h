@@ -5,7 +5,7 @@
  * definitions, i.e. ones that cannot be overridden by localconf.h.
  * It is equivalent to EmuDesk's deskconf.h.
  *
- * Copyright (C) 2019-2021 The EmuTOS development team
+ * Copyright (C) 2019-2022 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -53,6 +53,9 @@
 #define LEN_ZNODE   8                   /* max node length */
 #define LEN_ZEXT    3                   /* max extension length */
 #define MAXPATHLEN  (LEN_ZPATH+LEN_ZFNAME+1) /* convenient shorthand */
+
+#define DRIVESEP    ':'                 /* standard Atari drive letter separator */
+#define PATHSEP     '\\'                /* standard Atari path separator */
 
 /*
  * Maximum coordinate supported (must fit in WORD)

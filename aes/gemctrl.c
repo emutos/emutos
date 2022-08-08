@@ -5,7 +5,7 @@
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2020 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -21,6 +21,7 @@
 #include "emutos.h"
 #include "struct.h"
 #include "aesdefs.h"
+#include "aesext.h"
 #include "aesvars.h"
 #include "obdefs.h"
 
@@ -40,16 +41,13 @@
 
 #define THEDESK 3       /* MUST be the same value as DESKMENU in desk/desk_rsc.h */
 
-#define TGADGETS    (NAME | CLOSER | FULLER | MOVER)
-#define VGADGETS    (UPARROW | DNARROW | VSLIDE)
-#define HGADGETS    (LFARROW | RTARROW | HSLIDE)
 
 /*
  * Global variables
  */
 MOBLK   gl_ctwait;      /* MOBLK telling if menu bar is waiting */
                         /*  to be entered or exited by ctrl mgr */
-WORD    gl_ctmown;
+BOOL    gl_ctmown;
 
 WORD    appl_msg[8];
 
@@ -199,6 +197,12 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
     r_get(&t, &x, &y, &w, &h);
     kind = pwin->w_kind;
 
+#if CONF_WITH_3D_OBJECTS
+    /* since we animate gadgets, we must set clipping here */
+    ob_actxywh(gl_awind, gadget, &f);
+    gsx_sclip(&f);
+#endif
+
     switch(cpt)
     {
     case W_CLOSER:
@@ -224,9 +228,12 @@ static void hctl_window(WORD w_handle, WORD mx, WORD my)
         {
 #if CONF_WITH_3D_OBJECTS
             ob_change(gl_awind, gadget, selected, TRUE);
-#endif
+            /* prevent the mover gadget from being moved completely offscreen */
+            r_set(&f, 0, gl_hbox, gl_rscreen.g_w+w-gl_wbox-6-2*ADJ3DSTD, MAX_COORDINATE);
+#else
             /* prevent the mover gadget from being moved completely offscreen */
             r_set(&f, 0, gl_hbox, gl_rscreen.g_w+w-gl_wbox-6, MAX_COORDINATE);
+#endif
             gr_dragbox(w, h, x, y, &f, &x, &y);
             message = WM_MOVED;
         }
@@ -314,12 +321,17 @@ static void hctl_rect(void)
     WORD    mesag;
     AESPD   *owner;
 #if CONF_WITH_MENU_EXTENSION
-    WORD    treehi, treelo, parent, dummy;
+    OBJECT *tree;
+    WORD    treehi, treelo, parent;
 #endif
 
     if ( gl_mntree )
     {
+#if CONF_WITH_MENU_EXTENSION
+        if (mn_do(&title, &item, &tree))
+#else
         if ( mn_do(&title, &item) )
+#endif
         {
             /* check system menu:   */
             if ((title == THEDESK) && (item >= gl_dafirst))
@@ -341,9 +353,9 @@ static void hctl_rect(void)
                 owner = gl_mnppd;
                 mesag = MN_SELECTED;
 #if CONF_WITH_MENU_EXTENSION
-                treehi = HIWORD(gl_mntree);
-                treelo = LOWORD(gl_mntree);
-                parent = get_par(gl_mntree, item, &dummy);
+                treehi = HIWORD(tree);
+                treelo = LOWORD(tree);
+                parent = get_par(tree, item);
 #endif
             }
             /*
@@ -390,7 +402,6 @@ void ct_mouse(WORD grabit)
     if (grabit)
     {
         gl_ctmown = TRUE;
-        gl_mowner = rlr;
         set_mouse_to_arrow();
         gl_tmpmoff = gl_moff;
         if (gl_tmpmoff)
@@ -440,8 +451,14 @@ void ctlmgr(void)
 #endif
         if (gl_mntree)                  /* only wait on bar when there  */
             ev_which |= MU_M1;          /* is a menu                    */
+
+#if CONF_WITH_MENU_EXTENSION
+        ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait, NULL,
+                                0x0L, 0x0001ff01L, msgbuf, rets);
+#else
         ev_which = ev_multi(ev_which, &gl_ctwait, &gl_ctwait,
                                 0x0L, 0x0001ff01L, msgbuf, rets);
+#endif
 
         wm_update(BEG_UPDATE);          /* take the screen */
         /*

@@ -6,7 +6,7 @@
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
 *                 2001 John Elliott
-*                 2002-2021 The EmuTOS development team
+*                 2002-2022 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
@@ -26,6 +26,7 @@
 #include "obdefs.h"
 #include "gemdos.h"
 #include "optimize.h"
+#include "miscutil.h"
 
 #include "aesdefs.h"
 #include "deskbind.h"
@@ -155,7 +156,7 @@ void fun_rebld_marked(void)
     /* check all wnodes     */
     for (pwin = G.g_wfirst; pwin; pwin = pwin->w_next)
     {
-        if (pwin->w_flags & WN_REBUILD)
+        if ( (pwin->w_id) && (pwin->w_flags & WN_REBUILD) )
         {
             rebuild_window(pwin);
             pwin->w_flags &= ~WN_REBUILD;
@@ -219,7 +220,7 @@ BOOL add_one_level(char *pathname,char *folder)
     strcpy(filename,p);     /* save filename portion */
     strcpy(p,folder);       /* & copy in folder      */
     p += flen;
-    *p++ = '\\';            /* add the trailing path separator */
+    *p++ = PATHSEP;         /* add the trailing path separator */
     strcpy(p,filename);     /* & restore the filename          */
     return TRUE;
 }
@@ -242,7 +243,7 @@ static void remove_one_level(char *pathname)
         return;
 
     for (prev = filename-2; prev >= stop; prev--)
-        if (*prev == '\\')
+        if (*prev == PATHSEP)
             break;
 
     strcpy(prev+1,filename);
@@ -456,7 +457,7 @@ static BOOL search_recursive(WORD curr, char *pathname, char *searchwild)
     p = filename_start(pathname);
     strcpy(p, searchwild);
     ret = dos_sfirst(pathname, DISPATTR);
-    strcpy(p, "*.*");
+    set_all_files(p);
     dos_sdta(save_dta); /* in case we must return */
 
     switch(ret) {
@@ -537,7 +538,7 @@ static BOOL search_icon(WORD win, WORD curr, char *searchwild)
     case AT_ISDISK:
         p = pathname;
         *p++ = pa->a_letter;
-        *p++ = ':';
+        *p++ = DRIVESEP;
         *p = '\0';
         break;
     default:            /* do nothing for file, trash or printer icon */
@@ -665,7 +666,7 @@ void fun_mask(WNODE *pw)
         }
         else    /* empty string => use the default of "*.*" */
         {
-            strcpy(maskptr, "*.*");
+            set_all_files(maskptr);
         }
         refresh_window(pw, FALSE);
     }
@@ -715,7 +716,7 @@ WORD fun_mkdir(WNODE *pw_node)
         }
 
         len = strlen(path); /* before we restore old path */
-        restore_path(ptmp); /* restore original path */
+        set_all_files(ptmp);/* restore original path */
         if (len >= LEN_ZPATH-3)
         {
             fun_alert(1,STDEEPPA);
@@ -1006,7 +1007,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
     char pathname[MAXPATHLEN];
     WORD operation, ret;
 
-    pathname[1] = ':';      /* set up everything except drive letter */
+    pathname[1] = DRIVESEP; /* set up everything except drive letter */
     strcpy(pathname+2, "\\*.*");
 
     operation = -1;
@@ -1027,7 +1028,7 @@ static WORD fun_file2desk(PNODE *pn_src, WORD icontype_src, ANODE *an_dest, WORD
 
             /* build pathname for do_aopen() */
             strcpy(pathname, an_dest->a_pappl);
-            strcpy(filename_start(pathname),"*.*");
+            del_fname(pathname);
 
             /* set global so desktop will exit if do_aopen() succeeds */
             exit_desktop = do_aopen(an_dest, TRUE, dobj, pathname, filename_start(an_dest->a_pappl), tail);
@@ -1106,7 +1107,7 @@ static WORD fun_file2win(PNODE *pn_src, char  *spec, ANODE *an_dest, FNODE *fn_d
     }
     else
     {
-        strcpy(p, "*.*");
+        set_all_files(p);
     }
 
     return fun_op(OP_COPY, -1, pn_src, pathname);
@@ -1155,7 +1156,7 @@ static WORD fun_file2any(WORD sobj, WNODE *wn_dest, ANODE *an_dest, FNODE *fn_de
     {
         ib_src = (ICONBLK *)G.g_screen[sobj].ob_spec;
         build_root_path(path, ib_src->ib_char);
-        strcat(path,"*.*");
+        set_all_files(path+3);
     }
 
     pn_src = pn_open(path, NULL);
@@ -1225,6 +1226,30 @@ static void fun_desk2win(WORD wh, WORD dobj, WORD keystate)
                 continue;
             }
         }
+#if CONF_WITH_DESKTOP_SHORTCUTS
+        /*
+         * check if we are launching a program by dragging a
+         * desktop icon on to it
+         */
+        if (an_dest && (an_dest->a_aicon >= 0)) /* destination is application */
+        {
+            char diskname[4], *tail;
+            if (an_src->a_type == AT_ISDISK)    /* disk icon */
+            {
+                diskname[0] = an_src->a_letter;
+                diskname[1] = DRIVESEP;
+                diskname[2] = PATHSEP;
+                diskname[3] = '\0';
+                tail = diskname;
+            }
+            else                                /* desktop shortcut */
+            {
+                tail = an_src->a_pappl;
+            }
+            exit_desktop = do_aopen(an_dest, TRUE, dobj, wn_dest->w_pnode.p_spec, fn_dest->f_name, tail);
+            return;
+        }
+#endif
         copied = fun_file2any(sobj, wn_dest, an_dest, fn_dest, dobj, keystate);
         if (copied)
             fun_rebld(wn_dest->w_pnode.p_spec);
@@ -1374,7 +1399,7 @@ void fun_del(WNODE *pw, WORD sobj)
                 break;
             case AT_ISDISK:
                 build_root_path(path, pa->a_letter);
-                strcat(path,"*.*");
+                set_all_files(path+3);
                 break;
             default:        /* "can't happen" */
                 continue;
