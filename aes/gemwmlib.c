@@ -1312,6 +1312,18 @@ void wm_init(void)
     /* set up box width & height for window building */
     adj_wbox = gl_wbox + 2 * ADJ3DSTD;
     adj_hbox = gl_hbox + 2 * ADJ3DSTD;
+
+    /*
+     * the following mimics TOS4 behaviour and ensures that the work area
+     * of a full-screen window is the same as TOS4.  this is necessary to
+     * allow 4 columns of icons in a full-screen window in ST Low.
+     */
+    if (gl_width < 640)
+    {
+        adj_wbox--;
+        if (gl_height >= 400)   /* e.g. 320 x 400 */
+            adj_wbox--;
+    }
 #endif
 }
 
