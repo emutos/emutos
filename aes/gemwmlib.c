@@ -46,11 +46,6 @@
 /*
  *  defines
  */
-#define XFULL   0
-#define YFULL   gl_hbox
-#define WFULL   gl_width
-#define HFULL   (gl_height - gl_hbox)
-
 #define DROP_SHADOW_SIZE    2   /* size of drop shadow on windows */
 
 GLOBAL WORD     gl_wtop;
@@ -1288,7 +1283,7 @@ void wm_init(void)
     /* init rectangle list */
     D.w_win[0].w_rlist = po = get_orect();
     po->o_link = NULL;
-    r_set(&po->o_gr, XFULL, YFULL, WFULL, HFULL);
+    rc_copy(&gl_rfull, &po->o_gr);
     w_setup(ppd, DESKWH, NONE);
     w_setsize(WS_CURR, DESKWH, &gl_rscreen);
     w_setsize(WS_PREV, DESKWH, &gl_rscreen);

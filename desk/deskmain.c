@@ -26,6 +26,7 @@
 #include "aesdefs.h"
 #include "biosext.h"
 #include "obdefs.h"
+#include "rectfunc.h"
 #include "gemdos.h"
 #include "optimize.h"
 #include "gsxdefs.h"
@@ -1305,10 +1306,7 @@ WORD hndl_msg(void)
         pw = win_find(handle);
         if (!pw)
             break;
-        gr.g_x = G.g_rmsg[4];
-        gr.g_y = G.g_rmsg[5];
-        gr.g_w = G.g_rmsg[6];
-        gr.g_h = G.g_rmsg[7];
+        rc_copy((GRECT *)&G.g_rmsg[4], &gr);
         do_xyfix(&gr.g_x, &gr.g_y);
         wind_set_grect(handle, WF_CXYWH, &gr);
         if (G.g_rmsg[0] == WM_SIZED)
@@ -1322,7 +1320,7 @@ WORD hndl_msg(void)
         else    /* WM_MOVED */
         {
             wind_get_grect(handle, WF_WXYWH, &gr);
-            r_set((GRECT *)(&G.g_screen[pw->w_root].ob_x), gr.g_x, gr.g_y, gr.g_w, gr.g_h);
+            rc_copy(&gr, (GRECT *)(&G.g_screen[pw->w_root].ob_x));
         }
         change = TRUE;
         break;
