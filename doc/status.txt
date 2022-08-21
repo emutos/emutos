@@ -536,7 +536,7 @@ All AES versions:
  X  17  appl_yield          (PC-GEM call)
  T  19  appl_exit
 
- X  20  evnt_keybd
+ T  20  evnt_keybd
  T  21  evnt_button
  t  22  evnt_mouse
  t  23  evnt_mesag
