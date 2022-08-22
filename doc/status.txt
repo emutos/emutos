@@ -530,7 +530,7 @@ All AES versions:
  T  10  appl_init
  T  11  appl_read
  t  12  appl_write
- t  13  appl_find
+ T  13  appl_find
  T  14  appl_tplay
  T  15  appl_trecord
  X  17  appl_yield          (PC-GEM call)
