@@ -215,6 +215,17 @@ crash happens on next private function which Cubase tries to search
 for.
 
 
+Program: Flexdisk 1.7
+---------------------
+Error: fails to load, complaining about not enough memory
+
+Bug analysis:
+This RAM disk software accesses internal TOS variables to manage its
+memory. To achieve that, it has a list of known Atari TOS versions and
+corresponding memory addresses. Thus, it does not work on versions of
+TOS that are unknown to the program, such as EmuTOS or Atari TOS 4.04.
+
+
 Program: Flood (game)
 ---------------------
 Error: crash while loading
