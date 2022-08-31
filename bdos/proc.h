@@ -14,6 +14,7 @@
 #define PROC_H
 
 #include "pghdr.h"
+#include "program_loader.h"
 
 /*
  *  process management
@@ -32,8 +33,8 @@ WORD xtermres(long blkln, WORD rc);
  * in kpgmld.c
  */
 
-LONG kpgmhdrld(FH h, PGMHDR01 *hd);
-LONG kpgmld(PD *p, FH h, PGMHDR01 *hd);
+LONG read_program_header(FH h, PGMHDR01 *hd, PROGRAM_LOADER **found_loader);
+LONG load_program_into_memory(PD *p, FH h, PGMHDR01 *hd, const PROGRAM_LOADER *loader);
 
 #if DETECT_NATIVE_FEATURES
 LONG kpgm_relocate( PD *p, long length); /* SOP */

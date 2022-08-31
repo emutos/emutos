@@ -17,6 +17,8 @@
 #ifndef _SYSCONF_H
 #define _SYSCONF_H
 
+#include "config.h"
+
 /*
  * System configuration definitions
  */

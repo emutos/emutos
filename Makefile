@@ -309,7 +309,8 @@ endif
 
 bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
            fshand.c fsio.c fsmain.c fsopnclo.c iumem.c kpgmld.c osmem.c \
-           proc.c rwa.S time.c umem.c initinfo.c bootstrap.c logo.c
+           proc.c rwa.S time.c umem.c initinfo.c bootstrap.c logo.c \
+		   program_loader.c prg_program_loader.c
 
 #
 # source code in util/
@@ -540,7 +541,7 @@ NODEP += 256
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS206))) bytes more than TOS 2.06)"
 	@printf "$(LOCALCONFINFO)"
-	@cp etos256$(UNIQUE).img mpts256$(UNIQUE).img
+	@cp etos256$(UNIQUE).img $(UNIQUE).img
 
 $(ROM_256): ROMSIZE = 256
 $(ROM_256): emutos.img mkrom

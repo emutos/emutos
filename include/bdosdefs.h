@@ -14,6 +14,8 @@
 #ifndef _BDOSDEFS_H
 #define _BDOSDEFS_H
 
+#include "config.h"
+
 /* Values for Mxalloc() mode */
 #define MX_STRAM 0
 #define MX_TTRAM 1

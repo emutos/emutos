@@ -21,6 +21,8 @@
 #ifndef FS_H
 #define FS_H
 
+#include "portab.h"
+#include "sysconf.h"
 #include "biosdefs.h"
 #include "bdosdefs.h"
 #include "tosvars.h" /* for drvbits */

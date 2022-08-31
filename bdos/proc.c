@@ -26,6 +26,7 @@
 #include "biosext.h"
 #include "asm.h"
 #include "has.h"
+#include "program_loader.h"
 
 
 /*
@@ -185,6 +186,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     LONG rc;
     long max, needed;
     FH fh;
+    PROGRAM_LOADER *loader;
 
     KDEBUG(("BDOS xexec: flag or mode = %d\n",flag));
 
@@ -272,9 +274,9 @@ long xexec(WORD flag, char *path, char *tail, char *env)
      * jump directly back to bdosmain.c, which is not a problem because
      * we haven't allocated anything yet.
      */
-    rc = kpgmhdrld(fh, &hdr);
+    rc = read_program_header(fh, &hdr, &loader);
     if (rc) {
-        KDEBUG(("BDOS xexec: kpgmhdrld returned %ld (0x%lx)\n",rc,rc));
+        KDEBUG(("BDOS xexec: read_program_header returned %ld (0x%lx)\n",rc,rc));
         xclose(fh);
         return rc;
     }
@@ -287,7 +289,7 @@ long xexec(WORD flag, char *path, char *tail, char *env)
         return ENSMEM;
     }
 
-    /* allocate the basepage depending on memory policy */
+    /* allocate the basepage and space for TEXT, DATA and BSS depending on memory policy */
     needed = hdr.h01_tlen + hdr.h01_dlen + hdr.h01_blen + sizeof(PD);
     p = (PD *)alloc_tpa(hdr.h01_flags,needed,&max);
 
@@ -333,9 +335,9 @@ long xexec(WORD flag, char *path, char *tail, char *env)
     }
 
     /* now, load the rest of the program, perform relocation, close the file */
-    rc = kpgmld(cur_p, fh, &hdr);
+    rc = load_program_into_memory(cur_p, fh, &hdr, loader);
     if (rc) {
-        KDEBUG(("BDOS xexec: kpgmld returned %ld (0x%lx)\n",rc,rc));
+        KDEBUG(("BDOS xexec: load_program_into_memory returned %ld (0x%lx)\n",rc,rc));
         /* free any memory allocated yet */
         xmfree(cur_p->p_env);
         xmfree(cur_p);
@@ -431,7 +433,7 @@ static char *alloc_env(ULONG flags, char *env)
 }
 
 /*
- * allocate the TPA
+ * allocate memory in the Transcient Program Area (TPA)
  *
  * we first determine if ST RAM and/or alternate RAM is available for
  * allocation, based on the flags, the amount of RAM required and
@@ -463,6 +465,7 @@ static UBYTE *alloc_tpa(ULONG flags,LONG needed,LONG *avail)
     LONG st_ram_size;
     BOOL st_ram_available = FALSE;
 
+    /* pmd is the ST-RAM descriptor */
     st_ram_size = (LONG) ffit(-1L, &pmd);
     if (st_ram_size >= needed)
         st_ram_available = TRUE;
