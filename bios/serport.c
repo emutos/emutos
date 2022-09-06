@@ -154,7 +154,7 @@ static WORD incr_tail(IOREC *iorec)
     return tail;
 }
 
-#if (!CONF_WITH_COLDFIRE_RS232 && CONF_WITH_MFP_RS232 && !RS232_DEBUG_PRINT) || CONF_WITH_TT_MFP
+#if (!CONF_WITH_COLDFIRE_RS232 && CONF_WITH_MFP_RS232 && !RS232_DEBUG_PRINT) || CONF_WITH_TT_MFP || CONF_WITH_SCC
 static void put_iorecbuf(IOREC *out, WORD b)
 {
     WORD old_sr, tail;
