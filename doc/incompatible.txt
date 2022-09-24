@@ -17,8 +17,8 @@ or trying to find some 'private' TOS address by the use of heuristics.
 Common issues
 =============
 
-Category: STOS program
-----------------------
+Category: STOS Basic program
+----------------------------
 Error 1: joystick and/or keyboard input doesn't work.
 
 Bug analysis:
@@ -58,6 +58,44 @@ variable so that etv_timer() was called four times less frequently.
 
 Note: STOS programs can sometimes be identified by the presence of *.MBK
 files (STOS memory bank files).
+
+
+Category: Omikron Basic program
+-------------------------------
+
+Programs compiled with older Omikron Basic versions rely on undocumented
+internal TOS variables at several points.
+
+Error 1: crash at start / during disk access
+
+Bug analysis:
+Program expects A0 upon return from Mediach (BIOS function) to point
+to wplatch (floppy write protect latch variable). On EmuTOS A0 is
+undefined and hence a bus error can occur when the program modifies
+that variable.
+
+Error 2: crash at start / during display updates
+
+Bug analysis:
+Program parses the bytes of the 0xA00A (hide cursor) line-A routine to
+get the address of a variable reflecting the internal state of the
+mouse cursor:
+	https://sourceforge.net/p/emutos/mailman/message/30605378/
+This also fails on EmuTOS, resulting in (another) bus error (or possibly
+the mouse cursor not being visible).
+
+Known failing programs (and their Omikron Basic library version):
+- Hypnosis 1.5 (v3.05)
+- Ramses (v3.00)
+- OMIKRON.BASIC interpreter v3.01 (v3.0x)
+- Quaderno 1.5 (v3.05)
+
+Only older Basic library versions seem to have these issues. v3.5x and
+v3.6x versions supporting Falcon do not have these issues.
+
+Omikron Basic programs and the Basic library version they use can
+be identified from the strings in the binaries:
+	strings some.prg | grep -i omikron
 
 
 Category: program created by ST Adventure Creator (STAC)
@@ -102,8 +140,8 @@ best workaround is to use a version of the game that has been fixed to
 run from HD and with modern TOS versions.
 
 
-Program: old game using undocumented addresses for joystick/keyboard data
--------------------------------------------------------------------------
+Category: old game using undocumented addresses for joystick/keyboard data
+--------------------------------------------------------------------------
 Error: joystick and/or keyboard is ignored.
 
 Bug analysis:
@@ -291,18 +329,6 @@ Use a different program to manipulate the _FDC cookie, e.g., ACC.PRG
 by Steffen Engel.
 
 
-Program: Hypnosis 1.5
----------------------
-Error: crash at start or corrupted display
-
-Bug analysis:
-The program was developed with Omikron BASIC and fails for similar reasons
-as the Omikron BASIC interpreter.  Among other things it expects A0 to
-point to an internal TOS variable upon return from the Mediach BIOS call.
-It also parses the bytes of the 0xA00A line-A routine for specific
-instructions that are only present in Atari TOS.
-
-
 Program: Indigo (game)
 ----------------------
 Error: random crashes and glitches (depending on exact EmuTOS version)
@@ -345,22 +371,6 @@ NOTE: the program also crashes on all versions of Atari TOS except 1.00,
 although the actual details of the crash are slightly different.
 
 
-Program: OMIKRON.BASIC V3.01 (interpreter)
-------------------------------------------
-Error: Panic (bus error) during start
-
-Bug analysis:
-The program relies on undocumented internal TOS variables at several
-points.  First, it expects A0 upon return from Mediach (BIOS function)
-to point to wplatch (floppy write protect latch variable).  On EmuTOS A0
-is undefined and hence a bus error can occur when the program modifies
-that variable.  Second, it parses the bytes of the 0xA00A (hide cursor)
-line-A routine to get the address of a variable reflecting the internal
-state of the mouse cursor.  This is done with the same code used in
-"Ramses" (see below).  This also fails on EmuTOS, resulting in another
-bus error.  There may be more accesses to undocumented variables.
-
-
 Program: Protracker v2 STE (Equinox version)
 --------------------------------------------
 Error: crash when "DISK OP." button is selected
@@ -381,29 +391,6 @@ resulting in a crash.
 Workaround:
 Use an alternate tracker program.  There are many Protracker variants and
 other module tracker programs which work fine with EmuTOS.
-
-
-Program: Quaderno 1.5
----------------------
-Error: crash at start or corrupted display
-
-Bug analysis:
-The program was developed with Omikron BASIC and fails for similar reasons
-as the Omikron BASIC interpreter.  Among other things it expects A0 to
-point to an internal TOS variable upon return from the Mediach BIOS call.
-It also parses the bytes of the 0xA00A line-A routine for specific
-instructions that are only present in Atari TOS.
-
-
-Program: Ramses
----------------
-Error: panic
-
-Bug analysis:
-Program calls the Line A initialization $A00A and gets the routine
-vectors in a2.  It gets the address of _v_hide_c, then starts doing
-undocumented things with the bytes of the actual routine:
-    https://sourceforge.net/p/emutos/mailman/message/30605378/
 
 
 Program: Reservoir Gods programs on the Falcon
