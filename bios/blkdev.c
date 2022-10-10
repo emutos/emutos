@@ -706,10 +706,23 @@ LONG blkdev_getbpb(WORD dev)
      * determine number of clusters
      */
     tmp = getiword(b->sec);
-    /* handle DOS-style disks (512-byte logical sectors) >= 32MB */
-    if (tmp == 0L)
+    /*
+     * a value of zero for total sectors should mean that we have a DOS-style
+     * disk (512-byte logical sectors) >= 32MB, but it can also be due to an
+     * invalid boot sector.  Atari TOS accepts a zero value & logs in the disk
+     * (ending up with a negative value for number of clusters in the BPB).
+     *
+     * in the general case, EmuTOS must assume that zeros in b->sec means
+     * that b->sec2 contains a valid value.  however, for floppies we can
+     * assume that it's an invalid boot sector.  in this case, we arrange
+     * to set a cluster count of zero.
+     */
+    if ((tmp == 0UL) && (unit >= NUMFLOPPIES))
         tmp = MAKE_ULONG(getiword(b16->sec2+2), getiword(b16->sec2));
-    tmp = (tmp - bdev->bpb.datrec) / b->spc;
+    if (tmp < bdev->bpb.datrec)
+        tmp = 0UL;
+    else
+        tmp = (tmp - bdev->bpb.datrec) / b->spc;
     if (tmp > MAX_FAT16_CLUSTERS)           /* FAT32 - unsupported */
     {
         KINFO(("Disk %c: is inaccessible (FAT32)\n",dev+'A'));
