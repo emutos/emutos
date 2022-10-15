@@ -14,6 +14,7 @@
 #include "lineavars.h"
 #include "asm.h"
 #include "bdosbind.h"
+#include "biosbind.h"
 #include "xbiosbind.h"
 
 
@@ -33,10 +34,12 @@ static LONG crawio(WORD ch)
 
 /*
  * write string to console
+ * use BIOS, not GEMDOS, to be uninterruptible by Ctrl+C
  */
-static void cconws(char *string)
+static void bios_conws(char *string)
 {
-    Cconws(string);
+    while(*string)
+        Bconout(2, *string++);
 }
 
 
@@ -77,7 +80,7 @@ static void escfn1(Vwk * vwk)
  */
 static void escfn2(Vwk * vwk)
 {
-    cconws("\033H\033f\033E");  /* home, hide alpha cursor, then clear-and-home */
+    bios_conws("\033H\033f\033E");  /* home, hide alpha cursor, then clear-and-home */
 }
 
 
@@ -89,7 +92,7 @@ static void escfn2(Vwk * vwk)
  */
 static void escfn3(Vwk * vwk)
 {
-    cconws("\033E\033e\015");   /* clear-and-home, then show alpha cursor */
+    bios_conws("\033E\033e\015");   /* clear-and-home, then show alpha cursor */
 }
 
 
@@ -98,7 +101,7 @@ static void escfn3(Vwk * vwk)
  */
 static void escfn4(Vwk * vwk)
 {
-    cconws("\033A");
+    bios_conws("\033A");
 }
 
 
@@ -107,7 +110,7 @@ static void escfn4(Vwk * vwk)
  */
 static void escfn5(Vwk * vwk)
 {
-    cconws("\033B");
+    bios_conws("\033B");
 }
 
 
@@ -116,7 +119,7 @@ static void escfn5(Vwk * vwk)
  */
 static void escfn6(Vwk * vwk)
 {
-    cconws("\033C");
+    bios_conws("\033C");
 }
 
 
@@ -125,7 +128,7 @@ static void escfn6(Vwk * vwk)
  */
 static void escfn7(Vwk * vwk)
 {
-    cconws("\033D");
+    bios_conws("\033D");
 }
 
 
@@ -134,7 +137,7 @@ static void escfn7(Vwk * vwk)
  */
 static void escfn8(Vwk * vwk)
 {
-    cconws("\033H");
+    bios_conws("\033H");
 }
 
 
@@ -143,7 +146,7 @@ static void escfn8(Vwk * vwk)
  */
 static void escfn9(Vwk * vwk)
 {
-    cconws("\033J");
+    bios_conws("\033J");
 }
 
 
@@ -152,7 +155,7 @@ static void escfn9(Vwk * vwk)
  */
 static void escfn10(Vwk * vwk)
 {
-    cconws("\033K");
+    bios_conws("\033K");
 }
 
 
@@ -176,7 +179,7 @@ static void escfn11(Vwk * vwk)
     out[2] = 0x20 + INTIN[0] - 1;   /* zero-based */
     out[3] = 0x20 + INTIN[1] - 1;
     out[4] = '\0';
-    cconws(out);
+    bios_conws(out);
 }
 
 
@@ -209,7 +212,7 @@ static void escfn12(Vwk * vwk)
  */
 static void escfn13(Vwk * vwk)
 {
-    cconws("\033p");        /* enter reverse video */
+    bios_conws("\033p");        /* enter reverse video */
 }
 
 
@@ -218,7 +221,7 @@ static void escfn13(Vwk * vwk)
  */
 static void escfn14(Vwk * vwk)
 {
-    cconws("\033q");        /* enter normal video */
+    bios_conws("\033q");        /* enter normal video */
 }
 
 
