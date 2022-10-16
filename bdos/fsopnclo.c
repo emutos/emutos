@@ -160,7 +160,8 @@ long ixcreat(char *name, UBYTE attr)
                 return EACCDN;          /*  subdir or read only  */
         }
         pos -= sizeof(FCB);
-        ixdel(dn,f,pos);
+        if (ixdel(dn,f,pos) < 0)    /* file currently open by another process? */
+            return EACCDN;
     }
     else
         pos = 0;
