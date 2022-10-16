@@ -100,7 +100,7 @@ long ixcreat(char *name, UBYTE attr)
 {
     DND *dn;
     OFD *fd;
-    FCB *f;
+    FCB *fcb;
     const char *s;
     char n[2], a[FNAMELEN];                 /*  M01.01.03   */
     int i, f2;                              /*  M01.01.03   */
@@ -148,19 +148,19 @@ long ixcreat(char *name, UBYTE attr)
      */
     pos = 0;
     if (attr == FA_VOL)
-        f = scan(dn,"*.*",FA_VOL,&pos);
-    else f = scan(dn,s,FA_NORM|FA_SUBDIR,&pos);
+        fcb = scan(dn,"*.*",FA_VOL,&pos);
+    else fcb = scan(dn,s,FA_NORM|FA_SUBDIR,&pos);
 
-    if (f)                  /* found matching file / label */
+    if (fcb)                /* found matching file / label */
     {
         if (attr != FA_VOL) /* for normal files, need to check more stuff */
         {
                                         /* M01.01.0730.01   */
-            if ((f->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR))
+            if ((fcb->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR))
                 return EACCDN;          /*  subdir or read only  */
         }
         pos -= sizeof(FCB);
-        if (ixdel(dn,f,pos) < 0)    /* file currently open by another process? */
+        if (ixdel(dn,fcb,pos) < 0)  /* file currently open by another process? */
             return EACCDN;
     }
     else
@@ -169,7 +169,7 @@ long ixcreat(char *name, UBYTE attr)
     /* now scan for empty space */
 
     /*  M01.01.SCC.FS.02  */
-    while( !( f = scan(dn,n,0xff,&pos) ) )
+    while( !( fcb = scan(dn,n,0xff,&pos) ) )
     {
         /*  not in current dir, need to grow  */
         if (!fd->o_dnode)           /*  but can't grow root  */
@@ -184,21 +184,21 @@ long ixcreat(char *name, UBYTE attr)
 
     builds(s,a);
     pos -= sizeof(FCB);
-    f->f_attrib = attr;
+    fcb->f_attrib = attr;
     for (i = 0; i < 10; i++)
-        f->f_fill[i] = 0;
-    f->f_td.time = current_time;
-    swpw(f->f_td.time);
-    f->f_td.date = current_date;
-    swpw(f->f_td.date);
-    f->f_clust = 0;
-    f->f_fileln = 0;
+        fcb->f_fill[i] = 0;
+    fcb->f_td.time = current_time;
+    swpw(fcb->f_td.time);
+    fcb->f_td.date = current_date;
+    swpw(fcb->f_td.date);
+    fcb->f_clust = 0;
+    fcb->f_fileln = 0;
     ixlseek(fd,pos);
     ixwrite(fd,FNAMELEN,a);         /* write name, set dirty flag */
     ixclose(fd,CL_DIR);             /* partial close to flush */
     ixlseek(fd,pos);
     s = (char *)ixgetfcb(fd);
-    f2 = rc = opnfil((FCB*)s,dn,(f->f_attrib&FA_RO)?RO_MODE:RW_MODE);
+    f2 = rc = opnfil((FCB*)s,dn,(fcb->f_attrib&FA_RO)?RO_MODE:RW_MODE);
 
     if (rc < 0)
         return rc;
@@ -238,7 +238,7 @@ long xopen(char *name, int mod)
 */
 static long ixopen(char *name, int mod)
 {
-    FCB *f;
+    FCB *fcb;
     DND *dn;
     const char *s;
     long pos;
@@ -253,14 +253,14 @@ static long ixopen(char *name, int mod)
      */
 
     pos = 0;
-    if (!(f = scan(dn,s,FA_NORM,&pos)))
+    if (!(fcb = scan(dn,s,FA_NORM,&pos)))
         return EFILNF;
 
     /* Check to see if the file is read only */
-    if ((f -> f_attrib & FA_RO) && (mod != 0))
+    if ((fcb->f_attrib & FA_RO) && (mod != 0))
         return EACCDN;
 
-    return opnfil(f, dn, mod);
+    return opnfil(fcb, dn, mod);
 }
 
 
@@ -564,7 +564,7 @@ long ixclose(OFD *fd, int part)
 static long ixunlink(char *name)
 {
     DND *dn;
-    FCB *f;
+    FCB *fcb;
     const char *s;
     long pos;
 
@@ -577,15 +577,15 @@ static long ixunlink(char *name)
     /* now scan for filename */
 
     pos = 0;
-    if (!(f = scan(dn,s,FA_NORM,&pos)))
+    if (!(fcb = scan(dn,s,FA_NORM,&pos)))
         return EFILNF;
 
-    if (f->f_attrib & FA_RO)
+    if (fcb->f_attrib & FA_RO)
         return EACCDN;
 
     pos -= sizeof(FCB);
 
-    return ixdel(dn,f,pos);
+    return ixdel(dn,fcb,pos);
 }
 
 

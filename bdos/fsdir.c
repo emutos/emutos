@@ -145,7 +145,7 @@ static int namlen(char *s11);
 static char *packit(char *s, char *d);
 static void unpackit(const char *src, char *dst);
 static char *dopath(DND *p, char *buf, int *len);
-static DND *makdnd(DND *p, FCB *b);
+static DND *makdnd(DND *p, FCB *fcb);
 static DND *dcrack(const char **np);
 static int getpath(const char *p, char *d, int dirspec);
 static BOOL match(char *s1, char *s2);
@@ -201,9 +201,8 @@ static int namlen(char *s11)                            /* M01.01.1107.01 */
 long xmkdir(char *s)
 {
     OFD *f;
-    FCB *f2;
     OFD *fd,*f0;
-    FCB *b;
+    FCB *fcb1,*fcb2;
     DND *dn;
     int h,cl,plen;
     long rc;
@@ -217,61 +216,61 @@ long xmkdir(char *s)
     fd = f->o_dirfil;
 
     ixlseek(fd,f->o_dirbyt);
-    b = ixgetfcb(fd);
+    fcb1 = ixgetfcb(fd);
 
     /* is the total path length too long? */    /* M01.01.1107.01 */
-    plen = namlen( b->f_name );
+    plen = namlen(fcb1->f_name);
     for (dn = f->o_dnode; dn; dn = dn->d_parent)
         plen += namlen(dn->d_name);
     if (plen >= (LEN_ZPATH-3))
     {
-        ixdel(f->o_dnode, b, f->o_dirbyt);
+        ixdel(f->o_dnode, fcb1, f->o_dirbyt);
         return EACCDN;
     }
 
     /* note: makdnd() and makofd() only return if they succeed */
-    dn = makdnd(f->o_dnode,b);
+    dn = makdnd(f->o_dnode, fcb1);
     f0 = makofd(dn);            /* makofd() also updates dn->d_ofd */
 
     /* initialize dir cluster */
     if (nextcl(f0,1))
     {
-        ixdel(f->o_dnode, b, f->o_dirbyt);      /* M01.01.1103.01 */
+        ixdel(f->o_dnode, fcb1, f->o_dirbyt);   /* M01.01.1103.01 */
         f->o_dnode->d_left = NULL;              /* M01.01.1103.01 */
         freednd(dn);                            /* M01.01.1031.02 */
         return EACCDN;
     }
 
-    f2 = dirinit(dn);                   /* pointer to dirty dir block */
+    fcb2 = dirinit(dn);             /* pointer to dirty dir block */
 
     /* write identifier */
-    memcpy(f2, dots, 22);
-    f2->f_attrib = FA_SUBDIR;
-    f2->f_td = f0->o_td;            /* time/date are little-endian */
+    memcpy(fcb2, dots, 22);
+    fcb2->f_attrib = FA_SUBDIR;
+    fcb2->f_td = f0->o_td;          /* time/date are little-endian */
     cl = f0->o_strtcl;
     swpw(cl);
-    f2->f_clust = cl;
-    f2->f_fileln = 0;
-    f2++;
+    fcb2->f_clust = cl;
+    fcb2->f_fileln = 0;
+    fcb2++;
 
     /* write parent entry .. */
-    memcpy(f2, dots, 22);
-    f2->f_name[1] = '.';           /* This is .. */
-    f2->f_attrib = FA_SUBDIR;
+    memcpy(fcb2, dots, 22);
+    fcb2->f_name[1] = '.';          /* This is .. */
+    fcb2->f_attrib = FA_SUBDIR;
     /* if creating a folder in the root, the parent entry needs special handling */
     if (!fd->o_dnode)
     {
-        f2->f_td.time = 0;          /* time/date of parent must be zero */
-        f2->f_td.date = 0;
-        f2->f_clust = 0;            /* cluster number is zero too */
+        fcb2->f_td.time = 0;        /* time/date of parent must be zero */
+        fcb2->f_td.date = 0;
+        fcb2->f_clust = 0;          /* cluster number is zero too */
     }
     else
     {
-        f2->f_td = f->o_dirfil->o_td;   /* time/date are little-endian */
-        f2->f_clust = f->o_dirfil->o_strtcl;
-        swpw(f2->f_clust);
+        fcb2->f_td = f->o_dirfil->o_td; /* time/date are little-endian */
+        fcb2->f_clust = f->o_dirfil->o_strtcl;
+        swpw(fcb2->f_clust);
     }
-    f2->f_fileln = 0;
+    fcb2->f_fileln = 0;
     memcpy(f, f0, sizeof(OFD));
     f->o_flag |= O_DIRTY;
     ixclose(f,CL_DIR | CL_FULL);    /* force flush and write */
@@ -296,7 +295,7 @@ long xrmdir(char *p)
 {
     DND *d;
     DND *d1,**q;
-    FCB *f;
+    FCB *fcb;
     OFD *fd,*f2;                    /* M01.01.03 */
     long pos;
     const char *s;
@@ -319,11 +318,11 @@ long xrmdir(char *p)
     ixlseek(fd,2*sizeof(FCB));      /* skip over . and .. */
     do
     {
-        if (!(f = ixgetfcb(fd)))
+        if (!(fcb = ixgetfcb(fd)))
             break;
-    } while ((f->f_name[0] == ERASE_MARKER) || (f->f_attrib == FA_LFN));
+    } while ((fcb->f_name[0] == ERASE_MARKER) || (fcb->f_attrib == FA_LFN));
 
-    if ((f != (FCB *)NULL) && (f->f_name[0] != 0x00))
+    if ((fcb != NULL) && (fcb->f_name[0] != 0x00))
         return EACCDN;
 
     /*
@@ -370,9 +369,9 @@ long xrmdir(char *p)
      * finally, we delete the entry from the parent directory
      */
     ixlseek((f2 = fd->o_dirfil),(pos = fd->o_dirbyt));
-    f = ixgetfcb(f2);
+    fcb = ixgetfcb(f2);
 
-    return ixdel(d1,f,pos);
+    return ixdel(d1, fcb, pos);
 }
 
 
@@ -440,7 +439,7 @@ long ixsfirst(char *name, WORD att, DTAINFO *addr)
 {
     const char *s;              /*  M01.01.03                   */
     DND *dn;
-    FCB *f;
+    FCB *fcb;
     long pos;
 
     if (att != FA_VOL)
@@ -454,7 +453,7 @@ long ixsfirst(char *name, WORD att, DTAINFO *addr)
 
     pos = 0;
 
-    if ((f = scan(dn,s,att,&pos)) == (FCB*)NULL)
+    if ((fcb = scan(dn,s,att,&pos)) == NULL)
         return EFILNF;
 
     if (addr)
@@ -479,7 +478,7 @@ long ixsfirst(char *name, WORD att, DTAINFO *addr)
         KDEBUG(("ixsfirst(%s,0x%02x,%p): DTA pvt=%08lx/%04x/%04x\n",
                 name,att,addr,addr->dt_offset_drive,addr->dt_cloffset,addr->dt_clnum));
 
-        makbuf(f, addr);
+        makbuf(fcb, addr);
     }
 
     return E_OK;
@@ -640,7 +639,7 @@ static FCB *ixsnext(DTAINFO *dt)
  */
 long xsnext(void)
 {
-    FCB *f;
+    FCB *fcb;
     DTAINFO *dt;
 
     dt = (DTAINFO *)run->p_xdta;            /* M01.01.1209.01 */
@@ -649,15 +648,15 @@ long xsnext(void)
     if (dt->dt_offset_drive < 0L)
         return ENMFIL;
 
-    f = ixsnext(dt);
+    fcb = ixsnext(dt);
 
-    if (f == NULL)                          /* end of directory */
+    if (fcb == NULL)                        /* end of directory */
     {
         dt->dt_offset_drive = -1L;
         return ENMFIL;
     }
 
-    makbuf(f,(DTAINFO *)run->p_xdta);
+    makbuf(fcb,(DTAINFO *)run->p_xdta);
 
     return E_OK;
 }
@@ -879,7 +878,7 @@ static WORD update_fcb(OFD *fd, LONG posp, LONG len, UBYTE *buf)
 long xrename(int n, char *p1, char *p2)
 {
     OFD *fd;
-    FCB *f;
+    FCB *fcb;
     DND *dn1, *dn2;
     DMD *dmd1, *dmd2;
     CLNO strtcl1, strtcl2, temp;
@@ -916,18 +915,18 @@ long xrename(int n, char *p1, char *p2)
      * not be renamed via Frename()
      */
     posp = 0L;
-    f = scan(dn1,s1,FA_NORM|FA_SUBDIR,&posp);
-    if (!f)                     /* old path doesn't exist */
+    fcb = scan(dn1,s1,FA_NORM|FA_SUBDIR,&posp);
+    if (!fcb)                   /* old path doesn't exist */
         return EFILNF;
 
     /*
      * renames are forbidden for Read-Only files
      */
-    if (f->f_attrib & FA_RO)
+    if (fcb->f_attrib & FA_RO)
         return EACCDN;
 
     /* at this point:
-     *   f -> FCB for old path
+     *   fcb -> FCB for old path
      *   dn1->d_ofd -> OFD for the directory containing the old path
      *   posp = offset of FCB from start of directory in bytes, plus 32
      */
@@ -935,14 +934,14 @@ long xrename(int n, char *p1, char *p2)
     posp -= sizeof(FCB);        /* adjust to start of FCB */
 
     /* get old attribute & time/date/cluster/length */
-    att = f->f_attrib;
-    filetime = f->f_td.time;
+    att = fcb->f_attrib;
+    filetime = fcb->f_td.time;
     swpw(filetime);             /* convert from little-endian format */
-    filedate = f->f_td.date;
+    filedate = fcb->f_td.date;
     swpw(filedate);
-    clust = f->f_clust;
+    clust = fcb->f_clust;
     swpw(clust);
-    fileln = f->f_fileln;
+    fileln = fcb->f_fileln;
     swpl(fileln);
 
     /*
@@ -1242,7 +1241,7 @@ FCB *dirinit(DND *dn)
     RECNO i2;
     UBYTE *s1;
     DMD *dm;
-    FCB *f1;
+    FCB *fcb;
 
     fd = dn->d_ofd;                                 /*  OFD for dir */
     num = (dm = fd->o_dmd)->m_recsiz;               /*  bytes/rec   */
@@ -1261,10 +1260,10 @@ FCB *dirinit(DND *dn)
     /*
      *  now zero out the first record and return a pointer to it
      */
-    f1 = (FCB *) (s1 = getrec(fd->o_currec,fd,1));
+    fcb = (FCB *) (s1 = getrec(fd->o_currec,fd,1));
 
     bzero(s1, num);
-    return f1;
+    return fcb;
 }
 
 
@@ -1588,7 +1587,7 @@ FCB *scan(DND *dnd, const char *n, WORD att, LONG *posp)
  *  makdnd - make a child subdirectory of directory p
  *              M01.01.SCC.FS.07
  */
-static DND *makdnd(DND *p, FCB *b)
+static DND *makdnd(DND *p, FCB *fcb)
 {
     DIRTBL_ENTRY *dt;
     DND *p1;
@@ -1648,14 +1647,14 @@ static DND *makdnd(DND *p, FCB *b)
     /* complete the initialization */
 
     p1->d_ofd = (OFD *) 0;
-    p1->d_strtcl = b->f_clust;
+    p1->d_strtcl = fcb->f_clust;
     swpw(p1->d_strtcl);
     p1->d_drv = p->d_drv;
     p1->d_dirfil = fd;
     p1->d_dirpos = fd->o_bytnum - sizeof(FCB);
-    p1->d_td.time = b->f_td.time;   /* note: DND time/date are  */
-    p1->d_td.date = b->f_td.date;   /*  actually little-endian! */
-    memcpy(p1->d_name, b->f_name, FNAMELEN);
+    p1->d_td.time = fcb->f_td.time; /* note: DND time/date are  */
+    p1->d_td.date = fcb->f_td.date; /*  actually little-endian! */
+    memcpy(p1->d_name, fcb->f_name, FNAMELEN);
 
     KDEBUG(("\n makdnd(%p)",p1));
 
