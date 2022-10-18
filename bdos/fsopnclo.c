@@ -370,21 +370,19 @@ static FTAB *sftofdsrch(OFD *ofd)
 */
 static void sftdel(FTAB *sftp)
 {
-    FTAB *s;
     OFD *ofd;
 
+    ofd = sftp->f_ofd;
+
     /*  clear out the entry  */
-
-    ofd = (s=sftp)->f_ofd;
-
-    s->f_ofd = 0;
-    s->f_own = 0;
-    s->f_use = 0;
+    sftp->f_ofd = NULL;
+    sftp->f_own = NULL;
+    sftp->f_use = 0;
 
     /*  if no other sft entries with same OFD, delete OFD  */
 
     if (sftofdsrch(ofd) == NULL)
-        xmfreblk((int *)ofd);
+        xmfreblk(ofd);
 }
 
 
