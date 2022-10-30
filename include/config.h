@@ -1520,6 +1520,19 @@
 # define HD_DETECT_RETRIES 0
 #endif
 
+/*
+ * Set CONF_WITH_1FAT_SUPPORT to 1 to enable support for filesystems with
+ * only one file allocation table (FAT) instead of the usual two FATs.
+ *
+ * This is disabled by default because all versions of Atari TOS assume
+ * two FATs. There are erroneously mastered disks that claim to have a
+ * single FAT, but in reality have two. For compatibility with Atari TOS
+ * EmuTOS has to assume two FATs by default.
+ *
+ */
+#ifndef CONF_WITH_1FAT_SUPPORT
+# define CONF_WITH_1FAT_SUPPORT 0
+#endif
 
 
 /********************************************************

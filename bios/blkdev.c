@@ -697,8 +697,9 @@ LONG blkdev_getbpb(WORD dev)
     /*
      * with 2 FATs, use 2nd FAT by default.
      * The code that flushes the FATs also assumes this.
+     * When support for single FAT is disabled, assume 2 FATs like Atari TOS.
      */
-    if (b->fat >= 2)
+    if (!CONF_WITH_1FAT_SUPPORT || (b->fat >= 2))
         bdev->bpb.fatrec += bdev->bpb.fsiz;
     bdev->bpb.datrec = bdev->bpb.fatrec + bdev->bpb.fsiz + bdev->bpb.rdlen;
 
@@ -739,8 +740,10 @@ LONG blkdev_getbpb(WORD dev)
     bdev->bpb.b_flags = 0;         /* FAT12 */
     if (bdev->bpb.numcl > MAX_FAT12_CLUSTERS)
         bdev->bpb.b_flags |= B_16;      /* FAT16 */
+#if CONF_WITH_1FAT_SUPPORT
     if (b->fat < 2)
         bdev->bpb.b_flags |= B_1FAT;
+#endif
 
     /* additional geometry info */
     bdev->geometry.sides = getiword(b->sides);
