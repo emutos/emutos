@@ -957,10 +957,12 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
  */
 void ob_draw(OBJECT *tree, WORD obj, WORD depth)
 {
-    WORD last, pobj;
+    WORD pobj;
+    WORD last = NIL;
     WORD sx, sy;
 
-    last = tree[obj].ob_next;
+    if (obj != ROOT)
+        last = tree[obj].ob_next;
     pobj = get_par(tree, obj);
 
     if (pobj != NIL)
