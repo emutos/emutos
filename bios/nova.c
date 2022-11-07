@@ -202,9 +202,14 @@ void detect_nova(void)
         novamembase = (UBYTE *)0x00C00000UL;
         has_nova = 1;
     }
-    else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00D00000UL+VIDSUB) && check_read_byte(0x00C00000UL))
+    else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00D00000UL+VIDSUB) &&
+             check_read_byte(0x00C00000UL) && check_read_byte(0x00C80000UL))
     {
-        /* Volksfarben 4000 in ST: be sure via phystop that it's not RAM we read */
+        /*
+         * Volksfarben 4000 in ST:
+         * - be sure via phystop that it's not RAM we read
+         * - check 0xC00000 and 0xC80000 to exclude MiSTer's Viking emulation
+         */
         novaregbase = (UBYTE *)0x00D00000UL;
         novamembase = (UBYTE *)0x00C00000UL;
         has_nova = 1;
