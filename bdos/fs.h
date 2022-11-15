@@ -102,6 +102,34 @@ typedef struct
 
 
 /*
+ *  DFD - disk file data
+ *
+ *  this contains a copy of the data from the FCB on disk and is
+ *  contained within the OFD.
+ *
+ *  a future change will ensure that if there are multiple opens
+ *  for the same file, only one copy of the data is maintained, in
+ *  the DFD in the first-opened OFD.
+ */
+typedef struct
+{
+    UWORD o_flag;       /* see below                            */
+    WORD  o_usecnt;     /* count of open OFDs pointing here     */
+                    /* the following 3 items must be as in FCB: */
+    DOSTIME o_td;       /* creation time/date: little-endian!   */
+    CLNO  o_strtcl;     /* starting cluster number              */
+    long  o_fileln;     /* length of file in bytes              */
+} DFD;
+
+
+/*
+ * bit usage in o_flag 
+ */
+#define O_DIRTY     1   /* contents have changed, FCB on disk must be updated */ 
+
+
+
+/*
  *  OFD - open file descriptor
  *
  *  architectural restriction: for compatibility with FOLDRnnn.PRG,
@@ -110,12 +138,7 @@ typedef struct
 struct _ofd
 {
     OFD   *o_link;      /*  link to next OFD                    */
-    UWORD o_flag;
-                    /* the following 3 items must be as in FCB: */
-    DOSTIME o_td;       /*  creation time/date: little-endian!  */
-    CLNO  o_strtcl;     /*  starting cluster number             */
-    long  o_fileln;     /*  length of file in bytes             */
-
+    DFD   *o_dfd;       /*  link to DFD for this file           */
     DMD   *o_dmd;       /*  link to media descr                 */
     DND   *o_dnode;     /*  link to dir for this file           */
     OFD   *o_dirfil;    /*  OFD for dir for this file           */
@@ -125,9 +148,10 @@ struct _ofd
     CLNO  o_curcl;      /* current cluster number for file      */
     RECNO o_currec;     /* current record number for file       */
     UWORD o_curbyt;     /* byte pointer within current cluster  */
-    WORD  o_usecnt;     /* use count for inherited files        */
     OFD   *o_thread;    /* mulitple open thread list            */
     UWORD o_mod;        /* mode file opened in (see below)      */
+
+    DFD   o_disk;       /* data to be synchronised with the disk*/
 } ;
 
 /*
@@ -145,13 +169,6 @@ struct _ofd
 #define WO_MODE        1
 #define RW_MODE        2
 #define VALID_FOPEN_BITS    MODE_FAC    /* currently-valid bits for Fopen() */
-
-/*
- * O_DIRTY - Dirty Flag
- *
- * T: OFD is dirty, because of chg to startcl, length, time, etc.
- */
-#define O_DIRTY         1
 
 
 

@@ -202,6 +202,7 @@ long xmkdir(char *s)
 {
     OFD *f;
     OFD *fd,*f0;
+    DFD *dfd;
     FCB *fcb1,*fcb2;
     DND *dn;
     int h,cl,plen;
@@ -246,8 +247,9 @@ long xmkdir(char *s)
     /* write identifier */
     memcpy(fcb2, dots, 22);
     fcb2->f_attrib = FA_SUBDIR;
-    fcb2->f_td = f0->o_td;          /* time/date are little-endian */
-    cl = f0->o_strtcl;
+    dfd = f0->o_dfd;
+    fcb2->f_td = dfd->o_td;         /* time/date are little-endian */
+    cl = dfd->o_strtcl;
     swpw(cl);
     fcb2->f_clust = cl;
     fcb2->f_fileln = 0;
@@ -266,13 +268,14 @@ long xmkdir(char *s)
     }
     else
     {
-        fcb2->f_td = f->o_dirfil->o_td; /* time/date are little-endian */
-        fcb2->f_clust = f->o_dirfil->o_strtcl;
+        dfd = f->o_dirfil->o_dfd;
+        fcb2->f_td = dfd->o_td;     /* time/date are little-endian */
+        fcb2->f_clust = dfd->o_strtcl;
         swpw(fcb2->f_clust);
     }
     fcb2->f_fileln = 0;
     memcpy(f, f0, sizeof(OFD));
-    f->o_flag |= O_DIRTY;
+    f->o_disk.o_flag |= O_DIRTY;    /* must set flag in f, not f0! */
     ixclose(f,CL_DIR | CL_FULL);    /* force flush and write */
     xmfreblk(f);
     sft[h-NUMSTD].f_own = 0;
@@ -670,20 +673,23 @@ long xsnext(void)
 long xgsdtof(DOSTIME *buf, int h, int wrt)
 {
     OFD *f = getofd(h);
+    DFD *dfd;
 
     if (!f)
         return EIHNDL;
 
+    dfd = f->o_dfd;
+
     if (wrt)
     {
-        swpcopyw(&buf->time, &f->o_td.time);
-        swpcopyw(&buf->date, &f->o_td.date);
-        f->o_flag |= O_DIRTY;           /* M01.01.0918.01 */
+        swpcopyw(&buf->time, &dfd->o_td.time);
+        swpcopyw(&buf->date, &dfd->o_td.date);
+        dfd->o_flag |= O_DIRTY;         /* M01.01.0918.01 */
     }
     else
     {
-        swpcopyw(&f->o_td.time, &buf->time);
-        swpcopyw(&f->o_td.date, &buf->date);
+        swpcopyw(&dfd->o_td.time, &buf->time);
+        swpcopyw(&dfd->o_td.date, &buf->date);
     }
 
     return E_OK;
@@ -878,6 +884,7 @@ static WORD update_fcb(OFD *fd, LONG posp, LONG len, UBYTE *buf)
 long xrename(int n, char *p1, char *p2)
 {
     OFD *fd;
+    DFD *dfd;
     FCB *fcb;
     DND *dn1, *dn2;
     DMD *dmd1, *dmd2;
@@ -1009,10 +1016,12 @@ long xrename(int n, char *p1, char *p2)
         }
 
         /* copy the time/date/cluster/length to the OFD */
-        swpcopyw(&filetime,&fd2->o_td.time);    /* must be little-endian! */
-        swpcopyw(&filedate,&fd2->o_td.date);
-        fd2->o_strtcl = clust;
-        fd2->o_fileln = fileln;
+        dfd = fd2->o_dfd;
+        swpcopyw(&filetime,&dfd->o_td.time);    /* must be little-endian! */
+        swpcopyw(&filedate,&dfd->o_td.date);
+        dfd->o_strtcl = clust;
+        dfd->o_fileln = fileln;
+        dfd->o_usecnt++;
 
         /* if this is really a folder we're moving, we need to
          * do two things: fix up the parent directory pointer in
@@ -1021,14 +1030,14 @@ long xrename(int n, char *p1, char *p2)
          */
         fdparent = fd2->o_dirfil;           /* parent's OFD */
         if (att&FA_SUBDIR) {
-            fd2->o_fileln = DIR_FILE_LENGTH;/* fake size for dirs */
+            dfd->o_fileln = DIR_FILE_LENGTH;/* fake size for dirs */
 
             /* set .. entry to point to new parent.
              * note that the root dir has a cluster# of zero.
              */
             if (!fd2->o_dnode->d_name[0])   /* empty name means root */
                 temp = 0;
-            else temp = fdparent->o_strtcl; /* else real start cluster */
+            else temp = fdparent->o_dfd->o_strtcl;  /* else real start cluster */
             swpw(temp);                     /* convert to disk format */
             if (update_fcb(fd2,sizeof(FCB)+26,2L,(UBYTE *)&temp) < 0)
             {
@@ -1043,7 +1052,7 @@ long xrename(int n, char *p1, char *p2)
                 return EINTRN;
             }
         }
-        fd2->o_flag |= O_DIRTY;
+        dfd->o_flag |= O_DIRTY;
         if (att&FA_SUBDIR) {
             ixclose(fd2,CL_DIR|CL_FULL);    /* force flush & write */
             xmfreblk(fd2);                  /* free OFD */
@@ -1900,6 +1909,7 @@ static void freednd(DND *dn)                    /* M01.01.1031.02 */
 OFD *makofd(DND *p)
 {
     OFD *f;
+    DFD *dfd;
 
     /*
      * if we run out of memory when allocating the OFD, xmgetblk()
@@ -1913,14 +1923,18 @@ OFD *makofd(DND *p)
 
     p->d_ofd = f;       /* update pointer in DND */
 
-    f->o_strtcl = p->d_strtcl;
-    f->o_fileln = DIR_FILE_LENGTH;
+    dfd = &f->o_disk;
+    f->o_dfd = dfd;
     f->o_dirfil = p->d_dirfil;
     f->o_dnode = p->d_parent;
     f->o_dirbyt = p->d_dirpos;
-    f->o_td.date = p->d_td.date;
-    f->o_td.time = p->d_td.time;
     f->o_dmd = p->d_drv;
+
+    dfd->o_usecnt = 1;
+    dfd->o_td.date = p->d_td.date;
+    dfd->o_td.time = p->d_td.time;
+    dfd->o_strtcl = p->d_strtcl;
+    dfd->o_fileln = DIR_FILE_LENGTH;
 
     return f;
 }

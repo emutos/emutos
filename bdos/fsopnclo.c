@@ -203,7 +203,7 @@ long ixcreat(char *name, UBYTE attr)
     if (rc < 0)
         return rc;
 
-    getofd(f2)->o_flag |= O_DIRTY;
+    getofd(f2)->o_dfd->o_flag |= O_DIRTY;
 
     return f2;
 }
@@ -272,6 +272,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 {
     OFD *p;
     OFD *p2;
+    DFD *dfd;
     DMD *dm;                        /*  M01.01.03   */
 
     dm = dn->d_drv;
@@ -281,7 +282,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
     p->o_mod = mod;                 /*  set mode                    */
     p->o_dmd = dm;                  /*  link OFD to media           */
     sft[h-NUMSTD].f_ofd = p;
-    p->o_usecnt = 0;                /*  init usage                  */
+    /* the following 2 assignments are unnecessary, since MGET zeroes the OFD */
     p->o_curcl = 0;                 /*  init file pointer info      */
     p->o_curbyt = 0;                /*  "                           */
     p->o_dnode = dn;                /*  link to directory           */
@@ -294,21 +295,25 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 
     p->o_link = dn->d_files;
     dn->d_files = p;
+    dfd = &p->o_disk;           /* for now, always use our own DFD */
+    p->o_dfd = dfd;
+    dfd->o_usecnt = 1;
 
     if (p2)
     {       /* steal time/date,startcl,fileln (a bit clumsily) */
-        memcpy(&p->o_td,&p2->o_td,sizeof(DOSTIME)+sizeof(CLNO)+sizeof(long));
+        DFD *dfd2 = p2->o_dfd;
+        memcpy(&dfd->o_td,&dfd2->o_td,sizeof(DOSTIME)+sizeof(CLNO)+sizeof(long));
         /* not used yet... TBA *********/
         p2->o_thread = p;
     }
     else
     {
-        p->o_strtcl = f->f_clust;       /*  1st cluster of file */
-        swpw(p->o_strtcl);
-        p->o_fileln = f->f_fileln;      /*  init length of file */
-        swpl(p->o_fileln);
-        p->o_td.date = f->f_td.date;    /* note: OFD time/date are  */
-        p->o_td.time = f->f_td.time;    /*  actually little-endian! */
+        dfd->o_td.date = f->f_td.date;  /* note: OFD time/date are  */
+        dfd->o_td.time = f->f_td.time;  /*  actually little-endian! */
+        dfd->o_strtcl = f->f_clust;     /* 1st cluster of file */
+        swpw(dfd->o_strtcl);
+        dfd->o_fileln = f->f_fileln;    /* init length of file */
+        swpl(dfd->o_fileln);
     }
 
     return h;
@@ -488,6 +493,7 @@ long ixclose(OFD *fd, int part)
     OFD *p, **q;
     int i;                          /*  M01.01.03                   */
     BCB *b;
+    DFD *dfd = fd->o_dfd;
 
     /*
      * if the file or folder has been modified, we need to make sure
@@ -501,7 +507,7 @@ long ixclose(OFD *fd, int part)
      * end so that the buffer is marked as dirty and is subsequently
      * written.
      */
-    if (fd->o_flag & O_DIRTY)
+    if (dfd->o_flag & O_DIRTY)
     {
         FCB *fcb;
         UBYTE attr;
@@ -509,7 +515,7 @@ long ixclose(OFD *fd, int part)
         ixlseek(fd->o_dirfil,fd->o_dirbyt); /* start of dir entry */
         fcb = ixgetfcb(fd->o_dirfil);
         attr = fcb->f_attrib;               /* get attributes */
-        memcpy(&fcb->f_td,&fd->o_td,10);    /* copy date/time, start, length */
+        memcpy(&fcb->f_td,&dfd->o_td,10);   /* copy date/time, start, length */
         swpw(fcb->f_clust);                 /*  & fixup byte order */
         swpl(fcb->f_fileln);
 
@@ -520,7 +526,7 @@ long ixclose(OFD *fd, int part)
 
         ixlseek(fd->o_dirfil,fd->o_dirbyt+FNAMELEN);/* seek to attrib byte */
         ixwrite(fd->o_dirfil,1,&attr);          /*  & rewrite it       */
-        fd->o_flag &= ~O_DIRTY;             /* not dirty any more */
+        dfd->o_flag &= ~O_DIRTY;            /* not dirty any more */
     }
 
     if ((!part) || (part & CL_FULL))

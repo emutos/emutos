@@ -184,6 +184,7 @@ static int log2ul(unsigned long n)
 WORD log_media(BPB *b, int drv)
 {
     OFD *fo, *f;                        /*  M01.01.03   */
+    DFD *dfd;
     DND *d;
     DMD *dm;
     unsigned long rsiz, cs, n, fs;
@@ -227,12 +228,15 @@ WORD log_media(BPB *b, int drv)
     dm->m_clblog = log2ul(dm->m_clsizb);/*  log of bytes/clus           */
     dm->m_clbm = (1L<<dm->m_clblog)-1;  /*    and mask of it            */
 
-    f->o_fileln = n * rsiz;             /*  size of file (root dir)     */
-    d->d_strtcl = f->o_strtcl = 2;      /*  root start pseudo-cluster   */
+    f->o_dfd = dfd = &f->o_disk;
+    dfd->o_fileln = n * rsiz;           /*  size of file (root dir)     */
+    d->d_strtcl = dfd->o_strtcl = 2;    /*  root start pseudo-cluster   */
 
     fo = dm->m_fatofd;                  /*  OFD for 'fat file'          */
-    fo->o_strtcl = 2;                   /*  FAT start pseudo-cluster    */
     fo->o_dmd = dm;                     /*  link with DMD               */
+    fo->o_dfd = dfd = &fo->o_disk;
+    dfd->o_fileln = fs * rsiz;          /*  FAT size                    */
+    dfd->o_strtcl = 2;                  /*  FAT start pseudo-cluster    */
 
     dm->m_recoff[BT_FAT] = (RECNO)b->fatrec;
     dm->m_recoff[BT_ROOT] = (RECNO)b->fatrec + fs;
@@ -240,8 +244,6 @@ WORD log_media(BPB *b, int drv)
 
     KDEBUG(("log_media(%i) dm->m_recoff[0-2] = 0x%lx/0x%lx/0x%lx\n",
             drv, dm->m_recoff[0],dm->m_recoff[1],dm->m_recoff[2]));
-
-    fo->o_fileln = fs * rsiz;
 
     return E_OK;
 }
