@@ -107,9 +107,11 @@ typedef struct
  *  this contains a copy of the data from the FCB on disk and is
  *  contained within the OFD.
  *
- *  a future change will ensure that if there are multiple opens
- *  for the same file, only one copy of the data is maintained, in
- *  the DFD in the first-opened OFD.
+ *  note: only one copy of the data is maintained in memory, in the
+ *  DFD in the first-opened OFD for a given file (the 'base OFD').
+ *  until all OFDs for that file are closed, other OFDs access this
+ *  data via the o_dfd pointer, which always points to the DFD in
+ *  the 'base OFD'.
  */
 typedef struct
 {

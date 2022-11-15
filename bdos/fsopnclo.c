@@ -295,19 +295,23 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 
     p->o_link = dn->d_files;
     dn->d_files = p;
-    dfd = &p->o_disk;           /* for now, always use our own DFD */
-    p->o_dfd = dfd;
-    dfd->o_usecnt = 1;
 
+    /*
+     * if this file is already open, we copy the DFD pointer; this
+     * ensures that that all OFDs for the same file use the same DFD.
+     * otherwise, we use the DFD in the current OFD.
+     */
     if (p2)
-    {       /* steal time/date,startcl,fileln (a bit clumsily) */
-        DFD *dfd2 = p2->o_dfd;
-        memcpy(&dfd->o_td,&dfd2->o_td,sizeof(DOSTIME)+sizeof(CLNO)+sizeof(long));
+    {
+        dfd = p2->o_dfd;
+        dfd->o_usecnt++;                /* more than one user of DFD! */
         /* not used yet... TBA *********/
         p2->o_thread = p;
     }
     else
     {
+        dfd = &p->o_disk;
+        dfd->o_usecnt = 1;              /* only OFD using this DFD */
         dfd->o_td.date = f->f_td.date;  /* note: OFD time/date are  */
         dfd->o_td.time = f->f_td.time;  /*  actually little-endian! */
         dfd->o_strtcl = f->f_clust;     /* 1st cluster of file */
@@ -315,6 +319,8 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
         dfd->o_fileln = f->f_fileln;    /* init length of file */
         swpl(dfd->o_fileln);
     }
+
+    p->o_dfd = dfd;                     /* for future reference ... */
 
     return h;
 }
@@ -376,6 +382,7 @@ static FTAB *sftofdsrch(OFD *ofd)
 static void sftdel(FTAB *sftp)
 {
     OFD *ofd;
+    DFD *d;
 
     ofd = sftp->f_ofd;
 
@@ -384,10 +391,25 @@ static void sftdel(FTAB *sftp)
     sftp->f_own = NULL;
     sftp->f_use = 0;
 
-    /*  if no other sft entries with same OFD, delete OFD  */
-
+    /*
+     * if there are no other sft entries with same OFD, delete the OFD
+     * (subject to the complication of multiple OFDs pointing to the same file)
+     */
     if (sftofdsrch(ofd) == NULL)
-        xmfreblk(ofd);
+    {
+        d = ofd->o_dfd;
+        if (d->o_usecnt > 0)        /* paranoia */
+            d->o_usecnt--;
+
+        if (d != &ofd->o_disk)      /* not the 'base OFD', */
+            xmfreblk(ofd);          /*  so OK to delete it */
+
+        if (d->o_usecnt == 0)       /* no more users of this file */
+        {
+            ofd = (OFD *)((char *)d - offsetof(OFD, o_disk));
+            xmfreblk(ofd);          /* delete the 'base OFD' */
+        }
+    }
 }
 
 
