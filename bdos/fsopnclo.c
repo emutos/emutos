@@ -282,9 +282,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
     p->o_mod = mod;                 /*  set mode                    */
     p->o_dmd = dm;                  /*  link OFD to media           */
     sft[h-NUMSTD].f_ofd = p;
-    /* the following 2 assignments are unnecessary, since MGET zeroes the OFD */
-    p->o_curcl = 0;                 /*  init file pointer info      */
-    p->o_curbyt = 0;                /*  "                           */
+    /* no need to zero o_curcl & o_curbyt, since MGET zeroes the OFD */
     p->o_dnode = dn;                /*  link to directory           */
     p->o_dirfil = dn->d_ofd;        /*  link to dir's OFD           */
     p->o_dirbyt = dn->d_ofd->o_bytnum - sizeof(FCB);    /* offset of fcb in dir */
