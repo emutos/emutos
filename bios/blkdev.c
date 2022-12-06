@@ -653,7 +653,14 @@ LONG blkdev_getbpb(WORD dev)
         return 0L;
     }
 
-    /* don't login a disk if the number of FATs is unsupported */
+    /*
+     * don't login a disk if the number of FATs is unsupported,
+     * but for compatibility with TOS accept "zero" and then assume 2 FATs
+     */
+    if (b->fat == 0)
+    {
+        b->fat = 2;
+    }
     if ((b->fat < MIN_FATS) || (b->fat > MAX_FATS))
     {
         KDEBUG(("invalid FAT count %u\n",b->fat));
