@@ -2,7 +2,7 @@
  * iumem.c - internal user memory management routines
  *
  * Copyright (C) 2001 Lineo, Inc.
- *               2013-2021 The EmuTOS development team
+ *               2013-2022 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
@@ -32,8 +32,18 @@ long ccfreeit;
 /*
  *  ffit - find first fit for requested memory in ospool
  */
-MD *ffit(long amount, MPB *mp)
+MD *ffit(ULONG amount, MPB *mp) 
 {
+#if CONF_WITH_NON_RELOCATABLE_SUPPORT
+    return find_first_large_enough_free_block(amount, mp, (UBYTE*)0L);
+}
+
+
+MD *find_first_large_enough_free_block(ULONG amount, MPB *mp, UBYTE *start_address)
+{
+    MD *middle_block; 
+    LONG s;
+#endif
     MD *p, *q, *p1;     /* free list is composed of MD's */
     LONG maxval;
 
@@ -65,11 +75,21 @@ MD *ffit(long amount, MPB *mp)
      */
     if (amount == -1L)
     {
+#if CONF_WITH_NON_RELOCATABLE_SUPPORT
+        for (maxval = 0L; q && (start_address == 0 || (s = ((LONG)start_address - (LONG)q->m_start)) >= 0); p = q, q = p->m_link)
+        {
+            ULONG size = q->m_length;
+            if (start_address)
+                size -= s;
+            if (size > maxval)
+                maxval = size;
+        }
+#else
         for (maxval = 0L; q; p = q, q = p->m_link)
             if (q->m_length > maxval)
                 maxval = q->m_length;
-
-        KDEBUG(("BDOS ffit: maxval=%ld\n",maxval));
+#endif
+        KDEBUG(("BDOS ffit: maxval=%ld\n",maxval));      
         return (MD *)maxval;
     }
 
@@ -89,11 +109,22 @@ MD *ffit(long amount, MPB *mp)
      * look for first free space that's large enough
      * (this could be changed to a best-fit quite easily)
      */
+#if CONF_WITH_NON_RELOCATABLE_SUPPORT
+    for ( ; q && (start_address == 0 || (s = ((LONG)start_address - (LONG)q->m_start)) >= 0); p = q, q = p->m_link)
+    {
+        LONG size = q->m_length;
+        if (start_address)
+            size -= s;
+        if (size >= amount)
+            break;
+    }
+#else
     for ( ; q; p = q, q = p->m_link)
     {
         if (q->m_length >= amount)
             break;
     }
+#endif
     if (!q)
     {
         KDEBUG(("BDOS ffit: Not enough contiguous memory\n"));
@@ -101,7 +132,14 @@ MD *ffit(long amount, MPB *mp)
     }
 
     if (q->m_length == amount)
+    {
         p->m_link = q->m_link;  /* take the whole thing */
+#if CONF_WITH_NON_RELOCATABLE_SUPPORT
+        /* link allocated block into allocated list & mark owner of block */
+        q->m_link = mp->mp_mal;
+        mp->mp_mal = q;
+#endif
+    }
     else
     {
         /* break it up - 1st allocate a new MD to describe the remainder */
@@ -116,21 +154,65 @@ MD *ffit(long amount, MPB *mp)
             return NULL;
         }
 
-        /* init new MD for remaining memory on free chain */
-        p1->m_length = q->m_length - amount;
-        p1->m_start = q->m_start + amount;
-        p1->m_link = q->m_link;
-        p->m_link = p1;
+#if CONF_WITH_NON_RELOCATABLE_SUPPORT
 
-        /* adjust old MD for allocated memory on allocated chain */
-        q->m_length = amount;
+        /* s = q->m_start - start_address, can only be <= 0 otherwise it means we didn't find a suitable block (q) */
+        if (start_address == 0 || s == 0)
+        {
+            /* best case scenario (also happens when start_address==0), we only need to trim the
+             * block we found to the requested length */
+
+#endif
+            /* init new MD for remaining memory on free chain */
+            p1->m_length = q->m_length - amount;
+            p1->m_start = q->m_start + amount;
+            p1->m_link = q->m_link; 
+            p->m_link = p1;
+
+            /* adjust old MD for allocated memory on allocated chain */
+            q->m_length = amount;
+
+            /*
+            * link allocated block into allocated list & mark owner of block
+            */
+            q->m_link = mp->mp_mal;
+            mp->mp_mal = q;
+        }
+#if CONF_WITH_NON_RELOCATABLE_SUPPORT
+        else
+        {
+            /* worst case scenario, we have to allocate something in the middle of our block, and
+             * have fringe free blocks on both sides */
+            if ((middle_block=xmgetmd()) == NULL)
+            {
+                KDEBUG(("BDOS ffit: null MGET\n"));
+                xmfremd(p1);
+                return NULL;
+            }
+            /* q is the left fringe, then we have middle_block, then remainder */
+            q->m_length = s;
+            middle_block->m_length = amount;
+            p1->m_length = q->m_length - amount - s;
+
+            middle_block->m_start = start_address; /* that's the whole point */
+            p1->m_start = start_address + amount;
+            
+            /* insert middle_block to allocated blocks list */
+            middle_block->m_link = mp->mp_mal;
+            mp->mp_mal = middle_block;
+            
+            /* insert p1 in the list of free blocks, immediately after the free block
+             * we found so free blocks are still sorted by ascending address */
+            q->m_link = p1;
+            p1->m_link = q->m_link;
+
+            middle_block->m_own = run;
+            return middle_block;
+        }
     }
+#endif
 
-    /*
-     * link allocated block into allocated list & mark owner of block
-     */
-    q->m_link = mp->mp_mal;
-    mp->mp_mal = q;
+    /* if we take all block, shrink block or start_address = free block address */ 
     q->m_own = run;
 
     KDEBUG(("BDOS ffit: start=%p, length=%ld\n",q->m_start,q->m_length));

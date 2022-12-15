@@ -310,7 +310,7 @@ endif
 bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
            fshand.c fsio.c fsmain.c fsopnclo.c iumem.c kpgmld.c osmem.c \
            proc.c rwa.S time.c umem.c initinfo.c bootstrap.c logo.c \
-		   program_loader.c prg_program_loader.c
+		   program_loader.c prg_program_loader.c pgz_program_loader.c
 
 #
 # source code in util/

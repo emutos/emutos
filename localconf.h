@@ -12,7 +12,11 @@
 #define CONF_WITH_EASTER_EGG 0
 #define CONF_WITH_PRINTER_ICON 0
 #define CONF_WITH_VDI_VERTLINE 1
+#define CONF_WITH_NON_RELOCATABLE_SUPPORT 1
+#define CONF_WITH_3D_OBJECTS 1
 
+#define RS232_DEBUG_PRINT 1
+#define CONF_WITH_SCC 0
 
 /* If blitter is available, always use it and remove software drawing routines. */
 /* #define MPS_BLITTER_ALWAYS_ON 1 */
@@ -22,8 +26,8 @@
 /* #define MPS_STE_SOUND_ONLY */
 
 /* These are mutually exclusive */
-#define MPS_STF 1
-#define MPS_STE 0
+#define MPS_STF 0
+#define MPS_STE 1
 
 #if MPS_STF
   /* STf have no blitter so remove related code.

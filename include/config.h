@@ -391,6 +391,9 @@
  * are not known (and not likely) to be available for that hardware.
  */
 #ifdef TARGET_256
+# ifndef DETECT_NATIVE_FEATURES
+#  define DETECT_NATIVE_FEATURES 0
+# endif
 # ifndef CONF_WITH_ARANYM
 #  define CONF_WITH_ARANYM 0
 # endif
@@ -1566,7 +1569,18 @@
 # define CONF_LOGSEC_SIZE 512
 #endif
 
-
+/*
+ * Allows support for allocating memory in the TPA at a specified
+ * address. This is used to support the feature allowing the loading
+ * of PGZ programs, which are not relocatable and must be loaded
+ * at specific addresses (they can have multiple segments) they 
+ * specify. Thanks to this "non relocatable support", we can
+ * reserve the areas of the TPA that will be assigned to the program
+ * by the program loader.
+ */ 
+#ifndef CONF_WITH_NON_RELOCATABLE_SUPPORT
+# define CONF_WITH_NON_RELOCATABLE_SUPPORT 0
+#endif
 
 /****************************************************
  *  S O F T W A R E   S E C T I O N   -   V D I     *

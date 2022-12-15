@@ -37,6 +37,8 @@ MPB pmd;
 MPB pmdalt;
 int has_alt_ram;
 #endif
+
+/* value 2^n-1 to add to an address to round it */
 ULONG malloc_align_stram;
 
 /* internal variables */
@@ -584,7 +586,7 @@ void umem_init(void)
 /*
  * change the memory owner based on the block address
  */
-void set_owner(void *addr, PD *p)
+void set_owner(void *addr, const PD *p)
 {
     MD *m;
     MPB *mpb;
@@ -596,7 +598,7 @@ void set_owner(void *addr, PD *p)
 
     for (m = mpb->mp_mal; m; m = m->m_link) {
         if (m->m_start == (UBYTE *)addr) {
-            m->m_own = p;
+            m->m_own = (PD*)p;
             return;
         }
     }

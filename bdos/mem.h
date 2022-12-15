@@ -14,6 +14,7 @@
 #ifndef MEM_H
 #define MEM_H
 
+#include "portab.h"
 #include "bdosdefs.h"
 
 
@@ -86,7 +87,7 @@ void *srealloc(long amount);
 void umem_init(void);
 
 /* set memory ownership */
-void set_owner(void *addr, PD *p);
+void set_owner(void *addr, const PD *p);
 
 
 /*
@@ -94,7 +95,11 @@ void set_owner(void *addr, PD *p);
  */
 
 /* find first fit for requested memory in ospool */
-MD *ffit(long amount, MPB *mp);
+MD *ffit(ULONG amount, MPB *mp);
+#if CONF_WITH_NON_RELOCATABLE_SUPPORT
+/* same thing, but the memory block has to start at the given address */
+MD *find_first_large_enough_free_block(ULONG amount, MPB *mem_partition, UBYTE *start_address);
+#endif
 /* Free up a memory descriptor */
 void freeit(MD *m, MPB *mp);
 /* shrink a memory descriptor */

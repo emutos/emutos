@@ -1,3 +1,13 @@
+/*
+ * prg_program_loader - loader for TOS PRG program format.
+ *
+ * Copyright (C) 2001 Lineo, Inc.
+ * Copyright (C) 2015-2019 The EmuTOS development team
+ *
+ * This file is distributed under the GPL, version 2 or at your
+ * option any later version.  See doc/license.txt for details.
+ */
+
 #include "program_loader.h"
 #include "gemerror.h"
 #include "config.h"
@@ -7,42 +17,62 @@
 #include "pghdr.h"
 #include "proc.h"
 #include "string.h"
+#include "mem.h"
 
 #define TOS_PRG_MAGIC 0x601a
-#if 0
-#define EXT_LENGTH 3
-static const char extensions[][EXT_LENGTH+1] = { "TOS", "TTP", "PRG", "PGX", "APP", "GTP" };
-
-static char *loadable_extensions(void) {
-    return extensions;
-}
-#endif
+#define SIZEOF_MAGIC 2L
 
 
-static LONG pgfix01(UBYTE *lastcp, LONG nrelbytes, PGMINFO *pi);
+/* Information from the loaded program */ 
+typedef struct
+{
+    LONG    pi_tpalen;    /*  length of tpa area          */
+    UBYTE   *pi_tbase;    /*  start addr of text seg      */
+    UBYTE   *pi_dbase;    /*  start addr of data seg      */
+    UBYTE   *pi_bbase;    /*  start addr of bss  seg      */
+} PGMINFO;
+
+static LONG pgfix01(UBYTE *lastcp, LONG nrelbytes, const PGMINFO *pi);
 
 
-/* Tells whether this loader can manage that executable format.
- * Returns < 0 if error, >= is the number of bytes to skip the magic number. */
-static WORD can_load(const UBYTE *first_bytes) {
-    return *((WORD*)first_bytes) == TOS_PRG_MAGIC ? 2 : -1;
-}
-
-
-static WORD prg_get_program_header(FH h, PGMHDR01 *hd) {
+static WORD can_load(FH fh)
+{
     WORD r;
+    WORD magic_maybe;
 
-    r = xread(h, (LONG)sizeof(PGMHDR01), hd);
+    r = xread(fh, SIZEOF_MAGIC, &magic_maybe);
+    if (r < 0L)
+        return r;
+    if (r != SIZEOF_MAGIC)
+        return EPLFMT;
+
+    return magic_maybe == TOS_PRG_MAGIC ? 1 : 0;
+}
+
+
+static WORD get_program_info(FH fh, LOAD_STATE *lstate)
+{
+    WORD r;
+    PGMHDR01 *header;
+    
+    lstate->data = header = xmalloc(sizeof(PGMHDR01));
+    if (!lstate->data)
+        return ENSMEM;
+
+    /* load program header (can_load skipped the magic) */
+    r = xread(fh, (LONG)sizeof(PGMHDR01), header);
     if (r < 0L)
         return r;
     if (r != (LONG)sizeof(PGMHDR01))
         return EPLFMT;
     
-    return 0;
+    lstate->flags = header->h01_flags;
+    lstate->relocatable_size = header->h01_tlen + header->h01_dlen + header->h01_blen;
+    return E_OK;
 }
 
 /*
- * prg_load_program_into_memory - oldest known gemdos load format
+ * load_program_into_memory - oldest known gemdos load format
  * It is very similar to cp/m 68k load in the (open) program file with
  * handle 'h' using load file strategy like cp/m 68k.  Specifically:
  *
@@ -56,71 +86,63 @@ static WORD prg_get_program_header(FH h, PGMHDR01 *hd) {
  * - call pgfix01() to fix up the code using that info
  * - zero out the bss
  */
-static LONG prg_load_program_into_memory(FH h, PD *pdptr, PGMHDR01 *hd)
+static LONG prg_load_program_into_memory(FH fh, PD *p, LOAD_STATE *lstate)
 {
-    PGMINFO *pi;
-    PD      *p;
-    PGMINFO pinfo;
+    /* Aliases */
+    PGMHDR01 *hd = (PGMHDR01*)lstate->data;
+    PGMINFO  pi;
+    /* Relocation stuff */
     UBYTE   *cp;
     LONG    relst;
     LONG    flen;
     LONG    r;
 
-    pi = &pinfo;
-    p = pdptr;
     relst = 0;
 
     /* calculate program load info */
 
-    pi->pi_tlen=hd->h01_tlen;
-    pi->pi_dlen=hd->h01_dlen;
-    flen = pi->pi_tlen + pi->pi_dlen;
-
-    pi->pi_blen = hd->h01_blen;
-    pi->pi_slen = hd->h01_slen;
-    pi->pi_tpalen = p->p_hitpa - p->p_lowtpa - sizeof(PD);
-    pi->pi_tbase = (UBYTE *) (p+1);     /*  1st byte after PD   */
-    pi->pi_bbase = pi->pi_tbase + flen;
-    pi->pi_dbase = pi->pi_tbase + pi->pi_tlen;
-
+    flen = hd->h01_tlen + hd->h01_dlen;                     /* TEXT + DATA size  */
+    pi.pi_tpalen = p->p_hitpa - p->p_lowtpa;                /* TPA length        */
+    pi.pi_tbase = lstate->prg_entry_point = (UBYTE *)(p+1); /* 1st byte after PD */
+    pi.pi_bbase = pi.pi_tbase + flen;
+    pi.pi_dbase = pi.pi_tbase + hd->h01_tlen;
 
     /*
      * see if there is enough room to load in the file, then see if
      * the requested bss space is larger than the space we have to offer
      */
 
-    if ((flen > pi->pi_tpalen) || (pi->pi_tpalen-flen < pi->pi_blen))
+    if ((flen > pi.pi_tpalen) || (pi.pi_tpalen - flen < hd->h01_blen))
         return ENSMEM;
 
     /* initialize PD fields */
 
-    memcpy(&p->p_tbase, &pi->pi_tbase, 6 * sizeof(long));
+    memcpy(&p->p_tbase, &(pi.pi_tbase), 6 * sizeof(long));
 
-    /*
-     * read in the program file (text and data)
-     */
-
-    r = xread(h,flen,pi->pi_tbase);
+    /* read TEXT and DATA section into memory */
+    r = xread(fh, flen, pi.pi_tbase);
     if (r < 0)
         return r;
 
     if (!hd->h01_abs)
     {
+        /* relocation required */
 
         /*
          * if not an absolute format, position past the symbols and start
          * the reloc pointer (flen is tlen + dlen).
          */
 
-        /**********  should change hard coded 0x1c  ******************/
+        KDEBUG(("BDOS load_program_into_memory: flen=0x%lx, hd->h01_slen=0x%lx\n",flen,hd->h01_slen));
 
-        KDEBUG(("BDOS load_program_into_memory: flen=0x%lx, pi_slen=0x%lx\n",flen,pi->pi_slen));
-
-        r = xlseek(flen+pi->pi_slen+0x1c,h,0);
+        /* the 0x1c comes from the fact that the text segment image doesn't come immediately
+         * after the program header, but one word after: there is a 2-byte padding after ABSFLAG
+         * and before the TEXT section's content that we need to skip. */ 
+        r = xlseek(flen + hd->h01_slen + sizeof(PGMHDR01) + sizeof(UWORD), fh, 0);
         if (r < 0L)
             return r;
 
-        r = xread(h,(long)sizeof(relst),&relst);
+        r = xread(fh,(long)sizeof(relst),&relst);
 
         KDEBUG(("BDOS load_program_into_memory: relst=0x%lx\n",relst));
 
@@ -129,26 +151,26 @@ static LONG prg_load_program_into_memory(FH h, PD *pdptr, PGMHDR01 *hd)
 
         if (relst != 0)
         {
-            cp = pi->pi_tbase + relst;
+            cp = pi.pi_tbase + relst;
 
             /*  make sure we didn't wrap memory or overrun the bss  */
 
-            if ((cp < pi->pi_tbase) || (cp >= pi->pi_bbase))
+            if ((cp < pi.pi_tbase) || (cp >= pi.pi_bbase))
                 return EPLFMT;
 
-            *((long *)(cp)) += (long)pi->pi_tbase ; /*  1st fixup     */
+            *((long *)(cp)) += (long)pi.pi_tbase ; /*  1st fixup     */
 
-            flen = (long)p->p_hitpa - (long)pi->pi_bbase;   /* M01.01.0925.01 */
+            flen = (long)p->p_hitpa - (long)pi.pi_bbase;   /* M01.01.0925.01 */
 
             for ( ; ; )
             {
                 /*  read in more relocation info  */
-                r = xread(h,flen,pi->pi_bbase);
+                r = xread(fh, flen, pi.pi_bbase);
                 if (r <= 0)
                     break;
 
                 /*  do fixups using that info  */
-                r = pgfix01(cp, r, pi);
+                r = pgfix01(cp, r, &pi);
                 if (r <= 0)
                     break;
             }
@@ -160,19 +182,14 @@ static LONG prg_load_program_into_memory(FH h, PD *pdptr, PGMHDR01 *hd)
     }
 
     /* clear the bss or the whole heap */
-
-    if (hd->h01_flags & PF_FASTLOAD)
-    {
-        flen =  pi->pi_blen;                            /* clear only the bss */
-    }
-    else
-    {
-        flen = (long)p->p_hitpa - (long)pi->pi_bbase;   /* clear the whole heap */
-    }
+    flen = hd->h01_flags & PF_FASTLOAD
+        ? hd->h01_blen                            /* clear only the bss */
+        : (long)p->p_hitpa - (long)pi.pi_bbase;   /* clear the whole heap */
+    
     if (flen > 0)
-        bzero(pi->pi_bbase, flen);
+        bzero(pi.pi_bbase, flen);
 
-    return 0;
+    return E_OK;
 }
 
 
@@ -192,7 +209,7 @@ static LONG prg_load_program_into_memory(FH h, PD *pdptr, PGMHDR01 *hd)
  *  pi        - program info pointer
  */
 
-static LONG pgfix01(UBYTE *lastcp, LONG nrelbytes, PGMINFO *pi)
+static LONG pgfix01(UBYTE *lastcp, LONG nrelbytes, const PGMINFO *pi)
 {
     UBYTE *cp;              /*  code pointer                */
     UBYTE *rp;              /*  relocation info pointer     */
@@ -214,9 +231,9 @@ static LONG pgfix01(UBYTE *lastcp, LONG nrelbytes, PGMINFO *pi)
         {
             cp += *rp;  /* add the byte at rp to cp, don't sign ext */
 
-            if (cp >= bbase)
+            if (cp >= bbase) /* we can apply relocation offset to TEXT and DATA only */
                 return EPLFMT;
-            if (((LONG)cp) & 1)
+            if (((LONG)cp) & 1) /* only legit to relocate on word boundaries */
                 return EPLFMT;
             *((LONG *)cp) += tbase;
         }
@@ -245,22 +262,17 @@ LONG kpgm_relocate(PD *p, long length)
     pi = &pinfo;
     abs_flag = hd->h01_abs;
 
-    pi->pi_tlen=hd->h01_tlen;
-    pi->pi_dlen=hd->h01_dlen;
-    flen = pi->pi_tlen + pi->pi_dlen;
-
-    pi->pi_blen = hd->h01_blen;
-    pi->pi_slen = hd->h01_slen;
-    pi->pi_tpalen = p->p_hitpa - p->p_lowtpa - sizeof(PD);
+    flen = hd->h01_tlen + hd->h01_dlen;
+    pi->pi_tpalen = p->p_hitpa - p->p_lowtpa;
     pi->pi_tbase = (UBYTE *)(p+1);      /*  1st byte after PD   */
     pi->pi_bbase = pi->pi_tbase + flen;
-    pi->pi_dbase = pi->pi_tbase + pi->pi_tlen;
+    pi->pi_dbase = pi->pi_tbase + hd->h01_tlen;
 
     /* move the code to the right position (after the PD - basepage) */
     memmove(p+1, (char*)(p+1) +2+sizeof(PGMHDR01), flen);
 
     KDEBUG(("BDOS kpgm_relocate: tlen=0x%lx, dlen=0x%lx, slen=0x%lx\n",
-            pi->pi_tlen,pi->pi_dlen,pi->pi_slen));
+            hd->h01_tlen, hd->h01_dlen, hd->h01_slen));
     KDEBUG(("BDOS kpgm_relocate: flen=0x%lx, tpalen=0x%lx\n",flen,pi->pi_tpalen));
 
     /*
@@ -268,7 +280,7 @@ LONG kpgm_relocate(PD *p, long length)
      * the requested bss space is larger than the space we have to offer
      */
 
-    if ((flen > pi->pi_tpalen) || (pi->pi_tpalen-flen < pi->pi_blen))
+    if ((flen > pi->pi_tpalen) || (pi->pi_tpalen-flen < hd->h01_blen))
     {
         KDEBUG(("BDOS kpgm_relocate: ENSMEM\n"));
         return ENSMEM;
@@ -283,7 +295,7 @@ LONG kpgm_relocate(PD *p, long length)
     if (!abs_flag)
     {
         /* relocation information present */
-        rp = (LONG*) (pi->pi_tbase+2+sizeof(PGMHDR01)+flen+pi->pi_slen);
+        rp = (LONG*) (pi->pi_tbase + 2 + sizeof(PGMHDR01) + flen + hd->h01_slen);
         if (*rp)
         {
             cp = pi->pi_tbase + *rp++;
@@ -308,13 +320,13 @@ LONG kpgm_relocate(PD *p, long length)
     if (flen > 0)
         bzero(pi->pi_bbase, flen);
 
-    return 0;
+    return E_OK;
 }
 #endif
 
 
 PROGRAM_LOADER prg_program_loader = {
     can_load,
-    prg_get_program_header,
+    get_program_info,
     prg_load_program_into_memory
 };

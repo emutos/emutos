@@ -11,5 +11,6 @@
 #G 06 FF *.PRG@ @ 000 @
 #P 06 FF *.TTP@ @ 000 @
 #F 06 FF *.TOS@ @ 000 @
+#F 06 FF *.PGX@ @ 000 @
 #T 00 08 03 FF   TRASH@ @
 #F 06 07 C:\BCONIO1.TOS@ *.@ 000 @

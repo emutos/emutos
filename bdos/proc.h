@@ -15,6 +15,9 @@
 
 #include "pghdr.h"
 #include "program_loader.h"
+#include "sysconf.h"
+
+
 
 /*
  *  process management
@@ -30,11 +33,21 @@ void xterm(UWORD rc)  NORETURN ;
 WORD xtermres(long blkln, WORD rc);
 
 /*
+ * program memory management
+ */
+UBYTE *alloc_tpa(ULONG flags, LONG needed, LONG *allocated_size
+#if CONF_WITH_NON_RELOCATABLE_SUPPORT
+    , UBYTE *start_address
+#endif
+);
+
+
+/*
  * in kpgmld.c
  */
 
-LONG read_program_header(FH h, PGMHDR01 *hd, PROGRAM_LOADER **found_loader);
-LONG load_program_into_memory(PD *p, FH h, PGMHDR01 *hd, const PROGRAM_LOADER *loader);
+LONG read_program_header(FH h, LOAD_STATE *lstate);
+LONG load_program_into_memory(PD *p, FH h, LOAD_STATE *lstate);
 
 #if DETECT_NATIVE_FEATURES
 LONG kpgm_relocate( PD *p, long length); /* SOP */
