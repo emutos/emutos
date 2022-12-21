@@ -276,12 +276,12 @@ msgid "ITEM SELECTOR"
 msgstr "SELETTORE OGGETTI"
 
 #: desk/desk_rsc.c
-msgid "Number of folders: _____"
-msgstr "Numero cartelle: _____"
+msgid "Number of folders:         _____"
+msgstr "Numero cartelle:         _____ "
 
 #: desk/desk_rsc.c
-msgid "Number of files: _____"
-msgstr "Numero di file: _____"
+msgid "Number of files:         _____"
+msgstr "Numero di file:         _____ "
 
 #: desk/desk_rsc.c
 msgid "Skip"
@@ -308,32 +308,32 @@ msgid "Name: ________.___"
 msgstr "Nome: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Dim.: __________"
+msgid "Size:   __________"
+msgstr "Dimensione:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Data: __________"
+msgid "Date:   __________"
+msgstr "Data:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Ora: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Ora:   __:__ __  "
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Identità disco:     _"
+msgid "Drive identifier:  _           "
+msgstr "Identità disco:  _            "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Etichetta disco: ________.___"
+msgid "Disk label:  ________.___"
+msgstr "Etichetta disco:  ________.___ "
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Byte usati: __________"
+msgid "Bytes used:    __________"
+msgstr "Byte usati:    __________ "
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Byte liberi: __________"
+msgid "Bytes available:    __________"
+msgstr "Byte liberi:    __________ "
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
@@ -730,14 +730,6 @@ msgstr "IMPOSTA FILTRO"
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
 msgstr "CONFIGURAZIONE SCRIVANIA"
-
-#: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Directory predefinita"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Parametri di input"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"

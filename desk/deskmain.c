@@ -1638,10 +1638,8 @@ static void adjust_3d_positions(void)
     /*
      * adjust Desktop configuration dialog
      */
-    tree[DCFUNPRV].ob_y -= 2 * ADJ3DSTD;    /* avoid button overlap */
-    tree[DCFUNNXT].ob_y += ADJ3DSTD;
-    tree[DCMNUPRV].ob_y -= 2 * ADJ3DSTD;
-    tree[DCMNUNXT].ob_y += ADJ3DSTD;
+    tree[DCFUNPRV].ob_x -= 3 * ADJ3DSTD;    /* avoid button overlap */
+    tree[DCMNUPRV].ob_x -= 3 * ADJ3DSTD;
 }
 #endif
 

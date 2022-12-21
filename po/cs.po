@@ -274,12 +274,12 @@ msgid "ITEM SELECTOR"
 msgstr "VÝBÌR POLO®EK"
 
 #: desk/desk_rsc.c
-msgid "Number of folders: _____"
-msgstr "Poèet adresáøù: _____"
+msgid "Number of folders:         _____"
+msgstr "Poèet adresáøù:          _____ "
 
 #: desk/desk_rsc.c
-msgid "Number of files: _____"
-msgstr "Poèet souborù: _____"
+msgid "Number of files:         _____"
+msgstr "Poèet souborù:          _____ "
 
 #: desk/desk_rsc.c
 msgid "Skip"
@@ -306,32 +306,32 @@ msgid "Name: ________.___"
 msgstr "Jméno: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Velikost: __________"
+msgid "Size:   __________"
+msgstr "Velikost:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Datum: __________"
+msgid "Date:   __________"
+msgstr "Datum:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Èas: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Èas:   __:__ __  "
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Oznaèení disku:     _"
+msgid "Drive identifier:  _           "
+msgstr "Oznaèení disku:   _            "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Jmenovka: ________.___"
+msgid "Disk label:  ________.___"
+msgstr "Jmenovka:   ________.___ "
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Obsazeno: __________ B"
+msgid "Bytes used:    __________"
+msgstr "Obsazeno:   __________ B "
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Volných: __________ B"
+msgid "Bytes available:    __________"
+msgstr "Volných:   __________ B "
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
@@ -631,7 +631,7 @@ msgstr "Typ aplikace:"
 
 #: desk/desk_rsc.c
 msgid "Default dir:"
-msgstr "Výchozí adresáø:"
+msgstr "Adresáø:"
 
 #: desk/desk_rsc.c
 msgid "Application"
@@ -728,14 +728,6 @@ msgstr "NASTAVIT MASKU SOUBORÙ"
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
 msgstr "KONFIGURACE DESKTOPU"
-
-#: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Výchozí adresáø:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Parametr:"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"

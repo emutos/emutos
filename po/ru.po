@@ -275,12 +275,12 @@ msgid "ITEM SELECTOR"
 msgstr "ВЫБОР УСТРОЙСТВ"
 
 #: desk/desk_rsc.c
-msgid "Number of folders: _____"
-msgstr "Количество папок: _____"
+msgid "Number of folders:         _____"
+msgstr "Количество папок:        _____"
 
 #: desk/desk_rsc.c
-msgid "Number of files: _____"
-msgstr "Количество файлов: _____"
+msgid "Number of files:         _____"
+msgstr "Количество файлов:        _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"
@@ -307,32 +307,32 @@ msgid "Name: ________.___"
 msgstr "Имя: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Размер: __________"
+msgid "Size:   __________"
+msgstr "Размер:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Дата: __________"
+msgid "Date:   __________"
+msgstr "Дата:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Время: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Время:   __:__ __  "
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Идентификатор диска:     _"
+msgid "Drive identifier:  _           "
+msgstr "Идентификатор диска: _           "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
+msgid "Disk label:  ________.___"
 msgstr "Метка диска: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Байт использ.: __________"
+msgid "Bytes used:    __________"
+msgstr "Байт использ.:   __________"
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Байт свободно: __________"
+msgid "Bytes available:    __________"
+msgstr "Байт свободно:   __________"
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
@@ -616,7 +616,7 @@ msgstr "УСТАНОВИТЬ ПРОГРАММУ"
 
 #: desk/desk_rsc.c
 msgid "Boot status:"
-msgstr " Статус загрузки:"
+msgstr "Статус загрузки:"
 
 #: desk/desk_rsc.c
 msgid "Auto"
@@ -729,14 +729,6 @@ msgstr "УСТАНОВИТЬ МАСКУ ФАЙЛОВ"
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
 msgstr "КОНФИГУРАЦИЯ ДЕСКТОПА"
-
-#: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "  Папка по умолчанию:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "  Параметры ввода:"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"

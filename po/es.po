@@ -278,12 +278,12 @@ msgid "ITEM SELECTOR"
 msgstr "SELECTOR DE ELEMENTOS"
 
 #: desk/desk_rsc.c
-msgid "Number of folders: _____"
-msgstr "Número de carpetas: _____"
+msgid "Number of folders:         _____"
+msgstr "Número de carpetas:        _____"
 
 #: desk/desk_rsc.c
-msgid "Number of files: _____"
-msgstr "Número de archivos: _____"
+msgid "Number of files:         _____"
+msgstr "Número de archivos:        _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"
@@ -310,32 +310,32 @@ msgid "Name: ________.___"
 msgstr "Nombre: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Tamaño: __________"
+msgid "Size:   __________"
+msgstr "Tamaño:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Fecha: __________"
+msgid "Date:   __________"
+msgstr "Fecha:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Hora: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Hora:   __:__ __  "
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Identificador del dispositivo: _"
+msgid "Drive identifier:  _           "
+msgstr "Identificador: _           "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
+msgid "Disk label:  ________.___"
 msgstr "Etiqueta del disco: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Bytes usados: __________"
+msgid "Bytes used:    __________"
+msgstr "Bytes usados:   __________"
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Bytes disponibles: __________"
+msgid "Bytes available:    __________"
+msgstr "Bytes disponibles:   __________"
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
@@ -732,14 +732,6 @@ msgstr "FIJAR MASCARA FICHERO"
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
 msgstr "CONFIGURACION ESCRITORIO"
-
-#: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Directorio por defecto:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Introducir parámetro:"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"
