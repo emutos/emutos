@@ -276,10 +276,18 @@ msgid "ITEM SELECTOR"
 msgstr "SELEKTOR PRZEDMIOTÓW"
 
 #: desk/desk_rsc.c
+msgid "Number of folders:         _____"
+msgstr "Liczba folderów:         _____"
+
+# FIXME: unable to change string from ADFFINFO without compilation error
 msgid "Number of folders: _____"
 msgstr "Liczba folderów: _____"
 
 #: desk/desk_rsc.c
+msgid "Number of files:         _____"
+msgstr "Liczba plików:         _____"
+
+# FIXME: unable to change string from ADFFINFO without compilation error
 msgid "Number of files: _____"
 msgstr "Liczba plików: _____"
 
@@ -320,20 +328,20 @@ msgid "Time: __:__ __"
 msgstr "Czas: __:__ __"
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Okre¶lenie dysku:    _"
+msgid "Drive identifier:  _           "
+msgstr "Okre¶lenie dysku:  _           "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Etykieta dysku: ________.___"
+msgid "Disk label:  ________.___"
+msgstr "Etykieta dysku:  ________.___"
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Bajty u¿yte: __________"
+msgid "Bytes used:    __________"
+msgstr "Bajty u¿yte:    __________"
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Bajty wolne: __________"
+msgid "Bytes available:    __________"
+msgstr "Bajty wolne:    __________"
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"

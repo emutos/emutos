@@ -274,10 +274,18 @@ msgid "ITEM SELECTOR"
 msgstr "VÝBÌR POLO®EK"
 
 #: desk/desk_rsc.c
+msgid "Number of folders:         _____"
+msgstr "Poèet adresáøù:          _____ "
+
+# FIXME: unable to change string from ADFFINFO without compilation error
 msgid "Number of folders: _____"
 msgstr "Poèet adresáøù: _____"
 
 #: desk/desk_rsc.c
+msgid "Number of files:         _____"
+msgstr "Poèet souborù:          _____ "
+
+# FIXME: unable to change string from ADFFINFO without compilation error
 msgid "Number of files: _____"
 msgstr "Poèet souborù: _____"
 
@@ -318,20 +326,20 @@ msgid "Time: __:__ __"
 msgstr "Èas: __:__ __"
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Oznaèení disku:     _"
+msgid "Drive identifier:  _           "
+msgstr "Oznaèení disku:   _            "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Jmenovka: ________.___"
+msgid "Disk label:  ________.___"
+msgstr "Jmenovka:   ________.___ "
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Obsazeno: __________ B"
+msgid "Bytes used:    __________"
+msgstr "Obsazeno:   __________ B "
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Volných: __________ B"
+msgid "Bytes available:    __________"
+msgstr "Volných:   __________ B "
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"

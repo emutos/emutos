@@ -274,10 +274,18 @@ msgid "ITEM SELECTOR"
 msgstr "TIEDOSTON VALINTA"
 
 #: desk/desk_rsc.c
+msgid "Number of folders:         _____"
+msgstr "Kansioita:         _____ "
+
+# FIXME: unable to change string from ADFFINFO without compilation error
 msgid "Number of folders: _____"
 msgstr "Kansioita: _____"
 
 #: desk/desk_rsc.c
+msgid "Number of files:         _____"
+msgstr "Tiedostoja:         _____ "
+
+# FIXME: unable to change string from ADFFINFO without compilation error
 msgid "Number of files: _____"
 msgstr "Tiedostoja: _____"
 
@@ -318,20 +326,20 @@ msgid "Time: __:__ __"
 msgstr "Aika: __:__ __"
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Aseman tunnus:     _"
+msgid "Drive identifier:  _           "
+msgstr "Aseman tunnus:  _            "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Levyn nimi: ________.___"
+msgid "Disk label:  ________.___"
+msgstr "Levyn nimi:  ________.___ "
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Tavuja käytetty: __________"
+msgid "Bytes used:    __________"
+msgstr "Tavuja käytetty:    __________ "
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Tavuja vapaana: __________"
+msgid "Bytes available:    __________"
+msgstr "Tavuja vapaana:    __________ "
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"

@@ -267,10 +267,18 @@ msgid "ITEM SELECTOR"
 msgstr "ELEM KIJELÖLÉSE"
 
 #: desk/desk_rsc.c
+msgid "Number of folders:         _____"
+msgstr "Mappák:         _____ "
+
+# FIXME: unable to change string from ADFFINFO without compilation error
 msgid "Number of folders: _____"
 msgstr "Mappák: _____           "
 
 #: desk/desk_rsc.c
+msgid "Number of files:         _____"
+msgstr "Fájlok:         _____ "
+
+# FIXME: unable to change string from ADFFINFO without compilation error
 msgid "Number of files: _____"
 msgstr "Fájlok: _____           "
 
@@ -311,20 +319,20 @@ msgid "Time: __:__ __"
 msgstr "Idõ: __:__ __"
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Meghajtó jele: _          "
+msgid "Drive identifier:  _           "
+msgstr "Meghajtó jele:  _            "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Címke: ________.___      "
+msgid "Disk label:  ________.___"
+msgstr "Címke:  ________.___ "
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Használt bájtok: __________"
+msgid "Bytes used:    __________"
+msgstr "Használt bájtok:    __________ "
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Szabad bájtok: __________"
+msgid "Bytes available:    __________"
+msgstr "Szabad bájtok:    __________ "
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
