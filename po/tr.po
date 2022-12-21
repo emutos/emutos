@@ -277,17 +277,9 @@ msgstr "SEÇÝM"
 msgid "Number of folders:         _____"
 msgstr "Klasör adedi:         _____ "
 
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of folders: _____"
-msgstr "Klasör adedi: _____"
-
 #: desk/desk_rsc.c
 msgid "Number of files:         _____"
 msgstr "Dosya adedi:         _____ "
-
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of files: _____"
-msgstr "Dosya adedi: _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"

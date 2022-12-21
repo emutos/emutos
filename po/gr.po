@@ -291,17 +291,9 @@ msgstr "„ˆŠ‚„€‘ €•„ˆ—Œ"
 msgid "Number of folders:         _____"
 msgstr "€¨ Ÿ£æª ­˜¡â¢à¤:         _____"
 
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of folders: _____"
-msgstr "€¨ Ÿ£æª ­˜¡â¢à¤: _____"
-
 #: desk/desk_rsc.c
 msgid "Number of files:         _____"
 msgstr "€¨ Ÿ£æª ˜¨®œåà¤:         _____"
-
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of files: _____"
-msgstr "€¨ Ÿ£æª ˜¨®œåà¤: _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"

@@ -270,17 +270,9 @@ msgstr "ELEM KIJELÖLÉSE"
 msgid "Number of folders:         _____"
 msgstr "Mappák:         _____ "
 
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of folders: _____"
-msgstr "Mappák: _____           "
-
 #: desk/desk_rsc.c
 msgid "Number of files:         _____"
 msgstr "Fájlok:         _____ "
-
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of files: _____"
-msgstr "Fájlok: _____           "
 
 #: desk/desk_rsc.c
 msgid "Skip"

@@ -277,17 +277,9 @@ msgstr "TIEDOSTON VALINTA"
 msgid "Number of folders:         _____"
 msgstr "Kansioita:         _____ "
 
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of folders: _____"
-msgstr "Kansioita: _____"
-
 #: desk/desk_rsc.c
 msgid "Number of files:         _____"
 msgstr "Tiedostoja:         _____ "
-
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of files: _____"
-msgstr "Tiedostoja: _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"

@@ -279,17 +279,9 @@ msgstr "ITEM SELECTOR"
 msgid "Number of folders:         _____"
 msgstr "Aantal mappen:         _____"
 
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of folders: _____"
-msgstr "Aantal mappen: _____"
-
 #: desk/desk_rsc.c
 msgid "Number of files:         _____"
 msgstr "Aantal bestanden:         _____"
-
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of files: _____"
-msgstr "Aantal bestanden: _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"

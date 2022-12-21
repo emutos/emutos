@@ -277,17 +277,9 @@ msgstr "VÝBÌR POLO®EK"
 msgid "Number of folders:         _____"
 msgstr "Poèet adresáøù:          _____ "
 
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of folders: _____"
-msgstr "Poèet adresáøù: _____"
-
 #: desk/desk_rsc.c
 msgid "Number of files:         _____"
 msgstr "Poèet souborù:          _____ "
-
-# FIXME: unable to change string from ADFFINFO without compilation error
-msgid "Number of files: _____"
-msgstr "Poèet souborù: _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"
