@@ -311,16 +311,16 @@ msgid "Name: ________.___"
 msgstr "Name: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Größe: __________"
+msgid "Size:   __________"
+msgstr "Größe:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Datum: __________"
+msgid "Date:   __________"
+msgstr "Datum:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Zeit: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Zeit:   __:__ __  "
 
 #: desk/desk_rsc.c
 msgid "Drive identifier:  _           "

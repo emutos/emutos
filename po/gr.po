@@ -320,16 +320,16 @@ msgid "Name: ________.___"
 msgstr "î¤¦£˜: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "‹âšœŸ¦ª: __________"
+msgid "Size:   __________"
+msgstr "‹âšœŸ¦ª:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "†£/¤å˜: __________"
+msgid "Date:   __________"
+msgstr "†£/¤å˜:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "ð¨˜: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "ð¨˜:   __:__ __  "
 
 #: desk/desk_rsc.c
 msgid "Drive identifier:  _           "

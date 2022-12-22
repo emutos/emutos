@@ -510,6 +510,7 @@ LOCAL SHARED_ENTRY shared[] = {
     { "Yes", SHRT_MAX },
     { "No", SHRT_MAX },
     { "Skip", SHRT_MAX },
+    { "Name: ________.___", SHRT_MAX },
     { "Number of files:         _____", SHRT_MAX },
     { "Number of folders:         _____", SHRT_MAX }
 };

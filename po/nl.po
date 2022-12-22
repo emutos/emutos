@@ -308,16 +308,16 @@ msgid "Name: ________.___"
 msgstr "Naam: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Grootte: __________"
+msgid "Size:   __________"
+msgstr "Grootte:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Datum: __________"
+msgid "Date:   __________"
+msgstr "Datum:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Tijd: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Tijd:   __:__ __  "
 
 #: desk/desk_rsc.c
 msgid "Drive identifier:  _           "

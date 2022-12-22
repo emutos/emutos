@@ -306,16 +306,16 @@ msgid "Name: ________.___"
 msgstr "Nimi: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Koko: __________"
+msgid "Size:   __________"
+msgstr "Koko:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Pvm.: __________"
+msgid "Date:   __________"
+msgstr "Päiväys:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Aika: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Aika:   __:__ __  "
 
 #: desk/desk_rsc.c
 msgid "Drive identifier:  _           "

@@ -307,19 +307,19 @@ msgstr "Non"
 
 #: desk/desk_rsc.c
 msgid "Name: ________.___"
-msgstr "Nom : ________.___"
+msgstr "Nom: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Taille : __________"
+msgid "Size:   __________"
+msgstr "Taille:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Date : __________"
+msgid "Date:   __________"
+msgstr "Date:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Heure : __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Heure:   __:__ __  "
 
 #: desk/desk_rsc.c
 msgid "Drive identifier:  _           "
