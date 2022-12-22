@@ -695,11 +695,11 @@ msgstr "Confirmer écrasement:"
 
 #: desk/desk_rsc.c
 msgid "Double-click speed:"
-msgstr "Vitesse double-clic :"
+msgstr "Vitesse double-clic:"
 
 #: desk/desk_rsc.c
 msgid "Time format:"
-msgstr "Format heure :"
+msgstr "Format heure:"
 
 #: desk/desk_rsc.c
 msgid "Default"
@@ -715,7 +715,7 @@ msgstr "24H"
 
 #: desk/desk_rsc.c
 msgid "Date format:"
-msgstr "Format date :"
+msgstr "Format date:"
 
 #: desk/desk_rsc.c
 msgid "MDY"

@@ -693,7 +693,7 @@ msgstr "Potwierdzanie nadpisañ:"
 
 #: desk/desk_rsc.c
 msgid "Double-click speed:"
-msgstr "Szybko¶æ dwu-klikniêcia"
+msgstr "Szybko¶æ dwu-klikniêcia:"
 
 #: desk/desk_rsc.c
 msgid "Time format:"
