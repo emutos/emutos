@@ -624,7 +624,7 @@ msgstr "Programtípus:"
 
 #: desk/desk_rsc.c
 msgid "Default dir:"
-msgstr "Alapért. mappa:"
+msgstr "Mappa:"
 
 #: desk/desk_rsc.c
 msgid "Application"
@@ -636,7 +636,7 @@ msgstr "Ablak"
 
 #: desk/desk_rsc.c
 msgid "Parameter:"
-msgstr "Paraméter"
+msgstr "Paraméter:"
 
 #: desk/desk_rsc.c
 msgid "Full path"

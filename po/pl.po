@@ -633,7 +633,7 @@ msgstr "Typ programu:"
 
 #: desk/desk_rsc.c
 msgid "Default dir:"
-msgstr "Domy¶lny katalog"
+msgstr "Katalog:"
 
 #: desk/desk_rsc.c
 msgid "Application"
@@ -645,7 +645,7 @@ msgstr "Okno"
 
 #: desk/desk_rsc.c
 msgid "Parameter:"
-msgstr "Parametr"
+msgstr "Parametr:"
 
 #: desk/desk_rsc.c
 msgid "Full path"

@@ -616,7 +616,7 @@ msgstr "УСТАНОВИТЬ ПРОГРАММУ"
 
 #: desk/desk_rsc.c
 msgid "Boot status:"
-msgstr " Статус загрузки:"
+msgstr "Загрузки:"
 
 #: desk/desk_rsc.c
 msgid "Auto"

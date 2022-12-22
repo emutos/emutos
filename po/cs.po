@@ -631,7 +631,7 @@ msgstr "Typ aplikace:"
 
 #: desk/desk_rsc.c
 msgid "Default dir:"
-msgstr "Vıchozí adresáø:"
+msgstr "Adresáø:"
 
 #: desk/desk_rsc.c
 msgid "Application"

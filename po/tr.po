@@ -615,7 +615,7 @@ msgstr "UYGULAMA KUR"
 
 #: desk/desk_rsc.c
 msgid "Boot status:"
-msgstr "Önyükleme durumu:"
+msgstr "Önyükleme:"
 
 #: desk/desk_rsc.c
 msgid "Auto"
