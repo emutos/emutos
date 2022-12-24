@@ -734,14 +734,6 @@ msgid "DESKTOP CONFIGURATION"
 msgstr "CONFIGURACION ESCRITORIO"
 
 #: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Directorio por defecto:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Introducir parámetro:"
-
-#: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Teclas de función:"
 

@@ -732,14 +732,6 @@ msgid "DESKTOP CONFIGURATION"
 msgstr "DESKTOP CONFIGURATIE"
 
 #: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Standaard directory:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Invoer parameter:"
-
-#: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Functie toetsen:"
 

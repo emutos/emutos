@@ -744,14 +744,6 @@ msgid "DESKTOP CONFIGURATION"
 msgstr "ƒˆ€‹”—‘† DESKTOP"
 
 #: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "¨¦œ§ ¢œš£â¤¦ª ¡˜«á¢¦š¦ª:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "˜¨á£œ«¨¦  œ ©æ›¦¬"
-
-#: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "¦Ÿ« ¡á §¢ã¡«¨˜:"
 

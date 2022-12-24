@@ -731,14 +731,6 @@ msgid "DESKTOP CONFIGURATION"
 msgstr "КОНФИГУРАЦИЯ ДЕСКТОПА"
 
 #: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "  Папка по умолчанию:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "  Параметры ввода:"
-
-#: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Функциональные клавиши:"
 

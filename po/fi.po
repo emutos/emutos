@@ -730,14 +730,6 @@ msgid "DESKTOP CONFIGURATION"
 msgstr "TYÖPÖYTÄASETUKSET"
 
 #: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Oletushakemisto:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Syöte:"
-
-#: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Funktionäppäimet:"
 

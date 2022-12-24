@@ -723,14 +723,6 @@ msgid "DESKTOP CONFIGURATION"
 msgstr "ASZTAL BEÁLLíTÁSAI"
 
 #: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Alapért. mappa:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Paraméter:"
-
-#: desk/desk_rsc.c
 msgid "Function keys:"
 msgstr "Gyorsbillentyû:"
 

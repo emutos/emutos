@@ -371,11 +371,11 @@ msgstr "Nom de la copie: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Key: ^_"
-msgstr "Touche : ^_"
+msgstr "Touche: ^_"
 
 #: desk/desk_rsc.c
 msgid "Free RAM: _____________________"
-msgstr "RAM libre : _____________________"
+msgstr "Mémoire libre: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
@@ -734,20 +734,12 @@ msgid "DESKTOP CONFIGURATION"
 msgstr "CONFIGURATION DU BUREAU"
 
 #: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Dossier par défaut :"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Paramètre :"
-
-#: desk/desk_rsc.c
 msgid "Function keys:"
-msgstr "Touches de fonction :"
+msgstr "Touches de fonction:"
 
 #: desk/desk_rsc.c
 msgid "Menu shortcut keys:"
-msgstr "Raccourcis des menus :"
+msgstr "Raccourcis des menus:"
 
 #: desk/desk_rsc.c
 msgid "Clear all"
