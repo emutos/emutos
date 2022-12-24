@@ -1331,6 +1331,8 @@ void vdi_vst_load_fonts(Vwk * vwk)
         first_font = first_font->next_font;
     } while (first_font);
 
+    font_ring[2] = vwk->loaded_fonts;
+
     /* Update the device table count of faces. */
     vwk->num_fonts += count;
     INTOUT[0] = count;
@@ -1345,6 +1347,7 @@ void vdi_vst_unload_fonts(Vwk * vwk)
 #if CONF_WITH_GDOS
     /* Since we always unload all fonts, this is easy. */
     vwk->loaded_fonts = NULL;           /* No fonts installed */
+    font_ring[2] = NULL;
     vwk->scrpt2 = SCRATCHBUF_OFFSET;    /* Reset pointers to default buffers */
     vwk->scrtchp = vdishare.deftxbuf;
     vwk->num_fonts = font_count;        /* Reset font count to default */
