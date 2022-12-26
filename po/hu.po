@@ -380,11 +380,11 @@ msgstr " Fájl "
 
 #: desk/desk_rsc.c
 msgid " View "
-msgstr " Nézet"
+msgstr " Nézet "
 
 #: desk/desk_rsc.c
 msgid " Options "
-msgstr " Beállítások"
+msgstr " Beállítások "
 
 #: desk/desk_rsc.c
 msgid "  Desktop info..."
@@ -584,7 +584,7 @@ msgstr "ASZTAL IKON TELEPÍTÉSE"
 
 #: desk/desk_rsc.c
 msgid "Item type:"
-msgstr "Név:"
+msgstr "Tárgy típusa:"
 
 #: desk/desk_rsc.c
 msgid "Drive"
