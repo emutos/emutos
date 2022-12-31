@@ -1126,7 +1126,7 @@ static WORD install_window_icon(FNODE *pf)
     /* avoid button overlap */
     tree[IW_DOWN].ob_y += ADJ3DSTD;
 #else
-    tree[IW_DOWN].ob_y -= 4;
+    tree[IW_DOWN].ob_y -= ADJBUTNV;
 #endif
     start_dialog(tree);
     while(1)
@@ -1214,7 +1214,7 @@ static WORD install_window_icon(FNODE *pf)
     /* avoid button overlap */
     tree[IW_DOWN].ob_y -= ADJ3DSTD;
 #else
-    tree[IW_DOWN].ob_y += 4;
+    tree[IW_DOWN].ob_y += ADJBUTNV;
 #endif
     end_dialog(tree);
 
