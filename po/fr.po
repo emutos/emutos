@@ -96,15 +96,15 @@ msgstr ""
 
 #: aes/gem_rsc.c
 msgid "Selection: ________.___"
-msgstr "Sélection : ________.___"
+msgstr "Sélection: ________.___"
 
 #: aes/gem_rsc.c
 msgid "Directory:"
-msgstr "Dossier :"
+msgstr "Dossier:"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "Drive:"
-msgstr "Lecteur :"
+msgstr "Lecteur:"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "OK"
@@ -379,7 +379,7 @@ msgstr "Mémoire libre: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
-msgstr "Nom : ________.___"
+msgstr "Nom: ________.___"
 
 #: desk/desk_rsc.c
 msgid " Desk "
@@ -823,7 +823,7 @@ msgstr "DÉFINIR FOND"
 
 #: desk/desk_rsc.c
 msgid "Select:"
-msgstr "Choisissez :"
+msgstr "Choisissez:"
 
 #: desk/desk_rsc.c
 msgid "Desktop"
@@ -831,11 +831,11 @@ msgstr "Bureau"
 
 #: desk/desk_rsc.c
 msgid "Style:"
-msgstr "Style :"
+msgstr "Style:"
 
 #: desk/desk_rsc.c
 msgid "Color:"
-msgstr "Couleur :"
+msgstr "Couleur:"
 
 #: desk/desk_rsc.c
 msgid " %ld bytes used in %d items."
