@@ -124,6 +124,7 @@ void ev_mouse(MOBLK *pmo, WORD rets[])
 {
     ev_block(MU_M1, (LONG)pmo);
     ev_rets(rets);
+    rets[2] = button;   /* always use current button state */
 }
 
 

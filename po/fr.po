@@ -96,15 +96,15 @@ msgstr ""
 
 #: aes/gem_rsc.c
 msgid "Selection: ________.___"
-msgstr "Sélection : ________.___"
+msgstr "Sélection: ________.___"
 
 #: aes/gem_rsc.c
 msgid "Directory:"
-msgstr "Dossier :"
+msgstr "Dossier:"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "Drive:"
-msgstr "Lecteur :"
+msgstr "Lecteur:"
 
 #: aes/gem_rsc.c desk/desk_rsc.c
 msgid "OK"
@@ -278,12 +278,12 @@ msgid "ITEM SELECTOR"
 msgstr "SÉLECTEUR DE FICHIER"
 
 #: desk/desk_rsc.c
-msgid "Number of folders: _____"
-msgstr "Nombre de dossiers : _____"
+msgid "Number of folders:         _____"
+msgstr "Nombre de dossiers:        _____"
 
 #: desk/desk_rsc.c
-msgid "Number of files: _____"
-msgstr "Nombre de fichiers : _____"
+msgid "Number of files:         _____"
+msgstr "Nombre de fichiers:        _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"
@@ -307,35 +307,35 @@ msgstr "Non"
 
 #: desk/desk_rsc.c
 msgid "Name: ________.___"
-msgstr "Nom : ________.___"
+msgstr "Nom: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Taille : __________"
+msgid "Size:   __________"
+msgstr "Taille:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Date : __________"
+msgid "Date:   __________"
+msgstr "Date:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Heure : __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Heure:   __:__ __  "
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Lettre de lecteur :     _"
+msgid "Drive identifier:  _           "
+msgstr "Identification: _           "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Nom : ________.___"
+msgid "Disk label:  ________.___"
+msgstr "Nom du disque: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Octets utilisés : __________"
+msgid "Bytes used:    __________"
+msgstr "Octets utilisés:   __________"
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Octets libres : __________"
+msgid "Bytes available:    __________"
+msgstr "Octets disponibles:   __________"
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
@@ -371,15 +371,15 @@ msgstr "Nom de la copie: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Key: ^_"
-msgstr "Touche : ^_"
+msgstr "Touche: ^_"
 
 #: desk/desk_rsc.c
 msgid "Free RAM: _____________________"
-msgstr "RAM libre : _____________________"
+msgstr "Mémoire libre: _____________________"
 
 #: desk/desk_rsc.c
 msgid "Label: ________.___"
-msgstr "Nom : ________.___"
+msgstr "Nom: ________.___"
 
 #: desk/desk_rsc.c
 msgid " Desk "
@@ -695,11 +695,11 @@ msgstr "Confirmer écrasement:"
 
 #: desk/desk_rsc.c
 msgid "Double-click speed:"
-msgstr "Vitesse double-clic :"
+msgstr "Vitesse double-clic:"
 
 #: desk/desk_rsc.c
 msgid "Time format:"
-msgstr "Format heure :"
+msgstr "Format heure:"
 
 #: desk/desk_rsc.c
 msgid "Default"
@@ -715,7 +715,7 @@ msgstr "24H"
 
 #: desk/desk_rsc.c
 msgid "Date format:"
-msgstr "Format date :"
+msgstr "Format date:"
 
 #: desk/desk_rsc.c
 msgid "MDY"
@@ -734,20 +734,12 @@ msgid "DESKTOP CONFIGURATION"
 msgstr "CONFIGURATION DU BUREAU"
 
 #: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Dossier par défaut :"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Paramètre :"
-
-#: desk/desk_rsc.c
 msgid "Function keys:"
-msgstr "Touches de fonction :"
+msgstr "Touches de fonction:"
 
 #: desk/desk_rsc.c
 msgid "Menu shortcut keys:"
-msgstr "Raccourcis des menus :"
+msgstr "Raccourcis des menus:"
 
 #: desk/desk_rsc.c
 msgid "Clear all"
@@ -831,7 +823,7 @@ msgstr "DÉFINIR FOND"
 
 #: desk/desk_rsc.c
 msgid "Select:"
-msgstr "Choisissez :"
+msgstr "Choisissez:"
 
 #: desk/desk_rsc.c
 msgid "Desktop"
@@ -839,11 +831,11 @@ msgstr "Bureau"
 
 #: desk/desk_rsc.c
 msgid "Style:"
-msgstr "Style :"
+msgstr "Style:"
 
 #: desk/desk_rsc.c
 msgid "Color:"
-msgstr "Couleur :"
+msgstr "Couleur:"
 
 #: desk/desk_rsc.c
 msgid " %ld bytes used in %d items."

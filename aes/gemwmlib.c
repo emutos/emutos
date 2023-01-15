@@ -46,11 +46,6 @@
 /*
  *  defines
  */
-#define XFULL   0
-#define YFULL   gl_hbox
-#define WFULL   gl_width
-#define HFULL   (gl_height - gl_hbox)
-
 #define DROP_SHADOW_SIZE    2   /* size of drop shadow on windows */
 
 GLOBAL WORD     gl_wtop;
@@ -1288,7 +1283,7 @@ void wm_init(void)
     /* init rectangle list */
     D.w_win[0].w_rlist = po = get_orect();
     po->o_link = NULL;
-    r_set(&po->o_gr, XFULL, YFULL, WFULL, HFULL);
+    rc_copy(&gl_rfull, &po->o_gr);
     w_setup(ppd, DESKWH, NONE);
     w_setsize(WS_CURR, DESKWH, &gl_rscreen);
     w_setsize(WS_PREV, DESKWH, &gl_rscreen);
@@ -1312,6 +1307,18 @@ void wm_init(void)
     /* set up box width & height for window building */
     adj_wbox = gl_wbox + 2 * ADJ3DSTD;
     adj_hbox = gl_hbox + 2 * ADJ3DSTD;
+
+    /*
+     * the following mimics TOS4 behaviour and ensures that the work area
+     * of a full-screen window is the same as TOS4.  this is necessary to
+     * allow 4 columns of icons in a full-screen window in ST Low.
+     */
+    if (gl_width < 640)
+    {
+        adj_wbox--;
+        if (gl_height >= 400)   /* e.g. 320 x 400 */
+            adj_wbox--;
+    }
 #endif
 }
 

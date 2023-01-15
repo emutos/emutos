@@ -96,6 +96,13 @@ WORD ap_find(char *pname)
 {
     AESPD  *p;
 
+    /*
+     * explicitly disallow a NULL filename pointer, since this has
+     * a special meaning for fpdnm()
+     */
+    if (!pname)
+        return -1;
+
     p = fpdnm(pname, 0);
     return p ? p->p_pid : -1;
 }

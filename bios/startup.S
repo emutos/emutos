@@ -12,7 +12,8 @@
 
 // ==== Defines ==============================================================
 
-        .equ    cart_base, 0x00fa0000 // Base of ROM port cartridge
+        .equ    cart_base, 0x00fa0000  // Base of ROM port cartridge
+        .equ    cart_magic, 0xfa52235f // diagnostic cartridge magic number
 
 // ==== Definitions ==========================================================
 
@@ -54,7 +55,7 @@
         .text
 
 #if DIAGNOSTIC_CARTRIDGE
-    .dc.l   0xfa52235f  // diagnostic cartridge magic number
+    .dc.l   cart_magic
 #endif
 
 #if defined(MACHINE_AMIGA) && !EMUTOS_LIVES_IN_RAM
@@ -452,11 +453,18 @@ coldfire_startup_ret:
 
 #ifdef __mcoldfire__
         move.l  cart_base, d0
-        cmp.l   #0xfa52235f, d0         // magic - is cartridge present?
+        cmp.l   #cart_magic, d0         // magic - is cartridge present?
 #else
-        cmp.l   #0xfa52235f, cart_base  // magic - is cartridge present?
+        cmp.l   #cart_magic, cart_base  // magic - is cartridge present?
 #endif
         jne     nodiag                  // no -> go on
+
+#if EMUTOS_LIVES_IN_RAM
+        move.l  cart_base+0x30, d0
+        cmp.l   #0x45544f53, d0         // 'ETOS' - is this an EmuTOS cartridge?
+        jeq     nodiag                  // -> don't boot it from a RAM version
+#endif
+
         lea     nodiag(pc), a6          // save return address
         jmp     cart_base+4             // execute diagnostic cartridge
 nodiag:

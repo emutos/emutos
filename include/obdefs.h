@@ -136,6 +136,7 @@
 #define ADJ3DSTD    2           /* standard pixel adjustment for 3D objects */
 #define ADJ3DOUT    3           /* pixel adjustment for 3D OUTLINED objects */
 #define ADJ3DSHA    2           /* pixel adjustment for 3D SHADOWED objects */
+#define ADJBUTNV    4           /* pixel adjustment for non-3D vertically aligned buttons */
 
 typedef struct
 {

@@ -21,7 +21,7 @@
 #
 MAJOR_VERSION = 1
 MINOR_VERSION = 2
-FIX_VERSION = 0
+FIX_VERSION = 1
 
 empty =
 space = $(empty) $(empty)

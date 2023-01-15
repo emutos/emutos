@@ -472,9 +472,7 @@ PRIVATE LONG run_mv(WORD argc,char **argv)
 
 PRIVATE LONG run_path(WORD argc,char **argv)
 {
-char temp[MAXPATHLEN];
 const char *p;
-LONG rc = 0L;
 
     if (argc == 1) {
         p = user_path;
@@ -482,29 +480,11 @@ LONG rc = 0L;
             p = _("(empty)");
         message(" ");
         messagenl(p);
-        return 0L;
-    }
-
-    for (p = argv[1]; *p; ) {
-        p = shellutl_find_next_path_component(p,temp);
-
-        if (p == NULL)
-            break;
-
-        rc = check_path_component(temp);
-        if (rc < 0L)
-            break;
-    }
-
-    if (rc == 0L) {
-        strcpy(user_path,argv[1]);
     } else {
-        message(" ");
-        message(temp);
-        message(" ");
+        strcpy(user_path,argv[1]);
     }
 
-    return rc;
+    return 0L;
 }
 
 PRIVATE LONG run_pwd(WORD argc,char **argv)

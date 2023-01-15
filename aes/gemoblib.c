@@ -957,10 +957,12 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
  */
 void ob_draw(OBJECT *tree, WORD obj, WORD depth)
 {
-    WORD last, pobj;
+    WORD pobj;
+    WORD last = NIL;
     WORD sx, sy;
 
-    last = tree[obj].ob_next;
+    if (obj != ROOT)
+        last = tree[obj].ob_next;
     pobj = get_par(tree, obj);
 
     if (pobj != NIL)
@@ -1009,7 +1011,24 @@ static WORD get_prev(OBJECT *tree, WORD parent, WORD obj)
  *
  *  Since each parent object contains its children the idea is to
  *  walk down the tree, limited by the depth parameter, and find
- *  the last object the mx,my location was over.
+ *  the deepest object the mx,my location was over.
+ *
+ *  A note on ob_find() with 3D objects
+ *  ===================================
+ *  With non-3D objects, in a properly-constructed resource, a child
+ *  object will always have its x coordinate greater than or equal to
+ *  the x coordinate of the parent, and ob_find() relies on this.
+ *  Since 3D objects may be expanded visually, this principle may no
+ *  longer be true in certain circumstances, causing ob_find() to fail.
+ *
+ *  For example, consider an i-box surrounding a set of radio buttons,
+ *  where the i-box has the same x coordinate as the leftmost button.
+ *  The buttons will be expanded when displayed but the i-box will not. 
+ *  Then, if the user clicks just inside the leftmost radio button, mx/my
+ *  may NOT be inside the i-box.  In this case, ob_find() will not find
+ *  the radio button object, and the click will (probably) be ignored.
+ *
+ *  This issue also occurs with Atari TOS 4.
  */
 WORD ob_find(OBJECT *tree, WORD currobj, WORD depth, WORD mx, WORD my)
 {

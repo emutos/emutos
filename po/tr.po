@@ -274,12 +274,12 @@ msgid "ITEM SELECTOR"
 msgstr "SEÇÝM"
 
 #: desk/desk_rsc.c
-msgid "Number of folders: _____"
-msgstr "Klasör adedi: _____"
+msgid "Number of folders:         _____"
+msgstr "Klasör adedi:         _____ "
 
 #: desk/desk_rsc.c
-msgid "Number of files: _____"
-msgstr "Dosya adedi: _____"
+msgid "Number of files:         _____"
+msgstr "Dosya adedi:         _____ "
 
 #: desk/desk_rsc.c
 msgid "Skip"
@@ -306,32 +306,32 @@ msgid "Name: ________.___"
 msgstr "Adý: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Boyut: __________"
+msgid "Size:   __________"
+msgstr "Boyut:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Tarih: __________"
+msgid "Date:   __________"
+msgstr "Tarih:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Zaman: __: __ __"
+msgid "Time:   __:__ __  "
+msgstr "Zaman:   __:__ __  "
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Sürücü kimliði: _"
+msgid "Drive identifier:  _           "
+msgstr "Sürücü kimliði:  _            "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Sürücü etiketi: ________.___"
+msgid "Disk label:  ________.___"
+msgstr "Sürücü etiketi:  ________.___ "
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Kullanýlan bayt: __________"
+msgid "Bytes used:    __________"
+msgstr "Kullanýlan bayt:    __________ "
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Kalan bayt: __________"
+msgid "Bytes available:    __________"
+msgstr "Kalan bayt:    __________ "
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
@@ -367,7 +367,7 @@ msgstr "Kopyanýn adý: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Key: ^_"
-msgstr "Anahtar: ^ _"
+msgstr "Anahtar: ^_"
 
 #: desk/desk_rsc.c
 msgid "Free RAM: _____________________"
@@ -615,7 +615,7 @@ msgstr "UYGULAMA KUR"
 
 #: desk/desk_rsc.c
 msgid "Boot status:"
-msgstr "Önyükleme durumu:"
+msgstr "Önyükleme:"
 
 #: desk/desk_rsc.c
 msgid "Auto"
@@ -728,14 +728,6 @@ msgstr "DOSYA MASKESÝ AYARLA"
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
 msgstr "MASAÜSTÜ AYARLARI"
-
-#: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Varsayýlan dizin:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Giriþ parametresi:"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"
