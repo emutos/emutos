@@ -372,7 +372,7 @@ static void cursor_up(void)
  */
 static void cursor_down_impl(void)
 {
-    if ( v_cur_cy != v_cel_my)
+    if (v_cur_cy != v_cel_my)
         move_cursor(v_cur_cx, v_cur_cy + 1);
 }
 
