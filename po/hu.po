@@ -267,12 +267,12 @@ msgid "ITEM SELECTOR"
 msgstr "ELEM KIJELÖLÉSE"
 
 #: desk/desk_rsc.c
-msgid "Number of folders: _____"
-msgstr "Mappák: _____           "
+msgid "Number of folders:         _____"
+msgstr "Mappák:         _____ "
 
 #: desk/desk_rsc.c
-msgid "Number of files: _____"
-msgstr "Fájlok: _____           "
+msgid "Number of files:         _____"
+msgstr "Fájlok:         _____ "
 
 #: desk/desk_rsc.c
 msgid "Skip"
@@ -299,32 +299,32 @@ msgid "Name: ________.___"
 msgstr "Név: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Méret: __________"
+msgid "Size:   __________"
+msgstr "Méret:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Dátum: __________"
+msgid "Date:   __________"
+msgstr "Dátum:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Idõ: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Idõ:   __:__ __  "
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Meghajtó jele: _          "
+msgid "Drive identifier:  _           "
+msgstr "Meghajtó jele:  _            "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Címke: ________.___      "
+msgid "Disk label:  ________.___"
+msgstr "Címke:  ________.___ "
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Használt bájtok: __________"
+msgid "Bytes used:    __________"
+msgstr "Használt bájtok:    __________ "
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Szabad bájtok: __________"
+msgid "Bytes available:    __________"
+msgstr "Szabad bájtok:    __________ "
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
@@ -380,11 +380,11 @@ msgstr " Fájl "
 
 #: desk/desk_rsc.c
 msgid " View "
-msgstr " Nézet"
+msgstr " Nézet "
 
 #: desk/desk_rsc.c
 msgid " Options "
-msgstr " Beállítások"
+msgstr " Beállítások "
 
 #: desk/desk_rsc.c
 msgid "  Desktop info..."
@@ -584,7 +584,7 @@ msgstr "ASZTAL IKON TELEPÍTÉSE"
 
 #: desk/desk_rsc.c
 msgid "Item type:"
-msgstr "Név:"
+msgstr "Tárgy típusa:"
 
 #: desk/desk_rsc.c
 msgid "Drive"
@@ -624,7 +624,7 @@ msgstr "Programtípus:"
 
 #: desk/desk_rsc.c
 msgid "Default dir:"
-msgstr "Alapért. mappa:"
+msgstr "Mappa:"
 
 #: desk/desk_rsc.c
 msgid "Application"
@@ -636,7 +636,7 @@ msgstr "Ablak"
 
 #: desk/desk_rsc.c
 msgid "Parameter:"
-msgstr "Paraméter"
+msgstr "Paraméter:"
 
 #: desk/desk_rsc.c
 msgid "Full path"
@@ -721,14 +721,6 @@ msgstr "FÁJL MASZK BEÁLLíTÁSA"
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
 msgstr "ASZTAL BEÁLLíTÁSAI"
-
-#: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Alapért. mappa:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Paraméter:"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"

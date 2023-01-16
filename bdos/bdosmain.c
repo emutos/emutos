@@ -355,8 +355,8 @@ static void offree(DMD *d)
             if (f->o_dmd == d)
             {
                 xmfreblk(f);
-                sft[i].f_ofd = 0;
-                sft[i].f_own = 0;
+                sft[i].f_ofd = NULL;
+                sft[i].f_own = NULL;
                 sft[i].f_use = 0;
             }
         }

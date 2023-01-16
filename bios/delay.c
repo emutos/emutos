@@ -19,6 +19,7 @@
 #include "biosext.h" /* for is_apollo_68080 */
 #include "processor.h"
 #include "delay.h"
+#include "coldfire.h" /* For cookie jar info. */
 
 /*
  * initial 1 millisecond delay loop values
@@ -52,7 +53,14 @@ void calibration_timer(void);
 void init_delay(void)
 {
 #if defined(MACHINE_FIREBEE) || defined(MACHINE_M548X)
-    loopcount_1_msec = SDCLK_FREQUENCY_MHZ * 1000;
+    /*
+      For coldfire, we don't know cookie_mcf.sysbus_frequency at this point.
+      We know it will be between 100 and 133 MHz. Since also at this point
+      it is okay for the loop time to be approximate, we just use 133 MHz
+      here and set the correct value later in calibrate_delay() below.
+    */
+
+    loopcount_1_msec = 133UL * 1000;
 #else
 # if CONF_WITH_APOLLO_68080
     if (is_apollo_68080)
@@ -112,5 +120,9 @@ void calibrate_delay(void)
      */
     if (intcount)       /* check for valid */
         loopcount_1_msec = (loopcount * 24) / (intcount * 25);
+#else
+  #if defined(MACHINE_FIREBEE) || defined(MACHINE_M548X)
+    loopcount_1_msec = cookie_mcf.sysbus_frequency * 1000;
+  #endif
 #endif
 }

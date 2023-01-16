@@ -276,12 +276,12 @@ msgid "ITEM SELECTOR"
 msgstr "SELEKTOR PRZEDMIOTÓW"
 
 #: desk/desk_rsc.c
-msgid "Number of folders: _____"
-msgstr "Liczba folderów: _____"
+msgid "Number of folders:         _____"
+msgstr "Liczba folderów:         _____"
 
 #: desk/desk_rsc.c
-msgid "Number of files: _____"
-msgstr "Liczba plików: _____"
+msgid "Number of files:         _____"
+msgstr "Liczba plików:         _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"
@@ -308,32 +308,32 @@ msgid "Name: ________.___"
 msgstr "Nazwa: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Rozmiar: __________"
+msgid "Size:   __________"
+msgstr "Rozmiar:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Data: __________"
+msgid "Date:   __________"
+msgstr "Data:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Czas: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Czas:   __:__ __  "
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Okre¶lenie dysku:    _"
+msgid "Drive identifier:  _           "
+msgstr "Okre¶lenie dysku:  _           "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Etykieta dysku: ________.___"
+msgid "Disk label:  ________.___"
+msgstr "Etykieta dysku:  ________.___"
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Bajty u¿yte: __________"
+msgid "Bytes used:    __________"
+msgstr "Bajty u¿yte:    __________"
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Bajty wolne: __________"
+msgid "Bytes available:    __________"
+msgstr "Bajty wolne:    __________"
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
@@ -393,7 +393,7 @@ msgstr " Widok "
 
 #: desk/desk_rsc.c
 msgid " Options "
-msgstr " Opcje"
+msgstr " Opcje "
 
 #: desk/desk_rsc.c
 msgid "  Desktop info..."
@@ -633,7 +633,7 @@ msgstr "Typ programu:"
 
 #: desk/desk_rsc.c
 msgid "Default dir:"
-msgstr "Domy¶lny katalog"
+msgstr "Katalog:"
 
 #: desk/desk_rsc.c
 msgid "Application"
@@ -645,7 +645,7 @@ msgstr "Okno"
 
 #: desk/desk_rsc.c
 msgid "Parameter:"
-msgstr "Parametr"
+msgstr "Parametr:"
 
 #: desk/desk_rsc.c
 msgid "Full path"
@@ -693,7 +693,7 @@ msgstr "Potwierdzanie nadpisañ:"
 
 #: desk/desk_rsc.c
 msgid "Double-click speed:"
-msgstr "Szybko¶æ dwu-klikniêcia"
+msgstr "Szybko¶æ dwu-klikniêcia:"
 
 #: desk/desk_rsc.c
 msgid "Time format:"
@@ -730,14 +730,6 @@ msgstr "USTAW MASKÊ PLIKU"
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
 msgstr "KONFIGURACJA PULPITU"
-
-#: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Domy¶lny katalog:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Parametr:"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"

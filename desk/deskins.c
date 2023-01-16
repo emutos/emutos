@@ -803,6 +803,16 @@ static WORD install_desktop_icon(ANODE *pa)
     tree[ID_PRINT].ob_flags |= HIDETREE;
 #endif
 
+/*
+ * adjust dialog
+ */
+#if CONF_WITH_3D_OBJECTS
+    /* avoid button overlap */
+    tree[ID_DOWN].ob_y += ADJ3DSTD;
+#else
+    tree[ID_DOWN].ob_y -= ADJBUTNV;
+#endif
+
     /*
      * fill in dialog
      */
@@ -952,6 +962,16 @@ static WORD install_desktop_icon(ANODE *pa)
         }
         draw_fld(tree, ID_IBOX);
     }
+
+/*
+ * adjust dialog (restore)
+*/
+#if CONF_WITH_3D_OBJECTS
+    /* avoid button overlap */
+    tree[ID_DOWN].ob_y -= ADJ3DSTD;
+#else
+    tree[ID_DOWN].ob_y += ADJBUTNV;
+#endif
     end_dialog(tree);
 
     return change;
@@ -1099,6 +1119,15 @@ static WORD install_window_icon(FNODE *pf)
 
     insert_icon(tree, IW_ICON, curr_icon);
 
+/*
+ * adjust dialog
+ */
+#if CONF_WITH_3D_OBJECTS
+    /* avoid button overlap */
+    tree[IW_DOWN].ob_y += ADJ3DSTD;
+#else
+    tree[IW_DOWN].ob_y -= ADJBUTNV;
+#endif
     start_dialog(tree);
     while(1)
     {
@@ -1177,6 +1206,16 @@ static WORD install_window_icon(FNODE *pf)
         }
         draw_fld(tree, IW_IBOX);
     }
+
+/*
+ * adjust dialog (restore)
+*/
+#if CONF_WITH_3D_OBJECTS
+    /* avoid button overlap */
+    tree[IW_DOWN].ob_y -= ADJ3DSTD;
+#else
+    tree[IW_DOWN].ob_y += ADJBUTNV;
+#endif
     end_dialog(tree);
 
     return change;

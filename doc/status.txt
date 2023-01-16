@@ -529,17 +529,17 @@ GEMDOS v0.30 (TOS v4):
 All AES versions:
  T  10  appl_init
  T  11  appl_read
- t  12  appl_write
- t  13  appl_find
+ T  12  appl_write
+ T  13  appl_find
  T  14  appl_tplay
  T  15  appl_trecord
  X  17  appl_yield          (PC-GEM call)
  T  19  appl_exit
 
- X  20  evnt_keybd
+ T  20  evnt_keybd
  T  21  evnt_button
- t  22  evnt_mouse
- t  23  evnt_mesag
+ T  22  evnt_mouse
+ T  23  evnt_mesag
  T  24  evnt_timer
  T  25  evnt_multi
  T  26  evnt_dclick

@@ -100,7 +100,7 @@ long ixcreat(char *name, UBYTE attr)
 {
     DND *dn;
     OFD *fd;
-    FCB *f;
+    FCB *fcb;
     const char *s;
     char n[2], a[FNAMELEN];                 /*  M01.01.03   */
     int i, f2;                              /*  M01.01.03   */
@@ -148,19 +148,20 @@ long ixcreat(char *name, UBYTE attr)
      */
     pos = 0;
     if (attr == FA_VOL)
-        f = scan(dn,"*.*",FA_VOL,&pos);
-    else f = scan(dn,s,FA_NORM|FA_SUBDIR,&pos);
+        fcb = scan(dn,"*.*",FA_VOL,&pos);
+    else fcb = scan(dn,s,FA_NORM|FA_SUBDIR,&pos);
 
-    if (f)                  /* found matching file / label */
+    if (fcb)                /* found matching file / label */
     {
         if (attr != FA_VOL) /* for normal files, need to check more stuff */
         {
                                         /* M01.01.0730.01   */
-            if ((f->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR))
+            if ((fcb->f_attrib & (FA_SUBDIR | FA_RO)) || (attr == FA_SUBDIR))
                 return EACCDN;          /*  subdir or read only  */
         }
         pos -= sizeof(FCB);
-        ixdel(dn,f,pos);
+        if (ixdel(dn,fcb,pos) < 0)  /* file currently open by another process? */
+            return EACCDN;
     }
     else
         pos = 0;
@@ -168,7 +169,7 @@ long ixcreat(char *name, UBYTE attr)
     /* now scan for empty space */
 
     /*  M01.01.SCC.FS.02  */
-    while( !( f = scan(dn,n,0xff,&pos) ) )
+    while( !( fcb = scan(dn,n,0xff,&pos) ) )
     {
         /*  not in current dir, need to grow  */
         if (!fd->o_dnode)           /*  but can't grow root  */
@@ -183,26 +184,26 @@ long ixcreat(char *name, UBYTE attr)
 
     builds(s,a);
     pos -= sizeof(FCB);
-    f->f_attrib = attr;
+    fcb->f_attrib = attr;
     for (i = 0; i < 10; i++)
-        f->f_fill[i] = 0;
-    f->f_td.time = current_time;
-    swpw(f->f_td.time);
-    f->f_td.date = current_date;
-    swpw(f->f_td.date);
-    f->f_clust = 0;
-    f->f_fileln = 0;
+        fcb->f_fill[i] = 0;
+    fcb->f_td.time = current_time;
+    swpw(fcb->f_td.time);
+    fcb->f_td.date = current_date;
+    swpw(fcb->f_td.date);
+    fcb->f_clust = 0;
+    fcb->f_fileln = 0;
     ixlseek(fd,pos);
     ixwrite(fd,FNAMELEN,a);         /* write name, set dirty flag */
     ixclose(fd,CL_DIR);             /* partial close to flush */
     ixlseek(fd,pos);
     s = (char *)ixgetfcb(fd);
-    f2 = rc = opnfil((FCB*)s,dn,(f->f_attrib&FA_RO)?RO_MODE:RW_MODE);
+    f2 = rc = opnfil((FCB*)s,dn,(fcb->f_attrib&FA_RO)?RO_MODE:RW_MODE);
 
     if (rc < 0)
         return rc;
 
-    getofd(f2)->o_flag |= O_DIRTY;
+    getofd(f2)->o_dfd->o_flag |= O_DIRTY;
 
     return f2;
 }
@@ -237,7 +238,7 @@ long xopen(char *name, int mod)
 */
 static long ixopen(char *name, int mod)
 {
-    FCB *f;
+    FCB *fcb;
     DND *dn;
     const char *s;
     long pos;
@@ -252,14 +253,14 @@ static long ixopen(char *name, int mod)
      */
 
     pos = 0;
-    if (!(f = scan(dn,s,FA_NORM,&pos)))
+    if (!(fcb = scan(dn,s,FA_NORM,&pos)))
         return EFILNF;
 
     /* Check to see if the file is read only */
-    if ((f -> f_attrib & FA_RO) && (mod != 0))
+    if ((fcb->f_attrib & FA_RO) && (mod != 0))
         return EACCDN;
 
-    return opnfil(f, dn, mod);
+    return opnfil(fcb, dn, mod);
 }
 
 
@@ -271,6 +272,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
 {
     OFD *p;
     OFD *p2;
+    DFD *dfd;
     DMD *dm;                        /*  M01.01.03   */
 
     dm = dn->d_drv;
@@ -280,9 +282,7 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
     p->o_mod = mod;                 /*  set mode                    */
     p->o_dmd = dm;                  /*  link OFD to media           */
     sft[h-NUMSTD].f_ofd = p;
-    p->o_usecnt = 0;                /*  init usage                  */
-    p->o_curcl = 0;                 /*  init file pointer info      */
-    p->o_curbyt = 0;                /*  "                           */
+    /* no need to zero o_curcl & o_curbyt, since MGET zeroes the OFD */
     p->o_dnode = dn;                /*  link to directory           */
     p->o_dirfil = dn->d_ofd;        /*  link to dir's OFD           */
     p->o_dirbyt = dn->d_ofd->o_bytnum - sizeof(FCB);    /* offset of fcb in dir */
@@ -294,21 +294,31 @@ static long makopn(FCB *f, DND *dn, int h, int mod)
     p->o_link = dn->d_files;
     dn->d_files = p;
 
+    /*
+     * if this file is already open, we copy the DFD pointer; this
+     * ensures that that all OFDs for the same file use the same DFD.
+     * otherwise, we use the DFD in the current OFD.
+     */
     if (p2)
-    {       /* steal time/date,startcl,fileln (a bit clumsily) */
-        memcpy(&p->o_td,&p2->o_td,sizeof(DOSTIME)+sizeof(CLNO)+sizeof(long));
+    {
+        dfd = p2->o_dfd;
+        dfd->o_usecnt++;                /* more than one user of DFD! */
         /* not used yet... TBA *********/
         p2->o_thread = p;
     }
     else
     {
-        p->o_strtcl = f->f_clust;       /*  1st cluster of file */
-        swpw(p->o_strtcl);
-        p->o_fileln = f->f_fileln;      /*  init length of file */
-        swpl(p->o_fileln);
-        p->o_td.date = f->f_td.date;    /* note: OFD time/date are  */
-        p->o_td.time = f->f_td.time;    /*  actually little-endian! */
+        dfd = &p->o_disk;
+        dfd->o_usecnt = 1;              /* only OFD using this DFD */
+        dfd->o_td.date = f->f_td.date;  /* note: OFD time/date are  */
+        dfd->o_td.time = f->f_td.time;  /*  actually little-endian! */
+        dfd->o_strtcl = f->f_clust;     /* 1st cluster of file */
+        swpw(dfd->o_strtcl);
+        dfd->o_fileln = f->f_fileln;    /* init length of file */
+        swpl(dfd->o_fileln);
     }
+
+    p->o_dfd = dfd;                     /* for future reference ... */
 
     return h;
 }
@@ -369,21 +379,35 @@ static FTAB *sftofdsrch(OFD *ofd)
 */
 static void sftdel(FTAB *sftp)
 {
-    FTAB *s;
     OFD *ofd;
+    DFD *d;
+
+    ofd = sftp->f_ofd;
 
     /*  clear out the entry  */
+    sftp->f_ofd = NULL;
+    sftp->f_own = NULL;
+    sftp->f_use = 0;
 
-    ofd = (s=sftp)->f_ofd;
-
-    s->f_ofd = 0;
-    s->f_own = 0;
-    s->f_use = 0;
-
-    /*  if no other sft entries with same OFD, delete OFD  */
-
+    /*
+     * if there are no other sft entries with same OFD, delete the OFD
+     * (subject to the complication of multiple OFDs pointing to the same file)
+     */
     if (sftofdsrch(ofd) == NULL)
-        xmfreblk((int *)ofd);
+    {
+        d = ofd->o_dfd;
+        if (d->o_usecnt > 0)        /* paranoia */
+            d->o_usecnt--;
+
+        if (d != &ofd->o_disk)      /* not the 'base OFD', */
+            xmfreblk(ofd);          /*  so OK to delete it */
+
+        if (d->o_usecnt == 0)       /* no more users of this file */
+        {
+            ofd = (OFD *)((char *)d - offsetof(OFD, o_disk));
+            xmfreblk(ofd);          /* delete the 'base OFD' */
+        }
+    }
 }
 
 
@@ -489,6 +513,7 @@ long ixclose(OFD *fd, int part)
     OFD *p, **q;
     int i;                          /*  M01.01.03                   */
     BCB *b;
+    DFD *dfd = fd->o_dfd;
 
     /*
      * if the file or folder has been modified, we need to make sure
@@ -502,7 +527,7 @@ long ixclose(OFD *fd, int part)
      * end so that the buffer is marked as dirty and is subsequently
      * written.
      */
-    if (fd->o_flag & O_DIRTY)
+    if (dfd->o_flag & O_DIRTY)
     {
         FCB *fcb;
         UBYTE attr;
@@ -510,7 +535,7 @@ long ixclose(OFD *fd, int part)
         ixlseek(fd->o_dirfil,fd->o_dirbyt); /* start of dir entry */
         fcb = ixgetfcb(fd->o_dirfil);
         attr = fcb->f_attrib;               /* get attributes */
-        memcpy(&fcb->f_td,&fd->o_td,10);    /* copy date/time, start, length */
+        memcpy(&fcb->f_td,&dfd->o_td,10);   /* copy date/time, start, length */
         swpw(fcb->f_clust);                 /*  & fixup byte order */
         swpl(fcb->f_fileln);
 
@@ -521,7 +546,7 @@ long ixclose(OFD *fd, int part)
 
         ixlseek(fd->o_dirfil,fd->o_dirbyt+FNAMELEN);/* seek to attrib byte */
         ixwrite(fd->o_dirfil,1,&attr);          /*  & rewrite it       */
-        fd->o_flag &= ~O_DIRTY;             /* not dirty any more */
+        dfd->o_flag &= ~O_DIRTY;            /* not dirty any more */
     }
 
     if ((!part) || (part & CL_FULL))
@@ -563,7 +588,7 @@ long ixclose(OFD *fd, int part)
 static long ixunlink(char *name)
 {
     DND *dn;
-    FCB *f;
+    FCB *fcb;
     const char *s;
     long pos;
 
@@ -576,15 +601,15 @@ static long ixunlink(char *name)
     /* now scan for filename */
 
     pos = 0;
-    if (!(f = scan(dn,s,FA_NORM,&pos)))
+    if (!(fcb = scan(dn,s,FA_NORM,&pos)))
         return EFILNF;
 
-    if (f->f_attrib & FA_RO)
+    if (fcb->f_attrib & FA_RO)
         return EACCDN;
 
     pos -= sizeof(FCB);
 
-    return ixdel(dn,f,pos);
+    return ixdel(dn,fcb,pos);
 }
 
 

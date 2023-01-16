@@ -621,7 +621,14 @@ LONG blkdev_getbpb(WORD dev)
         return 0L;
     }
 
-    /* don't login a disk if the number of FATs is unsupported */
+    /*
+     * don't login a disk if the number of FATs is unsupported,
+     * but for compatibility with TOS accept "zero" and then assume 2 FATs
+     */
+    if (b->fat == 0)
+    {
+        b->fat = 2;
+    }
     if ((b->fat < MIN_FATS) || (b->fat > MAX_FATS))
     {
         KDEBUG(("invalid FAT count %u\n",b->fat));
@@ -665,8 +672,9 @@ LONG blkdev_getbpb(WORD dev)
     /*
      * with 2 FATs, use 2nd FAT by default.
      * The code that flushes the FATs also assumes this.
+     * When support for single FAT is disabled, assume 2 FATs like Atari TOS.
      */
-    if (b->fat >= 2)
+    if (!CONF_WITH_1FAT_SUPPORT || (b->fat >= 2))
         bdev->bpb.fatrec += bdev->bpb.fsiz;
     bdev->bpb.datrec = bdev->bpb.fatrec + bdev->bpb.fsiz + bdev->bpb.rdlen;
 
@@ -674,10 +682,23 @@ LONG blkdev_getbpb(WORD dev)
      * determine number of clusters
      */
     tmp = getiword(b->sec);
-    /* handle DOS-style disks (512-byte logical sectors) >= 32MB */
-    if (tmp == 0L)
+    /*
+     * a value of zero for total sectors should mean that we have a DOS-style
+     * disk (512-byte logical sectors) >= 32MB, but it can also be due to an
+     * invalid boot sector.  Atari TOS accepts a zero value & logs in the disk
+     * (ending up with a negative value for number of clusters in the BPB).
+     *
+     * in the general case, EmuTOS must assume that zeros in b->sec means
+     * that b->sec2 contains a valid value.  however, for floppies we can
+     * assume that it's an invalid boot sector.  in this case, we arrange
+     * to set a cluster count of zero.
+     */
+    if ((tmp == 0UL) && (unit >= NUMFLOPPIES))
         tmp = MAKE_ULONG(getiword(b16->sec2+2), getiword(b16->sec2));
-    tmp = (tmp - bdev->bpb.datrec) / b->spc;
+    if (tmp < bdev->bpb.datrec)
+        tmp = 0UL;
+    else
+        tmp = (tmp - bdev->bpb.datrec) / b->spc;
     if (tmp > MAX_FAT16_CLUSTERS)           /* FAT32 - unsupported */
     {
         KINFO(("Disk %c: is inaccessible (FAT32)\n",dev+'A'));
@@ -694,8 +715,10 @@ LONG blkdev_getbpb(WORD dev)
     bdev->bpb.b_flags = 0;         /* FAT12 */
     if (bdev->bpb.numcl > MAX_FAT12_CLUSTERS)
         bdev->bpb.b_flags |= B_16;      /* FAT16 */
+#if CONF_WITH_1FAT_SUPPORT
     if (b->fat < 2)
         bdev->bpb.b_flags |= B_1FAT;
+#endif
 
     /* additional geometry info */
     bdev->geometry.sides = getiword(b->sides);

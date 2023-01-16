@@ -276,12 +276,12 @@ msgid "ITEM SELECTOR"
 msgstr "ITEM SELECTOR"
 
 #: desk/desk_rsc.c
-msgid "Number of folders: _____"
-msgstr "Aantal mappen: _____"
+msgid "Number of folders:         _____"
+msgstr "Aantal mappen:         _____"
 
 #: desk/desk_rsc.c
-msgid "Number of files: _____"
-msgstr "Aantal bestanden: _____"
+msgid "Number of files:         _____"
+msgstr "Aantal bestanden:         _____"
 
 #: desk/desk_rsc.c
 msgid "Skip"
@@ -308,32 +308,32 @@ msgid "Name: ________.___"
 msgstr "Naam: ________.___"
 
 #: desk/desk_rsc.c
-msgid "Size: __________"
-msgstr "Grootte: __________"
+msgid "Size:   __________"
+msgstr "Grootte:   __________"
 
 #: desk/desk_rsc.c
-msgid "Date: __________"
-msgstr "Datum: __________"
+msgid "Date:   __________"
+msgstr "Datum:   __________"
 
 #: desk/desk_rsc.c
-msgid "Time: __:__ __"
-msgstr "Tijd: __:__ __"
+msgid "Time:   __:__ __  "
+msgstr "Tijd:   __:__ __  "
 
 #: desk/desk_rsc.c
-msgid "Drive identifier:     _"
-msgstr "Drive letter:     _"
+msgid "Drive identifier:  _           "
+msgstr "Drive letter:  _           "
 
 #: desk/desk_rsc.c
-msgid "Disk label: ________.___"
-msgstr "Disk naam: ________.___"
+msgid "Disk label:  ________.___"
+msgstr "Disk naam:  ________.___"
 
 #: desk/desk_rsc.c
-msgid "Bytes used: __________"
-msgstr "Bytes gebruikt: __________"
+msgid "Bytes used:    __________"
+msgstr "Bytes gebruikt:    __________"
 
 #: desk/desk_rsc.c
-msgid "Bytes available: __________"
-msgstr "Bytes beschikbaar: __________"
+msgid "Bytes available:    __________"
+msgstr "Bytes beschikbaar:    __________"
 
 #: desk/desk_rsc.c
 msgid "Identifier: _:"
@@ -730,14 +730,6 @@ msgstr "BESTAND FILTER INSTELLEN"
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
 msgstr "DESKTOP CONFIGURATIE"
-
-#: desk/desk_rsc.c
-msgid "Default directory:"
-msgstr "Standaard directory:"
-
-#: desk/desk_rsc.c
-msgid "Input parameter:"
-msgstr "Invoer parameter:"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"

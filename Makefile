@@ -206,7 +206,7 @@ ELF = 0
 ifeq (1,$(ELF))
 # Standard ELF toolchain
 TOOLCHAIN_PREFIX = m68k-elf-
-TOOLCHAIN_CFLAGS = -fleading-underscore -Wa,--register-prefix-optional -fno-reorder-functions -DELF_TOOLCHAIN
+TOOLCHAIN_CFLAGS = -fleading-underscore -Wa,--register-prefix-optional -fno-reorder-functions --param=min-pagesize=0 -DELF_TOOLCHAIN
 else
 # MiNT toolchain
 TOOLCHAIN_PREFIX = m68k-atari-mint-

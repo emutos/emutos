@@ -187,7 +187,6 @@ void screen(void)
         YMINCL = vwk->ymn_clip;
         XMAXCL = vwk->xmx_clip;
         YMAXCL = vwk->ymx_clip;
-        font_ring[2] = vwk->loaded_fonts;
         CUR_WORK = vwk;
     }
 }

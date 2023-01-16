@@ -247,6 +247,7 @@ static CLNO findfree(CLNO cl, DMD *dm)
 int nextcl(OFD *p, int wrtflg)
 {
     DMD     *dm;
+    DFD     *dfd = p->o_dfd;
     CLNO    cl, cl2;                                /*  M01.01.03   */
 
     cl = p->o_curcl;
@@ -254,7 +255,7 @@ int nextcl(OFD *p, int wrtflg)
 
     if (cl == 0)                /* initial value */
     {
-        cl2 = (p->o_strtcl ? p->o_strtcl : ENDOFCHAIN );
+        cl2 = (dfd->o_strtcl ? dfd->o_strtcl : ENDOFCHAIN );
     }
     else if (!p->o_dnode)       /* if no dir node, must be FAT/root */
     {
@@ -276,8 +277,8 @@ int nextcl(OFD *p, int wrtflg)
             clfix(cl,cl2,dm);
         else
         {
-            p->o_strtcl = cl2;
-            p->o_flag |= O_DIRTY;
+            dfd->o_strtcl = cl2;
+            dfd->o_flag |= O_DIRTY;
         }
     }
 
