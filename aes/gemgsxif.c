@@ -1,7 +1,7 @@
 /*
  * gemgsxif.c - AES's interface to VDI (gsx)
  *
- * Copyright 2002-2022 The EmuTOS development team
+ * Copyright 2002-2023 The EmuTOS development team
  *           1999, Caldera Thin Clients, Inc.
  *           1987, Digital Research Inc.
  *
@@ -32,6 +32,8 @@
 #include "biosdefs.h"   /* for FALCON_REZ */
 #include "biosext.h"
 #include "asm.h"
+
+#include "cookie.h"
 
 /*
  * calculate memory size to buffer a display area, given its
@@ -257,7 +259,7 @@ static void gsx_resetmb(void)
 static BOOL aestrap_intercepted(void)
 {
     void *trap2_handler = (void *)ULONG_AT(0x88);
-    return !is_text_pointer(trap2_handler);
+    return (!is_text_pointer(trap2_handler)) || nvdi_cookie_present();
 }
 
 #endif /* CONF_WITH_EXTENDED_MOUSE */
