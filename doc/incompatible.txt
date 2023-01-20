@@ -241,8 +241,8 @@ Use a less-buggy control panel, e.g. XCONTROL.ACC from the TT or
 Falcon Language Disk.
 
 
-Program: Cubase v2 & Lite
--------------------------
+Program: Cubase v2, v3.01 & Lite
+--------------------------------
 Error: panic
 
 Bug analysis:
