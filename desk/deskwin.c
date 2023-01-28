@@ -576,6 +576,8 @@ static void win_blt(WNODE *pw, BOOL horizontal, WORD newcv)
 
     /* see if any part is off the screen */
     wind_get_grect(pw->w_id, WF_FIRSTXYWH, &t);
+    rc_intersect(&gl_rfull, &t);
+
     if (rc_equal(&c, &t))
     {
         /* blt as much as we can, adjust clip & draw the rest */
