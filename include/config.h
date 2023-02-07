@@ -593,6 +593,9 @@
 # ifndef CONF_WITH_CACHE_CONTROL
 #  define CONF_WITH_CACHE_CONTROL 0
 # endif
+# ifndef CONF_WITH_EJECT
+#  define CONF_WITH_EJECT 1
+# endif
 # ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
    /* This makes LisaEm timings completely inaccurate, so disable it */
 #  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
@@ -1945,6 +1948,14 @@
 # else
 #  define CONF_WITH_SHUTDOWN 0
 # endif
+#endif
+
+/*
+ * Set CONF_WITH_EJECT to 1 to enable automatic floppy eject.
+ * This isn't available on Atari hardware.
+ */
+#ifndef CONF_WITH_EJECT
+# define CONF_WITH_EJECT 0
 #endif
 
 /*

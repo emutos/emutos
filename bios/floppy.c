@@ -639,6 +639,17 @@ LONG floppy_rw(WORD rw, UBYTE *buf, WORD cnt, LONG recnr, WORD spt,
     return 0;
 }
 
+#if CONF_WITH_EJECT
+
+void flop_eject(void)
+{
+#ifdef MACHINE_LISA
+    lisa_flop_eject();
+#endif
+}
+
+#endif /* CONF_WITH_EJECT */
+
 /*==== boot-sector: protobt =======================================*/
 /*
  * note that (as in Falcon or TT TOS) you are allowed to create

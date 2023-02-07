@@ -40,6 +40,9 @@ char *exclude_items[] =
     "STFMTERR",
     "STFMTINF",
 #endif
+#if !CONF_WITH_EJECT
+    "EJCTITEM",
+#endif
 #if !WITH_CLI && !CONF_WITH_SHUTDOWN
     "SEP_FL2",
 #endif
