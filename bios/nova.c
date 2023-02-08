@@ -40,6 +40,10 @@ int has_nova;
  */
 static int use_16bit_io;
 
+/* CrazyDots has a special clock generator register. */
+static int is_crazydots;
+#define CRAZY_DOTS_CLK_SEL 0x000
+
 /* Macros for VGA register access */
 #define VGAREG(x)   (*(novaregbase+(x)))
 /* Note that for 16 bit access high and low word are swapped by Nova HW.
@@ -182,11 +186,12 @@ static int check_for_vga(void)
     }
 }
 
-/* Detect Nova addresses */
+/* Detect Nova/Volksfarben/CrazyDots addresses */
 void detect_nova(void)
 {
     has_nova = 0;
     use_16bit_io = 1; /* Default for everything but Volksfarben/ST */
+    is_crazydots = 0;
 
     if (IS_BUS32 && HAS_VME && check_read_byte(0xFE900000UL+VIDSUB))
     {
@@ -201,6 +206,14 @@ void detect_nova(void)
         novaregbase = (UBYTE *)0x00DC0000UL;
         novamembase = (UBYTE *)0x00C00000UL;
         has_nova = 1;
+    }
+    else if (IS_BUS32 && HAS_VME && check_read_byte(0xFEBF0000UL+VIDSUB))
+    {
+        /* CrazyDots in Atari TT */
+        novaregbase = (UBYTE *)0xFEBF0000UL;
+        novamembase = (UBYTE *)0xFEC00000UL;
+        has_nova = 1;
+        is_crazydots = 1;
     }
     else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00D00000UL+VIDSUB) &&
              check_read_byte(0x00C00000UL) && check_read_byte(0x00C80000UL))
@@ -232,7 +245,7 @@ void detect_nova(void)
 
     if (has_nova)
     {
-        KDEBUG(("Nova detected at IO=%p / mem=%p\n", novaregbase, novamembase));
+        KDEBUG(("VGA card detected at IO=%p / mem=%p\n", novaregbase, novamembase));
     }
 }
 
@@ -575,6 +588,10 @@ int init_nova(void)
     }
 
     if (!is_mach32) {   /* ET4000 */
+        if (is_crazydots) {
+            /* Program clock generator to 25.175 MHz pixel clock */
+            VGAREG(CRAZY_DOTS_CLK_SEL) = 0x4;
+        }
         unlock_et4000();
         init_et4000();
     }
