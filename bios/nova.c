@@ -459,7 +459,7 @@ static void init_nova_resolution(int is_mach32)
     if (is_mach32) {
         set_mach32_idxreg();
     } else {   /* ET4000 */
-        set_idxreg(CRTC_I, 0x36, 0x53);
+        set_idxreg(CRTC_I, 0x36, use_16bit_io? 0xD3:0x53);
     }
     set_idxreg(TS_I, 1, vga_TS_1_4[0] | 0x20); /* screen off */
     set_palette_entries(vga_palette);
