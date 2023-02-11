@@ -26,7 +26,7 @@ a ROM version of EmuTOS.
   STf & STfm          |  yes  | CZ  |  2 Jul 2022 |
   Mega ST             |  yes  | CZ  |  3 Jul 2022 | tested with PRG
   STe                 |  yes  | CZ  |  9 Jul 2022 |
-  Mega STe            |  yes  | CZ  |  3 Jul 2022 | tested with PRG
+  Mega STe            |  yes  | CZ  | 11 Feb 2023 |
   TT030               |  yes  | CZ  |  2 Jul 2022 |
   Falcon030           |  yes  | CZ  |  3 Jul 2022 |
   Falcon030 + CT60    |  yes  | RFB |  3 Jul 2022 | tested with PRG
