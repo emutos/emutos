@@ -470,10 +470,10 @@ static void init_nova_resolution(int is_mach32)
 
 /* Certain ET4000 graphic cards require a different clock divider.
    There is no direct way of finding out the clock the ET4000 runs on.
-   Instead, this function counts the number of VBLs for half a second.
+   Instead, this function counts the number of VBLs for 250 ms.
 */
-#define VBL_TIMEOUT 100 /* 0.5 second */
-#define VBL_LIMIT   25  /* nominally: 60 Hz, i.e. 30 VBLs in 0.5s */
+#define VBL_TIMEOUT 50  /* 0.25 seconds */
+#define VBL_LIMIT   12  /* nominally: 60 Hz, i.e. 15 VBLs in 0.25s */
 static void count_vbls(void)
 {
     LONG end = hz_200 + VBL_TIMEOUT;
