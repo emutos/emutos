@@ -195,21 +195,24 @@ void detect_nova(void)
 
     if (IS_BUS32 && HAS_VME && check_read_byte(0xFE900000UL+VIDSUB))
     {
-        /* Mach32(?) in Atari TT */
+        /* Nova/Mach32 in Atari TT */
         novaregbase = (UBYTE *)0xFE900000UL;
         novamembase = (UBYTE *)0xFE800000UL;
         has_nova = 1;
     }
-    else if (HAS_VME && check_read_byte(0x00DC0000UL+VIDSUB))
+    else if (HAS_VME && check_read_byte(0xFEDC0000UL+VIDSUB))
     {
-        /* Nova in Atari MegaSTe */
-        novaregbase = (UBYTE *)0x00DC0000UL;
-        novamembase = (UBYTE *)0x00C00000UL;
+        /*
+         * Nova/ET4000 in Atari MegaSTe or TT:
+         * In the MegaSTE the top 8 address bits are simply ignored.
+         */
+        novaregbase = (UBYTE *)0xFEDC0000UL;
+        novamembase = (UBYTE *)0xFEC00000UL;
         has_nova = 1;
     }
-    else if (IS_BUS32 && HAS_VME && check_read_byte(0xFEBF0000UL+VIDSUB))
+    else if (HAS_VME && check_read_byte(0xFEBF0000UL+VIDSUB))
     {
-        /* CrazyDots in Atari TT */
+        /* CrazyDots in Atari MegaSTe or TT */
         novaregbase = (UBYTE *)0xFEBF0000UL;
         novamembase = (UBYTE *)0xFEC00000UL;
         has_nova = 1;
@@ -233,13 +236,6 @@ void detect_nova(void)
         /* Nova in Atari MegaST: be sure via phystop that it's not RAM we read */
         novaregbase = (UBYTE *)0x00CC0000UL;
         novamembase = (UBYTE *)0x00C00000UL;
-        has_nova = 1;
-    }
-    else if (IS_BUS32 && HAS_VME && check_read_byte(0xFEDC0000UL+VIDSUB))
-    {
-        /* ET4000 in Atari TT */
-        novaregbase = (UBYTE *)0xFEDC0000UL;
-        novamembase = (UBYTE *)0xFEC00000UL;
         has_nova = 1;
     }
 
