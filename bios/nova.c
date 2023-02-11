@@ -231,13 +231,6 @@ void detect_nova(void)
         has_nova = 1;
         use_16bit_io = 0;
     }
-    else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00CC0000UL+VIDSUB))
-    {
-        /* Nova in Atari MegaST: be sure via phystop that it's not RAM we read */
-        novaregbase = (UBYTE *)0x00CC0000UL;
-        novamembase = (UBYTE *)0x00C00000UL;
-        has_nova = 1;
-    }
 
     if (has_nova)
     {
