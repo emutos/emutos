@@ -417,6 +417,10 @@ static void flop_detect_drive(WORD dev)
     floplock(dev);
 
     select(dev, 0);
+
+    set_fdc_reg(FDC_CS,FDC_IRUPT);  /* Force Interrupt */
+    fdc_delay();                    /* allow it to complete */
+
     if (flopcmd(FDC_RESTORE | FDC_HBIT | finfo[dev].actual_rate) < 0) {
         KDEBUG(("flop_detect_drive(%d) timeout\n",dev));
     } else {
