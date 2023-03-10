@@ -351,48 +351,40 @@ static BOOL getbpb_allowed(char *id)
  */
 int add_partition(UWORD unit, LONG *devices_available, char id[], ULONG start, ULONG size)
 {
-    int logical;
-    BLKDEV *b;
-
-    logical = next_logical(devices_available);
+    int logical = next_logical(devices_available);
     if (logical < 0) {
         KDEBUG(("add_partition(): maximum number of partitions reached!\n"));
         return -1;
     }
-    b = blkdev + logical;
 
-    if (id[0])
-        KDEBUG((" %c=%c%c%c",'A'+logical,id[0],id[1],id[2]));
-    else
-        KDEBUG((" %c=$%02x",'A'+logical,id[2]));
-    KDEBUG((",start=%ld,size=%ld\n",start,size));
+    BLKDEV *b = blkdev + logical;
+    if (id[0]) {
+        KDEBUG((" %c=%c%c%c", 'A' + logical, id[0], id[1], id[2]));
+    } else {
+        KDEBUG((" %c=$%02x", 'A' + logical, id[2]));
+    }
+    KDEBUG((", start=%ld, size=%ld\n", start, size));
 
-    b->id[0] = id[0];
-    b->id[1] = id[1];
-    b->id[2] = id[2];
+    memcpy(b->id, id, 3);
     b->id[3] = '\0';
     b->start = start;
-    b->size  = size;
-
+    b->size = size;
     b->flags = DEVICE_VALID;
     b->mediachange = MEDIANOCHANGE;
-    b->unit  = unit;
+    b->unit = unit;
 
-    /* flag partitions that support GetBPB() */
-    if (getbpb_allowed(id))
+    if (getbpb_allowed(id)) {
         b->flags |= GETBPB_ALLOWED;
+    }
 
-    /* make just GEM/BGM partitions visible to applications */
-/*
-    if (strcmp(b->id, "GEM") == 0
-        || strcmp(b->id, "BGM") == 0)
-*/
+    if (id[0] == 'G' && id[1] == 'E' && id[2] == 'M' || id[0] == 'B' && id[1] == 'G' && id[2] == 'M') {
         drvbits |= (1L << logical);
+    }
 
-    *devices_available &= ~(1L << logical); /* mark device as used */
-
+    *devices_available &= ~(1L << logical);
     return 0;
 }
+
 
 
 /*
