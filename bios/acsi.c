@@ -550,6 +550,8 @@ static LONG ultrasatan_set_clock(WORD dev)
     UBYTE cdb[10] = " USWrClRTC";
     int status;
 
+    flush_data_cache(dskbufp,SECTOR_SIZE);
+
     acsi_begin();
 
     cmd.cdbptr = cdb;
