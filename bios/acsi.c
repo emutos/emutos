@@ -459,7 +459,7 @@ static LONG ultrasatan_get_running_firmware(WORD dev)
 
     /* load DMA base address -> internal disk buffer */
     set_dma_addr(dskbufp);
-    status = send_command(cdb,10,RW_READ,dev,1,1);
+    status = send_command(cdb,10,RW_READ,dev,1,0);
 
     acsi_end();
 
