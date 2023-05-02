@@ -32,13 +32,28 @@
 #if CONF_WITH_ACSI
 
 /*
+ * structure passed to send_command()
+ */
+typedef struct
+{
+    UBYTE *cdbptr;                  /* command address */
+    WORD cdblen;                    /* command length */
+    UBYTE *bufptr;                  /* buffer address */
+    UWORD cnt;                      /* # 512-byte sectors to DMA */
+    LONG timeout;                   /* in ticks */
+    UBYTE rw;                       /* RW_READ or RW_WRITE */
+    UBYTE repeat;                   /* repeat count */
+} ACSICMD;
+
+
+/*
  * private prototypes
  */
 static void acsi_begin(void);
 static void acsi_end(void);
 static void hdc_start_dma(UWORD control);
 static void dma_send_byte(UBYTE data, UWORD control);
-static int send_command(UBYTE *cdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UWORD repeat);
+static int send_command(WORD dev,ACSICMD *cmd);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, UBYTE *buf, WORD dev);
 static LONG acsi_capacity(WORD dev, ULONG *info);
 static LONG acsi_testunit(WORD dev);
@@ -230,17 +245,23 @@ LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
 
 static LONG acsi_capacity(WORD dev, ULONG *info)
 {
+    ACSICMD cmd;
     UBYTE cdb[10];
     int status;
 
     acsi_begin();
 
-    /* load DMA base address -> internal disk buffer */
-    set_dma_addr(dskbufp);
-
     cdb[0] = 0x25;          /* set up Read Capacity cdb */
     bzero(cdb+1,9);
-    status = send_command(cdb,10,RW_READ,dev,1,1);
+
+    cmd.cdbptr = cdb;
+    cmd.cdblen = 10;
+    cmd.bufptr = dskbufp;   /* use internal disk buffer */
+    cmd.cnt = 1;
+    cmd.timeout = LARGE_TIMEOUT;
+    cmd.rw = RW_READ;
+    cmd.repeat = 1;
+    status = send_command(dev,&cmd);
 
     acsi_end();
 
@@ -257,13 +278,22 @@ static LONG acsi_capacity(WORD dev, ULONG *info)
 
 static LONG acsi_testunit(WORD dev)
 {
+    ACSICMD cmd;
     UBYTE cdb[6];
     int status;
 
     acsi_begin();
 
     bzero(cdb,6);           /* set up Test Unit Ready cdb */
-    status = send_command(cdb,6,RW_READ,dev,0,0);
+
+    cmd.cdbptr = cdb;
+    cmd.cdblen = 6;
+    cmd.bufptr = dskbufp;   /* irrelevant */
+    cmd.cnt = 0;
+    cmd.timeout = LARGE_TIMEOUT;
+    cmd.rw = RW_READ;
+    cmd.repeat = 0;
+    status = send_command(dev,&cmd);
 
     acsi_end();
 
@@ -272,18 +302,24 @@ static LONG acsi_testunit(WORD dev)
 
 static LONG acsi_inquiry(WORD dev, UBYTE *buf)
 {
+    ACSICMD cmd;
     UBYTE cdb[6];
     int status;
 
     acsi_begin();
 
-    /* load DMA base address */
-    set_dma_addr(buf);
-
     cdb[0] = 0x12;          /* set up Inquiry cdb */
     cdb[1] = cdb[2] = cdb[3] = cdb[5] = 0;
     cdb[4] = INQUIRY_BYTES; /* retrieve 36 bytes at maximum. */
-    status = send_command(cdb,6,RW_READ,dev,1,1);
+
+    cmd.cdbptr = cdb;
+    cmd.cdblen = 6;
+    cmd.bufptr = buf;
+    cmd.cnt = 1;
+    cmd.timeout = LARGE_TIMEOUT;
+    cmd.rw = RW_READ;
+    cmd.repeat = 1;
+    status = send_command(dev,&cmd);
 
     acsi_end();
 
@@ -322,6 +358,7 @@ static void acsi_end(void)
 
 static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
 {
+    ACSICMD cmd;
     UBYTE cdb[10];  /* allow for 10-byte read/write commands */
     int status, cdblen;
     LONG buflen = cnt * SECTOR_SIZE;
@@ -332,12 +369,17 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
 
     acsi_begin();
 
-    /* load DMA base address */
-    set_dma_addr(buf);
-
     /* emit command */
     cdblen = build_rw_command(cdb,rw,sector,cnt);
-    status = send_command(cdb,cdblen,rw,dev,cnt,0);
+
+    cmd.cdbptr = cdb;
+    cmd.cdblen = cdblen;
+    cmd.bufptr = buf;
+    cmd.cnt = cnt;
+    cmd.timeout = LARGE_TIMEOUT;
+    cmd.rw = rw;
+    cmd.repeat = 0;
+    status = send_command(dev,&cmd);
 
     acsi_end();
 
@@ -361,32 +403,36 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
  *   2. length returned is greater than 16: set 'repeat' to 1; otherwise
  *   3. set 'repeat' to ceil(16/length returned).
  */
-static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UWORD repeat)
+static int send_command(WORD dev,ACSICMD *cmd)
 {
     UWORD control;
     UBYTE cdb[13];      /* allow for 12-byte input commands */
     UBYTE *cdbptr, *p;
+    WORD cdblen = cmd->cdblen;
+    WORD repeat = cmd->repeat;
     int j, status;
+
+    set_dma_addr(cmd->bufptr);
 
     /*
      * see if we need to use ICD trickery
      */
-    if (*inputcdb > 0x1e) {
+    if (cmd->cdbptr[0] > 0x1e) {
         cdbptr = cdb;
         *cdbptr = 0x1f;     /* ICD extended command method */
-        memcpy(cdbptr+1,inputcdb,cdblen);
+        memcpy(cdbptr+1,cmd->cdbptr,cmd->cdblen);
         cdblen++;
-    } else cdbptr = inputcdb;
+    } else cdbptr = cmd->cdbptr;
 
     *cdbptr |= (dev << 5);  /* insert device number */
 
-    if (rw == RW_WRITE) {
+    if (cmd->rw == RW_WRITE) {
         control = DMA_WRBIT | DMA_DRQ_FLOPPY;
     } else {
         control = DMA_DRQ_FLOPPY;
     }
     hdc_start_dma(control); /* select sector count register */
-    ACSIDMA->s.data = cnt;
+    ACSIDMA->s.data = cmd->cnt;
 
     /*
      * handle 'repeat' function
@@ -410,7 +456,7 @@ static int send_command(UBYTE *inputcdb,WORD cdblen,WORD rw,WORD dev,WORD cnt,UW
 
         /* send the last byte & wait for completion of DMA */
         dma_send_byte(*p,control&0xff00);
-        status = timeout_gpip(LARGE_TIMEOUT);
+        status = timeout_gpip(cmd->timeout);
         next_acsi_time = hz_200 + INTER_IO_TIME;    /* next safe time */
         if (status)
             return -1;
@@ -452,14 +498,20 @@ static void hdc_start_dma(UWORD control)
 
 static LONG ultrasatan_get_running_firmware(WORD dev)
 {
+    ACSICMD cmd;
     UBYTE cdb[10] = " USCurntFW";
     int status;
 
     acsi_begin();
 
-    /* load DMA base address -> internal disk buffer */
-    set_dma_addr(dskbufp);
-    status = send_command(cdb,10,RW_READ,dev,1,0);
+    cmd.cdbptr = cdb;
+    cmd.cdblen = 10;
+    cmd.bufptr = dskbufp;   /* use internal disk buffer */
+    cmd.cnt = 1;
+    cmd.timeout = LARGE_TIMEOUT;
+    cmd.rw = RW_READ;
+    cmd.repeat = 0;
+    status = send_command(dev,&cmd);
 
     acsi_end();
 
@@ -470,14 +522,20 @@ static LONG ultrasatan_get_running_firmware(WORD dev)
 
 static LONG ultrasatan_get_clock(WORD dev)
 {
+    ACSICMD cmd;
     UBYTE cdb[10] = " USRdClRTC";
     int status;
 
     acsi_begin();
 
-    /* load DMA base address -> internal disk buffer */
-    set_dma_addr(dskbufp);
-    status = send_command(cdb,10,RW_READ,dev,1,0);
+    cmd.cdbptr = cdb;
+    cmd.cdblen = 10;
+    cmd.bufptr = dskbufp;   /* use internal disk buffer */
+    cmd.cnt = 1;
+    cmd.timeout = LARGE_TIMEOUT;
+    cmd.rw = RW_READ;
+    cmd.repeat = 0;
+    status = send_command(dev,&cmd);
 
     acsi_end();
 
@@ -488,14 +546,20 @@ static LONG ultrasatan_get_clock(WORD dev)
 
 static LONG ultrasatan_set_clock(WORD dev)
 {
+    ACSICMD cmd;
     UBYTE cdb[10] = " USWrClRTC";
     int status;
 
     acsi_begin();
 
-    /* load DMA base address -> internal disk buffer */
-    set_dma_addr(dskbufp);
-    status = send_command(cdb,10,RW_WRITE,dev,1,0);
+    cmd.cdbptr = cdb;
+    cmd.cdblen = 10;
+    cmd.bufptr = dskbufp;   /* use internal disk buffer */
+    cmd.cnt = 1;
+    cmd.timeout = LARGE_TIMEOUT;
+    cmd.rw = RW_WRITE;
+    cmd.repeat = 0;
+    status = send_command(dev,&cmd);
 
     acsi_end();
 
