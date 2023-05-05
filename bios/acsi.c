@@ -39,10 +39,9 @@ typedef struct
     UBYTE *cdbptr;                  /* command address */
     WORD cdblen;                    /* command length */
     UBYTE *bufptr;                  /* buffer address */
-    UWORD cnt;                      /* # 512-byte sectors to DMA */
+    LONG buflen;                    /* buffer length */
     LONG timeout;                   /* in ticks */
     UBYTE rw;                       /* RW_READ or RW_WRITE */
-    UBYTE repeat;                   /* repeat count */
 } ACSICMD;
 
 
@@ -257,15 +256,12 @@ static LONG acsi_capacity(WORD dev, ULONG *info)
     cmd.cdbptr = cdb;
     cmd.cdblen = 10;
     cmd.bufptr = dskbufp;   /* use internal disk buffer */
-    cmd.cnt = 1;
+    cmd.buflen = 8;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
-    cmd.repeat = 1;
     status = send_command(dev,&cmd);
 
     acsi_end();
-
-    invalidate_data_cache(dskbufp,sizeof(ULONG)*4);
 
     if (status == 0) {
         const ULONG *data = (const ULONG *)dskbufp;
@@ -289,10 +285,9 @@ static LONG acsi_testunit(WORD dev)
     cmd.cdbptr = cdb;
     cmd.cdblen = 6;
     cmd.bufptr = dskbufp;   /* irrelevant */
-    cmd.cnt = 0;
+    cmd.buflen = 0;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
-    cmd.repeat = 0;
     status = send_command(dev,&cmd);
 
     acsi_end();
@@ -315,15 +310,12 @@ static LONG acsi_inquiry(WORD dev, UBYTE *buf)
     cmd.cdbptr = cdb;
     cmd.cdblen = 6;
     cmd.bufptr = buf;
-    cmd.cnt = 1;
+    cmd.buflen = 36;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
-    cmd.repeat = 1;
     status = send_command(dev,&cmd);
 
     acsi_end();
-
-    invalidate_data_cache(buf,INQUIRY_BYTES);
 
     return status;
 }
@@ -363,10 +355,6 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
     int status, cdblen;
     LONG buflen = cnt * SECTOR_SIZE;
 
-    /* flush data cache here so that memory is current */
-    if (rw == RW_WRITE)
-        flush_data_cache(buf,buflen);
-
     acsi_begin();
 
     /* emit command */
@@ -375,44 +363,95 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
     cmd.cdbptr = cdb;
     cmd.cdblen = cdblen;
     cmd.bufptr = buf;
-    cmd.cnt = cnt;
+    cmd.buflen = buflen;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = rw;
-    cmd.repeat = 0;
     status = send_command(dev,&cmd);
 
     acsi_end();
-
-    /* invalidate data cache if we've read into memory */
-    if (rw == RW_READ)
-        invalidate_data_cache(buf,buflen);
 
     return status;
 }
 
 /*
+ * calculate number of additional times we must send a command
+ *
+ * this is to handle situations where the length of data returned from
+ * a single input command is not a multiple of 16.  without this, some
+ * returned data would be stuck in the DMA FIFO.
+ *
+ * returns -ve on error
+ */
+static int calculate_repeat(ACSICMD *cmd)
+{
+    LONG buflen = cmd->buflen;
+
+    /* we never need repeats when writing */
+    if (cmd->rw == RW_WRITE)
+        return 0;
+
+    /* big input xfers are expected to be exact multiples of SECTOR_SIZE */
+    if (buflen >= SECTOR_SIZE)
+    {
+        if (buflen & (SECTOR_SIZE-1))
+            return -1;
+        return 0;
+    }
+
+    /* xfers of multiples of 16 bytes cause no problems */
+    if ((buflen & (16-1)) == 0)
+        return 0;
+
+    /* for now (at least) we disallow "too many" repeats */
+    if (buflen < 4)     /* would need 5, 7, or 15 repeats */
+        return -1;
+
+    /* 4- and 5-byte xfers need 3 repeats */
+    if (buflen < 6)
+        return 3;
+
+    /* 6- and 7-byte xfers need 2 repeats */
+    if (buflen < 8)
+        return 2;
+
+    /* 8-byte & greater xfers need 1 repeat */
+    return 1;
+}
+
+/*
  * send an ACSI command; return -1 if timeout
  *
- * note: we actually send the command repeat+1 times.  this is to handle
- * situations where the length of data returned from a single command is
- * not a multiple of 16.  without this trick, some returned data would be
- * stuck in the DMA FIFO.
- *
- * the following values for 'repeat' are suggested:
- *   1. length returned is a multiple of 16: set repeat = 0; otherwise
- *   2. length returned is greater than 16: set 'repeat' to 1; otherwise
- *   3. set 'repeat' to ceil(16/length returned).
+ * note:
+ * we may actually send the command more than once (see calculate_repeat())
  */
 static int send_command(WORD dev,ACSICMD *cmd)
 {
     UWORD control;
     UBYTE cdb[13];      /* allow for 12-byte input commands */
-    UBYTE *cdbptr, *p;
+    UBYTE *cdbptr, *p, *bufptr;
     WORD cdblen = cmd->cdblen;
-    WORD repeat = cmd->repeat;
-    int j, status;
+    WORD cnt;
+    int j, repeat, status;
 
-    set_dma_addr(cmd->bufptr);
+    repeat = calculate_repeat(cmd);
+    if (repeat < 0)
+        return -1;
+
+    cnt = (cmd->buflen + SECTOR_SIZE - 1) / SECTOR_SIZE;
+
+    /*
+     * if repeating, use temporary buffer for I/O to avoid overflows
+     * [calculate_repeat() guarantees that the largest temp buffer
+     * required is 2*(SECTOR_SIZE-1)]
+     */
+    bufptr = repeat ? dskbufp : cmd->bufptr;
+    set_dma_addr(bufptr);
+
+    /*
+     * if writing, ensure the buffer memory isn't stale
+     */
+    if (cmd->rw == RW_WRITE)
+        flush_data_cache(bufptr,cmd->buflen);
 
     /*
      * see if we need to use ICD trickery
@@ -432,7 +471,7 @@ static int send_command(WORD dev,ACSICMD *cmd)
         control = DMA_DRQ_FLOPPY;
     }
     hdc_start_dma(control); /* select sector count register */
-    ACSIDMA->s.data = cmd->cnt;
+    ACSIDMA->s.data = cnt;
 
     /*
      * handle 'repeat' function
@@ -468,6 +507,22 @@ static int send_command(WORD dev,ACSICMD *cmd)
             break;
         control &= ~DMA_NOT_NEWCDB; /* set new CDB signal for next time */
     } while(repeat--);
+
+    /*
+     * if reading, ensure the cache isn't stale
+     */
+    if (cmd->rw == RW_READ)
+        invalidate_data_cache(bufptr,cmd->buflen);
+
+    /*
+     * if we used the system temporary buffer *instead of* the user buffer,
+     * copy the data to the user buffer
+     *
+     * note: acsi_capacity() (for example) uses the system temporary buffer
+     * for input data: no copying is needed in such cases
+     */
+    if (cmd->bufptr != bufptr)
+        memcpy(cmd->bufptr,bufptr,cmd->buflen);
 
     return status;
 }
@@ -507,15 +562,12 @@ static LONG ultrasatan_get_running_firmware(WORD dev)
     cmd.cdbptr = cdb;
     cmd.cdblen = 10;
     cmd.bufptr = dskbufp;   /* use internal disk buffer */
-    cmd.cnt = 1;
+    cmd.buflen = SECTOR_SIZE;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
-    cmd.repeat = 0;
     status = send_command(dev,&cmd);
 
     acsi_end();
-
-    invalidate_data_cache(dskbufp,32);
 
     return status;
 }
@@ -531,15 +583,12 @@ static LONG ultrasatan_get_clock(WORD dev)
     cmd.cdbptr = cdb;
     cmd.cdblen = 10;
     cmd.bufptr = dskbufp;   /* use internal disk buffer */
-    cmd.cnt = 1;
+    cmd.buflen = SECTOR_SIZE;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
-    cmd.repeat = 0;
     status = send_command(dev,&cmd);
 
     acsi_end();
-
-    invalidate_data_cache(dskbufp,9);
 
     return status;
 }
@@ -550,17 +599,14 @@ static LONG ultrasatan_set_clock(WORD dev)
     UBYTE cdb[10] = " USWrClRTC";
     int status;
 
-    flush_data_cache(dskbufp,SECTOR_SIZE);
-
     acsi_begin();
 
     cmd.cdbptr = cdb;
     cmd.cdblen = 10;
     cmd.bufptr = dskbufp;   /* use internal disk buffer */
-    cmd.cnt = 1;
+    cmd.buflen = SECTOR_SIZE;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_WRITE;
-    cmd.repeat = 0;
     status = send_command(dev,&cmd);
 
     acsi_end();
