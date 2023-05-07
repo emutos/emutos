@@ -520,7 +520,7 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
         } while(retval == CRITIC_RETRY_REQUEST);
         if (retval < 0)     /* error, retries exhausted */
             break;
-        buf += scount << psshift;
+        buf += (ULONG)scount << psshift;
         lrecnr += scount;
         lcount -= scount;
     } while(lcount > 0);
