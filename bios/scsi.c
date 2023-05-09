@@ -231,13 +231,15 @@ typedef struct
 
 
 /*
- * internal error codes
+ * internal error codes - these are aligned with the SCSIDRV error codes
  */
-#define PHASE_CHANGE        -1              /* not really an error, signals end of phase */
-#define TIMEOUT_ERROR       -2
+#define PHASE_CHANGE        -100            /* not really an error, signals end of phase */
+#define SELECT_ERROR        -1
 #define PHASE_ERROR         -3
-#define BUS_ERROR           -4
-
+#define BUS_ERROR           -5
+#define BUSFREE_ERROR       -7
+#define TIMEOUT_ERROR       -8
+#define ARBITRATE_ERROR     -11
 
 /*
  * local variables
@@ -945,7 +947,7 @@ static int scsi_arbitrate(void)
     timeout = hz_200 + BUSFREE_TIMEOUT;
     while (get_bus_status_reg() & 0x40)
         if (hz_200 >= timeout)
-            return TIMEOUT_ERROR;
+            return BUSFREE_ERROR;
 
     put_tcr_reg(0x00);              /* unassert I/O, C/D, MSG: bus free phase */
     put_select_enable_reg(0x00);    /* disable interrupts */
@@ -962,7 +964,7 @@ static int scsi_arbitrate(void)
             timeout = hz_200 + AIP_TIMEOUT;
             while(!(get_icr_reg()&0x40))    /* wait for AIP bit to be set */
                 if (hz_200 >= timeout)
-                    return TIMEOUT_ERROR;   /* probably broken hardware */
+                    return ARBITRATE_ERROR; /* probably broken hardware */
             arbitration_delay();
         } while(get_icr_reg()&0x20);        /* retry if we lost arbitration */
         temp = get_data_reg();          /* read active bus */
@@ -991,7 +993,7 @@ static int scsi_select(WORD device)
     bus_settle_delay();
     while(!(get_bus_status_reg() & 0x40)) /* wait for BSY bit */
         if (hz_200 >= timeout)
-            return TIMEOUT_ERROR;
+            return SELECT_ERROR;
     and_icr_reg(0x02);                  /* turn off everything except ATN */
 
     return 0;
