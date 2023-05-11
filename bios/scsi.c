@@ -1261,9 +1261,6 @@ static LONG do_scsi_io(WORD dev, CMDINFO *info)
             flush_data_cache(info->bufptr, info->buflen);
     }
 
-    /* calculate conservative transfer time, for use as timeout */
-    info->xfer_time = max(SHORT_TIMEOUT, (info->buflen/BYTES_PER_CLOCK));
-
     info->next_msg_out = IDENTIFY_MSG;  /* set for first msg out phase */
 
     if (has_scsi == FALCON_SCSI)
@@ -1340,6 +1337,7 @@ static LONG decode_scsi_status(WORD dev, LONG ret)
     info.cdblen = 6;
     info.bufptr = reqsense_buffer;
     info.buflen = REQSENSE_LENGTH;
+    info.xfer_time = SHORT_TIMEOUT;
     ret = do_scsi_io(dev, &info);
 
     if (ret < 0)                                /* errors on request sense are bad */
@@ -1377,6 +1375,8 @@ static LONG do_scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev
     info.cdblen = build_rw_command(cdb, rw, sector, count);
     info.bufptr = buf;
     info.buflen = count * SECTOR_SIZE;
+    /* calculate conservative transfer time, for use as timeout */
+    info.xfer_time = max(SHORT_TIMEOUT, (info.buflen/BYTES_PER_CLOCK));
     info.mode = rw ? WRITE_MODE : 0;
 
     /* execute command */
@@ -1399,6 +1399,7 @@ static LONG scsi_capacity(WORD dev, ULONG *buffer)
     info.cdblen = 10;
     info.bufptr = (void *)buffer;
     info.buflen = CAPACITY_LENGTH;
+    info.xfer_time = SHORT_TIMEOUT;
     ret = do_scsi_io(dev, &info);
 
     return decode_scsi_status(dev, ret);
@@ -1419,6 +1420,7 @@ static LONG scsi_inquiry(WORD dev, UBYTE *buffer)
     info.cdblen = 6;
     info.bufptr = buffer;
     info.buflen = INQUIRY_LENGTH;
+    info.xfer_time = SHORT_TIMEOUT;
     ret = do_scsi_io(dev, &info);
 
     return decode_scsi_status(dev, ret);
