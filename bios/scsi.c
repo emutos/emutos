@@ -175,25 +175,6 @@ typedef struct
 
 
 /*
- * structure passed to do_scsi_io() / scsi_dispatcher()
- */
-typedef struct
-{
-    UBYTE *cdbptr;                  /* command address */
-    WORD cdblen;                    /* command length */
-    UBYTE *bufptr;                  /* buffer address */
-    LONG buflen;                    /* buffer length */
-    ULONG xfer_time;                /* calculated, in ticks */
-    UBYTE mode;                     /* see below */
-#define WRITE_MODE  0x01
-#define DMA_MODE    0x02
-    UBYTE next_msg_out;             /* next msg to send */
-    UBYTE msg_in;                   /* first msg byte received */
-    UBYTE status;                   /* (last) status byte received */
-} CMDINFO;
-
-
-/*
  * timeouts & other longish times
  */
 #define RESET_TIME      (CLOCKS_PER_SEC)    /* 1 second (SCSI spec says >250msec) */
@@ -1240,8 +1221,7 @@ static int scsi_dispatcher(CMDINFO *info)
 /*
  * high-level SCSI support
  */
-
-static LONG do_scsi_io(WORD dev, CMDINFO *info)
+LONG do_scsi_io(WORD dev, CMDINFO *info)
 {
     ULONG timeout;
     LONG ret;

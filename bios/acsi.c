@@ -32,27 +32,12 @@
 #if CONF_WITH_ACSI
 
 /*
- * structure passed to send_command()
- */
-typedef struct
-{
-    UBYTE *cdbptr;                  /* command address */
-    WORD cdblen;                    /* command length */
-    UBYTE *bufptr;                  /* buffer address */
-    LONG buflen;                    /* buffer length */
-    LONG timeout;                   /* in ticks */
-    UBYTE rw;                       /* RW_READ or RW_WRITE */
-} ACSICMD;
-
-
-/*
  * private prototypes
  */
 static void acsi_begin(void);
 static void acsi_end(void);
 static void hdc_start_dma(UWORD control);
 static void dma_send_byte(UBYTE data, UWORD control);
-static int send_command(WORD dev,ACSICMD *cmd);
 static int do_acsi_rw(WORD rw, LONG sect, WORD cnt, UBYTE *buf, WORD dev);
 static LONG acsi_capacity(WORD dev, ULONG *info);
 static LONG acsi_testunit(WORD dev);
@@ -424,7 +409,7 @@ static int calculate_repeat(ACSICMD *cmd)
  * note:
  * we may actually send the command more than once (see calculate_repeat())
  */
-static int send_command(WORD dev,ACSICMD *cmd)
+int send_command(WORD dev,ACSICMD *cmd)
 {
     UWORD control;
     UBYTE cdb[13];      /* allow for 12-byte input commands */

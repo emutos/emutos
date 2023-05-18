@@ -21,7 +21,26 @@ int build_rw_command(UBYTE *cdb, UWORD rw, ULONG sector, UWORD count);
 
 #if CONF_WITH_SCSI
 
+/*
+ * structure passed to do_scsi_io() / scsi_dispatcher()
+ */
+typedef struct
+{
+    UBYTE *cdbptr;                  /* command address */
+    WORD cdblen;                    /* command length */
+    UBYTE *bufptr;                  /* buffer address */
+    LONG buflen;                    /* buffer length */
+    ULONG xfer_time;                /* calculated, in ticks */
+    UBYTE mode;                     /* see below */
+#define WRITE_MODE  0x01
+#define DMA_MODE    0x02
+    UBYTE next_msg_out;             /* next msg to send */
+    UBYTE msg_in;                   /* first msg byte received */
+    UBYTE status;                   /* (last) status byte received */
+} CMDINFO;
+
 void detect_scsi(void);
+LONG do_scsi_io(WORD dev, CMDINFO *info);
 void scsi_init(void);
 LONG scsi_ioctl(WORD dev, UWORD ctrl, void *arg);
 LONG scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev);
