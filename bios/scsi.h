@@ -22,7 +22,7 @@ int build_rw_command(UBYTE *cdb, UWORD rw, ULONG sector, UWORD count);
 #if CONF_WITH_SCSI
 
 /*
- * structure passed to do_scsi_io() / scsi_dispatcher()
+ * structure passed to send_scsi_command() / scsi_dispatcher()
  */
 typedef struct
 {
@@ -40,10 +40,10 @@ typedef struct
 } CMDINFO;
 
 void detect_scsi(void);
-LONG do_scsi_io(WORD dev, CMDINFO *info);
 void scsi_init(void);
 LONG scsi_ioctl(WORD dev, UWORD ctrl, void *arg);
 LONG scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev);
+LONG send_scsi_command(WORD dev, CMDINFO *info);
 
 #endif /* CONF_WITH_SCSI */
 

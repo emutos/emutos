@@ -1221,7 +1221,7 @@ static int scsi_dispatcher(CMDINFO *info)
 /*
  * high-level SCSI support
  */
-LONG do_scsi_io(WORD dev, CMDINFO *info)
+LONG send_scsi_command(WORD dev, CMDINFO *info)
 {
     ULONG timeout;
     LONG ret;
@@ -1318,7 +1318,7 @@ static LONG decode_scsi_status(WORD dev, LONG ret)
     info.bufptr = reqsense_buffer;
     info.buflen = REQSENSE_LENGTH;
     info.xfer_time = SHORT_TIMEOUT;
-    ret = do_scsi_io(dev, &info);
+    ret = send_scsi_command(dev, &info);
 
     if (ret < 0)                                /* errors on request sense are bad */
         return EDRVNR;
@@ -1360,7 +1360,7 @@ static LONG do_scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev
     info.mode = rw ? WRITE_MODE : 0;
 
     /* execute command */
-    ret = do_scsi_io(dev, &info);
+    ret = send_scsi_command(dev, &info);
 
     return decode_scsi_status(dev, ret);
 }
@@ -1380,7 +1380,7 @@ static LONG scsi_capacity(WORD dev, ULONG *buffer)
     info.bufptr = (void *)buffer;
     info.buflen = CAPACITY_LENGTH;
     info.xfer_time = SHORT_TIMEOUT;
-    ret = do_scsi_io(dev, &info);
+    ret = send_scsi_command(dev, &info);
 
     return decode_scsi_status(dev, ret);
 }
@@ -1401,7 +1401,7 @@ static LONG scsi_inquiry(WORD dev, UBYTE *buffer)
     info.bufptr = buffer;
     info.buflen = INQUIRY_LENGTH;
     info.xfer_time = SHORT_TIMEOUT;
-    ret = do_scsi_io(dev, &info);
+    ret = send_scsi_command(dev, &info);
 
     return decode_scsi_status(dev, ret);
 }
