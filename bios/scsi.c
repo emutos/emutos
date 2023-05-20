@@ -1288,11 +1288,27 @@ LONG send_scsi_command(WORD dev, CMDINFO *info)
     return ret;
 }
 
-static LONG decode_scsi_status(WORD dev, LONG ret)
+LONG scsi_request_sense(WORD dev, UBYTE *buffer)
 {
     UBYTE cdb[6];
     CMDINFO info;
 
+    bzero(cdb, 6);
+    cdb[0] = REQUEST_SENSE;
+    cdb[4] = REQSENSE_LENGTH;
+
+    bzero(&info, sizeof(CMDINFO));
+    info.cdbptr = cdb;
+    info.cdblen = 6;
+    info.bufptr = buffer;
+    info.buflen = REQSENSE_LENGTH;
+    info.xfer_time = SHORT_TIMEOUT;
+
+    return send_scsi_command(dev, &info);
+}
+
+static LONG decode_scsi_status(WORD dev, LONG ret)
+{
     if (ret == 0)
         return E_OK;
 
@@ -1308,17 +1324,7 @@ static LONG decode_scsi_status(WORD dev, LONG ret)
     /*
      * handle check condition: do a request sense & check result
      */
-    bzero(cdb, 6);
-    cdb[0] = REQUEST_SENSE;
-    cdb[4] = REQSENSE_LENGTH;
-
-    bzero(&info, sizeof(CMDINFO));
-    info.cdbptr = cdb;
-    info.cdblen = 6;
-    info.bufptr = reqsense_buffer;
-    info.buflen = REQSENSE_LENGTH;
-    info.xfer_time = SHORT_TIMEOUT;
-    ret = send_scsi_command(dev, &info);
+    ret = scsi_request_sense(dev, reqsense_buffer);
 
     if (ret < 0)                                /* errors on request sense are bad */
         return EDRVNR;

@@ -42,6 +42,7 @@ typedef struct
 void detect_scsi(void);
 void scsi_init(void);
 LONG scsi_ioctl(WORD dev, UWORD ctrl, void *arg);
+LONG scsi_request_sense(WORD dev, UBYTE *buffer);
 LONG scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev);
 LONG send_scsi_command(WORD dev, CMDINFO *info);
 
