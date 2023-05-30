@@ -233,8 +233,6 @@ static LONG acsi_capacity(WORD dev, ULONG *info)
     UBYTE cdb[10];
     int status;
 
-    acsi_begin();
-
     cdb[0] = 0x25;          /* set up Read Capacity cdb */
     bzero(cdb+1,9);
 
@@ -245,8 +243,6 @@ static LONG acsi_capacity(WORD dev, ULONG *info)
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
     status = send_command(dev,&cmd);
-
-    acsi_end();
 
     if (status == 0) {
         const ULONG *data = (const ULONG *)dskbufp;
@@ -261,9 +257,6 @@ static LONG acsi_testunit(WORD dev)
 {
     ACSICMD cmd;
     UBYTE cdb[6];
-    int status;
-
-    acsi_begin();
 
     bzero(cdb,6);           /* set up Test Unit Ready cdb */
 
@@ -273,20 +266,14 @@ static LONG acsi_testunit(WORD dev)
     cmd.buflen = 0;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
-    status = send_command(dev,&cmd);
 
-    acsi_end();
-
-    return status;
+    return send_command(dev,&cmd);
 }
 
 static LONG acsi_inquiry(WORD dev, UBYTE *buf)
 {
     ACSICMD cmd;
     UBYTE cdb[6];
-    int status;
-
-    acsi_begin();
 
     cdb[0] = 0x12;          /* set up Inquiry cdb */
     cdb[1] = cdb[2] = cdb[3] = cdb[5] = 0;
@@ -298,11 +285,8 @@ static LONG acsi_inquiry(WORD dev, UBYTE *buf)
     cmd.buflen = 36;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
-    status = send_command(dev,&cmd);
 
-    acsi_end();
-
-    return status;
+    return send_command(dev,&cmd);
 }
 
 
@@ -337,10 +321,8 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
 {
     ACSICMD cmd;
     UBYTE cdb[10];  /* allow for 10-byte read/write commands */
-    int status, cdblen;
+    int cdblen;
     LONG buflen = cnt * SECTOR_SIZE;
-
-    acsi_begin();
 
     /* emit command */
     cdblen = build_rw_command(cdb,rw,sector,cnt);
@@ -351,11 +333,8 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
     cmd.buflen = buflen;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = rw;
-    status = send_command(dev,&cmd);
 
-    acsi_end();
-
-    return status;
+    return send_command(dev,&cmd);
 }
 
 /*
@@ -422,6 +401,8 @@ int send_command(WORD dev,ACSICMD *cmd)
     if (repeat < 0)
         return -1;
 
+    acsi_begin();
+
     cnt = (cmd->buflen + SECTOR_SIZE - 1) / SECTOR_SIZE;
 
     /*
@@ -475,7 +456,10 @@ int send_command(WORD dev,ACSICMD *cmd)
         for (j = 0, p = cdbptr; j < cdblen-1; j++) {
             dma_send_byte(*p++,control);
             if (timeout_gpip(SMALL_TIMEOUT))
+            {
+                acsi_end();
                 return -1;
+            }
         }
 
         /* send the last byte & wait for completion of DMA */
@@ -483,7 +467,10 @@ int send_command(WORD dev,ACSICMD *cmd)
         status = timeout_gpip(cmd->timeout);
         next_acsi_time = hz_200 + INTER_IO_TIME;    /* next safe time */
         if (status)
-            return -1;
+        {
+            status = -1;
+            break;
+        }
 
         /* read status & return it */
         ACSIDMA->s.control = control & ~DMA_WRBIT;
@@ -508,6 +495,8 @@ int send_command(WORD dev,ACSICMD *cmd)
      */
     if (cmd->bufptr != bufptr)
         memcpy(cmd->bufptr,bufptr,cmd->buflen);
+
+    acsi_end();
 
     return status;
 }
@@ -540,9 +529,6 @@ static LONG ultrasatan_get_running_firmware(WORD dev)
 {
     ACSICMD cmd;
     UBYTE cdb[10] = " USCurntFW";
-    int status;
-
-    acsi_begin();
 
     cmd.cdbptr = cdb;
     cmd.cdblen = 10;
@@ -550,20 +536,14 @@ static LONG ultrasatan_get_running_firmware(WORD dev)
     cmd.buflen = SECTOR_SIZE;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
-    status = send_command(dev,&cmd);
 
-    acsi_end();
-
-    return status;
+    return send_command(dev,&cmd);
 }
 
 static LONG ultrasatan_get_clock(WORD dev)
 {
     ACSICMD cmd;
     UBYTE cdb[10] = " USRdClRTC";
-    int status;
-
-    acsi_begin();
 
     cmd.cdbptr = cdb;
     cmd.cdblen = 10;
@@ -571,20 +551,14 @@ static LONG ultrasatan_get_clock(WORD dev)
     cmd.buflen = SECTOR_SIZE;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
-    status = send_command(dev,&cmd);
 
-    acsi_end();
-
-    return status;
+    return send_command(dev,&cmd);
 }
 
 static LONG ultrasatan_set_clock(WORD dev)
 {
     ACSICMD cmd;
     UBYTE cdb[10] = " USWrClRTC";
-    int status;
-
-    acsi_begin();
 
     cmd.cdbptr = cdb;
     cmd.cdblen = 10;
@@ -592,11 +566,8 @@ static LONG ultrasatan_set_clock(WORD dev)
     cmd.buflen = SECTOR_SIZE;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_WRITE;
-    status = send_command(dev,&cmd);
 
-    acsi_end();
-
-    return status;
+    return send_command(dev,&cmd);
 }
 
 #endif /* CONF_WITH_ULTRASATAN_CLOCK */
