@@ -81,6 +81,16 @@ size_t n;
     return s-src-1;
 }
 
+/*
+Workaround for infinite loop in strlen() with recent GCC.
+Without that, strlen() implementation is replaced by a call to itself.
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=106349
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=102725
+https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56888
+*/
+#if __GNUC_PREREQ(12, 1)
+__attribute__((optimize("no-tree-loop-distribute-patterns")))
+#endif
 size_t strlen(const char *s)
 {
     size_t n;
