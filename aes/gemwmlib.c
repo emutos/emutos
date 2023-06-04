@@ -480,7 +480,10 @@ void w_bldactive(WORD w_handle)
 {
     BOOL    istop, havevbar, havehbar;
     WORD    kind;
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wuninitialized"
     WORD    corner_x, corner_y;
+#pragma GCC diagnostic pop
     GRECT   t;
     WORD    tempw;
     WINDOW  *pw;
