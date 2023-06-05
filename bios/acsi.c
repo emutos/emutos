@@ -358,17 +358,13 @@ static int calculate_repeat(ACSICMD *cmd)
     if (cmd->rw == RW_WRITE)
         return 0;
 
-    /* big input xfers are expected to be exact multiples of SECTOR_SIZE */
-    if (buflen >= SECTOR_SIZE)
-    {
-        if (buflen & (SECTOR_SIZE-1))
-            return -1;
-        return 0;
-    }
-
     /* xfers of multiples of 16 bytes cause no problems */
     if ((buflen & (16-1)) == 0)
         return 0;
+
+    /* not a multiple of 16 bytes: big input xfers are not supported */
+    if (buflen >= SECTOR_SIZE)
+        return -1;
 
     /* for now (at least) we disallow "too many" repeats */
     if (buflen < 4)     /* would need 5, 7, or 15 repeats */
