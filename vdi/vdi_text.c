@@ -1202,7 +1202,9 @@ void gdp_justified(Vwk * vwk)
      * calculate values for interword spacing
      */
 #pragma GCC diagnostic push
+#if __GNUC_PREREQ(4, 7)
 #pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
     if (interword && spaces) {
 #pragma GCC diagnostic pop
         delword = (max_x - width) / spaces;
