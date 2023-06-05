@@ -28,6 +28,7 @@
 #include "cookie.h"
 #include "delay.h"
 #include "biosdefs.h"
+#include "intmath.h"
 
 #if CONF_WITH_ACSI
 
@@ -89,6 +90,9 @@ union acsidma {
 
 /* Bytes to request for an INQUIRY command */
 #define INQUIRY_BYTES 36
+
+/* maximum legal SCSI CDB length */
+#define MAX_SCSI_CDBLEN 16
 
 /*
  * local variables
@@ -391,9 +395,9 @@ static int calculate_repeat(ACSICMD *cmd)
 int send_command(WORD dev,ACSICMD *cmd)
 {
     UWORD control;
-    UBYTE cdb[13];      /* allow for 12-byte input commands */
+    UBYTE cdb[MAX_SCSI_CDBLEN+1];
     UBYTE *cdbptr, *p, *bufptr;
-    WORD cdblen = cmd->cdblen;
+    WORD cdblen;
     WORD cnt;
     int j, repeat, status;
 
@@ -403,6 +407,7 @@ int send_command(WORD dev,ACSICMD *cmd)
 
     acsi_begin();
 
+    cdblen = min(cmd->cdblen,MAX_SCSI_CDBLEN);
     cnt = (cmd->buflen + SECTOR_SIZE - 1) / SECTOR_SIZE;
 
     /*
@@ -425,7 +430,7 @@ int send_command(WORD dev,ACSICMD *cmd)
     if (cmd->cdbptr[0] > 0x1e) {
         cdbptr = cdb;
         *cdbptr = 0x1f;     /* ICD extended command method */
-        memcpy(cdbptr+1,cmd->cdbptr,cmd->cdblen);
+        memcpy(cdbptr+1,cmd->cdbptr,cdblen);
         cdblen++;
     } else cdbptr = cmd->cdbptr;
 
