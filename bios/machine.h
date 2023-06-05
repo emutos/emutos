@@ -34,6 +34,25 @@
 #define MONSTER_REG         0xfffffe00UL
 
 /*
+ * standard bus numbers
+ */
+#define ACSI_BUS            0
+#define SCSI_BUS            1
+#define IDE_BUS             2
+#define SDMMC_BUS           3
+
+#if CONF_WITH_SDMMC
+# define MAX_BUS            SDMMC_BUS
+#elif CONF_WITH_IDE
+# define MAX_BUS            IDE_BUS
+#elif CONF_WITH_SCSI
+# define MAX_BUS            SCSI_BUS
+#else
+# define MAX_BUS            ACSI_BUS
+#endif
+
+
+/*
  * some useful cookies.
  */
 

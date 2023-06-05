@@ -20,6 +20,7 @@
 #include "tosvars.h"
 #include "ahdi.h"
 #include "floppy.h"
+#include "machine.h"
 #include "disk.h"
 #include "ikbd.h"
 #include "blkdev.h"

@@ -256,7 +256,7 @@ static LONG scsi_inquiry(WORD dev, UBYTE *buffer);
 /*
  * externally-visible SCSI routines
  */
-void detect_scsi(void)
+BOOL detect_scsi(void)
 {
     has_scsi = 0;
 
@@ -277,6 +277,8 @@ void detect_scsi(void)
 #endif
 
     KDEBUG(("detect_scsi(): has_scsi = 0x%02x\n",has_scsi));
+
+    return has_scsi ? TRUE : FALSE;
 }
 
 void scsi_init(void)

@@ -462,7 +462,7 @@ static int ide_interface_exists(WORD ifnum, LONG timeout)
 }
 #endif
 
-void detect_ide(void)
+BOOL detect_ide(void)
 {
     int i, bitmask;
 
@@ -504,6 +504,8 @@ void detect_ide(void)
 #endif
 
     KDEBUG(("detect_ide(): has_ide = 0x%02x\n",has_ide));
+
+    return has_ide ? TRUE : FALSE;
 }
 
 /*

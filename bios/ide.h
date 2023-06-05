@@ -15,7 +15,7 @@
 
 #if CONF_WITH_IDE
 
-void detect_ide(void);
+BOOL detect_ide(void);
 void ide_init(void);
 LONG ide_ioctl(WORD dev, UWORD ctrl, void *arg);
 LONG ide_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev, BOOL need_byteswap);

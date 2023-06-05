@@ -29,6 +29,7 @@ typedef struct
 } ACSICMD;
 
 
+BOOL detect_acsi(void);
 void acsi_init(void);
 LONG acsi_ioctl(UWORD drv, UWORD ctrl, void *arg);
 LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev);

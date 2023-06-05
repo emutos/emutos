@@ -39,7 +39,7 @@ typedef struct
     UBYTE status;                   /* (last) status byte received */
 } CMDINFO;
 
-void detect_scsi(void);
+BOOL detect_scsi(void);
 void scsi_init(void);
 LONG scsi_ioctl(WORD dev, UWORD ctrl, void *arg);
 LONG scsi_request_sense(WORD dev, UBYTE *buffer);

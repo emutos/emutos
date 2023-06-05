@@ -20,6 +20,7 @@
 #include "string.h"
 #include "mfp.h"
 #include "machine.h"
+#include "has.h"
 #include "tosvars.h"
 #include "gemerror.h"
 #include "blkdev.h"
@@ -104,6 +105,16 @@ static ULONG next_acsi_time;    /* earliest time we can start the next i/o */
 /*
  * High-level ACSI stuff.
  */
+BOOL detect_acsi(void)
+{
+#if CONF_ATARI_HARDWARE
+    if (!HAS_VIDEL)
+        return TRUE;
+#endif
+
+    return FALSE;
+}
+
 void acsi_init(void)
 {
     /* the following delay is used between toggling dma out.  in Atari
