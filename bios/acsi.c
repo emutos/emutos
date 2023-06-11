@@ -403,7 +403,6 @@ int send_command(WORD dev,ACSICMD *cmd)
 
     acsi_begin();
 
-    cdblen = min(cmd->cdblen,MAX_SCSI_CDBLEN);
     cnt = (cmd->buflen + SECTOR_SIZE - 1) / SECTOR_SIZE;
 
     /*
@@ -421,16 +420,19 @@ int send_command(WORD dev,ACSICMD *cmd)
         flush_data_cache(bufptr,cmd->buflen);
 
     /*
-     * see if we need to use ICD trickery
+     * we almost always need to modify the CDB (to insert the device number
+     * or to use ICD trickery), so copy it first
      */
-    if (cmd->cdbptr[0] > 0x1e) {
-        cdbptr = cdb;
-        *cdbptr = 0x1f;     /* ICD extended command method */
-        memcpy(cdbptr+1,cmd->cdbptr,cdblen);
-        cdblen++;
-    } else cdbptr = cmd->cdbptr;
+    cdbptr = cdb;
+    cdblen = min(cmd->cdblen,MAX_SCSI_CDBLEN);
 
-    *cdbptr |= (dev << 5);  /* insert device number */
+    if (cmd->cdbptr[0] > 0x1e) {
+        *cdbptr++ = 0x1f;   /* ICD extended command method */
+        cdblen++;
+    }
+    memcpy(cdbptr,cmd->cdbptr,min(cmd->cdblen,MAX_SCSI_CDBLEN));
+
+    cdb[0] |= (dev << 5);  /* insert device number */
 
     if (cmd->rw == RW_WRITE) {
         control = DMA_WRBIT | DMA_DRQ_FLOPPY;
@@ -454,7 +456,7 @@ int send_command(WORD dev,ACSICMD *cmd)
         ACSIDMA->s.control = control;   /* assert command signal */
         control |= DMA_NOT_NEWCDB;      /* set up for remaining cmd bytes */
 
-        for (j = 0, p = cdbptr; j < cdblen-1; j++) {
+        for (j = 0, p = cdb; j < cdblen-1; j++) {
             dma_send_byte(*p++,control);
             if (timeout_gpip(SMALL_TIMEOUT))
             {
