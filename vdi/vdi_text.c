@@ -1168,7 +1168,7 @@ void vdi_vqt_fontinfo(Vwk * vwk)
 
 void gdp_justified(Vwk * vwk)
 {
-    WORD spaces;
+    WORD spaces = 0;
     WORD expand;
     WORD interword, interchar;
     WORD cnt, width, max_x;
@@ -1187,7 +1187,7 @@ void gdp_justified(Vwk * vwk)
      * if interword adjustment required, count spaces
      */
     if (interword) {
-        for (i = 0, spaces = 0; i < cnt; i++)
+        for (i = 0; i < cnt; i++)
             if (*(pointer++) == ' ')
                 spaces++;
     }
@@ -1201,12 +1201,7 @@ void gdp_justified(Vwk * vwk)
     /*
      * calculate values for interword spacing
      */
-#pragma GCC diagnostic push
-#if __GNUC_PREREQ(4, 7)
-#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
-#endif
     if (interword && spaces) {
-#pragma GCC diagnostic pop
         delword = (max_x - width) / spaces;
         just.rmword = (max_x - width) % spaces;
 
