@@ -51,6 +51,7 @@
 # define MAX_BUS            ACSI_BUS
 #endif
 
+extern ULONG detected_busses;
 
 /*
  * some useful cookies.

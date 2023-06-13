@@ -1246,6 +1246,13 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
     case GET_MEDIACHANGE:
         ret = MEDIANOCHANGE;
         break;
+#if CONF_WITH_SCSI_DRIVER
+    case CHECK_DEVICE:
+        ret = ide_identify(dev);    /* reads into identify structure */
+        if (ret >= 0)
+            ret = E_OK;
+        break;
+#endif
     }
 
     return ret;

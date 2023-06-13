@@ -253,6 +253,9 @@
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 0
 # endif
+# ifndef CONF_WITH_SCSI_DRIVER
+#  define CONF_WITH_SCSI_DRIVER 0
+# endif
 # ifndef CONF_WITH_STE_SHIFTER
 #  define CONF_WITH_STE_SHIFTER 0
 # endif
@@ -472,6 +475,9 @@
 # endif
 # ifndef CONF_WITH_SCSI
 #  define CONF_WITH_SCSI 0
+# endif
+# ifndef CONF_WITH_SCSI_DRIVER
+#  define CONF_WITH_SCSI_DRIVER 0
 # endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
@@ -712,6 +718,9 @@
 # endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 0
+# endif
+# ifndef CONF_WITH_SCSI_DRIVER
+#  define CONF_WITH_SCSI_DRIVER 0
 # endif
 # ifndef CONF_WITH_ATARI_VIDEO
 #  define CONF_WITH_ATARI_VIDEO 0
@@ -1028,6 +1037,13 @@
  */
 #ifndef CONF_WITH_SDMMC
 # define CONF_WITH_SDMMC 0
+#endif
+
+/*
+ * set CONF_WITH_SCSI_DRIVER to 1 to activate SCSI driver support
+ */
+#ifndef CONF_WITH_SCSI_DRIVER
+# define CONF_WITH_SCSI_DRIVER 0
 #endif
 
 /*

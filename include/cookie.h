@@ -41,6 +41,7 @@ struct cookie {
 #define COOKIE_MCF      0x5f4d4346L
 #define COOKIE__5MS     0x5f354d53L
 #define COOKIE_NVDI     0x4e564449L
+#define COOKIE_SCSIDRIV 0x53435349L
 
 /*
  * values of _MCH cookie

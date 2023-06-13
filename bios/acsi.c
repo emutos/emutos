@@ -226,6 +226,15 @@ LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
     case GET_MEDIACHANGE:
         rc = MEDIANOCHANGE;
         break;
+#if CONF_WITH_SCSI_DRIVER
+    case CHECK_DEVICE:
+        rc = acsi_testunit(dev);
+        if (rc < 0)         /* timeout means it doesn't exist */
+            rc = EUNDEV;
+        else
+            rc = 0;
+        break;
+#endif
 #if CONF_WITH_ULTRASATAN_CLOCK
     case ULTRASATAN_GET_FIRMWARE_VERSION:
         rc = ultrasatan_get_running_firmware(dev);
@@ -241,6 +250,47 @@ LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
 
     return rc;
 }
+
+#if CONF_WITH_SCSI_DRIVER
+/*
+ * this is a bit messy, because some *real* ACSI devices only return 4 bytes
+ * of request sense data compared to 16 from SCSI devices.  such devices would
+ * need 4 I/Os to flush the DMA buffer whereas normal devices need 1.
+ *
+ * since, in practice, all devices on the ACSI bus will be SCSI devices behind
+ * a converter, we will use the SCSI version.  If we get nothing back, we assume
+ * it was a real ACSI device whose data was stuck in the buffer, and assume
+ * the check condition was cleared.
+ */
+LONG acsi_request_sense(WORD dev, UBYTE *buffer)
+{
+    ACSICMD cmd;
+    UBYTE cdb[6];
+    WORD tempbuf[16/sizeof(WORD)];  /* force alignment for ACSI */
+    int status;
+
+    acsi_begin();
+
+    bzero(cdb, 6);
+    cdb[0] = 0x03;
+    cdb[4] = 16;
+    bzero(buffer, 16);
+
+    cmd.cdbptr = cdb;
+    cmd.cdblen = 6;
+    cmd.bufptr = (void *)tempbuf;
+    cmd.buflen = 16;
+    cmd.timeout = LARGE_TIMEOUT;
+    cmd.rw = RW_READ;
+    status = send_command(dev, &cmd);
+
+    memcpy(buffer, tempbuf, 16);
+
+    acsi_end();
+
+    return status;
+}
+#endif
 
 static LONG acsi_capacity(WORD dev, ULONG *info)
 {
@@ -397,7 +447,8 @@ static int calculate_repeat(ACSICMD *cmd)
  * send an ACSI command; return -1 if timeout
  *
  * note:
- * we may actually send the command more than once (see calculate_repeat())
+ * . we assume that the i/o buffer is WORD-aligned and allocated in ST RAM
+ * . we may actually send the command more than once (see calculate_repeat())
  */
 int send_command(WORD dev,ACSICMD *cmd)
 {
@@ -507,7 +558,7 @@ int send_command(WORD dev,ACSICMD *cmd)
      * note: acsi_capacity() (for example) uses the system temporary buffer
      * for input data: no copying is needed in such cases
      */
-    if (cmd->bufptr != bufptr)
+    if ((status == 0) && (cmd->bufptr != bufptr))
         memcpy(cmd->bufptr,bufptr,cmd->buflen);
 
     acsi_end();

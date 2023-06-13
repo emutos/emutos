@@ -212,7 +212,7 @@ typedef struct
 
 
 /*
- * internal error codes - these are aligned with the SCSIDRV error codes
+ * internal error codes - these must be aligned with the SCSI driver error codes
  */
 #define PHASE_CHANGE        -100            /* not really an error, signals end of phase */
 #define SELECT_ERROR        -1
@@ -350,6 +350,13 @@ LONG scsi_ioctl(WORD dev, UWORD ctrl, void *arg)
     case GET_MEDIACHANGE:
         rc = MEDIANOCHANGE;
         break;
+#if CONF_WITH_SCSI_DRIVER
+    case CHECK_DEVICE:
+        rc = scsi_inquiry(dev, inquiry_buffer);
+        if (rc != 0L)
+            rc = EUNDEV;
+        break;
+#endif
     }
 
     KDEBUG(("scsi_ioctl(%d, %u) returned %ld\n", dev, ctrl, rc));

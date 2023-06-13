@@ -38,6 +38,8 @@
                                 /* arg -> return data (max 40 chars)  */
 #define GET_MEDIACHANGE     30  /* return status as per Mediach() call*/
                                 /* arg is NULL                        */
+#define CHECK_DEVICE        40  /* determine if device exists         */
+                                /* (not necessarily a hard disk)      */
 
 #if CONF_WITH_ULTRASATAN_CLOCK
 #define ULTRASATAN_GET_FIRMWARE_VERSION 60

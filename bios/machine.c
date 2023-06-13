@@ -31,6 +31,7 @@
 #include "acsi.h"
 #include "scsi.h"
 #include "ide.h"
+#include "scsidriv.h"
 #include "asm.h"
 #include "delay.h"
 #include "mfp.h"
@@ -783,6 +784,10 @@ void fill_cookie_jar(void)
 
 #if CONF_WITH_XHDI
     cookie_add(COOKIE_XHDI, (ULONG)xhdi_vec);
+#endif
+
+#if CONF_WITH_SCSI_DRIVER
+    cookie_add(COOKIE_SCSIDRIV, (ULONG)&scsidriv_root);
 #endif
 
 #if !CONF_WITH_MFP
