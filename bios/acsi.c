@@ -90,7 +90,7 @@ union acsidma {
 #define delay() delay_loop(loopcount_delay)
 
 /* Bytes to request for an INQUIRY command */
-#define INQUIRY_BYTES 36
+#define INQUIRY_LENGTH  32
 
 /* maximum legal SCSI CDB length */
 #define MAX_SCSI_CDBLEN 16
@@ -342,12 +342,12 @@ static LONG acsi_inquiry(WORD dev, UBYTE *buf)
 
     cdb[0] = 0x12;          /* set up Inquiry cdb */
     cdb[1] = cdb[2] = cdb[3] = cdb[5] = 0;
-    cdb[4] = INQUIRY_BYTES; /* retrieve 36 bytes at maximum. */
+    cdb[4] = INQUIRY_LENGTH;
 
     cmd.cdbptr = cdb;
     cmd.cdblen = 6;
     cmd.bufptr = buf;
-    cmd.buflen = 36;
+    cmd.buflen = INQUIRY_LENGTH;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
 
