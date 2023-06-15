@@ -18,7 +18,7 @@
 # This subset of the doc directory will be included in all the binary archives
 DOCFILES = doc/announce.txt doc/authors.txt doc/bugs.txt doc/changelog.txt \
   doc/emudesk.txt doc/incompatible.txt doc/license.txt doc/status.txt \
-  doc/todo.txt doc/xhdi.txt
+  doc/todo.txt doc/tools.txt doc/xhdi.txt
 
 # This subset of the extras directory will be included in all the binary archives
 # that have a desktop
