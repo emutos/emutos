@@ -38,6 +38,7 @@
 
 #include "emutos.h"
 #include "scsi.h"
+#include "scsicmds.h"
 #include "asm.h"
 #include "biosdefs.h"
 #include "cookie.h"
@@ -64,14 +65,6 @@
 #define EXTENDED_MSG            0x01        /* i.e. multibyte */
 #define MESSAGE_REJECT_MSG      0x07
 #define IDENTIFY_MSG            0x80
-
-
-/*
- * SCSI commands
- */
-#define REQUEST_SENSE   0x03
-#define INQUIRY         0x12
-#define READ_CAPACITY   0x25
 
 
 /*
@@ -238,11 +231,8 @@ static ULONG deskew2_count;
 static ULONG rst_hold_count;
 static ULONG toggle_delay_count;
 
-#define REQSENSE_LENGTH 16
 static UBYTE reqsense_buffer[REQSENSE_LENGTH];
-#define INQUIRY_LENGTH  32
 static UBYTE inquiry_buffer[INQUIRY_LENGTH];
-#define CAPACITY_LENGTH 8
 
 
 /*
@@ -1393,7 +1383,7 @@ static LONG scsi_capacity(WORD dev, ULONG *buffer)
     info.cdbptr = cdb;
     info.cdblen = 10;
     info.bufptr = (void *)buffer;
-    info.buflen = CAPACITY_LENGTH;
+    info.buflen = READCAP_LENGTH;
     info.xfer_time = SHORT_TIMEOUT;
     ret = send_scsi_command(dev, &info);
 
@@ -1423,14 +1413,6 @@ static LONG scsi_inquiry(WORD dev, UBYTE *buffer)
 #endif
 
 #if (CONF_WITH_ACSI || CONF_WITH_SCSI)
-/*
- * SCSI commands used by build_rw_command()
- */
-#define READ6           0x08
-#define WRITE6          0x0a
-#define READ10          0x28
-#define WRITE10         0x2a
-
 /*
  * build ACSI/SCSI read/write command
  * returns length of command built

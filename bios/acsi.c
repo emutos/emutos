@@ -15,6 +15,7 @@
 #include "emutos.h"
 #include "acsi.h"
 #include "scsi.h"
+#include "scsicmds.h"
 #include "disk.h"
 #include "dma.h"
 #include "string.h"
@@ -88,12 +89,6 @@ union acsidma {
 
 /* delay for dma out toggle */
 #define delay() delay_loop(loopcount_delay)
-
-/* Bytes to request for an INQUIRY command */
-#define INQUIRY_LENGTH  32
-
-/* maximum legal SCSI CDB length */
-#define MAX_SCSI_CDBLEN 16
 
 /*
  * local variables
