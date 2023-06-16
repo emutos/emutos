@@ -261,25 +261,25 @@ LONG acsi_request_sense(WORD dev, UBYTE *buffer)
 {
     ACSICMD cmd;
     UBYTE cdb[6];
-    WORD tempbuf[16/sizeof(WORD)];  /* force alignment for ACSI */
+    WORD tempbuf[REQSENSE_LENGTH/sizeof(WORD)]; /* force alignment for ACSI */
     int status;
 
     acsi_begin();
 
     bzero(cdb, 6);
-    cdb[0] = 0x03;
-    cdb[4] = 16;
-    bzero(buffer, 16);
+    cdb[0] = REQUEST_SENSE;
+    cdb[4] = REQSENSE_LENGTH;
+    bzero(buffer, REQSENSE_LENGTH);
 
     cmd.cdbptr = cdb;
     cmd.cdblen = 6;
     cmd.bufptr = (void *)tempbuf;
-    cmd.buflen = 16;
+    cmd.buflen = REQSENSE_LENGTH;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
     status = send_command(dev, &cmd);
 
-    memcpy(buffer, tempbuf, 16);
+    memcpy(buffer, tempbuf, REQSENSE_LENGTH);
 
     acsi_end();
 
@@ -293,13 +293,13 @@ static LONG acsi_capacity(WORD dev, ULONG *info)
     UBYTE cdb[10];
     int status;
 
-    cdb[0] = 0x25;          /* set up Read Capacity cdb */
+    cdb[0] = READ_CAPACITY;
     bzero(cdb+1,9);
 
     cmd.cdbptr = cdb;
     cmd.cdblen = 10;
     cmd.bufptr = dskbufp;   /* use internal disk buffer */
-    cmd.buflen = 8;
+    cmd.buflen = READCAP_LENGTH;
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = RW_READ;
     status = send_command(dev,&cmd);
@@ -335,7 +335,7 @@ static LONG acsi_inquiry(WORD dev, UBYTE *buf)
     ACSICMD cmd;
     UBYTE cdb[6];
 
-    cdb[0] = 0x12;          /* set up Inquiry cdb */
+    cdb[0] = INQUIRY;
     cdb[1] = cdb[2] = cdb[3] = cdb[5] = 0;
     cdb[4] = INQUIRY_LENGTH;
 
