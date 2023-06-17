@@ -553,7 +553,12 @@ void ide_init(void)
             set_multiple_mode(i,identify.multiple_io_info);
 }
 
-static int ide_device_exists(WORD dev)
+/*
+ * check for the presence of a hard disk (i.e. ATA device) on the IDE bus
+ *
+ * note: ATAPI devices return FALSE
+ */
+static BOOL ide_disk_exists(WORD dev)
 {
     WORD ifnum;
 
@@ -561,12 +566,12 @@ static int ide_device_exists(WORD dev)
     dev &= 1;       /* 0 or 1 */
 
     if (!(has_ide & (1<<ifnum)))    /* interface does not exist */
-        return 0;
+        return FALSE;
 
     if (ifinfo[ifnum].dev[dev].type != DEVTYPE_ATA)
-        return 0;
+        return FALSE;
 
-    return 1;
+    return TRUE;
 }
 
 /*
@@ -1088,7 +1093,7 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
     BOOL use_tmpbuf = FALSE;
     LONG ret;
 
-    if (!ide_device_exists(dev))
+    if (!ide_disk_exists(dev))
         return EUNDEV;
 
     ifnum = dev / 2;/* i.e. primary IDE, secondary IDE, ... */
@@ -1200,7 +1205,7 @@ static LONG ide_identify(WORD dev)
     KDEBUG(("ide_identify(%d [ifnum=%d ifdev=%d])\n", dev, ifnum, ifdev));
 
     /* with twisted cable the response of IDENTIFY_DEVICE will be byte-swapped */
-    if (ide_device_exists(dev)) {
+    if (ide_disk_exists(dev)) {
         ret = ide_read(IDE_CMD_IDENTIFY_DEVICE,ifnum,ifdev,0L,1,(UBYTE *)&identify,
                        ifinfo[ifnum].twisted_cable != IDE_DATA_REGISTER_IS_BYTESWAPPED);
     } else ret = EUNDEV;
