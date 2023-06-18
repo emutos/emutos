@@ -12,8 +12,6 @@
  */
 
 /*
- * Warning: This is beta IDE support.
- *
  * Note: this driver does not support CHS addressing.
  */
 
