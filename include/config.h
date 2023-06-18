@@ -1040,7 +1040,9 @@
 #endif
 
 /*
- * set CONF_WITH_SCSI_DRIVER to 1 to activate SCSI driver support
+ * set CONF_WITH_SCSI_DRIVER to 1 to activate support for the SCSI driver
+ * API, which allows user programs to issue SCSI-style commands directly
+ * to devices.  see the documentation by Steffen Engel for more details.
  */
 #ifndef CONF_WITH_SCSI_DRIVER
 # define CONF_WITH_SCSI_DRIVER 0
