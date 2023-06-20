@@ -263,9 +263,18 @@ endif
 endif
 
 DEFINES = $(LOCALCONF) -DWITH_AES=$(WITH_AES) -DWITH_CLI=$(WITH_CLI) $(DEF)
-CFLAGS = $(MULTILIBFLAGS) $(TOOLCHAIN_CFLAGS) $(OPTFLAGS) $(OTHERFLAGS) $(WARNFLAGS) $(INC) $(DEFINES)
+CFLAGS_COMPILE = $(TOOLCHAIN_CFLAGS) $(OPTFLAGS) $(OTHERFLAGS) $(WARNFLAGS)
+CFLAGS = $(MULTILIBFLAGS) $(CFLAGS_COMPILE) $(INC) $(DEFINES)
 
 CPPFLAGS = $(CFLAGS)
+
+ifeq (1,$(LTO))
+# Link Time Optimization
+LTOFLAGS = -flto=auto
+CFLAGS += $(LTOFLAGS)
+LDFLAGS += $(LTOFLAGS) $(CFLAGS_COMPILE)
+AR = $(TOOLCHAIN_PREFIX)gcc-ar
+endif
 
 # The objdump utility (disassembler)
 OBJDUMP = $(TOOLCHAIN_PREFIX)objdump
@@ -1236,6 +1245,16 @@ TOCLEAN += obj/*.o
 
 CFILE_FLAGS = $(strip $(CFLAGS))
 SFILE_FLAGS = $(strip $(CFLAGS))
+
+ifeq (1,$(LTO))
+# Files in the NOLTO list below will not be compiled using LTO.
+# This is necessary to allow the linker script to put the resulting .o files
+# into specific sections, as LTO changes the object file name.
+NOLTO = bios/lowstram.c
+CFILE_FLAGS = $(if $(filter $(NOLTO),$<),$(filter-out $(LTOFLAGS),$(CFLAGS)),$(CFLAGS))
+# Compiling assembler sources with LTO is useless.
+SFILE_FLAGS = $(filter-out $(LTOFLAGS),$(CFLAGS))
+endif
 
 obj/%.o : %.tr.c
 	$(CC) $(CFILE_FLAGS) -c $< -o $@
