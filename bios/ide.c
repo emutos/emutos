@@ -23,6 +23,7 @@
 #include "delay.h"
 #include "disk.h"
 #include "ide.h"
+#include "scsicmds.h"
 #include "gemerror.h"
 #include "string.h"
 #include "tosvars.h"
@@ -33,6 +34,7 @@
 #include "processor.h"
 #include "biosmem.h"
 #include "amiga.h"
+#include "intmath.h"
 
 #if CONF_WITH_IDE
 
@@ -236,6 +238,7 @@ struct IFINFO {
         UBYTE type;
         UBYTE options;
         UBYTE spi;          /* # sectors transferred between interrupts */
+        UBYTE sense;        /* current sense condition on device */
     } dev[2];
     volatile struct IDE *base_address;
     BOOL twisted_cable;
@@ -247,6 +250,11 @@ struct IFINFO {
 #define DEVTYPE_ATAPI   3
 
 #define MULTIPLE_MODE_ACTIVE    0x01    /* for 'options' */
+
+#define INVALID_OPCODE  1               /* for 'sense' */
+#define INVALID_SECTOR  2
+#define INVALID_CDB     3
+#define INVALID_LUN     4
 
 
 /* timing stuff */
@@ -279,7 +287,8 @@ static struct IFINFO ifinfo[NUM_IDE_INTERFACES];
 static ULONG delay400ns;
 static ULONG delay5us;
 static struct {
-    UWORD filler00[27];
+    UWORD filler00[23];
+    char firmware_revision[8];
     char model_number[40];
     UWORD multiple_io_info;
     UWORD filler2f;
@@ -292,6 +301,35 @@ static struct {
     UWORD maxsec_lba48[4];  /* max sector number for LBA48 cmds */
     UWORD filler68[152];
 } identify;
+
+#if CONF_WITH_SCSI_DRIVER
+static struct {
+    UBYTE error_code;
+    UBYTE segment;
+    UBYTE sense_key;
+    UBYTE information[4];
+    UBYTE addl_length;
+    ULONG cmd_specific;
+    UBYTE asc;
+    UBYTE ascq;
+    UBYTE fru_code;
+    UBYTE sense_specific[3];
+} reqsense;
+
+static struct {             /* space to build return data for Inquiry */
+    UBYTE devtype;
+    UBYTE devtype_mod;
+    UBYTE versions;
+    UBYTE response_fmt;
+    UBYTE addl_length;
+    UBYTE resvd;
+    UBYTE flags1;
+    UBYTE flags2;
+    UBYTE vendor_id[8];
+    UBYTE product_id[16];
+    UBYTE product_rev[4];
+} inquiry;
+#endif
 
 
 /* prototypes */
@@ -670,6 +708,7 @@ static void ide_detect_devices(UWORD ifnum)
             info->dev[i].type = DEVTYPE_NONE;
         info->dev[i].options = 0;
         info->dev[i].spi = 0;   /* changed if using READ/WRITE MULTIPLE */
+        info->dev[i].sense = 0;
     }
 
     /* recheck after soft reset, also detect ata/atapi */
@@ -1260,5 +1299,264 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
 
     return ret;
 }
+
+#if CONF_WITH_SCSI_DRIVER
+/*
+ * creates a request sense response based on the last 'check condition'
+ */
+LONG ide_request_sense(WORD dev, WORD buflen, UBYTE *buffer)
+{
+    UWORD ifnum;
+    UBYTE sense, *senseptr;
+
+    bzero(&reqsense, REQSENSE_LENGTH);
+    reqsense.addl_length = (REQSENSE_LENGTH-1) - 7;
+
+    ifnum = dev / 2;
+    dev &= 1;
+
+    senseptr = &ifinfo[ifnum].dev[dev].sense;
+    sense = *senseptr;      /* get last saved check condition */
+    *senseptr = 0;          /*  & reset it                    */
+
+    if (sense)
+    {
+        reqsense.error_code = 0xf0; /* valid / error code 0x70 */
+        reqsense.sense_key = 0x05;  /* illegal request */
+    }
+
+    switch(sense) {
+    case INVALID_OPCODE:
+        reqsense.asc = 0x20;        /* invalid command operation code */
+        break;
+    case INVALID_SECTOR:
+        reqsense.asc = 0x21;        /* logical block address out of range */
+        break;
+    case INVALID_CDB:
+        reqsense.asc = 0x24;        /* invalid field in cdb */
+        break;
+    case INVALID_LUN:
+        reqsense.asc = 0x25;        /* logical unit not supported */
+        break;
+    }
+
+    memcpy(buffer, &reqsense, min(buflen, REQSENSE_LENGTH));
+
+    return E_OK;
+}
+
+/*
+ * in the cdb, check the LUN and the bytes that should be zeroes
+ *
+ * the LUN should always be zero; the bytes that should be zero are
+ * indicated by 1 bits in the 'zerobits' bitmask.  for example, if
+ * zerobits contains 0x0872, bytes 1, 4-6, and 11 should be zero.
+ *
+ * note that INVALID_CDB takes precedence over INVALID_LUN, since an
+ * invalid CDB should always cause a check condition, whereas an invalid
+ * LUN may not.
+ */
+static LONG check_lun_and_zeroes(IDECmd *cmd, UWORD zerobits)
+{
+    UBYTE *p;
+    UWORD mask;
+    LONG ret = E_OK;
+    int i;
+
+    for (i = 0, mask = 0x01, p = cmd->cdbptr; i < cmd->cdblen; i++, mask <<= 1, p++)
+    {
+        if ((zerobits & mask) && *p)    /* should be zero but isn't */
+        {
+            if ((i == 1)                /* handle byte containing LUN: */
+             && ((*p & 0x1f) == 0))     /*  if rest of byte is zero,   */
+            {                           /*  LUN must be non-zero       */
+                ret = INVALID_LUN;      /* remember! */
+                continue;
+            }
+            return INVALID_CDB;
+        }
+    }
+
+    /*
+     * in the case where the non-LUN bits of CDB byte 1 are not expected
+     * to be zero (e,g, the READ6 command), byte 1 won't have been checked
+     * above, so check it now
+     */
+    if (cmd->cdbptr[1] & 0xe0)
+        ret = INVALID_LUN;
+
+    return ret;
+}
+
+static ULONG get_disk_size(WORD dev)
+{
+    UNIT *unit = units + GET_UNITNUM(IDE_BUS, dev);
+
+    return unit->valid ? unit->size : 0UL;
+}
+
+/*
+ * emulate a basic set of SCSI commands on an ATA device
+ */
+static LONG handle_ata_device(WORD dev, IDECmd *cmd)
+{
+    UWORD ifnum, devnum, unitnum, count;
+    ULONG start;
+    LONG info[2];
+    LONG ret, oldret;
+
+    ifnum = dev / 2;
+    devnum = dev & 1;
+
+    switch(cmd->cdbptr[0]) {
+    case TEST_UNIT_READY:
+        ret = check_lun_and_zeroes(cmd, 0x003e);
+        /* at this time we do nothing except validate the CDB */
+        break;
+    case REQUEST_SENSE:
+        ret = check_lun_and_zeroes(cmd, 0x002e);
+        if (ret == INVALID_CDB)
+            break;
+        /*
+         * for invalid LUN, update stored sense, so that ide_request_sense()
+         * will fill in ASC & ASCQ (this is apparently standard SCSI)
+         */
+        if (ret == INVALID_LUN)
+            ifinfo[ifnum].dev[devnum].sense = ret;
+        oldret = ret;
+        ret = ide_request_sense(dev, cmd->buflen, cmd->bufptr);
+        if (oldret == INVALID_LUN)  /* for invalid LUN, we clear the error code, */
+            cmd->bufptr[0] = 0x00;  /* which is also apparently standard SCSI    */
+        break;
+    case INQUIRY:
+        ret = check_lun_and_zeroes(cmd, 0x002e);
+        if (ret == INVALID_CDB)
+            break;
+        /* direct access device unless LUN is invalid ... */
+        inquiry.devtype = (ret==INVALID_LUN) ? 0x7f : 0x00;
+        ret = ide_identify(dev);    /* reads into identify structure */
+        if (ret)
+            break;
+        /*
+         * initialise Inquiry data, then copy to user's buffer
+         */
+        inquiry.devtype_mod = 0;
+        inquiry.versions = 0x02;        /* iso=0, ecma=0, ansi=2 */
+        inquiry.response_fmt = 0x02;    /* scsi 2 */
+        inquiry.addl_length = INQUIRY_LENGTH - 1;
+        inquiry.resvd = 0;
+        inquiry.flags1 = 0;
+        inquiry.flags2 = 0;
+        memcpy(inquiry.vendor_id, identify.model_number, 24);
+        memcpy(inquiry.product_rev, identify.firmware_revision, 4);
+        memcpy(cmd->bufptr, &inquiry, min(cmd->buflen, INQUIRY_LENGTH));
+        break;
+    case READ_CAPACITY:
+        ret = check_lun_and_zeroes(cmd, 0x07fe);
+        if (ret)
+            break;
+        ret = ide_identify(dev);
+        if (ret)
+            break;
+        info[0] = MAKE_ULONG(identify.numsecs_lba28[1], identify.numsecs_lba28[0]) - 1;
+        info[1] = SECTOR_SIZE;
+        memcpy(cmd->bufptr, (void *)info, 2*sizeof(LONG));
+        break;
+    case READ6:
+        ret = check_lun_and_zeroes(cmd, 0x0020);
+        if (ret)
+            break;
+        start = ((ULONG)cmd->cdbptr[1] << 16) + MAKE_UWORD(cmd->cdbptr[2], cmd->cdbptr[3]);
+        count = cmd->cdbptr[4];
+        if (!count)
+            count = 256;
+        if (start + count > get_disk_size(dev))
+        {
+            ret = INVALID_SECTOR;
+            break;
+        }
+        unitnum = GET_UNITNUM(IDE_BUS, dev);
+        ret = ide_rw(RW_READ, start, count, cmd->bufptr, dev, units[unitnum].byteswap);
+        break;
+    case READ10:
+        ret = check_lun_and_zeroes(cmd, 0x0242);
+        if (ret)
+            break;
+        start = MAKE_UWORD(cmd->cdbptr[2], cmd->cdbptr[3]);
+        start = (start << 16) + MAKE_UWORD(cmd->cdbptr[4], cmd->cdbptr[5]);
+        count = MAKE_UWORD(cmd->cdbptr[7], cmd->cdbptr[8]);
+        if (start + count > get_disk_size(dev))
+        {
+            ret = INVALID_SECTOR;
+            break;
+        }
+        if (count)
+        {
+            unitnum = GET_UNITNUM(IDE_BUS, dev);
+            ret = ide_rw(RW_READ, start, count, cmd->bufptr, dev, units[unitnum].byteswap);
+        }
+        break;
+    case WRITE6:
+        ret = check_lun_and_zeroes(cmd, 0x0020);
+        if (ret)
+            break;
+        start = ((ULONG)cmd->cdbptr[1] << 16) + MAKE_UWORD(cmd->cdbptr[2], cmd->cdbptr[3]);
+        count = cmd->cdbptr[4];
+        if (!count)
+            count = 256;
+        if (start + count > get_disk_size(dev))
+        {
+            ret = INVALID_SECTOR;
+            break;
+        }
+        unitnum = GET_UNITNUM(IDE_BUS, dev);
+        ret = ide_rw(RW_WRITE, start, count, cmd->bufptr, dev, units[unitnum].byteswap);
+        break;
+    case WRITE10:
+        ret = check_lun_and_zeroes(cmd, 0x0242);
+        if (ret)
+            break;
+        start = MAKE_UWORD(cmd->cdbptr[2], cmd->cdbptr[3]);
+        start = (start << 16) + MAKE_UWORD(cmd->cdbptr[4], cmd->cdbptr[5]);
+        count = MAKE_UWORD(cmd->cdbptr[7], cmd->cdbptr[8]);
+        if (start + count > get_disk_size(dev))
+        {
+            ret = INVALID_SECTOR;
+            break;
+        }
+        if (count)
+        {
+            unitnum = GET_UNITNUM(IDE_BUS, dev);
+            ret = ide_rw(RW_WRITE, start, count, cmd->bufptr, dev, units[unitnum].byteswap);
+        }
+        break;
+    default:
+        /* check condition: invalid opcode */
+        ret = INVALID_OPCODE;
+        break;
+    }
+
+    if (ret <= 0)
+        return ret;
+
+    /*
+     * a check condition was detected, save the details for later
+     */
+    ifinfo[ifnum].dev[devnum].sense = ret;
+
+    return 0x02;    /* check condition */
+}
+
+/*
+ * initially, we just emulate a basic set of SCSI commands on an ATA device
+ *
+ * subsequently, we'll also use the ATAPI Packet Command to send SCSI commands
+ * directly to ATAPI devices.
+ */
+LONG send_ide_command(WORD dev, IDECmd *cmd)
+{
+    return handle_ata_device(dev, cmd);
+}
+#endif
 
 #endif /* CONF_WITH_IDE */

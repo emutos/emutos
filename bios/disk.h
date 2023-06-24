@@ -27,6 +27,8 @@
 #define IS_IDE_DEVICE(major)    (GET_BUS(major) == IDE_BUS)
 #define IS_SDMMC_DEVICE(major)  (GET_BUS(major) == SDMMC_BUS)
 
+#define GET_UNITNUM(bus,dev)    (NUMFLOPPIES+(DEVICES_PER_BUS*(bus))+dev)
+
 /*
  * commands used for internal xxx_ioctl() calls
  */

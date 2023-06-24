@@ -39,6 +39,7 @@
 #include "acsi.h"
 #include "scsi.h"
 #include "ide.h"
+#include "scsicmds.h"
 #include "gemerror.h"
 #include "cookie.h"
 #include "string.h"
@@ -361,7 +362,30 @@ static LONG scsidriv_InOut(WORD write, SCSICmd *cmd)
 #endif
 #if CONF_WITH_IDE
     case IDE_BUS:
-        /* to be developed */
+        {
+            IDECmd ide;
+
+            ide.cdbptr = cmd->cdb;
+            ide.cdblen = cmd->cdblen;
+            ide.bufptr = cmd->buffer;
+            ide.buflen = cmd->xferlen;
+            ide.timeout = cmd->timeout;
+            ide.flags = write ? RW_WRITE : RW_READ;
+            rc = send_ide_command(dev, &ide);
+            if (rc < 0L)        /* -ve: already have the correct return code */
+                break;
+
+            /*
+             * if check condition AND request sense buffer is supplied, fill it in
+             */
+            rc &= 0x00ff;       /* isolate status byte */
+            if ((rc & 0x02) && cmd->sensebuf)
+            {
+                rc2 = ide_request_sense(dev, REQSENSE_LENGTH, cmd->sensebuf);
+                if (rc2 < 0)    /* an error doing request sense is bad ... */
+                    rc = rc2;
+            }
+        }
         break;
 #endif
     default:

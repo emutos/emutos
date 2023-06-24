@@ -15,11 +15,12 @@
  * between ACSI and SCSI (and eventually ATAPI)
  */
 
-#if CONF_WITH_ACSI || CONF_WITH_SCSI
+#if CONF_WITH_ACSI || CONF_WITH_SCSI || CONF_WITH_IDE
 
 /*
  * standard operation codes
  */
+#define TEST_UNIT_READY 0x00
 #define REQUEST_SENSE   0x03
 #define READ6           0x08
 #define WRITE6          0x0a
