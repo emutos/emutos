@@ -489,7 +489,7 @@ obj/emutospp.ld: emutos.ld include/config.h tosvars.ld
 
 TOCLEAN += *.img *.map
 
-emutos.img: $(OBJECTS) obj/emutospp.ld Makefile
+emutos.img: $(OBJECTS) obj/emutospp.ld
 	$(LD) $(CORE_OBJ) $(LIBS) $(OPTIONAL_OBJ) $(LIBS) $(END_OBJ) $(LDFLAGS) -Wl,-Map=emutos.map -o emutos.img
 	@if [ $$(($$(awk '/^\.data /{print $$3}' emutos.map))) -gt 0 ]; then \
 	  echo "### Warning: The DATA segment is not empty."; \
