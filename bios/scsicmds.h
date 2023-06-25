@@ -32,8 +32,8 @@
 /*
  * standard data transfer lengths
  */
-#define INQUIRY_LENGTH  32
-#define REQSENSE_LENGTH 16
+#define INQUIRY_LENGTH  36
+#define REQSENSE_LENGTH 18
 #define READCAP_LENGTH  8
 
 
