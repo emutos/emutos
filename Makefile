@@ -600,11 +600,13 @@ $(ROM_PAK3): emutos.img mkrom
 #
 
 ROM_1024 = etos1024k.img
-SYMFILE = $(addsuffix .sym,$(basename $(ROM_1024)))
 
 .PHONY: 1024
+NODEP += 1024
 1024: override DEF += -DTARGET_1024
-1024: $(ROM_1024) $(SYMFILE)
+1024: SYMFILE = $(addsuffix .sym,$(basename $(ROM_1024)))
+1024:
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) MULTIKEYBD='-k' ROM_1024=$(ROM_1024) $(ROM_1024) SYMFILE=$(SYMFILE) $(SYMFILE)
 	@MEMBOT=$(call SHELL_SYMADDR,__end_os_stram,emutos.map);\
 	echo "# RAM used: $$(($$MEMBOT)) bytes ($$(($$MEMBOT - $(MEMBOT_TOS404))) bytes more than TOS 4.04)"
 	@printf "$(LOCALCONFINFO)"
@@ -1318,6 +1320,8 @@ dsm: check_target_exists
 # Hatari symbols file
 #
 
+# By default, no symbols file is generated.
+SYMFILE =
 TOCLEAN += *.sym
 
 %.sym: emutos.img tools/map2sym.sh
