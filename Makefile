@@ -47,10 +47,10 @@ help:
 	@echo "------  -------"
 	@echo "help    this help message"
 	@echo "version display the EmuTOS version"
-	@echo "192     $(ROM_192), EmuTOS ROM padded to size 192 KB"
-	@echo "256     $(ROM_256), EmuTOS ROM padded to size 256 KB"
-	@echo "512     $(ROM_512), EmuTOS ROM padded to size 512 KB"
-	@echo "1024    $(ROM_1024), EmuTOS ROM padded to size 1024 KB"
+	@echo "192     etos192$(UNIQUE).img, EmuTOS ROM padded to size 192 KB"
+	@echo "256     etos256$(UNIQUE).img, EmuTOS ROM padded to size 256 KB"
+	@echo "512     etos512$(UNIQUE).img, EmuTOS ROM padded to size 512 KB"
+	@echo "1024    etos1024$(UNIQUE).img, EmuTOS ROM padded to size 1024 KB"
 	@echo "aranym  $(ROM_ARANYM), optimized for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
@@ -512,20 +512,17 @@ else
 endif
 
 #
-# 128kB Image
+# Padded Image
 #
 
-ROM_128 = etos128k.img
+ROM_PADDED = $(if $(UNIQUE),etos$(ROMSIZE)$(UNIQUE).img,etos$(ROMSIZE)k.img)
 
-$(ROM_128): ROMSIZE = 128
-$(ROM_128): emutos.img mkrom
-	./mkrom pad $(ROMSIZE)k $< $(ROM_128)
+$(ROM_PADDED): emutos.img mkrom
+	./mkrom pad $(ROMSIZE)k $< $@
 
 #
 # 192kB Image
 #
-
-ROM_192 = etos192$(UNIQUE).img
 
 .PHONY: 192
 NODEP += 192
@@ -533,50 +530,37 @@ NODEP += 192
 192: OPTFLAGS = $(SMALL_OPTFLAGS)
 192: override DEF += -DTARGET_192
 192: WITH_CLI = 0
+192: ROMSIZE = 192
 192:
-	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' WITH_CLI=$(WITH_CLI) UNIQUE=$(UNIQUE) ROM_192=$(ROM_192) $(ROM_192) REF_OS=TOS104
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' WITH_CLI=$(WITH_CLI) UNIQUE=$(UNIQUE) ROMSIZE=$(ROMSIZE) ROM_PADDED=$(ROM_PADDED) $(ROM_PADDED) REF_OS=TOS104
 	@printf "$(LOCALCONFINFO)"
-
-$(ROM_192): ROMSIZE = 192
-$(ROM_192): emutos.img mkrom
-	./mkrom pad $(ROMSIZE)k $< $(ROM_192)
 
 #
 # 256kB Image
 #
-
-ROM_256 = etos256$(UNIQUE).img
 
 .PHONY: 256
 NODEP += 256
 256: UNIQUE = $(COUNTRY)
 256: OPTFLAGS = $(SMALL_OPTFLAGS)
 256: override DEF += -DTARGET_256
+256: ROMSIZE = 256
 256:
-	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROM_256=$(ROM_256) $(ROM_256) REF_OS=TOS206
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) ROMSIZE=$(ROMSIZE) ROM_PADDED=$(ROM_PADDED) $(ROM_PADDED) REF_OS=TOS206
 	@printf "$(LOCALCONFINFO)"
-
-$(ROM_256): ROMSIZE = 256
-$(ROM_256): emutos.img mkrom
-	./mkrom pad $(ROMSIZE)k $< $(ROM_256)
 
 #
 # 512kB Image (for TT or Falcon; also usable for ST/STe under Hatari)
 #
 
-ROM_512 = etos512$(UNIQUE).img
-
 .PHONY: 512
 NODEP += 512
 512: UNIQUE = $(COUNTRY)
 512: override DEF += -DTARGET_512
+512: ROMSIZE = 512
 512:
-	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) MULTIKEYBD='-k' ROM_512=$(ROM_512) $(ROM_512) REF_OS=TOS404
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) MULTIKEYBD='-k' ROMSIZE=$(ROMSIZE) ROM_PADDED=$(ROM_PADDED) $(ROM_PADDED) REF_OS=TOS404
 	@printf "$(LOCALCONFINFO)"
-
-$(ROM_512): ROMSIZE = 512
-$(ROM_512): emutos.img mkrom
-	./mkrom pad $(ROMSIZE)k $< $(ROM_512)
 
 #
 # 512kB PAK/3 Image (based on 256kB Image)
@@ -601,19 +585,14 @@ $(ROM_PAK3): emutos.img mkrom
 # 1024kB Image (for Hatari (and potentially other emulators))
 #
 
-ROM_1024 = etos1024k.img
-
 .PHONY: 1024
 NODEP += 1024
 1024: override DEF += -DTARGET_1024
-1024: SYMFILE = $(addsuffix .sym,$(basename $(ROM_1024)))
+1024: ROMSIZE = 1024
+1024: SYMFILE = $(addsuffix .sym,$(basename $(ROM_PADDED)))
 1024:
-	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) MULTIKEYBD='-k' ROM_1024=$(ROM_1024) $(ROM_1024) REF_OS=TOS404 SYMFILE=$(SYMFILE) $(SYMFILE)
+	$(MAKE) DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' UNIQUE=$(UNIQUE) MULTIKEYBD='-k' ROMSIZE=$(ROMSIZE) ROM_PADDED=$(ROM_PADDED) $(ROM_PADDED) REF_OS=TOS404 SYMFILE=$(SYMFILE) $(SYMFILE)
 	@printf "$(LOCALCONFINFO)"
-
-$(ROM_1024): ROMSIZE = 1024
-$(ROM_1024): emutos.img mkrom
-	./mkrom pad $(ROMSIZE)k $< $(ROM_1024)
 
 #
 # ARAnyM Image
@@ -626,9 +605,11 @@ NODEP += aranym
 aranym: override DEF += -DMACHINE_ARANYM
 aranym: OPTFLAGS = $(SMALL_OPTFLAGS)
 aranym: CPUFLAGS = -m68040
+aranym: ROMSIZE = 512
+aranym: ROM_PADDED = $(ROM_ARANYM)
 aranym:
-	@echo "# Building ARAnyM EmuTOS into $(ROM_ARANYM)"
-	$(MAKE) CPUFLAGS='$(CPUFLAGS)' OPTFLAGS='$(OPTFLAGS)' DEF='$(DEF)' ROM_512=$(ROM_ARANYM) $(ROM_ARANYM) REF_OS=TOS404
+	@echo "# Building ARAnyM EmuTOS into $(ROM_PADDED)"
+	$(MAKE) CPUFLAGS='$(CPUFLAGS)' OPTFLAGS='$(OPTFLAGS)' DEF='$(DEF)' ROMSIZE=$(ROMSIZE) ROM_PADDED=$(ROM_PADDED) $(ROM_PADDED) REF_OS=TOS404
 	@printf "$(LOCALCONFINFO)"
 
 #
@@ -643,9 +624,11 @@ NODEP += cart
 cart: OPTFLAGS = $(SMALL_OPTFLAGS)
 cart: override DEF += -DTARGET_CART
 cart: WITH_AES = 0
+cart: ROMSIZE = 128
+cart: ROM_PADDED = $(ROM_CARTRIDGE)
 cart:
-	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_CARTRIDGE)"
-	$(MAKE) OPTFLAGS='$(OPTFLAGS)' DEF='$(DEF)' UNIQUE=$(COUNTRY) WITH_AES=$(WITH_AES) ROM_128=$(ROM_CARTRIDGE) $(ROM_CARTRIDGE) REF_OS=TOS104
+	@echo "# Building Diagnostic Cartridge EmuTOS into $(ROM_PADDED)"
+	$(MAKE) OPTFLAGS='$(OPTFLAGS)' DEF='$(DEF)' UNIQUE=$(COUNTRY) WITH_AES=$(WITH_AES) ROMSIZE=$(ROMSIZE) ROM_PADDED=$(ROM_PADDED) $(ROM_PADDED) REF_OS=TOS104
 	./mkrom stc emutos.img emutos.stc
 	@printf "$(LOCALCONFINFO)"
 
