@@ -12,8 +12,9 @@ include ../version.mk
 TARGET = emucon2.tos
 LIBS = -nostartfiles -nostdlib -lgcc
 CC = m68k-atari-mint-gcc
+MULTILIBFLAGS = -m68000 -mshort
 CPPFLAGS = -I../include -DUSE_STATIC_INLINES=0 -DSTANDALONE_CONSOLE
-CFLAGS = $(CPPFLAGS) -mshort -Os -Wall -Wundef -Wold-style-definition -fomit-frame-pointer
+CFLAGS = $(MULTILIBFLAGS) $(CPPFLAGS) -Os -Wall -Wundef -Wold-style-definition -fomit-frame-pointer
 
 .PHONY: default all clean
 
