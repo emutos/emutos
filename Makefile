@@ -283,7 +283,7 @@ OBJDUMP = $(TOOLCHAIN_PREFIX)objdump
 OBJCOPY = $(TOOLCHAIN_PREFIX)objcopy
 
 # the native C compiler, for tools
-NATIVECC = gcc -ansi -pedantic $(WARNFLAGS) -W $(BUILD_TOOLS_OPTFLAGS)
+NATIVECC = gcc -ansi -pedantic $(WARNFLAGS) -Wall $(BUILD_TOOLS_OPTFLAGS)
 
 #
 # source code in bios/
