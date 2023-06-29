@@ -342,7 +342,7 @@ COOKIE *jar, *c;
 #ifdef STANDALONE_CONSOLE
 size_t strlen(const char *s)
 {
-int n;
+size_t n;
 
     for (n = 0; *s; s++, n++)
         ;
