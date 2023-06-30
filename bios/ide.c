@@ -853,13 +853,12 @@ static void ide_get_data_32(volatile struct IDE *interface,UBYTE *buffer,ULONG b
 /*
  * get data from IDE device
  */
-static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,UWORD numsecs,int need_byteswap)
+static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG bufferlen,int need_byteswap)
 {
-    ULONG bufferlen = numsecs * SECTOR_SIZE;
     XFERWIDTH *p = (XFERWIDTH *)buffer;
     XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
-    KDEBUG(("ide_get_data(%p, %p, %u, %d)\n", interface, buffer, numsecs, need_byteswap));
+    KDEBUG(("ide_get_data(%p, %p, %lu, %d)\n", interface, buffer, bufferlen, need_byteswap));
 
 #if CONF_WITH_APOLLO_68080
     if (is_apollo_68080)
@@ -968,9 +967,9 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
         rc = E_OK;
         if (status1 & IDE_STATUS_DRQ) {
             if (info->twisted_cable) {
-                ide_get_data((volatile struct IDE *)(((ULONG)interface)+1),buffer,numsecs,need_byteswap);
+                ide_get_data((volatile struct IDE *)(((ULONG)interface)+1),buffer,xferlen,need_byteswap);
             } else {
-                ide_get_data(interface,buffer,numsecs,need_byteswap);
+                ide_get_data(interface,buffer,xferlen,need_byteswap);
             }
         } else {
             rc = EREADF;
@@ -997,9 +996,8 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
 /*
  * send data to IDE device
  */
-static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,UWORD numsecs,int need_byteswap)
+static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG bufferlen,int need_byteswap)
 {
-    ULONG bufferlen = numsecs * SECTOR_SIZE;
     XFERWIDTH *p = (XFERWIDTH *)buffer;
     XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
 
@@ -1099,9 +1097,9 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
         status1 = IDE_READ_STATUS(interface);    /* status, clear pending interrupt */
         if (status1 & IDE_STATUS_DRQ) {
             if (info->twisted_cable) {
-                ide_put_data((volatile struct IDE *)(((ULONG)interface)+1),buffer,numsecs,need_byteswap);
+                ide_put_data((volatile struct IDE *)(((ULONG)interface)+1),buffer,xferlen,need_byteswap);
             } else {
-                ide_put_data(interface,buffer,numsecs,need_byteswap);
+                ide_put_data(interface,buffer,xferlen,need_byteswap);
             }
         } else {
             rc = EWRITF;
