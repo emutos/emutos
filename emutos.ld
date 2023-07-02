@@ -181,11 +181,30 @@ SECTIONS
  * we need to define leading-underscore aliases to the no-leading-underscore
  * functions in libgcc.
  */
-#define DEFINE_SYMBOL_ALIAS(alias, impl) EXTERN(impl) PROVIDE(alias = impl);
-#define ELF_LIB_REF(symbol) DEFINE_SYMBOL_ALIAS(_##symbol, symbol)
+
+/* Define an optional alias to a target symbol.
+ * If the alias is not referenced, it won't be defined, so the target won't be
+ * referenced either.
+ * This can safely be used to reference library functions:
+ * as usual, objects will only be pulled if required for the current build.
+ */
+#define DEFINE_OPTIONAL_SYMBOL_ALIAS(alias, target) PROVIDE(alias = target);
+
+/* Create a leading-underscore alias for an ELF library function. */
+#define ELF_LIB_REF(symbol) DEFINE_OPTIONAL_SYMBOL_ALIAS(_##symbol, symbol)
+
+/* List of library functions that *may* be used by our program.
+ * If we don't actually use them, our binary won't grow purposeless.
+ */
 ELF_LIB_REF(__mulsi3)
 ELF_LIB_REF(__divsi3)
 ELF_LIB_REF(__modsi3)
 ELF_LIB_REF(__udivsi3)
 ELF_LIB_REF(__umodsi3)
+
+/* The aliases above may create new unresolved externals,
+ * so we link the target libraries again.
+ * That could also be achieved on the command line, after the linker script.
+ */
+INPUT(-lgcc)
 #endif
