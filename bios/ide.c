@@ -833,7 +833,9 @@ static LONG ide_nodata(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count)
 static void ide_get_data_32(volatile struct IDE *interface,UBYTE *buffer,ULONG bufferlen,int need_byteswap)
 {
     ULONG *p = (ULONG *)buffer;
-    ULONG *end = (ULONG *)(buffer + bufferlen);
+    ULONG *end = (ULONG *)(buffer + (bufferlen & ~(4-1)));
+    UWORD *p2;
+    UWORD *end2 = (UWORD *)(buffer + bufferlen);
     volatile ULONG_ALIAS *pdatareg = (volatile ULONG_ALIAS *)&interface->data;
 
     if (need_byteswap) {
@@ -847,6 +849,16 @@ static void ide_get_data_32(volatile struct IDE *interface,UBYTE *buffer,ULONG b
         while (p < end)
             *p++ = *pdatareg;
     }
+
+    /* transfer remaining word (if any) */
+    p2 = (UWORD *)p;
+    if (p2 < end2) {
+        UWORD temp;
+        temp = interface->data;
+        if (need_byteswap)
+            swpw(temp);
+        *p2 = temp;
+    }
 }
 #endif /* CONF_WITH_APOLLO_68080 */
 
@@ -856,7 +868,9 @@ static void ide_get_data_32(volatile struct IDE *interface,UBYTE *buffer,ULONG b
 static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG bufferlen,int need_byteswap)
 {
     XFERWIDTH *p = (XFERWIDTH *)buffer;
-    XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
+    XFERWIDTH *end;
+    UWORD *p2;
+    UWORD *end2 = (UWORD *)(buffer + bufferlen);
 
     KDEBUG(("ide_get_data(%p, %p, %lu, %d)\n", interface, buffer, bufferlen, need_byteswap));
 
@@ -869,6 +883,7 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
 #endif
 
     if (need_byteswap) {
+        end = (XFERWIDTH *)(buffer + (bufferlen & ~(16-1)));    /* mask must match unrolled loop */
         while (p < end) {
             XFERWIDTH temp;
 
@@ -889,10 +904,20 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
             xferswap(temp);
             *p++ = temp;
         }
+
+        /* transfer remainder 2 bytes at a time */
+        p2 = (UWORD *)p;
+        while (p2 < end2) {
+            UWORD temp;
+
+            temp = interface->data;
+            swpw(temp);
+            *p2++ = temp;
+        }
     } else {
+        end = (XFERWIDTH *)(buffer + (bufferlen & ~(64-1)));    /* mask must match unrolled loop */
         while (p < end) {
             /* Unroll the loop 16 times, transferring 32/64 bytes in a row.
-             * We always transfer multiples of SECTOR_SIZE (512 bytes).
              * Note that the pointer p gets incremented implicitly.
              */
             ide_get_and_incr(&(interface->data), p);
@@ -914,6 +939,11 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
             ide_get_and_incr(&(interface->data), p);
             ide_get_and_incr(&(interface->data), p);
             ide_get_and_incr(&(interface->data), p);
+        }
+        /* transfer remainder 2 bytes at a time */
+        p2 = (UWORD *)p;
+        while (p2 < end2) {
+            *p2++ = interface->data;
         }
     }
 }
@@ -999,9 +1029,12 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
 static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG bufferlen,int need_byteswap)
 {
     XFERWIDTH *p = (XFERWIDTH *)buffer;
-    XFERWIDTH *end = (XFERWIDTH *)(buffer + bufferlen);
+    XFERWIDTH *end;
+    UWORD *p2;
+    UWORD *end2 = (UWORD *)(buffer + bufferlen);
 
     if (need_byteswap) {
+        end = (XFERWIDTH *)(buffer + (bufferlen & ~(16-1)));    /* mask must match unrolled loop */
         while (p < end) {
             XFERWIDTH temp;
 
@@ -1022,10 +1055,20 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
             xferswap(temp);
             interface->data = temp;
         }
+
+        /* transfer remainder 2 bytes at a time */
+        p2 = (UWORD *)p;
+        while (p2 < end2) {
+            UWORD temp;
+
+            temp = *p2++;
+            swpw(temp);
+            interface->data = temp;
+        }
     } else {
+        end = (XFERWIDTH *)(buffer + (bufferlen & ~(64-1)));    /* mask must match unrolled loop */
         while (p < end) {
             /* Unroll the loop 16 times, transferring 32/64 bytes in a row.
-             * We always transfer multiples of SECTOR_SIZE (512 bytes).
              * Note that the pointer p gets incremented implicitly.
              */
             ide_put_and_incr(p, &(interface->data));
@@ -1047,6 +1090,11 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
             ide_put_and_incr(p, &(interface->data));
             ide_put_and_incr(p, &(interface->data));
             ide_put_and_incr(p, &(interface->data));
+        }
+        /* transfer remainder 2 bytes at a time */
+        p2 = (UWORD *)p;
+        while (p2 < end2) {
+            interface->data = *p2++;
         }
     }
 }
