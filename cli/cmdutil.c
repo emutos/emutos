@@ -340,6 +340,10 @@ COOKIE *jar, *c;
 }
 
 #ifdef STANDALONE_CONSOLE
+
+/* Avoid bug: libc function implementation is optimized as a call to itself.
+ * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56888 */
+__attribute__((optimize("no-tree-loop-distribute-patterns")))
 size_t strlen(const char *s)
 {
 size_t n;
@@ -361,6 +365,9 @@ char *p = dest;
     return dest;
 }
 
+/* Avoid bug: libc function implementation is optimized as a call to itself.
+ * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56888 */
+__attribute__((optimize("no-tree-loop-distribute-patterns")))
 void *memcpy(void *RESTRICT dest, const void *RESTRICT src, size_t n)
 {
 unsigned char *d = (unsigned char *)dest;
