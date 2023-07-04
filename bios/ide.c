@@ -910,7 +910,7 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
         while (p2 < end2) {
             UWORD temp;
 
-            temp = interface->data;
+            temp = *(UWORD_ALIAS *)&interface->data;
             swpw(temp);
             *p2++ = temp;
         }
@@ -943,7 +943,7 @@ static void ide_get_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
         /* transfer remainder 2 bytes at a time */
         p2 = (UWORD *)p;
         while (p2 < end2) {
-            *p2++ = interface->data;
+            *p2++ = *(UWORD_ALIAS *)&interface->data;
         }
     }
 }
@@ -1063,7 +1063,7 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
 
             temp = *p2++;
             swpw(temp);
-            interface->data = temp;
+            *(UWORD_ALIAS *)&interface->data = temp;
         }
     } else {
         end = (XFERWIDTH *)(buffer + (bufferlen & ~(64-1)));    /* mask must match unrolled loop */
@@ -1094,7 +1094,7 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
         /* transfer remainder 2 bytes at a time */
         p2 = (UWORD *)p;
         while (p2 < end2) {
-            interface->data = *p2++;
+            *(UWORD_ALIAS *)interface->data = *p2++;
         }
     }
 }
