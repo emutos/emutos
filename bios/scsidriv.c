@@ -15,7 +15,6 @@
  * unknown bugs, the following shortcomings are currently present:
  *  1. we mark all ACSI devices as ICD-compatible
  *  2. we do not check if a device on an arbitrating bus is the host device
- *  3. we do not support I/O to devices on the IDE bus: this is a future objective
  */
 
 /*

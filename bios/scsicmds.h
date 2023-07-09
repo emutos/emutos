@@ -12,7 +12,7 @@
 
 /*
  * This file is intended to include those elements that are common
- * between ACSI and SCSI (and eventually ATAPI)
+ * among ACSI, SCSI, and ATAPI
  */
 
 #if CONF_WITH_ACSI || CONF_WITH_SCSI || CONF_WITH_IDE

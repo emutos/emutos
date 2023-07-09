@@ -24,6 +24,7 @@
 #include "disk.h"
 #include "ide.h"
 #include "scsicmds.h"
+#include "scsidriv.h"
 #include "gemerror.h"
 #include "string.h"
 #include "tosvars.h"
@@ -165,26 +166,26 @@ struct IDE
 
 struct IDE
 {
-    XFERWIDTH data;
+    XFERWIDTH data;         /* ATA & ATAPI: data transfer */
 #if !IDE_32BIT_XFER
     UBYTE filler02[2];
 #endif
     UBYTE filler04;
-    UBYTE features; /* Read: error */
+    UBYTE features;         /* ATA & ATAPI: Read: error / Write: features */
     UBYTE filler06[3];
-    UBYTE sector_count;
+    UBYTE sector_count;     /* ATAPI: Read: ATAPI Interrupt Reason Register / Write: unused */
     UBYTE filler0a[3];
-    UBYTE sector_number;
+    UBYTE sector_number;    /* ATAPI: reserved */
     UBYTE filler0e[3];
-    UBYTE cylinder_low;
+    UBYTE cylinder_low;     /* ATAPI: Byte Count Register (bits 0-7) */
     UBYTE filler12[3];
-    UBYTE cylinder_high;
+    UBYTE cylinder_high;    /* ATAPI: Byte Count Register (bits 8-15) */
     UBYTE filler16[3];
-    UBYTE head;
+    UBYTE head;             /* ATAPI: Drive select */
     UBYTE filler1a[3];
-    UBYTE command;  /* Read: status */
+    UBYTE command;          /* ATA & ATAPI: Read: status / Write: ATA command */
     UBYTE filler1e[27];
-    UBYTE control;  /* Read: Alternate status */
+    UBYTE control;          /* ATA & ATAPI: Read: alternate status / Write: device control */
     UBYTE filler3a[6];
 };
 
@@ -206,6 +207,9 @@ struct IDE
 #define IDE_CMD_READ_MULTIPLE       0xc4
 #define IDE_CMD_WRITE_MULTIPLE      0xc5
 #define IDE_CMD_SET_MULTIPLE_MODE   0xc6
+
+#define IDE_CMD_ATAPI_PACKET    0xa0    /* ATAPI-only commands */
+#define IDE_CMD_ATAPI_IDENTIFY  0xa1
 
 #define IDE_MODE_CHS    (0 << 6)
 #define IDE_MODE_LBA    (1 << 6)
@@ -238,7 +242,10 @@ struct IFINFO {
         UBYTE type;
         UBYTE options;
         UBYTE spi;          /* # sectors transferred between interrupts */
-        UBYTE sense;        /* current sense condition on device */
+#if CONF_WITH_SCSI_DRIVER
+        UBYTE sense;        /* ATA: current sense condition on device */
+        UBYTE packet_size;  /* ATAPI: packet size */
+#endif
     } dev[2];
     volatile struct IDE *base_address;
     BOOL twisted_cable;
@@ -255,6 +262,8 @@ struct IFINFO {
 #define INVALID_SECTOR  2
 #define INVALID_CDB     3
 #define INVALID_LUN     4
+
+#define ATAPI_MAX_BYTECOUNT     65012   /* largest multiple of 512 in UWORD */
 
 
 /* timing stuff */
@@ -287,9 +296,10 @@ static struct IFINFO ifinfo[NUM_IDE_INTERFACES];
 static ULONG delay400ns;
 static ULONG delay5us;
 static struct {
-    UWORD filler00[23];
-    char firmware_revision[8];
-    char model_number[40];
+    UWORD general_config;       /* ATAPI */
+    UWORD filler01[22];
+    char firmware_revision[8];  /* also in ATAPI */
+    char model_number[40];      /* also in ATAPI */
     UWORD multiple_io_info;
     UWORD filler2f;
     UWORD capabilities;
@@ -338,6 +348,12 @@ static void ide_detect_devices(UWORD ifnum);
 static LONG ide_identify(WORD dev);
 static void set_multiple_mode(WORD dev,UWORD multi_io);
 static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
+
+#if CONF_WITH_SCSI_DRIVER
+static LONG ata_request_sense(WORD dev,WORD buflen,UBYTE *buffer);
+static LONG atapi_identify(WORD dev);
+static void set_packet_size(WORD dev,UWORD config);
+#endif
 
 /*
  * some add-on IDE interfaces for Atari systems do not completely
@@ -587,6 +603,13 @@ void ide_init(void)
     for (i = 0; i < DEVICES_PER_BUS; i++)
         if (ide_identify(i) == 0)
             set_multiple_mode(i,identify.multiple_io_info);
+
+#if CONF_WITH_SCSI_DRIVER
+    /* set packet size for all ATAPI devices */
+    for (i = 0; i < DEVICES_PER_BUS; i++)
+        if (atapi_identify(i) == 0)
+            set_packet_size(i,identify.general_config);
+#endif
 }
 
 /*
@@ -713,7 +736,9 @@ static void ide_detect_devices(UWORD ifnum)
             info->dev[i].type = DEVTYPE_NONE;
         info->dev[i].options = 0;
         info->dev[i].spi = 0;   /* changed if using READ/WRITE MULTIPLE */
+#if CONF_WITH_SCSI_DRIVER
         info->dev[i].sense = 0;
+#endif
     }
 
     /* recheck after soft reset, also detect ata/atapi */
@@ -1013,6 +1038,15 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
         buffer += xferlen;
         count -= numsecs;
     }
+
+    /*
+     * the following was added to handle an ATAPI DVD recorder that left
+     * BSY asserted for more than 5 microseconds after the last word of
+     * data from an ATAPI IDENTIFY command was received.  it should be
+     * harmless in general.
+     */
+    if (wait_for_not_BSY(interface,SHORT_TIMEOUT))
+        return EREADF;
 
     status2 = IDE_READ_ALT_STATUS(interface);    /* alternate status, ignore */
     status2 = IDE_READ_STATUS(interface);        /* status, clear pending interrupt */
@@ -1341,9 +1375,17 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
         break;
 #if CONF_WITH_SCSI_DRIVER
     case CHECK_DEVICE:
-        ret = ide_identify(dev);    /* reads into identify structure */
-        if (ret >= 0)
-            ret = E_OK;
+        switch(ide_device_type(dev)) {
+        case DEVTYPE_ATA:
+            ret = ide_identify(dev);
+            break;
+        case DEVTYPE_ATAPI:
+            ret = atapi_identify(dev);
+            break;
+        default:
+            ret = EUNDEV;
+            break;
+        }
         break;
 #endif
     }
@@ -1353,47 +1395,51 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
 
 #if CONF_WITH_SCSI_DRIVER
 /*
- * creates a request sense response based on the last 'check condition'
+ * check for the presence of an ATAPI device on the IDE bus
  */
-LONG ide_request_sense(WORD dev, WORD buflen, UBYTE *buffer)
+static LONG atapi_identify(WORD dev)
+{
+    LONG ret;
+    UWORD ifnum, ifdev;
+
+    ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
+    ifdev = dev & 1;    /* 0 or 1 */
+
+    KDEBUG(("atapi_identify(%d [ifnum=%d ifdev=%d])\n", dev, ifnum, ifdev));
+
+    /* with twisted cable the response of IDENTIFY_DEVICE will be byte-swapped */
+    if (ide_device_type(dev) == DEVTYPE_ATAPI)
+    {
+        ret = ide_read(IDE_CMD_ATAPI_IDENTIFY,ifnum,ifdev,0L,1,(UBYTE *)&identify,
+                       ifinfo[ifnum].twisted_cable != IDE_DATA_REGISTER_IS_BYTESWAPPED);
+    } else ret = EUNDEV;
+
+    if (ret < 0)
+    {
+        KDEBUG(("atapi_identify(%d) ret=%ld\n", dev, ret));
+    }
+    else if ((identify.general_config & 0xc000) != 0x8000)
+    {
+        KDEBUG(("atapi_identify(%d) conflicting protocol(0x%02x)\n", dev, identify.general_config&0xc0));
+        ret = EUNDEV;
+    }
+
+    return ret;
+}
+
+static void set_packet_size(WORD dev, UWORD config)
 {
     UWORD ifnum;
-    UBYTE sense, *senseptr;
+    UBYTE size;
 
-    bzero(&reqsense, REQSENSE_LENGTH);
-    reqsense.addl_length = (REQSENSE_LENGTH-1) - 7;
+    ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
+    dev &= 1;           /* 0 or 1 */
 
-    ifnum = dev / 2;
-    dev &= 1;
+    size = (config & 0x03) ? 16 : 12;
 
-    senseptr = &ifinfo[ifnum].dev[dev].sense;
-    sense = *senseptr;      /* get last saved check condition */
-    *senseptr = 0;          /*  & reset it                    */
+    KDEBUG(("Setting packet size %d for ifnum %d dev %d\n",size,ifnum,dev));
 
-    if (sense)
-    {
-        reqsense.error_code = 0xf0; /* valid / error code 0x70 */
-        reqsense.sense_key = 0x05;  /* illegal request */
-    }
-
-    switch(sense) {
-    case INVALID_OPCODE:
-        reqsense.asc = 0x20;        /* invalid command operation code */
-        break;
-    case INVALID_SECTOR:
-        reqsense.asc = 0x21;        /* logical block address out of range */
-        break;
-    case INVALID_CDB:
-        reqsense.asc = 0x24;        /* invalid field in cdb */
-        break;
-    case INVALID_LUN:
-        reqsense.asc = 0x25;        /* logical unit not supported */
-        break;
-    }
-
-    memcpy(buffer, &reqsense, min(buflen, REQSENSE_LENGTH));
-
-    return E_OK;
+    ifinfo[ifnum].dev[dev].packet_size = size;
 }
 
 /*
@@ -1451,13 +1497,13 @@ static ULONG get_disk_size(WORD dev)
  */
 static LONG handle_ata_device(WORD dev, IDECmd *cmd)
 {
-    UWORD ifnum, devnum, unitnum, count;
+    UWORD ifnum, ifdev, unitnum, count;
     ULONG start;
     LONG info[2];
     LONG ret, oldret;
 
     ifnum = dev / 2;
-    devnum = dev & 1;
+    ifdev = dev & 1;
 
     switch(cmd->cdbptr[0]) {
     case TEST_UNIT_READY:
@@ -1469,13 +1515,13 @@ static LONG handle_ata_device(WORD dev, IDECmd *cmd)
         if (ret == INVALID_CDB)
             break;
         /*
-         * for invalid LUN, update stored sense, so that ide_request_sense()
+         * for invalid LUN, update stored sense, so that ata_request_sense()
          * will fill in ASC & ASCQ (this is apparently standard SCSI)
          */
         if (ret == INVALID_LUN)
-            ifinfo[ifnum].dev[devnum].sense = ret;
+            ifinfo[ifnum].dev[ifdev].sense = ret;
         oldret = ret;
-        ret = ide_request_sense(dev, cmd->buflen, cmd->bufptr);
+        ret = ata_request_sense(dev, cmd->buflen, cmd->bufptr);
         if (oldret == INVALID_LUN)  /* for invalid LUN, we clear the error code, */
             cmd->bufptr[0] = 0x00;  /* which is also apparently standard SCSI    */
         break;
@@ -1593,21 +1639,240 @@ static LONG handle_ata_device(WORD dev, IDECmd *cmd)
     /*
      * a check condition was detected, save the details for later
      */
-    ifinfo[ifnum].dev[devnum].sense = ret;
+    ifinfo[ifnum].dev[ifdev].sense = ret;
 
     return 0x02;    /* check condition */
 }
 
 /*
- * initially, we just emulate a basic set of SCSI commands on an ATA device
- *
- * subsequently, we'll also use the ATAPI Packet Command to send SCSI commands
- * directly to ATAPI devices.
+ * set device / command / bytecount for ATAPI device in IDE registers
  */
+static void atapi_rw_start(volatile struct IDE *interface,UWORD ifdev,UWORD bytecount,UBYTE cmd)
+{
+    KDEBUG(("atapi_rw_start(%p, %u, %u, 0x%02x)\n", interface, ifdev, bytecount, cmd));
+
+    IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW(interface,bytecount);
+    IDE_WRITE_COMMAND_HEAD(interface,cmd,0xa0|IDE_DEVICE(ifdev));
+}
+
+/*
+ * send CDB to ATAPI device
+ *
+ * note the following (currently true) assumptions about packet size:
+ *  . it is an exact multiple of XFERWIDTH
+ *  . it is less than or equal to MAX_SCSI_CDBLEN
+ */
+static void atapi_send_cdb(WORD dev,UBYTE *cdbptr,WORD cdblen)
+{
+    struct IFINFO *info;
+    volatile struct IDE *interface;
+    UWORD cdb[MAX_SCSI_CDBLEN/sizeof(UWORD)];
+    WORD ifnum, ifdev, packetlen;
+
+    ifnum = dev / 2;
+    ifdev = dev & 1;
+
+    info = &ifinfo[ifnum];
+    interface = info->base_address;
+    packetlen = info->dev[ifdev].packet_size;
+
+    /* copy cdb to word-aligned area with zero fill */
+    memset(cdb,0,MAX_SCSI_CDBLEN);
+    memcpy(cdb,(void *)cdbptr,min(cdblen,packetlen));
+
+    KDEBUG(("atapi_send_cdb(): dev=%d, cdblen=%d, cdb=%02x...\n",dev, cdblen,cdb[0]));
+
+    /*
+     * we assume that data on ATAPI devices is always byte-swapped,
+     * so iff we have a twisted cabel, we don't byte-swap
+     */
+    if (info->twisted_cable) {
+        ide_put_data((volatile struct IDE *)(((ULONG)interface)+1),(UBYTE *)cdb,packetlen,0);
+    } else {
+        ide_put_data(interface,(UBYTE *)cdb,packetlen,1);
+    }
+}
+
+/*
+ * send SCSI commands to an ATAPI device
+ */
+static LONG handle_atapi_device(WORD dev, IDECmd *cmd)
+{
+    struct IFINFO *info;
+    volatile struct IDE *interface;
+    UBYTE *buf;
+    UWORD bytecount, ifdev, ifnum;
+    UBYTE status;
+
+    KDEBUG(("handle_atapi_device(%d): cmd=0x%02x (%d,%p,%ld,%ld,%u)\n",
+            dev,cmd->cdbptr[0],cmd->cdblen,cmd->bufptr,cmd->buflen,cmd->timeout,cmd->flags));
+
+    ifnum = dev / 2;
+    ifdev = dev & 1;
+    info = ifinfo + ifnum;
+    interface = info->base_address;
+
+    if (ide_select_device(interface,ifdev) < 0)
+        return SELECT_ERROR;
+
+    /* determine byte count for cdb packet */
+    bytecount = min(cmd->buflen,ATAPI_MAX_BYTECOUNT);
+
+    atapi_rw_start(interface,ifdev,bytecount,IDE_CMD_ATAPI_PACKET);
+    if (wait_for_not_BSY(interface,SHORT_TIMEOUT))
+        return TIMEOUT_ERROR;
+
+    /* send the packet containing the cdb */
+    atapi_send_cdb(dev,cmd->cdbptr,cmd->cdblen);
+
+    buf = cmd->bufptr;
+    while(1) {
+        if (wait_for_not_BSY(interface,cmd->timeout))
+            return TIMEOUT_ERROR;
+
+        status = IDE_READ_STATUS(interface);    /* status, clear pending interrupt */
+        if (!(status & IDE_STATUS_DRQ))
+            break;
+
+        /*
+         * find out how many bytes the device wants to send (or receive),
+         * and get (or put) them.
+         */
+        bytecount = IDE_READ_CYLINDER_HIGH_CYLINDER_LOW(interface);
+        if (cmd->flags == RW_WRITE) {
+            if (info->twisted_cable) {
+                ide_put_data((volatile struct IDE *)(((ULONG)interface)+1),buf,bytecount,0);
+            } else {
+                ide_put_data(interface,buf,bytecount,1);
+            }
+        } else {
+            if (info->twisted_cable) {
+                ide_get_data((volatile struct IDE *)(((ULONG)interface)+1),buf,bytecount,0);
+            } else {
+                ide_get_data(interface,buf,bytecount,1);
+            }
+        }
+        buf += bytecount;
+    }
+
+    if (status & IDE_STATUS_DF)
+        return STATUS_ERROR;
+
+    if (status & IDE_STATUS_ERR) {
+        status = IDE_READ_ERROR(interface);
+        if (status&0xf0) {      /* non-zero sense key */
+            return 0x02;        /* check condition */
+        }
+    }
+
+    return E_OK;
+}
+
 LONG send_ide_command(WORD dev, IDECmd *cmd)
 {
-    return handle_ata_device(dev, cmd);
+    LONG ret;
+
+    switch(ide_device_type(dev)) {
+    case DEVTYPE_ATA:
+        ret = handle_ata_device(dev, cmd);
+        break;
+    case DEVTYPE_ATAPI:
+        ret = handle_atapi_device(dev, cmd);
+        break;
+    default:
+        ret = STATUS_ERROR;     /* "can't happen" */
+    }
+
+    return ret;
 }
+
+/*
+ * creates a request sense response based on the last 'check condition'
+ */
+static LONG ata_request_sense(WORD dev, WORD buflen, UBYTE *buffer)
+{
+    UWORD ifnum, ifdev;
+    UBYTE sense, *senseptr;
+
+    bzero(&reqsense, REQSENSE_LENGTH);
+    reqsense.addl_length = (REQSENSE_LENGTH-1) - 7;
+
+    ifnum = dev / 2;
+    ifdev = dev & 1;
+
+    senseptr = &ifinfo[ifnum].dev[ifdev].sense;
+    sense = *senseptr;      /* get last saved check condition */
+    *senseptr = 0;          /*  & reset it                    */
+
+    if (sense)
+    {
+        reqsense.error_code = 0xf0; /* valid / error code 0x70 */
+        reqsense.sense_key = 0x05;  /* illegal request */
+    }
+
+    switch(sense) {
+    case INVALID_OPCODE:
+        reqsense.asc = 0x20;        /* invalid command operation code */
+        break;
+    case INVALID_SECTOR:
+        reqsense.asc = 0x21;        /* logical block address out of range */
+        break;
+    case INVALID_CDB:
+        reqsense.asc = 0x24;        /* invalid field in cdb */
+        break;
+    case INVALID_LUN:
+        reqsense.asc = 0x25;        /* logical unit not supported */
+        break;
+    }
+
+    memcpy(buffer, &reqsense, min(buflen, REQSENSE_LENGTH));
+
+    return E_OK;
+}
+
+/*
+ * issue REQUEST SENSE on ATAPI
+ */
+static LONG atapi_request_sense(WORD dev, WORD buflen, UBYTE *buffer)
+{
+    UBYTE cdb[6];
+    IDECmd cmd;
+
+    cdb[0] = REQUEST_SENSE;
+    cdb[1] = 0;
+    cdb[2] = 0;
+    cdb[3] = 0;
+    cdb[4] = REQSENSE_LENGTH;
+    cdb[5] = 0;
+
+    cmd.cdbptr = cdb;
+    cmd.cdblen = 6;
+    cmd.bufptr = buffer;
+    cmd.buflen = buflen;
+    cmd.timeout = XFER_TIMEOUT;
+    cmd.flags = RW_READ;
+
+    return handle_atapi_device(dev, &cmd);
+}
+
+LONG ide_request_sense(WORD dev, WORD buflen, UBYTE *buffer)
+{
+    LONG ret;
+
+    switch(ide_device_type(dev)) {
+    case DEVTYPE_ATA:
+        ret = ata_request_sense(dev, buflen, buffer);
+        break;
+    case DEVTYPE_ATAPI:
+        ret = atapi_request_sense(dev, buflen, buffer);
+        break;
+    default:
+        ret = STATUS_ERROR;     /* "can't happen" */
+    }
+
+    return ret;
+}
+
 #endif
 
 #endif /* CONF_WITH_IDE */
