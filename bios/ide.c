@@ -345,7 +345,7 @@ static struct {             /* space to build return data for Inquiry */
 /* prototypes */
 static WORD clear_multiple_mode(UWORD ifnum,UWORD dev);
 static void ide_detect_devices(UWORD ifnum);
-static LONG ide_identify(WORD dev);
+static LONG ata_identify(WORD dev);
 static void set_multiple_mode(WORD dev,UWORD multi_io);
 static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
 
@@ -601,7 +601,7 @@ void ide_init(void)
 
     /* set multiple mode for all devices that we have info for */
     for (i = 0; i < DEVICES_PER_BUS; i++)
-        if (ide_identify(i) == 0)
+        if (ata_identify(i) == 0)
             set_multiple_mode(i,identify.multiple_io_info);
 
 #if CONF_WITH_SCSI_DRIVER
@@ -1316,7 +1316,7 @@ static void set_multiple_mode(WORD dev,UWORD multi_io)
     ifinfo[ifnum].dev[dev].spi = spi;
 }
 
-static LONG ide_identify(WORD dev)
+static LONG ata_identify(WORD dev)
 {
     LONG ret;
     UWORD ifnum, ifdev;
@@ -1324,7 +1324,7 @@ static LONG ide_identify(WORD dev)
     ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
     ifdev = dev & 1;    /* 0 or 1 */
 
-    KDEBUG(("ide_identify(%d [ifnum=%d ifdev=%d])\n", dev, ifnum, ifdev));
+    KDEBUG(("ata_identify(%d [ifnum=%d ifdev=%d])\n", dev, ifnum, ifdev));
 
     /* with twisted cable the response of IDENTIFY_DEVICE will be byte-swapped */
     if (ide_device_type(dev) == DEVTYPE_ATA) {
@@ -1333,7 +1333,7 @@ static LONG ide_identify(WORD dev)
     } else ret = EUNDEV;
 
     if (ret < 0)
-        KDEBUG(("ide_identify(%d [ifnum=%d ifdev=%d]) ret=%ld\n", dev, ifnum, ifdev, ret));
+        KDEBUG(("ata_identify(%d [ifnum=%d ifdev=%d]) ret=%ld\n", dev, ifnum, ifdev, ret));
 
     return ret;
 }
@@ -1349,7 +1349,7 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
 
     switch(ctrl) {
     case GET_DISKINFO:
-        ret = ide_identify(dev);    /* reads into identify structure */
+        ret = ata_identify(dev);    /* reads into identify structure */
         if (ret >= 0) {
             info[0] = MAKE_ULONG(identify.numsecs_lba28[1],
                         identify.numsecs_lba28[0]);
@@ -1358,7 +1358,7 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
         }
         break;
     case GET_DISKNAME:
-        ret = ide_identify(dev);    /* reads into identify structure */
+        ret = ata_identify(dev);    /* reads into identify structure */
         if (ret >= 0) {
             identify.model_number[39] = 0;  /* null terminate string */
 
@@ -1377,7 +1377,7 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
     case CHECK_DEVICE:
         switch(ide_device_type(dev)) {
         case DEVTYPE_ATA:
-            ret = ide_identify(dev);
+            ret = ata_identify(dev);
             break;
         case DEVTYPE_ATAPI:
             ret = atapi_identify(dev);
@@ -1531,7 +1531,7 @@ static LONG handle_ata_device(WORD dev, IDECmd *cmd)
             break;
         /* direct access device unless LUN is invalid ... */
         inquiry.devtype = (ret==INVALID_LUN) ? 0x7f : 0x00;
-        ret = ide_identify(dev);    /* reads into identify structure */
+        ret = ata_identify(dev);    /* reads into identify structure */
         if (ret)
             break;
         /*
@@ -1552,7 +1552,7 @@ static LONG handle_ata_device(WORD dev, IDECmd *cmd)
         ret = check_lun_and_zeroes(cmd, 0x07fe);
         if (ret)
             break;
-        ret = ide_identify(dev);
+        ret = ata_identify(dev);
         if (ret)
             break;
         info[0] = MAKE_ULONG(identify.numsecs_lba28[1], identify.numsecs_lba28[0]) - 1;
