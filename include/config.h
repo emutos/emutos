@@ -1040,15 +1040,6 @@
 #endif
 
 /*
- * set CONF_WITH_SCSI_DRIVER to 1 to activate support for the SCSI driver
- * API, which allows user programs to issue SCSI-style commands directly
- * to devices.  see the documentation by Steffen Engel for more details.
- */
-#ifndef CONF_WITH_SCSI_DRIVER
-# define CONF_WITH_SCSI_DRIVER 0
-#endif
-
-/*
  * Set CONF_WITH_VAMPIRE_SPI to 1 to activate SPI on the Vampire,
  * required for SD/MMC support on these boards
  */
@@ -1514,13 +1505,6 @@
 #endif
 
 /*
- * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
- */
-#ifndef CONF_WITH_XHDI
-# define CONF_WITH_XHDI 1
-#endif
-
-/*
  * Set the default baud rate for serial ports.
  */
 #ifndef DEFAULT_BAUDRATE
@@ -1642,6 +1626,28 @@
  */
 #ifndef NUM_VDI_HANDLES
 # define NUM_VDI_HANDLES 128    /* maximum number of open workstations */
+#endif
+
+
+
+/************************************************************************
+ *  S O F T W A R E   S E C T I O N   -   3 R D   P A R T Y   A P I     *
+ ************************************************************************/
+
+/*
+ * set CONF_WITH_SCSI_DRIVER to 1 to activate support for the SCSI driver
+ * API, which allows user programs to issue SCSI-style commands directly
+ * to devices.  see the documentation by Steffen Engel for more details.
+ */
+#ifndef CONF_WITH_SCSI_DRIVER
+# define CONF_WITH_SCSI_DRIVER 0
+#endif
+
+/*
+ * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
+ */
+#ifndef CONF_WITH_XHDI
+# define CONF_WITH_XHDI 1
 #endif
 
 
