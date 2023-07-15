@@ -260,7 +260,6 @@ static HandleEntry *get_handle_entry(SCSIHandle handle)
 static LONG scsidriv_InOut(WORD write, SCSICmd *cmd)
 {
     HandleEntry *h;
-    UBYTE *buf;
     LONG rc, rc2;
     int bus, dev;
 
@@ -287,6 +286,7 @@ static LONG scsidriv_InOut(WORD write, SCSICmd *cmd)
     case ACSI_BUS:
         {
             ACSICMD acsi;
+            UBYTE *buf;
 
             buf = cmd->buffer;
             if (IS_ODD_POINTER(buf) || !IS_STRAM_POINTER(buf))
