@@ -11,10 +11,15 @@
  */
 
 /*
- * this should be considered as alpha code at the moment.  apart from
- * unknown bugs, the following shortcomings are currently present:
- *  1. we mark all ACSI devices as ICD-compatible
- *  2. we do not check if a device on an arbitrating bus is the host device
+ * Apart from unknown bugs, the following shortcomings are currently
+ * present:
+ *  1. we mark all ACSI devices as ICD-compatible. there are likely very
+ *     few real ACSI devices left, so this should not be a real-life problem.
+ *     fixing this would probably require issuing (e.g.) an IDENTIFY during
+ *     ACSI initialisation.
+ *  2. we do not detect the host device (ourselves) on an arbitrating bus.
+ *     thus, unlike HDdriver, the host does not appear in the response to
+ *     InquireBus().  this is unlikely to cause any problems.
  */
 
 /*
