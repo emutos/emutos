@@ -1108,7 +1108,6 @@
 # define CONF_WITH_ULTRASATAN_CLOCK CONF_WITH_ACSI
 #endif
 
-
 /*
  * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
  */
@@ -1541,6 +1540,7 @@
 #ifndef CONF_WITH_1FAT_SUPPORT
 # define CONF_WITH_1FAT_SUPPORT 0
 #endif
+
 
 
 /********************************************************
