@@ -1640,7 +1640,7 @@
  * to devices.  see the documentation by Steffen Engel for more details.
  */
 #ifndef CONF_WITH_SCSI_DRIVER
-# define CONF_WITH_SCSI_DRIVER 0
+# define CONF_WITH_SCSI_DRIVER 1
 #endif
 
 /*
