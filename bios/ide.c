@@ -1128,7 +1128,7 @@ static void ide_put_data(volatile struct IDE *interface,UBYTE *buffer,ULONG buff
         /* transfer remainder 2 bytes at a time */
         p2 = (UWORD *)p;
         while (p2 < end2) {
-            *(UWORD_ALIAS *)interface->data = *p2++;
+            *(UWORD_ALIAS *)&interface->data = *p2++;
         }
     }
 }
