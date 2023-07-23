@@ -730,6 +730,7 @@ static void ide_detect_devices(UWORD ifnum)
     for (i = 0; i < 2; i++) {
         IDE_WRITE_HEAD(interface,IDE_DEVICE(i));
         DELAY_400NS;
+        wait_for_not_BSY(interface,SHORT_TIMEOUT);
         if (IDE_READ_SECTOR_NUMBER_SECTOR_COUNT(interface) == 0x0101) {
             status = IDE_READ_STATUS(interface);
             signature = IDE_READ_CYLINDER_HIGH_CYLINDER_LOW(interface);
