@@ -642,27 +642,24 @@ static UWORD ide_device_type(WORD dev)
  * the following routines for device type detection are adapted
  * from Hale Landis's public domain ATA driver, MINDRVR.
  */
-static int wait_for_signature(volatile struct IDE *interface,LONG timeout)
+static int wait_for_not_BSY_and_DRDY(volatile struct IDE *interface,LONG timeout)
 {
     LONG next = hz_200 + timeout;
-    UWORD n;
 
     DELAY_400NS;
     while(hz_200 < next) {
-        n = IDE_READ_SECTOR_NUMBER_SECTOR_COUNT(interface);
-        if (n == 0x0101)
+        if ((IDE_READ_ALT_STATUS(interface) & (IDE_STATUS_BSY|IDE_STATUS_DRDY)) == IDE_STATUS_DRDY)
             return 0;
     }
 
-    KDEBUG(("Timeout in wait_for_signature(%p,%ld)\n",interface,timeout));
+    KDEBUG(("Timeout in wait_for_not_BSY_and_DRDY(%p,%ld)\n",interface,timeout));
     return 1;
 }
 
 static void ide_reset(UWORD ifnum)
 {
-    volatile struct IDE *interface = ifinfo[ifnum].base_address;
     struct IFINFO *info = ifinfo + ifnum;
-    int err;
+    volatile struct IDE *interface = info->base_address;
 
     /* set, then reset, the soft reset bit */
     IDE_WRITE_CONTROL(interface,(IDE_CONTROL_SRST|IDE_CONTROL_nIEN));
@@ -670,26 +667,10 @@ static void ide_reset(UWORD ifnum)
     IDE_WRITE_CONTROL(interface,IDE_CONTROL_nIEN);
     DELAY_400NS;
 
-    /* if device 0 exists, wait for it to clear BSY */
-    if (info->dev[0].type != DEVTYPE_NONE) {
-        if (wait_for_not_BSY(interface,LONG_TIMEOUT)) {
-            info->dev[0].type = DEVTYPE_NONE;
-            KDEBUG(("IDE i/f %d device 0 timeout after soft reset\n",ifnum));
-        }
-    }
-
-    /* if device 1 exists, wait for the signature bits, then check BSY */
-    if (info->dev[1].type != DEVTYPE_NONE) {
-        err = 0;
-        if (wait_for_signature(interface,LONG_TIMEOUT))
-            err = 1;
-        else if ((IDE_READ_ALT_STATUS(interface) & IDE_STATUS_BSY) == 0)
-            err = 1;
-        if (err) {
-            info->dev[1].type = DEVTYPE_NONE;
-            KDEBUG(("IDE i/f %d device 1 timeout after soft reset\n",ifnum));
-        }
-    }
+    /* if at least one device exists, wait for it to clear BSY and set DRDY */
+    if ((info->dev[0].type != DEVTYPE_NONE)
+     || (info->dev[1].type != DEVTYPE_NONE))
+        wait_for_not_BSY_and_DRDY(interface,LONG_TIMEOUT);
 }
 
 static UBYTE ide_decode_type(UBYTE status,UWORD signature)
