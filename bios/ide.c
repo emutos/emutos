@@ -346,6 +346,7 @@ static struct {             /* space to build return data for Inquiry */
 static WORD clear_multiple_mode(UWORD ifnum,UWORD dev);
 static void ide_detect_devices(UWORD ifnum);
 static LONG ata_identify(WORD dev);
+static int ide_select_device(volatile struct IDE *interface,UWORD dev);
 static void set_multiple_mode(WORD dev,UWORD multi_io);
 static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
 
@@ -705,8 +706,7 @@ static void ide_detect_devices(UWORD ifnum)
 
     /* initial check for devices */
     for (i = 0; i < 2; i++) {
-        IDE_WRITE_HEAD(interface,IDE_DEVICE(i));
-        DELAY_400NS;
+        ide_select_device(interface,i);
         IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(interface,0xaa,0x55);
         IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(interface,0x55,0xaa);
         IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(interface,0xaa,0x55);
@@ -723,14 +723,11 @@ static void ide_detect_devices(UWORD ifnum)
     }
 
     /* recheck after soft reset, also detect ata/atapi */
-    IDE_WRITE_HEAD(interface,IDE_DEVICE(0));
-    DELAY_400NS;
+    ide_select_device(interface,0);
     ide_reset(ifnum);
 
     for (i = 0; i < 2; i++) {
-        IDE_WRITE_HEAD(interface,IDE_DEVICE(i));
-        DELAY_400NS;
-        wait_for_not_BSY(interface,SHORT_TIMEOUT);
+        ide_select_device(interface,i);
         if (IDE_READ_SECTOR_NUMBER_SECTOR_COUNT(interface) == 0x0101) {
             status = IDE_READ_STATUS(interface);
             signature = IDE_READ_CYLINDER_HIGH_CYLINDER_LOW(interface);
