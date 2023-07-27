@@ -348,6 +348,8 @@ static void ide_detect_devices(UWORD ifnum);
 static LONG ata_identify(WORD dev);
 static int ide_select_device(volatile struct IDE *interface,UWORD dev);
 static void set_multiple_mode(WORD dev,UWORD multi_io);
+static UWORD get_start_count(volatile struct IDE *interface);
+static void set_start_count(volatile struct IDE *interface,UBYTE sector,UBYTE count);
 static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
 
 #if CONF_WITH_SCSI_DRIVER
@@ -707,10 +709,10 @@ static void ide_detect_devices(UWORD ifnum)
     /* initial check for devices */
     for (i = 0; i < 2; i++) {
         ide_select_device(interface,i);
-        IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(interface,0xaa,0x55);
-        IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(interface,0x55,0xaa);
-        IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(interface,0xaa,0x55);
-        if (IDE_READ_SECTOR_NUMBER_SECTOR_COUNT(interface) == 0xaa55) {
+        set_start_count(interface,0xaa,0x55);
+        set_start_count(interface,0x55,0xaa);
+        set_start_count(interface,0xaa,0x55);
+        if (get_start_count(interface) == 0xaa55) {
             info->dev[i].type = DEVTYPE_UNKNOWN;
             KDEBUG(("IDE i/f %d device %d detected\n",ifnum,i));
         } else
@@ -728,7 +730,7 @@ static void ide_detect_devices(UWORD ifnum)
 
     for (i = 0; i < 2; i++) {
         ide_select_device(interface,i);
-        if (IDE_READ_SECTOR_NUMBER_SECTOR_COUNT(interface) == 0x0101) {
+        if (get_start_count(interface) == 0x0101) {
             status = IDE_READ_STATUS(interface);
             signature = IDE_READ_CYLINDER_HIGH_CYLINDER_LOW(interface);
             info->dev[i].type = ide_decode_type(status,signature);
@@ -798,15 +800,51 @@ static int ide_select_device(volatile struct IDE *interface,UWORD dev)
 }
 
 /*
+ * get sector number / sector count IDE registers
+ */
+static UWORD get_start_count(volatile struct IDE *interface)
+{
+    wait_for_not_BSY_not_DRQ(interface,SHORT_TIMEOUT);
+    return IDE_READ_SECTOR_NUMBER_SECTOR_COUNT(interface);
+}
+
+/*
+ * set sector number / sector count IDE registers
+ */
+static void set_start_count(volatile struct IDE *interface,UBYTE sector,UBYTE count)
+{
+    wait_for_not_BSY_not_DRQ(interface,SHORT_TIMEOUT);
+    IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(interface,sector,count);
+}
+
+/*
+ * set cylinder high / cylinder low IDE registers
+ */
+static void set_cylinder(volatile struct IDE *interface,UWORD cylinder)
+{
+    wait_for_not_BSY_not_DRQ(interface,SHORT_TIMEOUT);
+    IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW(interface,cylinder);
+}
+
+/*
+ * set command / head IDE registers
+ */
+static void set_command_head(volatile struct IDE *interface,UBYTE cmd,UBYTE head)
+{
+    wait_for_not_BSY_not_DRQ(interface,SHORT_TIMEOUT);
+    IDE_WRITE_COMMAND_HEAD(interface,cmd,head);
+}
+
+/*
  * set device / command / sector start / count / LBA mode in IDE registers
  */
 static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,UWORD count,UBYTE cmd)
 {
     KDEBUG(("ide_rw_start(%p, %u, %lu, %u, 0x%02x)\n", interface, dev, sector, count, cmd));
 
-    IDE_WRITE_SECTOR_NUMBER_SECTOR_COUNT(interface,LOBYTE(sector), LOBYTE(count));
-    IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW(interface,(UWORD)((sector & 0xffff00) >> 8));
-    IDE_WRITE_COMMAND_HEAD(interface,cmd,IDE_MODE_LBA|IDE_DEVICE(dev)|(UBYTE)((sector>>24)&0x0f));
+    set_start_count(interface,LOBYTE(sector),LOBYTE(count));
+    set_cylinder(interface,(UWORD)((sector & 0xffff00) >> 8));
+    set_command_head(interface,cmd,IDE_MODE_LBA|IDE_DEVICE(dev)|(UBYTE)((sector>>24)&0x0f));
 }
 
 /*
@@ -1630,8 +1668,8 @@ static void atapi_rw_start(volatile struct IDE *interface,UWORD ifdev,UWORD byte
 {
     KDEBUG(("atapi_rw_start(%p, %u, %u, 0x%02x)\n", interface, ifdev, bytecount, cmd));
 
-    IDE_WRITE_CYLINDER_HIGH_CYLINDER_LOW(interface,bytecount);
-    IDE_WRITE_COMMAND_HEAD(interface,cmd,0xa0|IDE_DEVICE(ifdev));
+    set_cylinder(interface,bytecount);
+    set_command_head(interface,cmd,0xa0|IDE_DEVICE(ifdev));
 }
 
 /*
