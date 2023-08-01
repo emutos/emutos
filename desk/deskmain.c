@@ -2152,6 +2152,9 @@ BOOL deskmain(void)
     /* turn off the menu bar */
     menu_bar(NULL, 0);
 
+    /* give up the desktop */
+    wind_set(DESKWH, WF_NEWDESK, NULL, 0, 0);
+
     /* exit the gem AES */
     appl_exit();
 
