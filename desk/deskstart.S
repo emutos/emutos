@@ -11,7 +11,8 @@
 
 #include "asmdefs.h"
 
-#define DESKSTACKSIZE   2048    /* in bytes: must be multiple of 4 */
+/* Desktop stack use can be estimated using CONF_DEBUG_DESK_STACK. */
+#define DESKSTACKSIZE   2560    /* in bytes: must be multiple of 4 */
 
         .globl  _deskstart
 #if CONF_DEBUG_DESK_STACK
