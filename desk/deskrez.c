@@ -62,20 +62,20 @@ static const WORD falconmode_from_button[] =        /*     VGA           RGB    
       VIDEL_80COL|VIDEL_2BPP,                       /* 640x480x4     640x400x4   */
       VIDEL_80COL|VIDEL_4BPP,                       /* 640x480x16    640x400x16  */
       VIDEL_80COL|VIDEL_8BPP,                       /* 640x480x256   640x400x256 */
-      VIDEL_80COL|VIDEL_TRUECOLOR,                  /*     n/a       640x400x32K */
+      VIDEL_80COL|VIDEL_TRUECOLOR,                  /*     n/a       640x400x64K */
       VIDEL_VERTICAL|VIDEL_80COL|VIDEL_1BPP,        /* 640x240x2     640x200x2   */
       VIDEL_VERTICAL|VIDEL_80COL|VIDEL_2BPP,        /* 640x240x4     640x200x4   */
       VIDEL_VERTICAL|VIDEL_80COL|VIDEL_4BPP,        /* 640x240x16    640x200x16  */
       VIDEL_VERTICAL|VIDEL_80COL|VIDEL_8BPP,        /* 640x240x256   640x200x256 */
-      VIDEL_VERTICAL|VIDEL_80COL|VIDEL_TRUECOLOR,   /*     n/a       640x200x32K */
+      VIDEL_VERTICAL|VIDEL_80COL|VIDEL_TRUECOLOR,   /*     n/a       640x200x64K */
       VIDEL_2BPP,                                   /* 320x480x4     320x400x4   */
       VIDEL_4BPP,                                   /* 320x480x16    320x400x16  */
       VIDEL_8BPP,                                   /* 320x480x256   320x400x256 */
-      VIDEL_TRUECOLOR,                              /* 320x480x32K   320x400x32K */
+      VIDEL_TRUECOLOR,                              /* 320x480x64K   320x400x64K */
       VIDEL_VERTICAL|VIDEL_2BPP,                    /* 320x240x4     320x200x4   */
       VIDEL_VERTICAL|VIDEL_4BPP,                    /* 320x240x16    320x200x16  */
       VIDEL_VERTICAL|VIDEL_8BPP,                    /* 320x240x256   320x200x256 */
-      VIDEL_VERTICAL|VIDEL_TRUECOLOR,               /* 320x240x32K   320x200x32K */
+      VIDEL_VERTICAL|VIDEL_TRUECOLOR,               /* 320x240x64K   320x200x64K */
       VIDEL_COMPAT|VIDEL_80COL|VIDEL_1BPP,                  /* ST High */
       VIDEL_COMPAT|VIDEL_VERTICAL|VIDEL_80COL|VIDEL_2BPP,   /* ST Medium */
       VIDEL_COMPAT|VIDEL_VERTICAL|VIDEL_4BPP };             /* ST Low */

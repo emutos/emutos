@@ -541,7 +541,7 @@ static int set_videl_vga(WORD mode)
     case VIDEL_8BPP:                    /* 256 colours */
         videlword(0x66) = 0x0010;
         break;
-    case VIDEL_TRUECOLOR:               /* 32768 colours (Truecolor) */
+    case VIDEL_TRUECOLOR:               /* 65536 colours (Truecolor) */
         videlword(0x66) = 0x0100;
         break;
     }

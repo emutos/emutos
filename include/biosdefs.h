@@ -155,7 +155,7 @@ typedef void (*ETV_TIMER_T)(int ms); /* Type of BDOS Event Timer */
 #define VIDEL_2BPP          1               /* 4 colours */
 #define VIDEL_4BPP          2               /* 16 colours */
 #define VIDEL_8BPP          3               /* 256 colours */
-#define VIDEL_TRUECOLOR     4               /* 32768 colours */
+#define VIDEL_TRUECOLOR     4               /* 65536 colours */
 
 /* IDT cookie flag for 24 hour: 0 = 12am/pm or 1 = 24 hour */
 #define IDT_12H   0x0000
