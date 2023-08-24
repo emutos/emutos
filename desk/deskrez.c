@@ -62,10 +62,12 @@ static const WORD falconmode_from_button[] =        /*     VGA           RGB    
       VIDEL_80COL|VIDEL_2BPP,                       /* 640x480x4     640x400x4   */
       VIDEL_80COL|VIDEL_4BPP,                       /* 640x480x16    640x400x16  */
       VIDEL_80COL|VIDEL_8BPP,                       /* 640x480x256   640x400x256 */
+      VIDEL_80COL|VIDEL_TRUECOLOR,                  /*     n/a       640x400x32K */
       VIDEL_VERTICAL|VIDEL_80COL|VIDEL_1BPP,        /* 640x240x2     640x200x2   */
       VIDEL_VERTICAL|VIDEL_80COL|VIDEL_2BPP,        /* 640x240x4     640x200x4   */
       VIDEL_VERTICAL|VIDEL_80COL|VIDEL_4BPP,        /* 640x240x16    640x200x16  */
       VIDEL_VERTICAL|VIDEL_80COL|VIDEL_8BPP,        /* 640x240x256   640x200x256 */
+      VIDEL_VERTICAL|VIDEL_80COL|VIDEL_TRUECOLOR,   /*     n/a       640x200x32K */
       VIDEL_2BPP,                                   /* 320x480x4     320x400x4   */
       VIDEL_4BPP,                                   /* 320x480x16    320x400x16  */
       VIDEL_8BPP,                                   /* 320x480x256   320x400x256 */
@@ -152,7 +154,7 @@ static int change_falcon_rez(WORD *newres,WORD *newmode)
 OBJECT *tree, *obj;
 int i, selected;
 WORD oldmode, oldbase, oldoptions;
-WORD mode;
+WORD mode, monitor;
 
     oldmode = VsetMode(-1);
     oldbase = oldmode & (VIDEL_VERTICAL|VIDEL_COMPAT|VIDEL_80COL|VIDEL_BPPMASK);
@@ -165,10 +167,13 @@ WORD mode;
             break;
     selected = i;
 
+    /* remember monitor type */
+    monitor = VgetMonitor();
+
     /* set up dialog & display */
     tree = desk_rs_trees[ADFALREZ];
 
-    if (VgetMonitor() != MON_VGA) { /* fix up rez descriptions if not VGA */
+    if (monitor != MON_VGA) {       /* fix up rez descriptions if not VGA */
         for (i = 0, obj = tree+FREZNAME; i < 4; i++, obj++)
             obj->ob_spec = (LONG) desktop_str_addr(STREZ1+i);
     }
@@ -178,9 +183,14 @@ WORD mode;
     obj->ob_flags |= HIDETREE;
 
     for (i = 0, obj = tree+FREZLIST; i < NUM_FALCON_BUTTONS; i++, obj++) {
-        /* FIXME: change the next 2 lines when we have TrueColor support in VDI */
-        if ((falconmode_from_button[i]&VIDEL_BPPMASK) > VIDEL_8BPP)
+        mode = falconmode_from_button[i];
+        if ((mode&VIDEL_BPPMASK) > VIDEL_8BPP) {
+            /* hide unsupported TC modes for VGA monitors */
+            if ((monitor == MON_VGA) && (mode&VIDEL_80COL))
+                obj->ob_flags |= HIDETREE;
+            /* FIXME: change the next line when we have TrueColor support in VDI */
             obj->ob_flags |= HIDETREE;
+        }
         if (i == selected)
             obj->ob_state |= SELECTED;
         else obj->ob_state &= ~SELECTED;
