@@ -1,7 +1,7 @@
 /*
- * screen.h - low-level screen routines
+ * videl.h - header for VIDEL support
  *
- * Copyright (C) 2013-2022 The EmuTOS development team
+ * Copyright (C) 2013-2023 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik

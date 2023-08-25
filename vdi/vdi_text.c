@@ -1,9 +1,9 @@
 /*
- * text.c - uses text_blt to move data from a font table to screen
+ * vdi_text.c - uses text_blt to move data from a font table to screen
  *
  * Copyright 1982 by Digital Research Inc.  All rights reserved.
  * Copyright 1999 by Caldera, Inc. and Authors:
- * Copyright 2002-2022 The EmuTOS development team
+ * Copyright 2002-2023 The EmuTOS development team
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.

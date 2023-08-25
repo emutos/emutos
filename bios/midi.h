@@ -1,7 +1,7 @@
 /*
- * midi.c - MIDI routines
+ * midi.h - header for MIDI routines
  *
- * Copyright (C) 2001, 2019 The EmuTOS development team
+ * Copyright (C) 2001-2023 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

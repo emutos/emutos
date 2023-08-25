@@ -1,9 +1,13 @@
+/*
+ *      deskmain.c - high-level EmuTOS desktop functions
+ */
+
 /*      DESKTOP.C       05/04/84 - 09/05/85     Lee Lorenzen            */
 /*      for 3.0         3/12/86  - 1/29/87      MDF                     */
 
 /*
 *       Copyright 1999, Caldera Thin Clients, Inc.
-*                 2002-2022 The EmuTOS development team
+*                 2002-2023 The EmuTOS development team
 *
 *       This software is licenced under the GNU Public License.
 *       Please see LICENSE.TXT for further information.
