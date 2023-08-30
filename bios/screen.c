@@ -1120,7 +1120,7 @@ WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
                     UBYTE *addr = (UBYTE *)Srealloc(vgetsize(videlmode));
                     if (!addr)      /* Srealloc() failed */
                         return -1;
-                    KDEBUG(("screen realloc'd to %d\n", addr));
+                    KDEBUG(("screen realloc'd to %p\n", addr));
                     v_bas_ad = addr;
                     setphys(addr);
                 }
