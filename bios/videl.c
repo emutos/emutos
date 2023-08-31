@@ -362,6 +362,11 @@ const VMODE_ENTRY *lookup_videl_mode(WORD mode,WORD monitor)
 {
     const VMODE_ENTRY *vmode_init_table, *p;
 
+    /*
+     * ignore reserved bits (this is what TOS4 does)
+     */
+    mode &= VIDEL_VALID;
+
     if (mode&VIDEL_VGA) {
         vmode_init_table = vga_init_table;
         /* ignore bits that don't affect initialisation data */
