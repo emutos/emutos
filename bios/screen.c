@@ -546,14 +546,15 @@ void screen_init_mode(void)
             boot_resolution = FALCON_DEFAULT_BOOT;  /* so use default */
         }
 
-        /* initialise the current video mode, for vfixmode()/vsetmode() */
+        /* initialise the current video mode, for vsetmode() */
         current_video_mode = boot_resolution;
 
-        /* fix the video mode according to the actual monitor */
-        boot_resolution = vfixmode(boot_resolution);
-        KDEBUG(("Fixed boot video mode is 0x%04x\n", boot_resolution));
+        /* vsetmode() now uses vfixmode() to adjust the video mode
+         * according to the actual monitor
+         */
         vsetmode(boot_resolution);  /* sets 'sshiftmod' */
         rez = sshiftmod;
+        KDEBUG(("Fixed boot video mode is 0x%04x\n",vsetmode(-1)));
     }
     else
 #endif /* CONF_WITH_VIDEL */

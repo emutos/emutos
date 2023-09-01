@@ -574,6 +574,11 @@ WORD vsetmode(WORD mode)
 
     KDEBUG(("vsetmode(0x%04x)\n", mode));
 
+    /*
+     * fix up mode according to current monitor type, just like TOS
+     */
+    mode = vfixmode(mode);
+
     if (set_videl_vga(mode) < 0)    /* invalid mode */
         return current_video_mode;
 
@@ -914,7 +919,6 @@ void videl_setrez(WORD rez, WORD videlmode)
             videlmode = FALCON_ST_HIGH;
             break;
         }
-        videlmode = vfixmode(videlmode);
     }
 
     vsetmode(videlmode);    /* sets 'sshiftmod' */
