@@ -53,7 +53,6 @@
 
 typedef struct {
     WORD vmode;         /* video mode (-1 => end marker) */
-    WORD monitor;       /* applicable monitors */
     UWORD hht;          /* H hold timer */
     UWORD hbb;          /* H border begin */
     UWORD hbe;          /* H border end */
@@ -69,7 +68,7 @@ typedef struct {
 } VMODE_ENTRY;
 
 void initialise_falcon_palette(WORD mode);
-const VMODE_ENTRY *lookup_videl_mode(WORD mode,WORD monitor);
+const VMODE_ENTRY *lookup_videl_mode(WORD mode);
 
 /* Public XBIOS functions */
 WORD vsetmode(WORD mode);

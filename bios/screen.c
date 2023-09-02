@@ -537,7 +537,7 @@ void screen_init_mode(void)
         /* try to ensure it corresponds to monitor */
         current_video_mode = boot_resolution;       /* needed by vfixmode() */
         boot_resolution = vfixmode(boot_resolution);
-        if (!lookup_videl_mode(boot_resolution,monitor_type)) { /* mode isn't in table */
+        if (!lookup_videl_mode(boot_resolution)) {  /* mode isn't in table */
             KDEBUG(("Invalid video mode 0x%04x changed to 0x%04x\n",
                     boot_resolution,FALCON_DEFAULT_BOOT));
             boot_resolution = FALCON_DEFAULT_BOOT;  /* so pick one that is */
