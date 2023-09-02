@@ -478,6 +478,8 @@ static WORD determine_vctl(WORD mode,WORD monitor)
     case VIDEL_4BPP:
         vctl = (mode&VIDEL_VGA)? 0x05 : 0x00;
         break;
+    default:
+        vctl = 0x04;
     }
 
     return vctl;
