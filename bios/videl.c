@@ -491,25 +491,21 @@ static WORD determine_vctl(WORD mode,WORD monitor)
  */
 static WORD determine_regc0(WORD mode,WORD monitor)
 {
+    /* mono monitors only have 1 setting */
+    if (monitor == MON_MONO)
+        return 0x0080;
+
+    /* likewise VGA */
     if (mode&VIDEL_VGA)
         return 0x0186;
 
-    if (!(mode&VIDEL_COMPAT))
-        return (monitor==MON_TV)?0x0183:0x0181;
-
     /* handle ST-compatible modes */
-    if ((mode&(VIDEL_80COL|VIDEL_BPPMASK)) == (VIDEL_80COL|VIDEL_1BPP)) {  /* 80-column, 2-colour */
-        switch(monitor) {
-        case MON_MONO:
-            return 0x0080;
-        case MON_TV:
-            return 0x0183;
-        default:
-            return 0x0181;
-        }
+    if (mode&VIDEL_COMPAT) {
+        if ((mode&VIDEL_BPPMASK) != VIDEL_1BPP)     /* not 2-colour */
+            return (monitor==MON_TV)?0x0083:0x0081;
     }
 
-    return (monitor==MON_TV)?0x0083:0x0081;
+    return (monitor==MON_TV)?0x0183:0x0181;
 }
 
 
