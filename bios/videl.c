@@ -131,7 +131,8 @@ static const VMODE_ENTRY vga_init_table[] = {
     /*
      * the entries in this table are for VGA/NTSC (i.e. VGA 60Hz) and VGA/PAL
      * (i.e. VGA 50Hz).  in *this* table, each entry applies to four video modes:
-     * with & without VIDEL_VERTICAL, with & without VIDEL_PAL.
+     * with & without VIDEL_VERTICAL, with & without VIDEL_PAL.  note that the
+     * VIDEL_OVERSCAN bit is ignored when searching for a match in this table.
      *
      * note that modes that include the VIDEL_COMPAT bit may be exact duplicates of
      * others; for example, modes 90 & 98 are the same, as are the 8 modes 91-94,99-9c.
@@ -370,8 +371,11 @@ const VMODE_ENTRY *lookup_videl_mode(WORD mode)
 
     if (mode&VIDEL_VGA) {
         vmode_init_table = vga_init_table;
-        /* ignore bits that don't affect initialisation data */
-        mode &= ~(VIDEL_VERTICAL|VIDEL_PAL);
+        /*
+         * ignore OVERSCAN (since VGA is set), plus other
+         * bits that don't affect initialisation data
+         */
+        mode &= ~(VIDEL_OVERSCAN|VIDEL_VERTICAL|VIDEL_PAL);
     } else {
         vmode_init_table = nonvga_init_table;
     }
@@ -393,7 +397,8 @@ static WORD determine_width(WORD mode)
 
     linewidth = (mode&VIDEL_80COL) ? 40 : 20;
     linewidth <<= (mode & VIDEL_BPPMASK);
-    if (mode&VIDEL_OVERSCAN)
+    /* overscan is ignored if VGA is set */
+    if ((mode&(VIDEL_OVERSCAN|VIDEL_VGA)) == VIDEL_OVERSCAN)
         linewidth = linewidth * 12 / 10;    /* multiply by 1.2 */
 
     return linewidth;
@@ -858,7 +863,6 @@ WORD monitor, currentmode;
 
     /* handle VGA monitor */
     if (monitor == MON_VGA) {
-        mode &= ~VIDEL_OVERSCAN;    /* turn off overscan (not used with VGA) */
         if (!(mode & VIDEL_VGA))            /* if mode doesn't have VGA set, */
             mode ^= (VIDEL_VERTICAL | VIDEL_VGA);   /* set it & flip vertical */
         if (mode & VIDEL_COMPAT) {
