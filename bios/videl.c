@@ -469,6 +469,21 @@ static WORD determine_regc0(WORD mode,WORD monitor)
 
 /*
  * this routine can set VIDEL to 1,2,4 or 8 bitplanes mode on VGA
+ *
+ * A note on TOS4 quirks
+ * ---------------------
+ * For certain videl modes (none of which are used by the desktop), TOS4
+ * sets some unusual register values which I consider to be erroneous;
+ * therefore this code does not attempt to reproduce them.  For future
+ * reference, these are the ones I have discovered:
+ * (1) VGA monitor: mode 0x0059 (& equivalent modes 0x0079, 0x0149, 0x169)
+ *      The vctl register (0xff82c2) is set to 0 rather than 8, setting
+ *      cycles/pixel to 4 instead of 1.  This seems clearly wrong, as
+ *      mode 0x0059 on a VGA monitor is logically exactly the same as
+ *      mode 0x0019 which does not do this.
+ * (2) VGA monitor: modes 0x005n (& many equivalent modes)
+ *      The offset register (xff820e) is set to 1/5 of the screen width.
+ *      The logically equivalent set of modes (0x001n) do not do this.
  */
 static int set_videl_vga(WORD mode)
 {
@@ -528,6 +543,11 @@ static int set_videl_vga(WORD mode)
              * additional steps; otherwise video output can become distorted.
              * Based on: "patch for Videl monochrome bug in Falcons, posted
              * by Thomas Binder" in FreeMiNT.
+             *
+             * Note that, when running under Hatari, this causes spurious msgs
+             * such as:
+             *   "WARN : Strange screen size 80x640 -> aspect corrected by 8x1!"
+             * each time a Vsetmode() is done for a monochrome mode.
              */
             vsync();
             videlword(0x66) = 0;
