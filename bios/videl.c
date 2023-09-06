@@ -700,36 +700,54 @@ WORD vsetsync(WORD external)
 }
 
 /*
- * get video ram size according to mode
+ * vgetsize - implements the Vgetsize() XBIOS call
+ *
+ * The described purpose of this call is to return the video ram size
+ * required for the specified mode.  Under TOS4, the same results are
+ * obtained, no matter what type of monitor is in use at the time of
+ * the call.  This is not useful, for the following reasons:
+ *  (1) When Vsetscreen() is called to set a new mode, that mode is fixed
+ *      up via Vfixmode() which *does* respect the monitor type.  Thus,
+ *      calling Vgetsize() before calling Vsetscreen() may give you
+ *      invalid information.  Further, if Vsetscreen() is called with NULL
+ *      values for logical and physical screen addresses, the actual RAM
+ *      allocated may differ from the amount indicated, for the same reason.
+ *  (2) The amount calculated can be completely bogus if the passed mode
+ *      contains conflicting parameters which cannot all be present in a
+ *      valid mode.  This happens, for example, if OVERSCAN and VGA are
+ *      both set.
+ *
+ * Therefore, in this implementation, Vfixmode() is called at the beginning
+ * to fix up the mode.  This makes the call useful in all circumstances,
+ * with the slight drawback that the values returned may differ from those
+ * returned by TOS4 in the same circumstances.
  */
-LONG vgetsize(WORD mode)
+LONG vgetsize(WORD inmode)
 {
     const VMODE_ENTRY *p;
     int height;
-    WORD vctl, monitor;
+    WORD mode, vctl;
 
     if (!has_videl)
         return 0x5b;    /* unimplemented xbios call: return function # */
 
-    monitor = vmontype();
-
-    mode &= VIDEL_VALID;        /* ignore invalid bits */
+    mode = inmode & VIDEL_VALID;    /* ignore invalid bits */
     if ((mode&VIDEL_BPPMASK) > VIDEL_TRUECOLOR) {   /* fixup invalid bpp */
         mode &= ~VIDEL_BPPMASK;
         mode |= VIDEL_TRUECOLOR;
     }
 
+    mode = vfixmode(mode);
+
     p = lookup_videl_mode(mode);
-    if (!p) {                   /* invalid mode */
-        if (mode&VIDEL_COMPAT)
+    if (!p) {                       /* invalid mode - "can't happen" */
+        KDEBUG(("vgetsize(): entry for mode 0x%04x missing (original=0x%04x)\n",mode,inmode));
+        if (mode&VIDEL_COMPAT)      /* try to fix things up */
             return ST_VRAM_SIZE;
-        mode &= ~(VIDEL_OVERSCAN|VIDEL_PAL);/* ignore less-important bits */
-        p = lookup_videl_mode(mode);        /* & try again */
-        if (!p)                             /* "can't happen" */
-            return FALCON_VRAM_SIZE;
+        return FALCON_VRAM_SIZE;
     }
 
-    vctl = determine_vctl(mode,monitor);
+    vctl = determine_vctl(mode,vmontype());
     height = p->vde - p->vdb;
     if (!(vctl&0x02))
         height >>= 1;
