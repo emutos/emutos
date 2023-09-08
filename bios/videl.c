@@ -20,6 +20,7 @@
 #include "videl.h"
 #include "biosext.h"
 #include "asm.h"
+#include "natfeat.h"
 #include "tosvars.h"
 #include "lineavars.h"
 #include "nvram.h"
@@ -580,11 +581,19 @@ static int set_videl_vga(WORD mode)
              * such as:
              *   "WARN : Strange screen size 80x640 -> aspect corrected by 8x1!"
              * each time a Vsetmode() is done for a monochrome mode.
+             *
+             * To try to avoid these, we check for NatFeats.  Its availability
+             * certainly means that we're running under an emulator which
+             * shouldn't need workarounds for hardware bugs.  Of course, if
+             * Hatari has NatFeats disabled, or if we compile without NatFeats
+             * support, we'll still see those messages.
              */
-            vsync();
-            videlword(0x66) = 0;
-            vsync();
-            videlword(0x66) = 0x0400;
+            if (!HAS_NATFEATS) {
+                vsync();
+                videlword(0x66) = 0;
+                vsync();
+                videlword(0x66) = 0x0400;
+            }
 #endif
         }
         break;
