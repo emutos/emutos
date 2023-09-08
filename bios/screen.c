@@ -1126,7 +1126,7 @@ WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
                     setphys(addr);
                 }
             }
-            oldmode = -1;   /* set flag to request return of old mode */
+            oldmode = vsetmode(-1);
         }
     }
 #endif
@@ -1138,11 +1138,6 @@ WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
     amiga_setrez(rez, videlmode);
 #elif CONF_WITH_ATARI_VIDEO
     atari_setrez(rez, videlmode);
-#endif
-
-#if CONF_WITH_VIDEL
-    if (oldmode < 0)
-        oldmode = vsetmode(-1);
 #endif
 
     /* Re-initialize line-a, VT52 etc: */
