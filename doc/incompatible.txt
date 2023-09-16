@@ -184,7 +184,7 @@ Error: mono desktop colours are inverted after exiting program.
 
 Bug analysis:
 This version of Awele was compiled with PureC and linked with a very
-early version of Windform.  During WinDOM initialisation, malloc() is
+early version of WinDOM.  During WinDOM initialisation, malloc() is
 called to allocate an area to save the palette in.  However, although
 malloc() returns the pointer in A0, the WinDOM code assumes it is in D0.
 As a result, an area of low memory is pointed to, which is overwritten
