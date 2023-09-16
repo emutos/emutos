@@ -32,17 +32,6 @@
 #if CONF_WITH_VIDEL
 
 /*
- * although the EmuTOS BIOS fully supports the Videl hardware, the
- * VDI/EmuCON/EmuDesk do not support TrueColor modes.  so we clamp
- * the bits-per-pixel value returned by get_videl_bpp() to the
- * following value in order to avoid crashes elsewhere.
- *
- * programs may use Vsetmode()/Vsetscreen() to set a TrueColor mode,
- * but, if they do, they must handle the screen display themselves.
- */
-#define MAX_BPP     8
-
-/*
  * used for byte-juggling between various palette layouts
  */
 typedef union {
@@ -320,6 +309,14 @@ static const VMODE_ENTRY other_init_table[] = {
  * functions for VIDEL programming
  */
 
+/*
+ * get the number of bits-per-pixel from the current hardware settings;
+ * this is ultimately used by linea_init() to derive v_planes & V_REZ_HZ
+ * when the resolution changes.
+ *
+ * note that we used to clamp this to 8, but this causes V_REZ_HZ to be
+ * wrong in TC modes.
+ */
 static UWORD get_videl_bpp(void)
 {
     UWORD f_shift = *(volatile UWORD *)SPSHIFT;
@@ -348,13 +345,6 @@ static UWORD get_videl_bpp(void)
         bits_per_pixel = 2;
     else /* if (st_shift == ST_HIGH) */
         bits_per_pixel = 1;
-
-    /*
-     * the following will no longer be necessary, and should be removed,
-     * when the VDI/EmuCON/EmuDesk are upgraded to support Falcon TrueColor
-     */
-    if (bits_per_pixel > MAX_BPP)
-        bits_per_pixel = MAX_BPP;
 
     return bits_per_pixel;
 }

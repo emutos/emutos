@@ -1142,7 +1142,8 @@ WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 
     /* Re-initialize line-a, VT52 etc: */
     linea_init();
-    vt52_init();
+    if (v_planes < 16)
+        vt52_init();
 
     return oldmode;
 }
