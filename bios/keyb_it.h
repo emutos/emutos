@@ -1,7 +1,7 @@
 /*
- * keyb_it.h - keyboard layout definition
+ * keyb_it.h - Italian keyboard layout definition
  *
- * Copyright (C) 2011-2020 The EmuTOS development team
+ * Copyright (C) 2011-2023 The EmuTOS development team
  *
  * Authors:
  *  L. Zanier

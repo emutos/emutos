@@ -290,6 +290,10 @@ WORD n, word = 0;
  *
  *  handles backspace or delete
  */
+#ifdef STANDALONE_CONSOLE
+/* Avoid implementation using memmove(), as it isn't available */
+__attribute__((optimize("no-tree-loop-distribute-patterns")))
+#endif
 PRIVATE void delete_char(char *line,WORD pos,WORD len,WORD backspace)
 {
 char *p;

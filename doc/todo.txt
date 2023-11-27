@@ -7,11 +7,11 @@ BDOS (GEMDOS)
 - move mem-only routines out of proc.c into umem.c or iumem.c
 
 VDI
+- Add TrueColor support
 - The linemask for dashed lines is not calculated correctly, depending on
   the internal calculations of increase in x direction, like in original TOS.
 
 AES
-- Implement AES v3.x functions (TOS v3 menu functions)
 
 DESK
 - Add a dialog for configuring the NVRAM (keyboard, languages, ...)

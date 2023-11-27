@@ -177,14 +177,6 @@ const COMMAND *p;
             return run_setdrv;
 
     /*
-     *  allow -h with any command to provide help
-     */
-    if ((argc == 2) && strequal(argv[1],"-h")) {
-        argv[1] = argv[0];
-        argv[0] = "help";
-    }
-
-    /*
      *  scan command table
      */
     for (p = cmdtable; p->func; p++) {
@@ -193,6 +185,17 @@ const COMMAND *p;
         if (p->synonym)
             if (strequal(argv[0],p->synonym))
                 break;
+    }
+    if (!p->func)
+        return NULL;
+
+    /*
+     *  builtin command: allow -h to provide help
+     */
+    if ((argc == 2) && strequal(argv[1],"-h")) {
+        argv[1] = argv[0];
+        argv[0] = "help";
+        return run_help;
     }
 
     argc--;

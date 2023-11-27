@@ -17,21 +17,6 @@
 
 #define NUMFLOPPIES     2   /* max number of floppies supported */
 
-#define ACSI_BUS            0
-#define SCSI_BUS            1
-#define IDE_BUS             2
-#define SDMMC_BUS           3
-
-#if CONF_WITH_SDMMC
-# define MAX_BUS            SDMMC_BUS
-#elif CONF_WITH_IDE
-# define MAX_BUS            IDE_BUS
-#elif CONF_WITH_SCSI
-# define MAX_BUS            SCSI_BUS
-#else
-# define MAX_BUS            ACSI_BUS
-#endif
-
 #define DEVICES_PER_BUS     8
 
 #define UNITSNUM            (NUMFLOPPIES+(DEVICES_PER_BUS*(MAX_BUS+1)))
@@ -41,6 +26,8 @@
 #define IS_SCSI_DEVICE(major)   (GET_BUS(major) == SCSI_BUS)
 #define IS_IDE_DEVICE(major)    (GET_BUS(major) == IDE_BUS)
 #define IS_SDMMC_DEVICE(major)  (GET_BUS(major) == SDMMC_BUS)
+
+#define GET_UNITNUM(bus,dev)    (NUMFLOPPIES+(DEVICES_PER_BUS*(bus))+dev)
 
 /*
  * commands used for internal xxx_ioctl() calls
@@ -53,6 +40,8 @@
                                 /* arg -> return data (max 40 chars)  */
 #define GET_MEDIACHANGE     30  /* return status as per Mediach() call*/
                                 /* arg is NULL                        */
+#define CHECK_DEVICE        40  /* determine if device exists         */
+                                /* (not necessarily a hard disk)      */
 
 #if CONF_WITH_ULTRASATAN_CLOCK
 #define ULTRASATAN_GET_FIRMWARE_VERSION 60

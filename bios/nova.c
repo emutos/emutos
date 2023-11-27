@@ -40,6 +40,10 @@ int has_nova;
  */
 static int use_16bit_io;
 
+/* CrazyDots has a special clock generator register. */
+static int is_crazydots;
+#define CRAZY_DOTS_CLK_SEL 0x000
+
 /* Macros for VGA register access */
 #define VGAREG(x)   (*(novaregbase+(x)))
 /* Note that for 16 bit access high and low word are swapped by Nova HW.
@@ -182,25 +186,37 @@ static int check_for_vga(void)
     }
 }
 
-/* Detect Nova addresses */
+/* Detect Nova/Volksfarben/CrazyDots addresses */
 void detect_nova(void)
 {
     has_nova = 0;
     use_16bit_io = 1; /* Default for everything but Volksfarben/ST */
+    is_crazydots = 0;
 
     if (IS_BUS32 && HAS_VME && check_read_byte(0xFE900000UL+VIDSUB))
     {
-        /* Mach32(?) in Atari TT */
+        /* Nova/Mach32 in Atari TT */
         novaregbase = (UBYTE *)0xFE900000UL;
         novamembase = (UBYTE *)0xFE800000UL;
         has_nova = 1;
     }
-    else if (HAS_VME && check_read_byte(0x00DC0000UL+VIDSUB))
+    else if (HAS_VME && check_read_byte(0xFEDC0000UL+VIDSUB))
     {
-        /* Nova in Atari MegaSTe */
-        novaregbase = (UBYTE *)0x00DC0000UL;
-        novamembase = (UBYTE *)0x00C00000UL;
+        /*
+         * Nova/ET4000 in Atari MegaSTe or TT:
+         * In the MegaSTE the top 8 address bits are simply ignored.
+         */
+        novaregbase = (UBYTE *)0xFEDC0000UL;
+        novamembase = (UBYTE *)0xFEC00000UL;
         has_nova = 1;
+    }
+    else if (HAS_VME && check_read_byte(0xFEBF0000UL+VIDSUB))
+    {
+        /* CrazyDots in Atari MegaSTe or TT */
+        novaregbase = (UBYTE *)0xFEBF0000UL;
+        novamembase = (UBYTE *)0xFEC00000UL;
+        has_nova = 1;
+        is_crazydots = 1;
     }
     else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00D00000UL+VIDSUB) &&
              check_read_byte(0x00C00000UL) && check_read_byte(0x00C80000UL))
@@ -215,24 +231,10 @@ void detect_nova(void)
         has_nova = 1;
         use_16bit_io = 0;
     }
-    else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00CC0000UL+VIDSUB))
-    {
-        /* Nova in Atari MegaST: be sure via phystop that it's not RAM we read */
-        novaregbase = (UBYTE *)0x00CC0000UL;
-        novamembase = (UBYTE *)0x00C00000UL;
-        has_nova = 1;
-    }
-    else if (IS_BUS32 && HAS_VME && check_read_byte(0xFEDC0000UL+VIDSUB))
-    {
-        /* ET4000 in Atari TT */
-        novaregbase = (UBYTE *)0xFEDC0000UL;
-        novamembase = (UBYTE *)0xFEC00000UL;
-        has_nova = 1;
-    }
 
     if (has_nova)
     {
-        KDEBUG(("Nova detected at IO=%p / mem=%p\n", novaregbase, novamembase));
+        KDEBUG(("VGA card detected at IO=%p / mem=%p\n", novaregbase, novamembase));
     }
 }
 
@@ -459,7 +461,7 @@ static void init_nova_resolution(int is_mach32)
     if (is_mach32) {
         set_mach32_idxreg();
     } else {   /* ET4000 */
-        set_idxreg(CRTC_I, 0x36, 0x53);
+        set_idxreg(CRTC_I, 0x36, use_16bit_io? 0xD3:0x53);
     }
     set_idxreg(TS_I, 1, vga_TS_1_4[0] | 0x20); /* screen off */
     set_palette_entries(vga_palette);
@@ -468,10 +470,10 @@ static void init_nova_resolution(int is_mach32)
 
 /* Certain ET4000 graphic cards require a different clock divider.
    There is no direct way of finding out the clock the ET4000 runs on.
-   Instead, this function counts the number of VBLs for half a second.
+   Instead, this function counts the number of VBLs for 250 ms.
 */
-#define VBL_TIMEOUT 100 /* 0.5 second */
-#define VBL_LIMIT   25  /* nominally: 60 Hz, i.e. 30 VBLs in 0.5s */
+#define VBL_TIMEOUT 50  /* 0.25 seconds */
+#define VBL_LIMIT   12  /* nominally: 60 Hz, i.e. 15 VBLs in 0.25s */
 static void count_vbls(void)
 {
     LONG end = hz_200 + VBL_TIMEOUT;
@@ -575,6 +577,10 @@ int init_nova(void)
     }
 
     if (!is_mach32) {   /* ET4000 */
+        if (is_crazydots) {
+            /* Program clock generator to 25.175 MHz pixel clock */
+            VGAREG(CRAZY_DOTS_CLK_SEL) = 0x4;
+        }
         unlock_et4000();
         init_et4000();
     }

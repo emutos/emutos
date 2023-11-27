@@ -15,6 +15,7 @@
 #endif
 
 #include "emutos.h"
+#include "coldfire.h"
 #include "coldpriv.h"
 #include "spi.h"
 
@@ -105,6 +106,7 @@ static ULONG fifo_out;
  */
 void spi_initialise(void)
 {
+    if (cf_spi_chip_select == MCF_VALUE_UNKNOWN) return;
     /*
      *  first, halt the DSPI so we can change the registers
      */
@@ -116,6 +118,16 @@ void spi_initialise(void)
     MCF_DSPI_DCTAR0 = SD_MODE;
     MCF_DSPI_DCTAR1 = MMC_MODE;
     MCF_DSPI_DCTAR2 = IDENT_MODE;
+
+    /* Initialze the PAR_DPSI register to use correct pin functions.*/
+    MCF_PAD_PAR_DSPI |= (
+        MCF_PAD_PAR_DSPI_PAR_CS5 |
+        MCF_PAD_PAR_DSPI_PAR_CS3_DSPICS3 |
+        MCF_PAD_PAR_DSPI_PAR_CS2_DSPICS2 |
+        MCF_PAD_PAR_DSPI_PAR_CS0_DSPICS0 |
+        MCF_PAD_PAR_DSPI_PAR_SCK_SCK |
+        MCF_PAD_PAR_DSPI_PAR_SIN_SIN |
+        MCF_PAD_PAR_DSPI_PAR_SOUT_SOUT);
 
     /*
      * initialize DSPI configuration register and start
@@ -148,13 +160,13 @@ void spi_clock_ident(void)
  */
 void spi_cs_assert(void)
 {
-    fifo_out |= MCF_DSPI_DTFR_CS5;
+    fifo_out |= cf_spi_chip_select;
     spi_send_byte(0xff);
 }
 
 void spi_cs_unassert(void)
 {
-    fifo_out &= ~MCF_DSPI_DTFR_CS5;
+    fifo_out &= ~cf_spi_chip_select;
     spi_send_byte(0xff);
 }
 

@@ -27,6 +27,7 @@
 #include "optimize.h"
 #include "miscutil.h"
 
+#include "aesdefs.h"
 #include "deskbind.h"
 #include "deskglob.h"
 #include "deskapp.h"
@@ -92,7 +93,7 @@ void draw_dial(OBJECT *tree)
 static WORD do_namecon(void)
 {
     OBJECT *tree = desk_rs_trees[ADCPALER];
-    WORD ob;
+    WORD ob, xd, yd, wd, hd;
 
     desk_busy_off();
     if (ml_havebox)
@@ -103,6 +104,17 @@ static WORD do_namecon(void)
         ml_havebox = TRUE;
     }
     form_do(tree, 0);
+
+    /*
+     * trigger a redraw for the copy alert dialog so that a redraw message
+     * is issued for the copy alert area.  when end_dialog() is subsequently
+     * called for the copy/delete dialog, the evnt_multi() loop will handle
+     * this redraw message as well as the one for the copy/delete dialog,
+     * so that both dialog areas are redrawn properly.
+     */
+    form_center(tree, &xd, &yd, &wd, &hd);
+    form_dial(FMD_FINISH, 0, 0, 0, 0, xd, yd, wd, hd);
+
     draw_dial(desk_rs_trees[ADCPYDEL]);
     desk_busy_on();
 

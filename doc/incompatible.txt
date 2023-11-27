@@ -80,7 +80,7 @@ Bug analysis:
 Program parses the bytes of the 0xA00A (hide cursor) line-A routine to
 get the address of a variable reflecting the internal state of the
 mouse cursor:
-	https://sourceforge.net/p/emutos/mailman/message/30605378/
+    https://sourceforge.net/p/emutos/mailman/message/30605378/
 This also fails on EmuTOS, resulting in (another) bus error (or possibly
 the mouse cursor not being visible).
 
@@ -95,7 +95,7 @@ v3.6x versions supporting Falcon do not have these issues.
 
 Omikron Basic programs and the Basic library version they use can
 be identified from the strings in the binaries:
-	strings some.prg | grep -i omikron
+    strings some.prg | grep -i omikron
 
 
 Category: program created by ST Adventure Creator (STAC)
@@ -184,7 +184,7 @@ Error: mono desktop colours are inverted after exiting program.
 
 Bug analysis:
 This version of Awele was compiled with PureC and linked with a very
-early version of Windform.  During WinDOM initialisation, malloc() is
+early version of WinDOM.  During WinDOM initialisation, malloc() is
 called to allocate an area to save the palette in.  However, although
 malloc() returns the pointer in A0, the WinDOM code assumes it is in D0.
 As a result, an area of low memory is pointed to, which is overwritten
@@ -241,8 +241,8 @@ Use a less-buggy control panel, e.g. XCONTROL.ACC from the TT or
 Falcon Language Disk.
 
 
-Program: Cubase v2 & Lite
--------------------------
+Program: Cubase v2, v3.01 & Lite
+--------------------------------
 Error: panic
 
 Bug analysis:

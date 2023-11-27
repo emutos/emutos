@@ -2,7 +2,7 @@
  *  bios.c - C portion of BIOS initialization and front end
  *
  * Copyright (C) 2001 Lineo, Inc.
- * Copyright (C) 2001-2022 The EmuTOS development team
+ * Copyright (C) 2001-2023 The EmuTOS development team
  *
  * Authors:
  *  SCC     Steve C. Cavender
@@ -1034,7 +1034,7 @@ const UWORD bios_ent = ARRAY_SIZE(bios_vecs);
 BOOL is_text_pointer(const void *p)
 {
     UBYTE *pb = (UBYTE *)p;
-    return pb >= (UBYTE *)&os_header && pb < _etext;
+    return (pb >= (UBYTE *)&os_header) && (pb < _etext);
 }
 
 #endif /* CONF_WITH_EXTENDED_MOUSE */

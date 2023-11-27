@@ -80,7 +80,7 @@ static void write_big_endian_long(uint32_t* p, uint32_t value)
 }
 
 /* Read a big endian short */
-static uint32_t read_big_endian_short(const uint16_t* p)
+static uint16_t read_big_endian_short(const uint16_t* p)
 {
     union
     {

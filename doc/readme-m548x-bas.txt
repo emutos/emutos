@@ -7,11 +7,13 @@ emutos-m548x-bas.s19 - RAM executable (English)
 
 Supported hardware:
 
-- M5485EVB (a.k.a. Zoom ColdFire EVB)
+- M5485EVB and M5475EVB (a.k.a. Zoom ColdFire EVB)
 https://www.nxp.com/products/no-longer-manufactured/mcf5485-evaluation-board:M5485EVB
+https://www.nxp.com/products/no-longer-manufactured/mcf5475-evaluation-board:M5475EVB
 
-- M5484LITE (a.k.a. Zoom ColdFire LITEKIT)
+- M5484LITE and M5474LITE (a.k.a. Zoom ColdFire LITEKIT)
 https://www.nxp.com/products/no-longer-manufactured/mcf5484-lite-evaluation-kit:M5484LITE
+https://www.nxp.com/products/no-longer-manufactured/mcf5474-lite-evaluation-kit:M5474LITE
 
 Prerequisites:
 Your EVB needs to boot to BaS_gcc; this is a pre-OS similar to the one found on
@@ -27,12 +29,10 @@ Requirements:
 
 Optional supported hardware:
 - a CompactFlash card with a FAT16 partition.
+- a micro SD card with a FAT16 partition via an Arduino-type adapter.
 - PS/2 keyboard connected through an Eiffel/CAN adapter.
 
-To use the CompactFlash card, you need to have programmed the CPLD
-(programmable component) on your board. You need to contact Logic PD
-(the board manufacturer) to get the appropriate software package.
-https://support.logicpd.com/
+The use of CompactFlash and SD cards is described in m54xx-cards.txt.
 
 How to flash EmuTOS:
 You just have to flash emutos-m548x-bas.s19 with your favorite flash tool.

@@ -20,6 +20,7 @@
 #include "tosvars.h"
 #include "ahdi.h"
 #include "floppy.h"
+#include "machine.h"
 #include "disk.h"
 #include "ikbd.h"
 #include "blkdev.h"
@@ -28,6 +29,7 @@
 #include "scsi.h"
 #include "ide.h"
 #include "sd.h"
+#include "scsidriv.h"
 #include "biosext.h"
 #include "biosmem.h"
 #include "xhdi.h"
@@ -186,6 +188,10 @@ static void blkdev_hdv_init(void)
      * do bus initialisation, such as setting delay values
      */
     bus_init();
+
+#if CONF_WITH_SCSI_DRIVER
+    scsidriv_init();    /* detect all devices */
+#endif
 
     disk_init_all();    /* Detect hard disk partitions */
 
@@ -488,7 +494,7 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
         } while(retval == CRITIC_RETRY_REQUEST);
         if (retval < 0)     /* error, retries exhausted */
             break;
-        buf += scount << psshift;
+        buf += (ULONG)scount << psshift;
         lrecnr += scount;
         lcount -= scount;
     } while(lcount > 0);

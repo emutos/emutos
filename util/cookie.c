@@ -1,7 +1,7 @@
 /*
  * cookie.c - initialisation of a cookie jar
  *
- * Copyright (C) 2001-2022 The EmuTOS development team
+ * Copyright (C) 2001-2023 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -120,5 +120,16 @@ WORD get_floppy_type(void)
         return value>>24;
 
     return 0;
+}
+#endif
+
+#if CONF_WITH_EXTENDED_MOUSE
+/*
+ * check if NVDI is installed by querying the cookie
+ */
+BOOL nvdi_cookie_present(void)
+{
+    ULONG dummy;
+    return cookie_get(COOKIE_NVDI, &dummy);
 }
 #endif

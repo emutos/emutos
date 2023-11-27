@@ -81,6 +81,9 @@ size_t n;
     return s-src-1;
 }
 
+/* Avoid bug: libc function implementation is optimized as a call to itself.
+ * https://gcc.gnu.org/bugzilla/show_bug.cgi?id=56888 */
+__attribute__((optimize("no-tree-loop-distribute-patterns")))
 size_t strlen(const char *s)
 {
     size_t n;

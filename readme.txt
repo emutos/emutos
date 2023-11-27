@@ -51,7 +51,9 @@ Additional information for developers (just in the source archive):
 doc/install.txt       - How to build EmuTOS from sources
 doc/coding.txt        - EmuTOS coding standards (never used :-) )
 doc/country.txt       - An overview of i18n issues in EmuTOS
+doc/dual_kbd.txt      - An explanation of the dual keyboard layout feature
 doc/fat16.txt         - Notes on the FAT16 filesystem in EmuTOS
+doc/m54xx-cards.txt   - Using CF cards on ColdFire V4e Evaluation Boards
 doc/memdetect.txt     - Memory bank detection during EmuTOS startup
 doc/nls.txt           - How to add a native language or use one
 doc/old_changelog.txt - A summarised list of changes up to & including
@@ -60,6 +62,7 @@ doc/osmemory.txt      - All about OS internal memory in EmuTOS
 doc/reschange.txt     - How resolution change works in the desktop
 doc/resource.txt      - Modifying resources in EmuTOS
 doc/startup.txt       - Some notes on the EmuTOS startup sequence
+doc/tools.txt         - User tools to customise EmuTOS ROM images
 doc/tos14fix.txt      - Lists bugs fixed by TOS 1.04 & their status in EmuTOS
 doc/version.txt       - Determining the version of EmuTOS at run-time
 

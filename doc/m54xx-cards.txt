@@ -1,0 +1,44 @@
+EmuTOS - Support for flash cards on ColdFire V4e Evaluation Boards
+
+
+To use the CompactFlash card, you need to have programmed the CPLD
+(programmable component) on your board. You need to contact Logic PD
+(the board manufacturer) to get the appropriate software package.
+https://support.logicpd.com/
+
+
+To use a micro SD card, obtain an adapter common in the Arduino
+ecosystem. Search your favorite online shopping site for a phrase like
+"Micro SD Storage Expansion Board Mini Micro SD TF Card Memory Shield
+Module." This adapter should run at 3.3 volts and not have any 5 volt
+level shifting support. The adapter should have these six pin
+connections: 3V3, CS, MOSI, CLK, MISO and GND, not necessarily in that
+order.
+
+The upper right of the M54x5 evaluation board has a 14-pin "Mini ITX
+Case" header with this pin out:
+
+| Pin Name | Pin Num | Pin Num | Pin Name       |
+|----------|---------|---------|----------------|
+| DGND     | 1       | 2       | /PWRBTN        |
+| DGND     | 3       | 4       | /BUTTON_MRESET |
+| 5V       | 5       | 6       | DSPI_CS0       |
+| 3V3      | 7       | 8       | DSPI_CS2       |
+| 3V3      | 9       | 10      | DSPI_DOUT      |
+| TIN3     | 11      | 12      | DSPI_DIN       |
+| DGND     | 13      | 14      | DSPICLK        |
+
+Use jumper wires to make the following connections to the SD card
+adapter:
+
+| Case Header Pin Name | Case Header Pin Num   | Micro SD Card Pin Name |
+|----------------------|-----------------------|------------------------|
+| 3V3                  | 7 (not pin 9!)        | 3V3                    |
+| DSPI_CS2             | 8 (not CS0 on pin 6!) | CS                     |
+| DSPI_DOUT            | 10                    | MOSI                   |
+| DSPICLK              | 14                    | CLK                    |
+| DSPI_DIN             | 12                    | MISO                   |
+| GND                  | 1 or 3 or 13          | GND                    |
+
+The Coldfire builds have CF and SD card support enabled by default, so no
+compile time configuration is needed.

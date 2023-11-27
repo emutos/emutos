@@ -1,0 +1,31 @@
+Dual keyboard layout support
+============================
+
+This is an EmuTOS-unique feature that was introduced in EmuTOS 0.9.5,
+and currently applies only to Russian and Greek keyboard layouts.  It
+allows the user to switch between two different keyboard layouts on
+the fly.
+
+In order to determine whether this feature applies to your setup, you
+first need to know that there are two distinct ways that the keyboard
+layout may be specified to EmuTOS:
+
+(1) via NVRAM
+If you are using a version of EmuTOS that supports NVRAM (such as the
+512K or 1024K ROMs), and you are running on a system with NVRAM (such
+as the Falcon or TT), the keyboard layout is determined by the NVRAM
+keyboard layout byte (location 7 of NVRAM).
+
+(2) via ROM
+If you are using a version of EmuTOS that doesn't support NVRAM (for
+example, a 256K ROM), or if you are running on a system without NVRAM
+(such as an ST or STe), the keyboard layout is determined by the country
+for which the ROM is built.
+
+If the keyboard layout indicates a Greek or Russian keyboard, the dual
+keyboard layout feature will be active.  For both languages, the default
+keyboard layouts generate latin characters at startup.  However, the
+user can toggle between this and an alternative character set at any
+time, by using a hot key combination (Alt+LeftShift).  For the Greek
+keyboard, the alternative character set contains Greek characters; for
+the Russian keyboard, it contains Cyrillic characters.

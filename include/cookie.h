@@ -1,7 +1,7 @@
 /*
  * cookie.h - declarations for the cookie jar
  *
- * Copyright (C) 2001-2022 The EmuTOS development team
+ * Copyright (C) 2001-2023 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel
@@ -40,6 +40,8 @@ struct cookie {
 #define COOKIE_COLDFIRE 0x5f43465fL
 #define COOKIE_MCF      0x5f4d4346L
 #define COOKIE__5MS     0x5f354d53L
+#define COOKIE_NVDI     0x4e564449L
+#define COOKIE_SCSIDRIV 0x53435349L
 
 /*
  * values of _MCH cookie
@@ -97,6 +99,10 @@ UBYTE *get_frb_cookie(void);
 
 #if CONF_WITH_FDC
 WORD get_floppy_type(void);     /* from _FDC cookie */
+#endif
+
+#if CONF_WITH_EXTENDED_MOUSE
+BOOL nvdi_cookie_present(void);
 #endif
 
 #endif

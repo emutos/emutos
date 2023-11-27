@@ -28,8 +28,10 @@
 #include "string.h"
 #include "dmasound.h"
 #include "dsp.h"
+#include "acsi.h"
 #include "scsi.h"
 #include "ide.h"
+#include "scsidriv.h"
 #include "asm.h"
 #include "delay.h"
 #include "mfp.h"
@@ -44,6 +46,8 @@
 #if CONF_WITH_ADVANCED_CPU
 UBYTE is_bus32; /* 1 if address bus is 32-bit, 0 if it is 24-bit */
 #endif
+
+ULONG detected_busses;  /* bitmap of i/o busses detected */
 
 ULONG cookie_vdo;
 #if CONF_WITH_FDC
@@ -517,6 +521,26 @@ static void aranym_machine_detect(void)
 }
 #endif
 
+static ULONG check_busses(void)
+{
+    ULONG found = 0UL;
+
+#if CONF_WITH_ACSI
+    if (detect_acsi())
+        found |= (1 << ACSI_BUS);
+#endif
+#if CONF_WITH_SCSI
+    if (detect_scsi())
+        found |= (1 << SCSI_BUS);
+#endif
+#if CONF_WITH_IDE
+    if (detect_ide())
+        found |= (1 << IDE_BUS);
+#endif
+
+    return found;
+}
+
 /* Detect optional hardware and fill has_* variables accordingly.
  * Those detection routines must *NOT* rely on cookies,
  * because cookies are initialized later.
@@ -574,12 +598,10 @@ void machine_detect(void)
 #if CONF_WITH_BLITTER && !MPS_BLITTER_ALWAYS_ON
     detect_blitter();
 #endif
-#if CONF_WITH_IDE
-    detect_ide();
-#endif
-#if CONF_WITH_SCSI
-    detect_scsi();
-#endif
+
+    detected_busses = check_busses();
+    KDEBUG(("detected_busses = 0x%04x\n", detected_busses));
+
 #if CONF_WITH_MONSTER
     detect_monster();
     if (has_monster)
@@ -763,6 +785,10 @@ void fill_cookie_jar(void)
 
 #if CONF_WITH_XHDI
     cookie_add(COOKIE_XHDI, (ULONG)xhdi_vec);
+#endif
+
+#if CONF_WITH_SCSI_DRIVER
+    cookie_add(COOKIE_SCSIDRIV, (ULONG)&scsidriv_root);
 #endif
 
 #if !CONF_WITH_MFP

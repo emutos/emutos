@@ -1,7 +1,7 @@
 /*
- * keyb_fr.h - a keyboard layout definition
+ * keyb_fr.h - French keyboard layout definition
  *
- * Copyright (C) 2001-2017 The EmuTOS development team
+ * Copyright (C) 2001-2023 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

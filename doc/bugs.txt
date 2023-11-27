@@ -1,15 +1,19 @@
 Video problems:
 
 Atari Falcon / TOS v4 compatibility bugs:
-+ Certain versions of Hatari (including 2.3.0) in Falcon emulation mode
-  may issue the following message (or similar) when EmuTOS switches to
-  monochrome mode:
+  When running some versions of Hatari (including 2.3.0) in Falcon
+  emulation mode with NatFeats support disabled, you may see the
+  following message (or similar) on the Hatari console when EmuTOS
+  switches to monochrome mode:
     WARN : Strange screen size 160x400 -> aspect corrected by 4x1!
   This is because of the method that EmuTOS uses to bypass a potential
   Falcon hardware problem (see the relevant code in bios/videl.c), which
   puts the screen into a nonstandard resolution for one frame.  This
   method works without problems on real Falcons, and the message may
-  safely be ignored when running under Hatari.
+  safely be ignored when running under Hatari.  Note: you will not see
+  this message if NatFeats is enabled, because EmuTOS then knows that
+  it is running under an emulator and will not attempt to bypass the
+  Falcon hardware bug.
 
 Problems that also occur in Atari TOS:
 + BIOS: Startup time can be slow on a floppy-only system.  You can speed

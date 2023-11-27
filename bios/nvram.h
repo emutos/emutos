@@ -1,7 +1,7 @@
 /*
- * nvram.c - Non-Volatile RAM access
+ * nvram.h - header for NVRAM access
  *
- * Copyright (C) 2001-2016 The EmuTOS development team
+ * Copyright (C) 2001-2023 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel

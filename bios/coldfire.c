@@ -39,6 +39,8 @@ void coldfire_early_init(void)
 
 MCF_COOKIE cookie_mcf;
 
+ULONG cf_spi_chip_select;
+
 #if CONF_WITH_COLDFIRE_RS232
 
 #define RS232_UART_PORT 0 /* PSC channel used as terminal */
@@ -231,6 +233,7 @@ void setvalue_mcf(void)
 #ifdef MACHINE_FIREBEE
     strcpy(cookie_mcf.device_name, "MCF5474");
     cookie_mcf.sysbus_frequency = 132;
+    cf_spi_chip_select = MCF_DSPI_DTFR_CS5;
 #else
     switch (MCF_SIU_JTAGID & MCF_SIU_JTAGID_PROCESSOR)
     {
@@ -238,25 +241,30 @@ void setvalue_mcf(void)
             strcpy(cookie_mcf.device_name, "MCF5484");
             /* If a MCF5484 we guess it is a LITE board */
             cookie_mcf.sysbus_frequency = 100;
+            cf_spi_chip_select = MCF_VALUE_UNKNOWN;
             break;
         case MCF_SIU_JTAGID_MCF5485:
             strcpy(cookie_mcf.device_name, "MCF5485");
             /* If a MCF5485 we guess it is a EVB board */
             cookie_mcf.sysbus_frequency = 133;
+            cf_spi_chip_select = MCF_DSPI_DTFR_CS2;
             break;
         case MCF_SIU_JTAGID_MCF5474:
             strcpy(cookie_mcf.device_name, "MCF5474");
             /* If a MCF5474 we guess it is a LITE board */
             cookie_mcf.sysbus_frequency = 100;
+            cf_spi_chip_select = MCF_VALUE_UNKNOWN;
             break;
         case MCF_SIU_JTAGID_MCF5475:
             strcpy(cookie_mcf.device_name, "MCF5475");
             /* If a MCF5475 we guess it is a EVB board */
             cookie_mcf.sysbus_frequency = 133;
+            cf_spi_chip_select = MCF_DSPI_DTFR_CS2;
             break;
         default:
             strcpy(cookie_mcf.device_name, "UNKNOWN");
             cookie_mcf.sysbus_frequency = 100;
+            cf_spi_chip_select = MCF_VALUE_UNKNOWN;
             KDEBUG(("Unknown ColdFire processor. Defaulting SDCLK to 100 MHz.\n"));
             break;
     }

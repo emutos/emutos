@@ -11,7 +11,7 @@
 # We store it as SSH_ID repository secret in GitHub's project settings. It
 # is passed to this script as an environment variable by GitHub Actions.
 # As environment variables can only contain text, our key files are transformed
-# like this: tar, xz, base64. Then then can be decoded here. This is safe as
+# like this: tar, xz, base64. Then they can be decoded here. This is safe as
 # GitHub Actions never shows the contents of secure variables.
 
 # To generate the contents of the SSH_ID variable:

@@ -38,6 +38,7 @@
 
 #include "emutos.h"
 #include "scsi.h"
+#include "scsicmds.h"
 #include "asm.h"
 #include "biosdefs.h"
 #include "cookie.h"
@@ -64,14 +65,6 @@
 #define EXTENDED_MSG            0x01        /* i.e. multibyte */
 #define MESSAGE_REJECT_MSG      0x07
 #define IDENTIFY_MSG            0x80
-
-
-/*
- * SCSI commands
- */
-#define REQUEST_SENSE   0x03
-#define INQUIRY         0x12
-#define READ_CAPACITY   0x25
 
 
 /*
@@ -175,25 +168,6 @@ typedef struct
 
 
 /*
- * structure passed to do_scsi_io() / scsi_dispatcher()
- */
-typedef struct
-{
-    UBYTE *cdbptr;                  /* command address */
-    WORD cdblen;                    /* command length */
-    UBYTE *bufptr;                  /* buffer address */
-    LONG buflen;                    /* buffer length */
-    ULONG xfer_time;                /* calculated, in ticks */
-    UBYTE mode;                     /* see below */
-#define WRITE_MODE  0x01
-#define DMA_MODE    0x02
-    UBYTE next_msg_out;             /* next msg to send */
-    UBYTE msg_in;                   /* first msg byte received */
-    UBYTE status;                   /* (last) status byte received */
-} CMDINFO;
-
-
-/*
  * timeouts & other longish times
  */
 #define RESET_TIME      (CLOCKS_PER_SEC)    /* 1 second (SCSI spec says >250msec) */
@@ -231,13 +205,15 @@ typedef struct
 
 
 /*
- * internal error codes
+ * internal error codes - these must be aligned with the SCSI driver error codes
  */
-#define PHASE_CHANGE        -1              /* not really an error, signals end of phase */
-#define TIMEOUT_ERROR       -2
+#define PHASE_CHANGE        -100            /* not really an error, signals end of phase */
+#define SELECT_ERROR        -1
 #define PHASE_ERROR         -3
-#define BUS_ERROR           -4
-
+#define BUS_ERROR           -5
+#define BUSFREE_ERROR       -7
+#define TIMEOUT_ERROR       -8
+#define ARBITRATE_ERROR     -11
 
 /*
  * local variables
@@ -255,11 +231,8 @@ static ULONG deskew2_count;
 static ULONG rst_hold_count;
 static ULONG toggle_delay_count;
 
-#define REQSENSE_LENGTH 16
 static UBYTE reqsense_buffer[REQSENSE_LENGTH];
-#define INQUIRY_LENGTH  32
 static UBYTE inquiry_buffer[INQUIRY_LENGTH];
-#define CAPACITY_LENGTH 8
 
 
 /*
@@ -273,7 +246,7 @@ static LONG scsi_inquiry(WORD dev, UBYTE *buffer);
 /*
  * externally-visible SCSI routines
  */
-void detect_scsi(void)
+BOOL detect_scsi(void)
 {
     has_scsi = 0;
 
@@ -294,6 +267,8 @@ void detect_scsi(void)
 #endif
 
     KDEBUG(("detect_scsi(): has_scsi = 0x%02x\n",has_scsi));
+
+    return has_scsi ? TRUE : FALSE;
 }
 
 void scsi_init(void)
@@ -365,6 +340,13 @@ LONG scsi_ioctl(WORD dev, UWORD ctrl, void *arg)
     case GET_MEDIACHANGE:
         rc = MEDIANOCHANGE;
         break;
+#if CONF_WITH_SCSI_DRIVER
+    case CHECK_DEVICE:
+        rc = scsi_inquiry(dev, inquiry_buffer);
+        if (rc != 0L)
+            rc = EUNDEV;
+        break;
+#endif
     }
 
     KDEBUG(("scsi_ioctl(%d, %u) returned %ld\n", dev, ctrl, rc));
@@ -945,7 +927,7 @@ static int scsi_arbitrate(void)
     timeout = hz_200 + BUSFREE_TIMEOUT;
     while (get_bus_status_reg() & 0x40)
         if (hz_200 >= timeout)
-            return TIMEOUT_ERROR;
+            return BUSFREE_ERROR;
 
     put_tcr_reg(0x00);              /* unassert I/O, C/D, MSG: bus free phase */
     put_select_enable_reg(0x00);    /* disable interrupts */
@@ -962,7 +944,7 @@ static int scsi_arbitrate(void)
             timeout = hz_200 + AIP_TIMEOUT;
             while(!(get_icr_reg()&0x40))    /* wait for AIP bit to be set */
                 if (hz_200 >= timeout)
-                    return TIMEOUT_ERROR;   /* probably broken hardware */
+                    return ARBITRATE_ERROR; /* probably broken hardware */
             arbitration_delay();
         } while(get_icr_reg()&0x20);        /* retry if we lost arbitration */
         temp = get_data_reg();          /* read active bus */
@@ -991,7 +973,7 @@ static int scsi_select(WORD device)
     bus_settle_delay();
     while(!(get_bus_status_reg() & 0x40)) /* wait for BSY bit */
         if (hz_200 >= timeout)
-            return TIMEOUT_ERROR;
+            return SELECT_ERROR;
     and_icr_reg(0x02);                  /* turn off everything except ATN */
 
     return 0;
@@ -1238,8 +1220,7 @@ static int scsi_dispatcher(CMDINFO *info)
 /*
  * high-level SCSI support
  */
-
-static LONG do_scsi_io(WORD dev, CMDINFO *info)
+LONG send_scsi_command(WORD dev, CMDINFO *info)
 {
     ULONG timeout;
     LONG ret;
@@ -1258,9 +1239,6 @@ static LONG do_scsi_io(WORD dev, CMDINFO *info)
         if ((info->mode&WRITE_MODE) && info->buflen)
             flush_data_cache(info->bufptr, info->buflen);
     }
-
-    /* calculate conservative transfer time, for use as timeout */
-    info->xfer_time = max(SHORT_TIMEOUT, (info->buflen/BYTES_PER_CLOCK));
 
     info->next_msg_out = IDENTIFY_MSG;  /* set for first msg out phase */
 
@@ -1309,11 +1287,27 @@ static LONG do_scsi_io(WORD dev, CMDINFO *info)
     return ret;
 }
 
-static LONG decode_scsi_status(WORD dev, LONG ret)
+LONG scsi_request_sense(WORD dev, UBYTE *buffer)
 {
     UBYTE cdb[6];
     CMDINFO info;
 
+    bzero(cdb, 6);
+    cdb[0] = REQUEST_SENSE;
+    cdb[4] = REQSENSE_LENGTH;
+
+    bzero(&info, sizeof(CMDINFO));
+    info.cdbptr = cdb;
+    info.cdblen = 6;
+    info.bufptr = buffer;
+    info.buflen = REQSENSE_LENGTH;
+    info.xfer_time = SHORT_TIMEOUT;
+
+    return send_scsi_command(dev, &info);
+}
+
+static LONG decode_scsi_status(WORD dev, LONG ret)
+{
     if (ret == 0)
         return E_OK;
 
@@ -1329,16 +1323,7 @@ static LONG decode_scsi_status(WORD dev, LONG ret)
     /*
      * handle check condition: do a request sense & check result
      */
-    bzero(cdb, 6);
-    cdb[0] = REQUEST_SENSE;
-    cdb[4] = REQSENSE_LENGTH;
-
-    bzero(&info, sizeof(CMDINFO));
-    info.cdbptr = cdb;
-    info.cdblen = 6;
-    info.bufptr = reqsense_buffer;
-    info.buflen = REQSENSE_LENGTH;
-    ret = do_scsi_io(dev, &info);
+    ret = scsi_request_sense(dev, reqsense_buffer);
 
     if (ret < 0)                                /* errors on request sense are bad */
         return EDRVNR;
@@ -1375,10 +1360,12 @@ static LONG do_scsi_rw(UWORD rw, ULONG sector, UWORD count, UBYTE *buf, WORD dev
     info.cdblen = build_rw_command(cdb, rw, sector, count);
     info.bufptr = buf;
     info.buflen = count * SECTOR_SIZE;
+    /* calculate conservative transfer time, for use as timeout */
+    info.xfer_time = max(SHORT_TIMEOUT, (info.buflen/BYTES_PER_CLOCK));
     info.mode = rw ? WRITE_MODE : 0;
 
     /* execute command */
-    ret = do_scsi_io(dev, &info);
+    ret = send_scsi_command(dev, &info);
 
     return decode_scsi_status(dev, ret);
 }
@@ -1396,8 +1383,9 @@ static LONG scsi_capacity(WORD dev, ULONG *buffer)
     info.cdbptr = cdb;
     info.cdblen = 10;
     info.bufptr = (void *)buffer;
-    info.buflen = CAPACITY_LENGTH;
-    ret = do_scsi_io(dev, &info);
+    info.buflen = READCAP_LENGTH;
+    info.xfer_time = SHORT_TIMEOUT;
+    ret = send_scsi_command(dev, &info);
 
     return decode_scsi_status(dev, ret);
 }
@@ -1417,21 +1405,14 @@ static LONG scsi_inquiry(WORD dev, UBYTE *buffer)
     info.cdblen = 6;
     info.bufptr = buffer;
     info.buflen = INQUIRY_LENGTH;
-    ret = do_scsi_io(dev, &info);
+    info.xfer_time = SHORT_TIMEOUT;
+    ret = send_scsi_command(dev, &info);
 
     return decode_scsi_status(dev, ret);
 }
 #endif
 
 #if (CONF_WITH_ACSI || CONF_WITH_SCSI)
-/*
- * SCSI commands used by build_rw_command()
- */
-#define READ6           0x08
-#define WRITE6          0x0a
-#define READ10          0x28
-#define WRITE10         0x2a
-
 /*
  * build ACSI/SCSI read/write command
  * returns length of command built

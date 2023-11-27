@@ -108,6 +108,9 @@ typedef struct {
 
 extern MCF_COOKIE cookie_mcf;
 
+/* MCF_DSPI_DTFR value for SPI chip select. */
+extern ULONG cf_spi_chip_select;
+
 void setvalue_mcf(void);
 
 #if CONF_WITH_FLEXCAN

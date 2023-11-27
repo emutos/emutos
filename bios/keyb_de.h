@@ -1,7 +1,7 @@
 /*
- * keyb_de.h - a keyboard layout definition
+ * keyb_de.h - German keyboard layout definition
  *
- * Copyright (C) 2001-2016 The EmuTOS development team
+ * Copyright (C) 2001-2023 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

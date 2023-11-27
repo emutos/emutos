@@ -534,7 +534,10 @@ void screen_init_mode(void)
         }
 #endif /* CONF_WITH_NVRAM */
 
-        if (!lookup_videl_mode(boot_resolution,monitor_type)) { /* mode isn't in table */
+        /* try to ensure it corresponds to monitor */
+        current_video_mode = boot_resolution;       /* needed by vfixmode() */
+        boot_resolution = vfixmode(boot_resolution);
+        if (!lookup_videl_mode(boot_resolution)) {  /* mode isn't in table */
             KDEBUG(("Invalid video mode 0x%04x changed to 0x%04x\n",
                     boot_resolution,FALCON_DEFAULT_BOOT));
             boot_resolution = FALCON_DEFAULT_BOOT;  /* so pick one that is */
@@ -546,14 +549,12 @@ void screen_init_mode(void)
             boot_resolution = FALCON_DEFAULT_BOOT;  /* so use default */
         }
 
-        /* initialise the current video mode, for vfixmode()/vsetmode() */
-        current_video_mode = boot_resolution;
-
-        /* fix the video mode according to the actual monitor */
-        boot_resolution = vfixmode(boot_resolution);
-        KDEBUG(("Fixed boot video mode is 0x%04x\n", boot_resolution));
+        /* vsetmode() now uses vfixmode() to adjust the video mode
+         * according to the actual monitor
+         */
         vsetmode(boot_resolution);  /* sets 'sshiftmod' */
         rez = sshiftmod;
+        KDEBUG(("Fixed boot video mode is 0x%04x\n",vsetmode(-1)));
     }
     else
 #endif /* CONF_WITH_VIDEL */
@@ -1120,7 +1121,7 @@ WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
                     UBYTE *addr = (UBYTE *)Srealloc(vgetsize(videlmode));
                     if (!addr)      /* Srealloc() failed */
                         return -1;
-                    KDEBUG(("screen realloc'd to %d\n", addr));
+                    KDEBUG(("screen realloc'd to %p\n", addr));
                     v_bas_ad = addr;
                     setphys(addr);
                 }
@@ -1141,7 +1142,8 @@ WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
 
     /* Re-initialize line-a, VT52 etc: */
     linea_init();
-    vt52_init();
+    if (v_planes < 16)
+        vt52_init();
 
     return oldmode;
 }

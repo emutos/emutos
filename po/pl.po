@@ -144,7 +144,7 @@ msgid "[1]["
 "[Cancel|Retry]"
 msgstr "[1]["
 "Dane na dysku w stacji %c:|"
-"mog± by popsute.]"
+"mog± byæ popsute.]"
 "[Anuluj|Ponów]"
 
 #: aes/gem_rsc.c
@@ -164,7 +164,7 @@ msgid "[1]["
 "[Cancel|Retry]"
 msgstr "[1]["
 "Twoje urz±dzenie wyj¶cia nie|"
-"otrzymuje danych.]"
+"odbiera danych.]"
 "[Anuluj|Ponów]"
 
 #: aes/gem_rsc.c
@@ -201,8 +201,8 @@ msgid "[1]["
 "[  OK  ]"
 msgstr "[1]["
 "Ten program nie ma miejsca,|"
-"by otworzyæ nastêpny|"
-"dokument. By zrobiæ miejsce,|"
+"aby otworzyæ kolejny|"
+"dokument. Aby zrobiæ miejsce,|"
 "zamknij nieu¿ywane dokumenty.]"
 "[  OK  ]"
 
@@ -216,8 +216,8 @@ msgid "[1]["
 msgstr "[1]["
 "Przedmiot z t± nazw± ju¿|"
 "istnieje w katalogu,|"
-"lub przedmiot jest ustawiony|"
-"na status Tylko odczyt.]"
+"lub ma on ustawiony|"
+"status Tylko odczyt.]"
 "[  OK  ]"
 
 #: aes/gem_rsc.c
@@ -238,7 +238,7 @@ msgid "[1]["
 "to run.]"
 "[  OK  ]"
 msgstr "[1]["
-"Nie ma wystarczaj±cej|"
+"Nie ma wystarczaj±co|"
 "pamiêci w komputerze dla|"
 "programu, który chciano|"
 "uruchomiæ.]"
@@ -429,7 +429,7 @@ msgstr "  Cykluj okna"
 
 #: desk/desk_rsc.c
 msgid "  Select all items"
-msgstr "  Wybierz wszystkie przedmioty"
+msgstr "  Wybierz wszystko"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
@@ -469,7 +469,7 @@ msgstr "  Sortuj - typ"
 
 #: desk/desk_rsc.c
 msgid "  Sort by size"
-msgstr "  Sortuj - Rozmiar"
+msgstr "  Sortuj - rozmiar"
 
 #: desk/desk_rsc.c
 msgid "  Sort by date"
@@ -573,7 +573,7 @@ msgstr "(C) 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c
 msgid "EmuTOS is distributed under the GPL"
-msgstr "EmuTOS jest dystrybutowany po GPL"
+msgstr "EmuTOS jest dystrybutowany pod GPL"
 
 #: desk/desk_rsc.c
 msgid "See doc\\license.txt for details"
@@ -741,7 +741,7 @@ msgstr "Skróty klawiszowe menu:"
 
 #: desk/desk_rsc.c
 msgid "Clear all"
-msgstr "Wyczy¶æ wszystkie"
+msgstr "Wyczy¶æ wszystko"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
@@ -797,7 +797,7 @@ msgstr "Plik"
 
 #: desk/desk_rsc.c
 msgid "Monochrome only"
-msgstr "Tylko cz.-b."
+msgstr "Tylko monochrom"
 
 #: desk/desk_rsc.c
 msgid "FORMAT FLOPPY DISKETTE"
@@ -813,7 +813,7 @@ msgstr "Dwu-stronna"
 
 #: desk/desk_rsc.c
 msgid "High density"
-msgstr "Wysokiej gêsto¶ci"
+msgstr "Wysoka gêsto¶æ"
 
 #: desk/desk_rsc.c
 msgid "SET BACKGROUND"
@@ -917,7 +917,7 @@ msgid "[1]["
 "Print error!]"
 "[ Retry | Cancel ]"
 msgstr "[1]["
-"B³±d druku!]"
+"B³±d wydruku!]"
 "[Ponów|Anuluj]"
 
 #: desk/desk_rsc.c
@@ -984,7 +984,7 @@ msgid "[1]["
 "or applications.]"
 "[  OK  ]"
 msgstr "[1]["
-"Niestety, pulpit nie mo¿e|"
+"Wybacz, pulpit nie mo¿e|"
 "doda¿ wiêcej ikon lub|"
 "programów.]"
 "[  OK  ]"
@@ -1036,7 +1036,7 @@ msgstr "[3]["
 "Nie mo¿esz stworzyæ lub|"
 "mieæ dostêpu do pliku lub|"
 "folderu z t± nazw±, poniewa¿|"
-"nazwa ¶cie¿ki jest zbyt d³uga.]"
+"nazwa ¶cie¿ki jest za d³uga.]"
 "[  OK  ]"
 
 #: desk/desk_rsc.c
@@ -1046,8 +1046,8 @@ msgid "[1]["
 "or folders.]"
 "[  OK  ]"
 msgstr "[1]["
-"%s jest u¿ywane, by|"
-"trwale usuwaæ pliki|"
+"%s jest u¿ywane, aby|"
+"trwale usun±æ pliki|"
 "lub foldery.]"
 "[  OK  ]"
 
@@ -1070,7 +1070,7 @@ msgid "[1]["
 msgstr "[1]["
 "Nie mo¿esz przeci±gaæ|"
 "programów, plików lub|"
-"folder na pulpit.]"
+"folderów na pulpit.]"
 "[  OK  ]"
 
 #: desk/desk_rsc.c
@@ -1105,9 +1105,9 @@ msgid "[2]["
 "Do you want to reassign it?]"
 "[  OK  |Cancel]"
 msgstr "[2]["
-"Klawisz funkcji ju¿|"
+"Klawisz funkcji jest ju¿|"
 "przydzielony. Chcesz go|"
-"znów przydzieliæ?]"
+"znowu przydzieliæ?]"
 "[  OK  |Anuluj]"
 
 #: desk/desk_rsc.c
@@ -1157,7 +1157,7 @@ msgid "[3]["
 "or unusable.]"
 "[ Retry | Abort ]"
 msgstr "[3]["
-"B³±d formatowania. Cel mo¿e|"
+"B³±d formatowania. Dysk mo¿e|"
 "byæ chroniony przed zapisem|"
 "lub nie do u¿ycia.]"
 "[ Ponów |Przerwij]"
@@ -1204,7 +1204,7 @@ msgid "[1]["
 "%s]"
 "[ Skip | Retry | Abort ]"
 msgstr "[1]["
-"Nie mo¿na usun±æ folderu|"
+"Nie mo¿na usun±æ kat.|"
 "%s]"
 "[ Pomiñ | Ponów |Przerwij]"
 
@@ -1240,7 +1240,7 @@ msgid "[1]["
 "%s]"
 "[ Skip | Retry | Abort ]"
 msgstr "[1]["
-"Nie mo¿na stworzyæ pliku|"
+"Nie mo¿na utworzyæ pliku|"
 "%s]"
 "[ Pomiñ | Ponów |Przerwij]"
 

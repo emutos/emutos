@@ -17,6 +17,12 @@ extern int is_aranym;
   #define IS_ARANYM 0
 #endif
 
+#if DETECT_NATIVE_FEATURES
+  #define HAS_NATFEATS has_natfeats()   /* declared in natfeat.h */
+#else
+  #define HAS_NATFEATS 0
+#endif
+
 #if CONF_WITH_STE_SHIFTER
 extern int has_ste_shifter;
   #define HAS_STE_SHIFTER has_ste_shifter

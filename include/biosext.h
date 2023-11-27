@@ -79,6 +79,10 @@ void halt(void) NORETURN;
 BOOL can_shutdown(void);
 #endif
 
+#if CONF_WITH_EJECT
+void flop_eject(void);
+#endif
+
 #if CONF_WITH_EXTENDED_MOUSE
 extern void (*mousexvec)(WORD scancode);    /* Additional mouse buttons */
 #endif

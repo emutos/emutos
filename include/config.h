@@ -253,6 +253,9 @@
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 0
 # endif
+# ifndef CONF_WITH_SCSI_DRIVER
+#  define CONF_WITH_SCSI_DRIVER 0
+# endif
 # ifndef CONF_WITH_STE_SHIFTER
 #  define CONF_WITH_STE_SHIFTER 0
 # endif
@@ -476,6 +479,9 @@
 # ifndef CONF_WITH_SCSI
 #  define CONF_WITH_SCSI 0
 # endif
+# ifndef CONF_WITH_SCSI_DRIVER
+#  define CONF_WITH_SCSI_DRIVER 0
+# endif
 # ifndef CONF_WITH_TT_MFP
 #  define CONF_WITH_TT_MFP 0
 # endif
@@ -596,6 +602,9 @@
 # ifndef CONF_WITH_CACHE_CONTROL
 #  define CONF_WITH_CACHE_CONTROL 0
 # endif
+# ifndef CONF_WITH_EJECT
+#  define CONF_WITH_EJECT 1
+# endif
 # ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
    /* This makes LisaEm timings completely inaccurate, so disable it */
 #  define USE_STOP_INSN_TO_FREE_HOST_CPU 0
@@ -620,6 +629,9 @@
 # endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 1
+# endif
+# ifndef CONF_WITH_SDMMC
+#  define CONF_WITH_SDMMC 1
 # endif
 # ifndef CONF_WITH_FLEXCAN
 #  define CONF_WITH_FLEXCAN 1
@@ -709,6 +721,9 @@
 # endif
 # ifndef CONF_WITH_IDE
 #  define CONF_WITH_IDE 0
+# endif
+# ifndef CONF_WITH_SCSI_DRIVER
+#  define CONF_WITH_SCSI_DRIVER 0
 # endif
 # ifndef CONF_WITH_ATARI_VIDEO
 #  define CONF_WITH_ATARI_VIDEO 0
@@ -1095,7 +1110,6 @@
 #ifndef CONF_WITH_ULTRASATAN_CLOCK
 # define CONF_WITH_ULTRASATAN_CLOCK CONF_WITH_ACSI
 #endif
-
 
 /*
  * Set CONF_WITH_DMASOUND to 1 to enable support for STe/TT/Falcon DMA sound
@@ -1493,13 +1507,6 @@
 #endif
 
 /*
- * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
- */
-#ifndef CONF_WITH_XHDI
-# define CONF_WITH_XHDI 1
-#endif
-
-/*
  * Set the default baud rate for serial ports.
  */
 #ifndef DEFAULT_BAUDRATE
@@ -1536,6 +1543,7 @@
 #ifndef CONF_WITH_1FAT_SUPPORT
 # define CONF_WITH_1FAT_SUPPORT 0
 #endif
+
 
 
 /********************************************************
@@ -1632,6 +1640,28 @@
  */
 #ifndef NUM_VDI_HANDLES
 # define NUM_VDI_HANDLES 128    /* maximum number of open workstations */
+#endif
+
+
+
+/************************************************************************
+ *  S O F T W A R E   S E C T I O N   -   3 R D   P A R T Y   A P I     *
+ ************************************************************************/
+
+/*
+ * set CONF_WITH_SCSI_DRIVER to 1 to activate support for the SCSI driver
+ * API, which allows user programs to issue SCSI-style commands directly
+ * to devices.  see the documentation by Steffen Engel for more details.
+ */
+#ifndef CONF_WITH_SCSI_DRIVER
+# define CONF_WITH_SCSI_DRIVER 1
+#endif
+
+/*
+ * Set CONF_WITH_XHDI to 1 to enable XHDI support (i.e. the XHDI cookie etc.)
+ */
+#ifndef CONF_WITH_XHDI
+# define CONF_WITH_XHDI 1
 #endif
 
 
@@ -1956,6 +1986,14 @@
 # else
 #  define CONF_WITH_SHUTDOWN 0
 # endif
+#endif
+
+/*
+ * Set CONF_WITH_EJECT to 1 to enable automatic floppy eject.
+ * This isn't available on Atari hardware.
+ */
+#ifndef CONF_WITH_EJECT
+# define CONF_WITH_EJECT 0
 #endif
 
 /*
