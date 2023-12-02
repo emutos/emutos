@@ -547,6 +547,9 @@ LONG gpio(UWORD mode, UWORD data)
     if (!SOUND_IS_AVAILABLE)
         return 0x8a;    /* unimplemented xbios call: return function # */
 
+    if (!has_falcon_dmasound)
+        return EBADRQ;
+
     switch (mode)
     {
      case 0:             /* Set direction */
