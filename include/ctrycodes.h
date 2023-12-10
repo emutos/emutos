@@ -48,6 +48,7 @@
  */
 #define COUNTRY_PL 17   /* Poland */
 #define COUNTRY_RU 19   /* Russia */
+#define COUNTRY_RO 24   /* Romania */
 #define COUNTRY_GR 31   /* Greece */
 
 /*
