@@ -122,7 +122,7 @@ msgid "[1]["
 msgstr "[1]["
 "Discul din unitatea %c: este|"
 "fizic protejat la scriere.]"
-"[Anulaþi|Reîncercaþi]"
+"[Anulaþi|Reîncerc.]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
@@ -134,7 +134,7 @@ msgstr "[2]["
 "Unitatea %c: nu rãspunde.|"
 "Verificaþi unitatea de discuri|"
 "sau introduceþi un disc.]"
-"[Anulaþi|Reîncercaþi]
+"[Anulaþi|Reîncerc.]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -143,9 +143,9 @@ msgid "[1]["
 "[Cancel|Retry]"
 msgstr "[1]["
 "Este posibil ca datele de pe|"
-"discul din unitatea %c: sã|
+"discul din unitatea %c: sã|"
 "fie deteriorate.]"
-"[Anulaþi|Reîncercaþi]"
+"[Anulaþi|Reîncerc.]"
 
 #: aes/gem_rsc.c
 msgid "[2]["
@@ -156,7 +156,7 @@ msgstr "[2]["
 "Aceastã aplicaþie nu poate|"
 "citi datele de pe discul din|"
 "unitatea %c:.]"
-"[Anulaþi|Reîncercaþi]"
+"[Anulaþi|Reîncerc.]"
 
 #: aes/gem_rsc.c
 msgid "[1]["
@@ -166,7 +166,7 @@ msgid "[1]["
 msgstr "[1]["
 "Dispozitivul de ieºire nu|"
 "primeºte date.]"
-"[Anulaþi|Reîncercaþi]"
+"[Anulaþi|Reîncerc.]"
 
 #: aes/gem_rsc.c
 msgid "[3]["
@@ -188,8 +188,8 @@ msgid "[2]["
 "[  OK  ]"
 msgstr "[2]["
 "Aceastã aplicaþie nu poate gãsi|"
-"dosarul sau fiºierul pe care tocmai|"
-"aþi încercat sã îl accesaþi.]"
+"dosarul sau fiºierul pe care|"
+"tocmai aþi încercat sã îl accesaþi.]"
 "[  OK  ]"
 
 #: aes/gem_rsc.c
@@ -919,7 +919,7 @@ msgid "[1]["
 "[ Retry | Cancel ]"
 msgstr "[1]["
 "Eroare de imprimare!]"
-"[Reîncercaþi|Anulaþi]"
+"[Reîncerc.|Anulaþi]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -999,9 +999,9 @@ msgid "[2]["
 "[Cancel|Retry]"
 msgstr "[2]["
 "Nu puteþi crea un dosar cu|"
-"acest nume. Reîncercaþi cu un|"
+"acest nume. Reîncerc. cu un|"
 "nume mou sau anulaþi.]"
-"[Anulaþi|Reîncercaþi]"
+"[Anulaþi|Reîncerc.]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1163,7 +1163,7 @@ msgstr "[3]["
 "posibil ca discul þintã sã|"
 "fie protejat la scriere sau|"
 "inutilizabil.]"
-"[Reîncercaþi|Anulaþi]"
+"[Reîncerc.|Anulaþi]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1188,9 +1188,9 @@ msgid "[1]["
 "No drive identifier.]"
 "[ Retry ]"
 msgstr "[1]["
-"Nu existã un identificator|
+"Nu existã un identificator|"
 "de unitate.]"
-"[Reîncercaþi]"
+"[Reîncerc.]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1200,7 +1200,7 @@ msgid "[1]["
 msgstr "[1]["
 "Nu se poate ºterge|"
 "fiºierul %s]"
-"[Sãriþi|Reîncercaþi|Anulaþi]"
+"[Sãriþi|Reîncerc.|Anulaþi]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1210,7 +1210,7 @@ msgid "[1]["
 msgstr "[1]["
 "Nu se poate ºterge|"
 "directorul %s]"
-"[Sãriþi|Reîncercaþi|Anulaþi]"
+"[Sãriþi|Reîncerc.|Anulaþi]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1236,7 +1236,7 @@ msgid "[1]["
 msgstr "[1]["
 "Nu se poate deschide fiºierul|"
 "%s]"
-"[Sãriþi|Reîncercaþi|Anulaþi]"
+"[Sãriþi|Reîncerc.|Anulaþi]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1246,7 +1246,7 @@ msgid "[1]["
 msgstr "[1]["
 "Nu se poate crea fiºierul|"
 "%s]"
-"[Sãriþi|Reîncercaþi|Anulaþi]"
+"[Sãriþi|Reîncerc.|Anulaþi]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1274,7 +1274,7 @@ msgid "[1]["
 "[ Retry | Cancel ]"
 msgstr "[1]["
 "Eroare de redenumire!]"
-"[Reîncercaþi|Anulaþi]"
+"[Reîncerc.|Anulaþi]"
 
 #: desk/desk_rsc.c
 msgid "[1]["
@@ -1316,273 +1316,273 @@ msgid "[2]["
 "Do you want to reassign it?]"
 "[  OK  |Cancel]"
 msgstr "[2]["
-"Ultimã tastã este deja atribuitã.|"
+"Ultimã tastã este deja atribuitã|"
 "Doriþi sã o realocaþi?]"
 "[  OK  |Anulaþi]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
-msgstr "Copier <filespec> ... vers la sortie standard"
+msgstr "Copiazã <specfiº> ... pe ieºirea standard"
 
 #: cli/cmdint.c
 msgid "Change current directory to <dir>"
-msgstr "Changer le rï¿½pertoire courant vers <dir>"
+msgstr "Schimbaþi directorul curent în <dir>"
 
 #: cli/cmdint.c
 msgid "or display current directory"
-msgstr "ou afficher le rï¿½pertoire courant"
+msgstr "sau afiºaþi directorul curent"
 
 #: cli/cmdint.c
 msgid "Change attributes for <filename>"
-msgstr "Changer les attributs de <filename>"
+msgstr "Modificarea atributelor pentru <nume de fiºier>"
 
 #: cli/cmdint.c
 msgid "<mode> specifies the new attribute(s):"
-msgstr "<mode> spï¿½cifie les nouveaux attributs:"
+msgstr "<mod> specificã noul/ile atribut(e)"
 
 #: cli/cmdint.c
 msgid "r=read-only  h=hidden  s=system  -=none"
-msgstr "r=lecture seule  h=cachï¿½  s=systï¿½me  -=aucun"
+msgstr "r=doar citire  h=ascuns  s=sistem  -=niciunul"
 
 #: cli/cmdint.c
 msgid "Clear screen"
-msgstr "Effacer l'ï¿½cran"
+msgstr "ªtergeþi ecranul"
 
 #: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dest>"
-msgstr "Copier les fichiers correspondant ï¿½ <filespec> vers <dest>"
+msgstr "Copiazã fiºierele care corespund cu <specfiº> în <dest>"
 
 #: cli/cmdint.c
 msgid "If <filespec> matches multiple files,"
-msgstr "Si <filespec> correspond ï¿½ plusieurs fichiers,"
+msgstr "Dacã <specfiº> se potriveºte cu mai multe fiºiere,"
 
 #: cli/cmdint.c
 msgid "<dest> must be a directory"
-msgstr "<dest> doit ï¿½tre un rï¿½pertoire"
+msgstr "<dest> trebuie sã fie un director"
 
 #: cli/cmdint.c
 msgid "Copy <string> ... to standard output"
-msgstr "Copier <string> ... vers la sortie standard"
+msgstr "Copiazã <ºir> ... pe ieºirea standard"
 
 #: cli/cmdint.c
 msgid "Strings may be surrounded by \"\""
-msgstr "Les chaines peuvent ï¿½tre mises entre \"\""
+msgstr "ªirurile de caractere pot fi înconjurate de \"\""
 
 #: cli/cmdint.c
 msgid "Exit EmuCON2"
-msgstr "Quitter EmuCON2"
+msgstr "Ieºire EmuCON2"
 
 #: cli/cmdint.c
 msgid "Get help about <cmd> or list available commands"
-msgstr "Obtenir de l'aide ï¿½ propos de <cmd> ou lister les commandes disponibles"
+msgstr "Obþineþi ajutor despre <cmd> sau lista comenzilor disponibile"
 
 #: cli/cmdint.c
 msgid "Use HELP ALL for help on all commands"
-msgstr "Utiliser HELP ALL pour afficher l'aide de toutes les commandes"
+msgstr "Utilizaþi HELP ALL pentru ajutor pentru toate comenzile"
 
 #: cli/cmdint.c
 msgid "Use HELP EDIT for help on line editing"
-msgstr "Utiliser HELP EDIT pour l'aide sur la ligne de commandes"
+msgstr "Utilizaþi HELP EDIT pentru ajutor la editarea în linie"
 
 #: cli/cmdint.c
 msgid "List files (default terse, horizontal)"
-msgstr "Lister les fichiers (par dï¿½faut : succinct, horizontal)"
+msgstr "Lista fiºierelor (implicit laconicã, orizontalã)"
 
 #: cli/cmdint.c
 msgid "Specify -l for detailed list"
-msgstr "Spï¿½cifier -l pour une liste dï¿½taillï¿½e"
+msgstr "Specificaþi -l pentru o listã detaliatã"
 
 #: cli/cmdint.c
 msgid "Create directory <dir>"
-msgstr "Crï¿½er le rï¿½pertoire <dir>"
+msgstr "Creaþi directorul <dir>"
 
 #: cli/cmdint.c
 msgid "Set or display console settings:"
-msgstr "Dï¿½finir ou afficher les paramï¿½tres de la console:"
+msgstr "Setaþi sau afiºaþi setãrile consolei:"
 
 #: cli/cmdint.c
 msgid "res for screen resolution (0,1)[ST] (0,1,2,4,7)[TT];"
-msgstr "res: rï¿½solution de l'ï¿½cran (0,1)[ST] (0,1,2,4,7)[TT];"
+msgstr "res pentru rezoluþia ecranului (0,1)[ST] (0,1,2,4,7)[TT];"
 
 #: cli/cmdint.c
 msgid "delay/rate for the keyboard"
-msgstr "dï¿½lai/vitesse de rï¿½pï¿½tition du clavier"
+msgstr "delay/rate pentru tastaturã"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> to standard output,"
-msgstr "Copier <filespec> vers la sortie standard,"
+msgstr "Copiazã <specfiº> pe ieºirea standard,"
 
 #: cli/cmdint.c
 msgid "pausing every screenful"
-msgstr "en marquant une pause ï¿½ chaque page"
+msgstr "fãcând o pauzã la fiecare ecranare"
 
 #: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dir>,"
-msgstr "Copier les fichiers correspondant ï¿½ <filespec> vers <dir>,"
+msgstr "Copiazã fiºierele care se potrivesc cu <specfiº> în <dir>,"
 
 #: cli/cmdint.c
 msgid "then delete input files"
-msgstr "puis supprimer les fichiers sources"
+msgstr "apoi ºterge fiºierele de intrare"
 
 #: cli/cmdint.c
 msgid "Set search path for external programs"
-msgstr "Dï¿½finir le chemin de recherche des programmes externes"
+msgstr "Setaþi calea de cãutare pentru programele externe"
 
 #: cli/cmdint.c
 msgid "or display current search path"
-msgstr "ou afficher le chemin de recherche actuel"
+msgstr "sau afiºaþi calea de cãutare curentã"
 
 #: cli/cmdint.c
 msgid "Display current drive and directory"
-msgstr "Afficher le lecteur et le rï¿½pertoire courants"
+msgstr "Afiºeazã unitatea ºi directorul curent"
 
 #: cli/cmdint.c
 msgid "Rename <oldname> to <newname>"
-msgstr "Renommer <oldname> en <newname>"
+msgstr "Redenumiþi <numevechi> în <numenou>"
 
 #: cli/cmdint.c
 msgid "Delete files matching <filespec>"
-msgstr "Supprimer les fichiers correspondant ï¿½ <filespec>"
+msgstr "ªterge fiºierele care corespund cu <specfiº>"
 
 #: cli/cmdint.c
 msgid "Specify -q to be prompted each time"
-msgstr "Spï¿½cifier -q pour demander une confirmation ï¿½ chaque fois"
+msgstr "Specificaþi -q pentru a fi solicitat de fiecare datã"
 
 #: cli/cmdint.c
 msgid "Delete directory <dir>"
-msgstr "Supprimer le rï¿½petoire <dir>"
+msgstr "ªtergeþi directorul <dir>"
 
 #: cli/cmdint.c
 msgid "Show info for <drive> or current drive"
-msgstr "Afficher les informations pour <drive> ou le lecteur courant"
+msgstr "Afiºeazã informaþii pentru <unitate> sau unitatea curentã"
 
 #: cli/cmdint.c
 msgid "Display GEMDOS version"
-msgstr "Afficher la version du GEMDOS"
+msgstr "Afiºeazã versiunea GEMDOS"
 
 #: cli/cmdint.c
 msgid "Set line wrap or show current status"
-msgstr "Activer le retour ï¿½ la ligne ou affiche l'ï¿½tat actuel"
+msgstr "Seteazã înfãºurarea liniei sau afiºeazã starea curentã"
 
 #: cli/cmdint.c
 msgid "up/down arrow = previous/next line in history"
-msgstr "flï¿½che haut/bas = ligne prï¿½cï¿½dente/suivante dans l'historique"
+msgstr "sãgeatã sus/jos = linia anterioarã/urmãtoare din istoric"
 
 #: cli/cmdint.c
 msgid "left/right arrow = previous/next character"
-msgstr "flï¿½che gauche/droite = caractï¿½re prï¿½cï¿½dent/suivant"
+msgstr "sãgeatã stânga/dreapta = caracterul anterior/urmãtor"
 
 #: cli/cmdint.c
 msgid "control-left/right arrow = previous/next word"
-msgstr "control-flï¿½che gauche/droite = mot prï¿½cï¿½dent/suivant"
+msgstr "control-sãgeatã stânga/dreapta = cuvânt anterior/urmãtor"
 
 #: cli/cmdint.c
 msgid "invalid mode argument"
-msgstr "argument mode invalide"
+msgstr "argument de mod invalid"
 
 #: cli/cmdint.c
 msgid "Builtin commands:"
-msgstr "Commandes internes :"
+msgstr "Comenzi încorporate:"
 
 #: cli/cmdint.c
 msgid "Listing of "
-msgstr "Contenu de "
+msgstr "Lista de "
 
 #: cli/cmdint.c
 msgid "Status for CON:"
-msgstr "Statut de CON:"
+msgstr "Statutul pentru CON:"
 
 #: cli/cmdint.c
 msgid "  Resolution:     "
-msgstr "  Rï¿½solution:                      "
+msgstr "  Rezoluþia:    "
 
 #: cli/cmdint.c
 msgid "  Keyboard delay: "
-msgstr "  Dï¿½lai de rï¿½pï¿½tition du clavier:  "
+msgstr "  Întârzierea de tastaturã:  "
 
 #: cli/cmdint.c
 msgid "  Keyboard rate:  "
-msgstr "  Vitesse de rï¿½pï¿½tition du clavier:"
+msgstr "  Viteza de tastaturã:  "
 
 #: cli/cmdint.c
 msgid "(empty)"
-msgstr "(vide)"
+msgstr "(gol)"
 
 #: cli/cmdint.c
 msgid "Delete ALL matching files"
-msgstr "Supprimer TOUS les fichiers correspondants"
+msgstr "ªtergeþi TOATE fiºierele corespunzãtoare"
 
 #: cli/cmdint.c
 msgid "Delete file "
-msgstr "Supprimer le fichier "
+msgstr "ªtergeþi fiºierul "
 
 #: cli/cmdint.c
 msgid "Allocation info for drive "
-msgstr "Utilisation du lecteur "
+msgstr "Informaþii pentru unitate "
 
 #: cli/cmdint.c
 msgid "  Size (bytes):   "
-msgstr "  Taille (octets) :    "
+msgstr "  Mãrime (byte):    "
 
 #: cli/cmdint.c
 msgid "  Bytes used:     "
-msgstr "  Octets utilisï¿½s :    "
+msgstr "  Byte utilizaþi:    "
 
 #: cli/cmdint.c
 msgid "  Bytes free:     "
-msgstr "  Octets libres :      "
+msgstr "  Byte libere:      "
 
 #: cli/cmdint.c
 msgid "  Total clusters: "
-msgstr "  Total des clusters : "
+msgstr "  Total clustere: "
 
 #: cli/cmdint.c
 msgid "  Free clusters:  "
-msgstr "  Clusters libres :    "
+msgstr "  Clustere libere:    "
 
 #: cli/cmdint.c
 msgid "  Sectors/cluster:"
-msgstr "  Secteurs/cluster :   "
+msgstr "  Sectoare/clustere:   "
 
 #: cli/cmdint.c
 msgid "  Bytes/sector:   "
-msgstr "  Octets/secteur :     "
+msgstr "  Byte/sector:     "
 
 #: cli/cmdint.c
 msgid " is not a directory"
-msgstr " n'est pas un rï¿½pertoire"
+msgstr " nu este un director"
 
 #: cli/cmdint.c
 msgid " and "
-msgstr " et "
+msgstr " ºi "
 
 #: cli/cmdint.c
 msgid "Copying "
-msgstr "Copie de "
+msgstr "Copierea "
 
 #: cli/cmdint.c
 msgid " to "
-msgstr " vers "
+msgstr " în "
 
 #: cli/cmdint.c
 msgid " ... deleting "
-msgstr " ... suppression "
+msgstr " ... ºtergerea "
 
 #: cli/cmdint.c
 msgid " ... done"
-msgstr " ... fait"
+msgstr " ... fãcut"
 
 #: cli/cmdint.c
 msgid " or "
-msgstr " ou "
+msgstr " sau "
 
 #: cli/cmdint.c
 msgid "CR to continue ..."
-msgstr "Entrï¿½e pour continuer..."
+msgstr "Enter pentru a continua"
 
 #: cli/cmdint.c
 msgid "--More--"
-msgstr "--Plus--"
+msgstr "--Mai mult--"
 
 #: cli/cmdmain.c
 msgid "Welcome to EmuCON2 version "
