@@ -189,7 +189,8 @@ msgid "[2]["
 msgstr "[2]["
 "Aceastã aplicaþie nu poate gãsi|"
 "dosarul sau fiºierul pe care|"
-"tocmai aþi încercat sã îl accesaþi.]"
+"tocmai aþi încercat sã îl|"
+"accesaþi.]"
 "[  OK  ]"
 
 #: aes/gem_rsc.c
