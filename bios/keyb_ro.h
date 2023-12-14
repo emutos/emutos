@@ -45,7 +45,7 @@ static const UBYTE keytbl_ro_shft[] = {
        0,    0,    0,    0,    0,    0,    0,    0,
 };
 
-static const UBYTE keytbl_pl_caps[] = {
+static const UBYTE keytbl_ro_caps[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
      '7',  '8',  '9',  '0',  '-',  '=', 0x08, 0x09,
      'Q',  'W',  'E',  'R',  'T',  'Y',  'U',  'I',
