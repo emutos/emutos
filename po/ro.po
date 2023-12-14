@@ -547,7 +547,7 @@ msgstr "INFORMAÞII DESPRE DISC"
 
 #: desk/desk_rsc.c
 msgid "Version"
-msgstr "Versiunea"
+msgstr "Ediþie"
 
 #: desk/desk_rsc.c
 msgid "Copyright \275 2001-"
@@ -619,7 +619,7 @@ msgstr "INSTALAÞI APLICAÞIA"
 
 #: desk/desk_rsc.c
 msgid "Boot status:"
-msgstr "Starea de pornire:"
+msgstr "Starea de boot:"
 
 #: desk/desk_rsc.c
 msgid "Auto"
@@ -703,7 +703,7 @@ msgstr "Format de timp:"
 
 #: desk/desk_rsc.c
 msgid "Default"
-msgstr "Dï¿½faut"
+msgstr "Implicit"
 
 #: desk/desk_rsc.c
 msgid "12H"
@@ -1672,3 +1672,4 @@ msgstr "numãr greºit de argumente"
 #: cli/cmdutil.c
 msgid "error code %ld"
 msgstr "cod de eroare %ld"
+
