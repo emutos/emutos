@@ -379,7 +379,7 @@ msgstr "Jmenovka: ________.___"
 
 #: desk/desk_rsc.c
 msgid " Desk "
-msgstr " Desk "
+msgstr " Desktop "
 
 #: desk/desk_rsc.c
 msgid " File "
@@ -395,7 +395,7 @@ msgstr " Mo¾nosti "
 
 #: desk/desk_rsc.c
 msgid "  Desktop info..."
-msgstr "  Info o desktopu..."
+msgstr "  O desktopu..."
 
 #: desk/desk_rsc.c
 msgid "  Open"
@@ -403,7 +403,7 @@ msgstr "  Otevøít"
 
 #: desk/desk_rsc.c
 msgid "  Info/Rename..."
-msgstr "  Info/Jméno..."
+msgstr "  Pøejmenovat..."
 
 #: desk/desk_rsc.c
 msgid "  Search..."
@@ -599,7 +599,7 @@ msgstr "Jednotka"
 
 #: desk/desk_rsc.c
 msgid "Trash can"
-msgstr "Popelnice"
+msgstr "Ko¹"
 
 #: desk/desk_rsc.c
 msgid "Printer"
@@ -847,7 +847,7 @@ msgstr "INFORMACE O SOUBORU"
 
 #: desk/desk_rsc.c
 msgid "FOLDER INFORMATION"
-msgstr "INFORMACE O ODRESÁØI"
+msgstr "INFORMACE O ADRESÁØI"
 
 #: desk/desk_rsc.c
 msgid "COPY FILE(S)"
@@ -1299,7 +1299,7 @@ msgid "[1]["
 "No more files.]"
 "[  OK  ]"
 msgstr "[1]["
-"®ádne dal¹í soubory.]"
+"®ádné dal¹í soubory.]"
 "[  OK  ]"
 
 #: desk/desk_rsc.c
