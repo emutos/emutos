@@ -5,14 +5,16 @@ These special versions allow EmuTOS to be loaded from the filesystem
 This is the simplest way to test EmuTOS on real hardware.
 The drawback is less available RAM compared to ROM versions.
 
-These versions are suitable for the following hardware:
-- STe
-- Mega STe
+These versions are ONLY suitable for the following hardware:
+- ST(e)
+- Mega ST(e)
 - emulators of the above
+Some add-on hardware is autodetected, but there is NO support for the
+following TT- and Falcon-specific hardware: memory control unit, video,
+DSP, SCSI, NVRAM, and the second MFP of a TT.
 
-Note: Extra hardware is autodetected, but the following TT- and
-Falcon-specific hardware is not supported: memory control unit,
-video, DSP, SCSI, NVRAM, and the second MFP of a TT.
+As a result, these versions will NOT work properly, or at all, on the
+TT, Falcon or equivalent hardware.
 
 The desktop features are comparable to Atari TOS 2.
 
