@@ -35,6 +35,7 @@ The default language is English.  Other supported languages are:
 - Italian
 - Norwegian
 - Polish
+- Romanian
 - Russian
 - Spanish
 - Swedish
