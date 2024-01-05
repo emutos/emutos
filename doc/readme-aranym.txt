@@ -28,6 +28,7 @@ it - Italian
 nl - Dutch
 no - Norwegian
 pl - Polish
+ro - Romanian
 ru - Russian
 se - Swedish
 cd - Swiss German
