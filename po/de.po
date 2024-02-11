@@ -447,6 +447,10 @@ msgid "  Format floppy..."
 msgstr "  Formatiere Floppy..."
 
 #: desk/desk_rsc.c
+msgid "  Eject floppy"
+msgstr "  Floppy auswerfen"
+
+#: desk/desk_rsc.c
 msgid "  Execute EmuCON"
 msgstr "  Starte EmuCON"
 
@@ -1675,4 +1679,3 @@ msgstr "Falsche Zahl von Parametern"
 #: cli/cmdutil.c
 msgid "error code %ld"
 msgstr "Fehlercode %ld"
-
