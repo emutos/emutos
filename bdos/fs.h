@@ -150,7 +150,7 @@ struct _ofd
     CLNO  o_curcl;      /* current cluster number for file      */
     RECNO o_currec;     /* current record number for file       */
     UWORD o_curbyt;     /* byte pointer within current cluster  */
-    OFD   *o_thread;    /* mulitple open thread list            */
+    OFD   *o_thread;    /* multiple open thread list            */
     UWORD o_mod;        /* mode file opened in (see below)      */
 
     DFD   o_disk;       /* data to be synchronised with the disk*/

@@ -212,7 +212,7 @@ Bug analysis:
 During startup, the program switches to supervisor state via the Super()
 system call.  Subsequently, the supervisor stack overwrites the program's
 user stack.  On exit, the user stack pointer is restored and during this
-a corrupted value is loaded into the SR, causing a trace excpetion.
+a corrupted value is loaded into the SR, causing a trace exception.
 
 
 Program: CP/M-Z80 Emulator by SoftDesign

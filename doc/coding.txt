@@ -96,7 +96,7 @@ Because ColdFire has restricted address modes for certain instructions
 (move.m is a notable example), this may mean that you will have to use
 conditional compilation in some cases.
 
-Certain parts of the code may require 680x0 intructions that are not
+Certain parts of the code may require 680x0 instructions that are not
 present on the 68000: for example, processor detection needs this.  These
 must be generated via dc.w/dc.l.  In order to reduce the possibility of
 mistakes, there are now macros that will generate dc.w/dc.l statements

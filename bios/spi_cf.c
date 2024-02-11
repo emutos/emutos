@@ -119,7 +119,7 @@ void spi_initialise(void)
     MCF_DSPI_DCTAR1 = MMC_MODE;
     MCF_DSPI_DCTAR2 = IDENT_MODE;
 
-    /* Initialze the PAR_DPSI register to use correct pin functions.*/
+    /* Initialize the PAR_DPSI register to use correct pin functions.*/
     MCF_PAD_PAR_DSPI |= (
         MCF_PAD_PAR_DSPI_PAR_CS5 |
         MCF_PAD_PAR_DSPI_PAR_CS3_DSPICS3 |
