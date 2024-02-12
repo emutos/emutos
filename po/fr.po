@@ -278,6 +278,10 @@ msgid "ITEM SELECTOR"
 msgstr "SÉLECTEUR DE FICHIER"
 
 #: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "Nom: ________.___"
+
+#: desk/desk_rsc.c
 msgid "Number of folders:         _____"
 msgstr "Nombre de dossiers:        _____"
 
@@ -304,10 +308,6 @@ msgstr "Oui"
 #: desk/desk_rsc.c
 msgid "No"
 msgstr "Non"
-
-#: desk/desk_rsc.c
-msgid "Name: ________.___"
-msgstr "Nom: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size:   __________"
@@ -444,6 +444,10 @@ msgstr "  Supprimer..."
 #: desk/desk_rsc.c
 msgid "  Format floppy..."
 msgstr "  Formater disquette..."
+
+#: desk/desk_rsc.c
+msgid "  Eject floppy"
+msgstr "  Ejecter disquette"
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
