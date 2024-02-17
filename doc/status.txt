@@ -10,11 +10,11 @@ a ROM version of EmuTOS.
   system              |  ok?  | who |   date      |  details
   --------------------+-------+-----+-------------+----------------
   Emulators           |       |     |             |
-  ARAnyM 1.1.0        |  yes  | CZ  |  9 Jul 2022 |
-  Hatari v2.4.0       |  yes  | VRI | 31 Jul 2022 |
+  ARAnyM 1.1.0        |  yes  | CZ  | 17 Feb 2024 |
+  Hatari v2.4.0       |  yes  | CZ  | 17 Feb 2024 |
   PaCifiST v0.48      |   no  | (7) | 21 Jul 2021 | see (B)
   SainT v2.40         |  yes  | RFB | 29 Aug 2020 | 192k ROM only
-  Steem SSE 4.1.2     |  yes  | CZ  |  9 Jul 2022 | (Win 32 D3D)
+  Steem SSE 4.1.2     |  yes  | CZ  | 17 Feb 2024 | (Win 32 D3D)
   STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   STonX DOS           |  yes  | CZ  | 22 Jul 2021 | see (A)
@@ -23,12 +23,12 @@ a ROM version of EmuTOS.
   WinUAE 4.4.0        |  yes  | VRI | 31 Jul 2022 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
-  STf & STfm          |  yes  | CZ  |  2 Jul 2022 |
-  Mega ST             |  yes  | CZ  |  3 Jul 2022 | tested with PRG
-  STe                 |  yes  | CZ  |  9 Jul 2022 |
-  Mega STe            |  yes  | CZ  | 11 Feb 2023 |
-  TT030               |  yes  | CZ  |  2 Jul 2022 |
-  Falcon030           |  yes  | CZ  |  3 Jul 2022 |
+  STf & STfm          |  yes  | CZ  | 17 Feb 2024 |
+  Mega ST             |  yes  | CZ  | 17 Feb 2024 | tested w/ prg256
+  STe                 |  yes  | CZ  | 17 Feb 2024 |
+  Mega STe            |  yes  | CZ  | 17 Feb 2024 |
+  TT030               |  yes  | CZ  | 17 Feb 2024 |
+  Falcon030           |  yes  | CZ  | 17 Feb 2024 |
   Falcon030 + CT60    |  yes  | RFB |  3 Jul 2022 | tested with PRG
   Suska III-C (2K15B) |  yes  | (3) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
