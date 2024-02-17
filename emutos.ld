@@ -149,9 +149,10 @@ SECTIONS
 
     /* This section is always the last one stored in ST-RAM.
      * It is usually empty, just used to calculate the last address
-     * of ST-RAM statically used by EmuTOS.
+     * of ST-RAM statically used by EmuTOS. If needed, the address
+     * is rounded up to the next multiple of four.
      */
-    .laststram :
+    .laststram : ALIGN(4)
     {
         __end_os_stram = .;
     } >stram
