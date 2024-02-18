@@ -442,6 +442,10 @@ msgid "  Format floppy..."
 msgstr "  Alusta levyke..."
 
 #: desk/desk_rsc.c
+msgid "  Eject floppy"
+msgstr "  Poista levyke"
+
+#: desk/desk_rsc.c
 msgid "  Execute EmuCON"
 msgstr "  Käynnistä EmuCON"
 
