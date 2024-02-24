@@ -442,6 +442,10 @@ msgid "  Format floppy..."
 msgstr "  Formátovat disketu..."
 
 #: desk/desk_rsc.c
+msgid "  Eject floppy"
+msgstr "  Vysunout floppy"
+
+#: desk/desk_rsc.c
 msgid "  Execute EmuCON"
 msgstr "  Spustit EmuCON"
 
