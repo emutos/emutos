@@ -443,6 +443,10 @@ msgid "  Format floppy..."
 msgstr "  Форматировать диск..."
 
 #: desk/desk_rsc.c
+msgid "  Eject floppy"
+msgstr "  Извлечь дискету"
+
+#: desk/desk_rsc.c
 msgid "  Execute EmuCON"
 msgstr "  Запустить EmuCON"
 
