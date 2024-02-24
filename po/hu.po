@@ -435,6 +435,10 @@ msgid "  Format floppy..."
 msgstr "  Lemez formázása..."
 
 #: desk/desk_rsc.c
+msgid "  Eject floppy"
+msgstr "  Lemez kiadása"
+
+#: desk/desk_rsc.c
 msgid "  Execute EmuCON"
 msgstr "  EmuCON futtatása"
 
