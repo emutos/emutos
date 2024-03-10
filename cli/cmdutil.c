@@ -1,7 +1,7 @@
 /*
  * EmuCON2 utility routines
  *
- * Copyright (C) 2013-2022 The EmuTOS development team
+ * Copyright (C) 2013-2023 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows

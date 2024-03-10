@@ -1,7 +1,7 @@
 /*
  * lisa.c - Apple Lisa specific functions
  *
- * Copyright (C) 2021 The EmuTOS development team
+ * Copyright (C) 2021-2023 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

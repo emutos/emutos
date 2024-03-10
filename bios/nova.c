@@ -1,7 +1,7 @@
 /*
  * nova.c - Nova/Vofa/Wittich adapter graphics card routines
  *
- * Copyright (C) 2018-2021 The EmuTOS development team
+ * Copyright (C) 2018-2023 The EmuTOS development team
  *
  * Authors:
  * Christian Zietz
