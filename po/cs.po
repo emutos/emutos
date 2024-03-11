@@ -274,6 +274,10 @@ msgid "ITEM SELECTOR"
 msgstr "VÝBÌR POLO®EK"
 
 #: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "Jméno: ________.___"
+
+#: desk/desk_rsc.c
 msgid "Number of folders:         _____"
 msgstr "Poèet adresáøù:          _____ "
 
@@ -300,10 +304,6 @@ msgstr "Ano"
 #: desk/desk_rsc.c
 msgid "No"
 msgstr "Ne"
-
-#: desk/desk_rsc.c
-msgid "Name: ________.___"
-msgstr "Jméno: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size:   __________"

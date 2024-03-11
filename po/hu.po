@@ -267,6 +267,10 @@ msgid "ITEM SELECTOR"
 msgstr "ELEM KIJELÖLÉSE"
 
 #: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "Név: ________.___"
+
+#: desk/desk_rsc.c
 msgid "Number of folders:         _____"
 msgstr "Mappák:         _____ "
 
@@ -293,10 +297,6 @@ msgstr "Igen"
 #: desk/desk_rsc.c
 msgid "No"
 msgstr "Nem"
-
-#: desk/desk_rsc.c
-msgid "Name: ________.___"
-msgstr "Név: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size:   __________"

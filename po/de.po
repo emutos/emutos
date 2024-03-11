@@ -279,6 +279,10 @@ msgid "ITEM SELECTOR"
 msgstr "AUSWAHL"
 
 #: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "Name: ________.___"
+
+#: desk/desk_rsc.c
 msgid "Number of folders:         _____"
 msgstr "Anzahl Ordner:         _____"
 
@@ -305,10 +309,6 @@ msgstr "Ja"
 #: desk/desk_rsc.c
 msgid "No"
 msgstr "Nein"
-
-#: desk/desk_rsc.c
-msgid "Name: ________.___"
-msgstr "Name: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size:   __________"

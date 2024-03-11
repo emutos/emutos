@@ -274,6 +274,10 @@ msgid "ITEM SELECTOR"
 msgstr "TIEDOSTON VALINTA"
 
 #: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "Nimi: ________.___"
+
+#: desk/desk_rsc.c
 msgid "Number of folders:         _____"
 msgstr "Kansioita:         _____ "
 
@@ -300,10 +304,6 @@ msgstr "Kyllä"
 #: desk/desk_rsc.c
 msgid "No"
 msgstr "Ei"
-
-#: desk/desk_rsc.c
-msgid "Name: ________.___"
-msgstr "Nimi: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size:   __________"

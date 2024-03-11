@@ -274,6 +274,10 @@ msgid "ITEM SELECTOR"
 msgstr "SEÇÝM"
 
 #: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "Adý: ________.___"
+
+#: desk/desk_rsc.c
 msgid "Number of folders:         _____"
 msgstr "Klasör adedi:         _____ "
 
@@ -300,10 +304,6 @@ msgstr "Evet"
 #: desk/desk_rsc.c
 msgid "No"
 msgstr "Hayýr"
-
-#: desk/desk_rsc.c
-msgid "Name: ________.___"
-msgstr "Adý: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size:   __________"

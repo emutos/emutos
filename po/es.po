@@ -278,6 +278,10 @@ msgid "ITEM SELECTOR"
 msgstr "SELECTOR DE ELEMENTOS"
 
 #: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "Nombre: ________.___"
+
+#: desk/desk_rsc.c
 msgid "Number of folders:         _____"
 msgstr "Número de carpetas:        _____"
 
@@ -304,10 +308,6 @@ msgstr "Sí"
 #: desk/desk_rsc.c
 msgid "No"
 msgstr "No"
-
-#: desk/desk_rsc.c
-msgid "Name: ________.___"
-msgstr "Nombre: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size:   __________"
@@ -1277,14 +1277,6 @@ msgstr "[1]["
 
 #: desk/desk_rsc.c
 msgid "[1]["
-"Illegal .INF file format.]"
-"[  OK  ]"
-msgstr "[1]["
-"Formato ilegal en fichero .INF.]"
-"[  OK  ]"
-
-#: desk/desk_rsc.c
-msgid "[1]["
 "Rename error!]"
 "[ Retry | Cancel ]"
 msgstr "[1]["
@@ -1299,6 +1291,14 @@ msgid "[1]["
 msgstr "[1]["
 "Error al seleccionar|"
 "el directorio por defecto.]"
+"[  OK  ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal .INF file format.]"
+"[  OK  ]"
+msgstr "[1]["
+"Formato ilegal en fichero .INF.]"
 "[  OK  ]"
 
 #: desk/desk_rsc.c

@@ -288,6 +288,10 @@ msgid "ITEM SELECTOR"
 msgstr "„ˆŠ‚„€‘ €•„ˆ—Œ"
 
 #: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "î¤¦£˜: ________.___"
+
+#: desk/desk_rsc.c
 msgid "Number of folders:         _____"
 msgstr "€¨ Ÿ£æª ­˜¡â¢à¤:         _____"
 
@@ -314,10 +318,6 @@ msgstr "Œ˜ "
 #: desk/desk_rsc.c
 msgid "No"
 msgstr "î® "
-
-#: desk/desk_rsc.c
-msgid "Name: ________.___"
-msgstr "î¤¦£˜: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size:   __________"

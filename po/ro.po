@@ -278,6 +278,10 @@ msgid "ITEM SELECTOR"
 msgstr "SELECTOR DE ARTICOL"
 
 #: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "Nume: ________.___"
+
+#: desk/desk_rsc.c
 msgid "Number of folders:         _____"
 msgstr "Numãrul de dosare:         _____"
 
@@ -304,10 +308,6 @@ msgstr "Da"
 #: desk/desk_rsc.c
 msgid "No"
 msgstr "Nu"
-
-#: desk/desk_rsc.c
-msgid "Name: ________.___"
-msgstr "Nume: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size:   __________"
