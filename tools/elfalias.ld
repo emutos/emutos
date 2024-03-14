@@ -1,7 +1,7 @@
 /*
  * elfalias.ld - Linker script fragment for ELF leading-underscore issues
  *
- * Copyright (C) 2023 The EmuTOS development team
+ * Copyright (C) 2023-2024 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière

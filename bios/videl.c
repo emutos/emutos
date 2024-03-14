@@ -1,7 +1,7 @@
 /*
  * videl.c - Falcon VIDEL support
  *
- * Copyright (C) 2013-2023 The EmuTOS development team
+ * Copyright (C) 2013-2024 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik

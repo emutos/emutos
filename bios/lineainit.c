@@ -1,7 +1,7 @@
 /*
  * lineainit.c - linea graphics initialization
  *
- * Copyright (C) 2001-2023 by Authors:
+ * Copyright (C) 2001-2024 by Authors:
  *
  * Authors:
  *  MAD  Martin Doering

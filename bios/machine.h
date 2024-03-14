@@ -1,7 +1,7 @@
 /*
  * machine.h - declarations about the machine type and capabilities
  *
- * Copyright (C) 2001-2023 The EmuTOS development team
+ * Copyright (C) 2001-2024 The EmuTOS development team
  *
  * Authors:
  *  LVL     Laurent Vogel

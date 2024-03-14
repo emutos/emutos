@@ -1,7 +1,7 @@
 /*
  * keyb_ru.h - Russian keyboard layout definition
  *
- * Copyright (C) 2010-2023 The EmuTOS development team
+ * Copyright (C) 2010-2024 The EmuTOS development team
  *
  * Authors:
  *  Dima Sobolev

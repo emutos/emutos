@@ -1,7 +1,7 @@
 /*
  * scsicmds.h - SCSI commands and related defines
  *
- * Copyright (C) 2023 The EmuTOS development team
+ * Copyright (C) 2023-2024 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows

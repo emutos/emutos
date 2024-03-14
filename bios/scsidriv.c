@@ -1,7 +1,7 @@
 /*
  * scsidriv.c - SCSI driver routines
  *
- * Copyright (C) 2023 The EmuTOS development team
+ * Copyright (C) 2023-2024 The EmuTOS development team
  *
  * Authors:
  *  RFB   Roger Burrows

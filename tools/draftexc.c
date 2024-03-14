@@ -1,7 +1,7 @@
 /*
  *  draftexc: exclude_items[] array for the draft program
  *
- *  Copyright 2019-2023 Roger Burrows
+ *  Copyright 2019-2024 Roger Burrows
  *
  *  This program is licensed under the GNU General Public License.
  *  Please see LICENSE.TXT for details.

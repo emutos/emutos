@@ -2,7 +2,7 @@
  * vdi_asm.S - Front end of the screen driver and mouse stuff
  *
  * Copyright 1999 Caldera, Inc. and Authors:
- * Copyright 2004-2023 The EmuTOS development team
+ * Copyright 2004-2024 The EmuTOS development team
  * Copyright      Steve Cavender
  *
  * This file is distributed under the GPL, version 2 or at your
