@@ -11,7 +11,7 @@ a ROM version of EmuTOS.
   --------------------+-------+-----+-------------+----------------
   Emulators           |       |     |             |
   ARAnyM 1.1.0        |  yes  | CZ  | 17 Feb 2024 |
-  Hatari v2.4.0       |  yes  | CZ  | 17 Feb 2024 |
+  Hatari v2.4.1       |  yes  | VRI | 14 Mar 2024 |
   PaCifiST v0.48      |   no  | (7) | 21 Jul 2021 | see (B)
   SainT v2.40         |  yes  | RFB | 29 Aug 2020 | 192k ROM only
   Steem SSE 4.1.2     |  yes  | CZ  | 17 Feb 2024 | (Win 32 D3D)
@@ -20,7 +20,7 @@ a ROM version of EmuTOS.
   STonX DOS           |  yes  | CZ  | 22 Jul 2021 | see (A)
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon v0.5        |   no  | RFB | 29 Aug 2020 |
-  WinUAE 4.4.0        |  yes  | VRI | 31 Jul 2022 |
+  WinUAE 5.2.0        |  yes  | VRI | 14 Mar 2024 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
   STf & STfm          |  yes  | CZ  | 17 Feb 2024 |
