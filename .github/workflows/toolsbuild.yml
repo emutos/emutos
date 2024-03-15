@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
     - name: Install SSH keys
       env:
         SSH_ID: ${{ secrets.SSH_ID }}
@@ -57,7 +57,7 @@ jobs:
         cd tools
         scp -o StrictHostKeyChecking=no *.tar.gz $SSH_USER@$SSH_HOST:$SSH_PATH
 #    - name: Save binaries as build artifacts
-#      uses: actions/upload-artifact@v2
+#      uses: actions/upload-artifact@v4
 #      with:
 #        name: tools-${{github.job}}-${{env.VERSION}}
 #        path: tools/*.tar.gz
@@ -68,7 +68,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Install SSH keys
       env:
         SSH_ID: ${{ secrets.SSH_ID }}
@@ -103,7 +103,7 @@ jobs:
         cd tools
         scp -o StrictHostKeyChecking=no *.zip $SSH_USER@$SSH_HOST:$SSH_PATH
 #    - name: Save binaries as build artifacts
-#      uses: actions/upload-artifact@v2
+#      uses: actions/upload-artifact@v4
 #      with:
 #        name: tools-${{github.job}}-${{env.VERSION}}
 #        path: tools/*.zip
@@ -114,7 +114,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - name: Install SSH keys
       env:
         SSH_ID: ${{ secrets.SSH_ID }}
@@ -143,7 +143,7 @@ jobs:
         cd tools
         scp -o StrictHostKeyChecking=no *.tar.gz $SSH_USER@$SSH_HOST:$SSH_PATH
 #    - name: Save binaries as build artifacts
-#      uses: actions/upload-artifact@v2
+#      uses: actions/upload-artifact@v4
 #      with:
 #        name: tools-${{github.job}}-${{env.VERSION}}
 #        path: tools/*.tar.gz

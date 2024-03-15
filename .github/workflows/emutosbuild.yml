@@ -18,7 +18,7 @@ jobs:
     if: ${{startsWith( github.repository, 'emutos/' ) }}
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
       with:
         fetch-depth: 0
     - name: Install SSH keys
@@ -66,7 +66,7 @@ jobs:
     - name: Deploy to SourceForge
       run: .scripts/deploy.sh
 #    - name: Save binaries as build artifacts
-#      uses: actions/upload-artifact@v2
+#      uses: actions/upload-artifact@v4
 #      with:
 #        name: emutos-${{env.VERSION}}
 #        path: release-archives/
