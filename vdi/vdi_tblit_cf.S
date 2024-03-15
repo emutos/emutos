@@ -10,7 +10,7 @@
 |                   All Rights Reserved Worldwide                       #
 |                                                                       #
 |########################################################################
-| Translated on Fri Sep  2 13:47:43 2022 by version 2.6.0 of PortAsm translator
+| Translated on Tue Oct 15 17:11:50 2019 by version 2.6.0 of PortAsm translator
 | PortAsm Licence Number #3250
 | Target assembler:    Gnu 'gas'
 |
