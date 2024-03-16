@@ -1,6 +1,6 @@
 Two utilities are available to customize EmuTOS ROM images. These can
 be found in the tools directory of the source tree and are also provided
-as binaries at https://sourceforge.net/projects/emutos/files/tools.
+as binaries at https://sourceforge.net/projects/emutos/files/tools/.
 
 
 ==== tos-lang-change ====

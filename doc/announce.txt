@@ -167,7 +167,7 @@ The latest sources are always available on GitHub:
 If you are just curious or would like to help us develop this nice little
 OS, you are invited to subscribe to our mailing list for developers at:
 
-    https://lists.sourceforge.net/lists/listinfo/emutos-devel
+    https://sourceforge.net/projects/emutos/lists/emutos-devel
 
 
 We hope that you like EmuTOS. If you have any suggestions or comments, we
