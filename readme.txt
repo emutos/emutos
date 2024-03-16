@@ -1,9 +1,9 @@
 This release has been built on Linux Mint (a Ubuntu derivative), using
 Vincent Rivière's GCC 4.6.4 cross-compiler.  The custom tools used in
-the build process were built with native GCC 4.8.4.
+the build process were built with native GCC 10.2.0
 
 The source package and other binary packages are available at:
-https://sourceforge.net/projects/emutos/files/emutos/1.2.1/
+https://sourceforge.net/projects/emutos/files/emutos/1.3/
 
 An online manual is available at the following URL:
 https://emutos.github.io/manual/
@@ -34,6 +34,7 @@ doc/incompatible.txt  - Programs incompatible with EmuTOS due to program bugs
 doc/license.txt       - The FSF General Public License for EmuTOS
 doc/status.txt        - What is implemented and running (or not yet)
 doc/todo.txt          - What should be done in future versions
+doc/tools.txt         - Tools to customize EmuTOS ROM images
 doc/xhdi.txt          - Current XHDI implementation status
 
 Additional information for developers (just in the source archive):

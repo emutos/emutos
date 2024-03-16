@@ -1,3 +1,20 @@
+CHANGES BETWEEN RELEASE 1.2.1 AND RELEASE 1.3
+
+Major changes:
+- BIOS: Support for SCSIDRV API (used by software such as ExtenDOS)
+- EmuDesk: Improved appearance of some dialogs
+- General: New Romanian translation
+- XBIOS: Support for true-color modes on the Falcon
+  (Note that VDI and EmuDesk support for true-color is still unavailable.)
+
+Other changes:
+- BIOS: Improved device compatibility in the IDE driver
+- BIOS: Support for the CrazyDots VME graphics card
+- BIOS: Better handling of incorrect values in FAT file systems
+- BIOS: SD card support for some ColdFire EVBs
+- Many minor and/or obscure bugs have been fixed
+
+
 CHANGES BETWEEN RELEASE 1.2 AND RELEASE 1.2.1
 
 There were only two changes to fix bugs in EmuTOS 1.2:

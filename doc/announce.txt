@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 1.2.1 -- August 16, 2022
+EmuTOS 1.3 -- March 17, 2024
 
 
 
@@ -127,10 +127,10 @@ EmuTOS also supports the following Atari-compatible hardware:
 - MonSTer expansion card
 - Magnum ST/STe expansion cards
 - Storm ST expansion card (RAM and RTC)
-- Nova/ET4000 graphics card
-- Nova/Mach32 graphics card
+- Nova/ET4000 and Nova/Mach32 graphics cards
 - Volksfarben/ET4000 graphics card
 - Wittich Imagine for the MegaST/ET4000 graphics card
+- CrazyDots VME graphics card
 - SD/MMC
 - The Native Features interface to some degree
 
