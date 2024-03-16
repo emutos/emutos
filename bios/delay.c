@@ -56,7 +56,7 @@ void init_delay(void)
 {
 #ifdef __mcoldfire__
     /*
-      For coldfire, we don't know cookie_mcf.sysbus_frequency at this point.
+      For ColdFire, we don't know cookie_mcf.sysbus_frequency at this point.
       We know it will be between 100 and 133 MHz. Since also at this point
       it is okay for the loop time to be approximate, we just use 133 MHz
       here and set the correct value later in calibrate_delay() below.
