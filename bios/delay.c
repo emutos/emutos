@@ -51,7 +51,7 @@ void calibration_timer(void);
  */
 void init_delay(void)
 {
-#if defined(MACHINE_FIREBEE) || defined(MACHINE_M548X)
+#ifdef __mcoldfire__
     /*
       For coldfire, we don't know cookie_mcf.sysbus_frequency at this point.
       We know it will be between 100 and 133 MHz. Since also at this point
@@ -120,7 +120,7 @@ void calibrate_delay(void)
     if (intcount)       /* check for valid */
         loopcount_1_msec = (loopcount * 24) / (intcount * 25);
 #else
-  #if defined(MACHINE_FIREBEE) || defined(MACHINE_M548X)
+  #ifdef __mcoldfire__
     loopcount_1_msec = (ULONG)cookie_mcf.sysbus_frequency * 1000;
   #endif
 #endif
