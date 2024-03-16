@@ -37,7 +37,7 @@ a ROM version of EmuTOS.
   Amiga 500 + Vampire |  yes  | VRI | 13 Oct 2019 | GOLD2.11
   Amiga 600 + Vampire |  yes  | (4) |    Mar 2017 |
   Amiga 1000          |  yes  | (2) |    Jul 2012 |
-  FireBee             |  yes  | VRI | 25 Jul 2022 |
+  FireBee             |  yes  | VRI | 15 Mar 2024 |
   M5484LITE           |  yes  | VRI | 25 Jul 2022 |
   Vampire V4-SA       |  yes  | CZ  | 10 Mar 2024 | Core 9465 + MAPROM
   Apple Lisa          |  yes  | (8) |  4 Feb 2021 |
