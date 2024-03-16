@@ -12,6 +12,9 @@
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
  */
+
+/* #define ENABLE_KDEBUG */
+
 #include "emutos.h"
 #include "biosdefs.h"
 #include "mfp.h"
@@ -80,6 +83,8 @@ void init_delay(void)
         }
     }
 #endif
+
+    KDEBUG(("init_delay loopcount_1_msec=%ld\n", loopcount_1_msec));
 }
 
 /*
@@ -119,9 +124,11 @@ void calibrate_delay(void)
      */
     if (intcount)       /* check for valid */
         loopcount_1_msec = (loopcount * 24) / (intcount * 25);
-#else
-  #ifdef __mcoldfire__
+#elif defined(__mcoldfire__)
     loopcount_1_msec = (ULONG)cookie_mcf.sysbus_frequency * 1000;
-  #endif
+#else
+    KDEBUG(("Warning: loopcount_1_msec isn't calibrated.\n"));
 #endif
+
+    KDEBUG(("calibrate_delay loopcount_1_msec=%ld\n", loopcount_1_msec));
 }
