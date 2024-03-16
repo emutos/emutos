@@ -121,7 +121,7 @@ void calibrate_delay(void)
         loopcount_1_msec = (loopcount * 24) / (intcount * 25);
 #else
   #if defined(MACHINE_FIREBEE) || defined(MACHINE_M548X)
-    loopcount_1_msec = cookie_mcf.sysbus_frequency * 1000;
+    loopcount_1_msec = (ULONG)cookie_mcf.sysbus_frequency * 1000;
   #endif
 #endif
 }
