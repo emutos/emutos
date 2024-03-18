@@ -1505,6 +1505,43 @@ static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
 }
 
 /*
+ *  Determine the default drive for the floppy format dialog
+ *
+ *  (1) if there is a selected drive icon, and the drive exists,
+ *      return that drive
+ *  (2) else, if a drive exists return that drive (preferring A:)
+ *  (3) otherwise return -1 (no floppy drives)
+ */
+static WORD determine_default_drive(OBJECT *tree)
+{
+    OBJECT *obj;
+    WORD i, objnum;
+
+    for (i = 0; i < 2; i++)
+    {
+        objnum = obj_get_obid('A'+i);
+        if (!objnum)        /* no such icon */
+            continue;
+
+        if (G.g_screen[objnum].ob_state & SELECTED)
+        {
+            obj = &tree[FMT_DRVA+i];
+            if (!(obj->ob_state & DISABLED))
+                return i;
+        }
+    }
+
+    for (i = 0; i < 2; i++)
+    {
+        obj = &tree[FMT_DRVA+i];
+        if (!(obj->ob_state & DISABLED))
+            return i;
+    }
+
+    return -1;
+}
+
+/*
  *  Format a floppy disk
  */
 void do_format(void)
@@ -1530,46 +1567,29 @@ void do_format(void)
         }
         else
         {
-            obj->ob_state &= ~SELECTED;
             obj->ob_state |= DISABLED;
         }
+        obj->ob_state &= ~SELECTED;     /* always deselect buttons */
     }
 
     /*
-     * if a drive is currently selected, don't change it
+     * determine default drive to select in dialog
      */
-    drive = -1;
-    for (i = 0, obj = &tree[FMT_DRVA]; i < 2; i++, obj++)
+    drive = determine_default_drive(tree);
+
+    /*
+     * if we've found a drive, select the corresponding button
+     * otherwise there are no enabled drives, so disallow OK
+     */
+    if (drive >= 0)
     {
-        if (obj->ob_state & SELECTED)
-        {
-            drive = i;
-            break;
-        }
+        obj = &tree[FMT_DRVA+drive];
+        obj->ob_state |= SELECTED;
     }
-
-    /*
-     * if NO drive was previously selected, select the first enabled one
-     */
-    if (drive < 0)
+    else
     {
-        for (i = 0, obj = &tree[FMT_DRVA]; i < 2; i++, obj++)
-        {
-            if (!(obj->ob_state & DISABLED))
-            {
-                drive = i;
-                break;
-            }
-        }
-        if (drive >= 0)
-            obj->ob_state |= SELECTED;
-    }
-
-    /*
-     * if there are no enabled drives, disallow OK
-     */
-    if (drive < 0)
         tree[FMT_OK].ob_state |= DISABLED;
+    }
 
     tree[FMT_CNCL].ob_state &= ~SELECTED;
 
@@ -1623,6 +1643,8 @@ void do_format(void)
         tree[FMT_BAR].ob_spec = 0x00FF1101L;
         tree[FMT_OK].ob_state &= ~SELECTED;
     } while (!done);
+
+    desk_clear(DESKWH);
 }
 #endif
 
