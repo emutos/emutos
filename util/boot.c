@@ -35,6 +35,8 @@ extern const UBYTE end_ramtos[];
  */
 #define _p_cookies  *(struct cookie **)0x5a0
 #define _CPU        0x5f435055L
+#define _MCH        0x5f4d4348L
+#define MCH_TT      0x00020000L
 
 struct cookie {
   ULONG id;
@@ -66,14 +68,14 @@ static void fatal(const char *s)
 }
 #endif
 
-/* return value from _CPU cookie */
-static ULONG get_cpu_cookie(void)
+/* return value from cookie */
+static ULONG get_cookie(ULONG id)
 {
   struct cookie *cptr = _p_cookies;
 
   if (cptr) {
     do {
-      if (cptr->id == _CPU)
+      if (cptr->id == id)
         return cptr->value;
     } while ((++cptr)->id);
   }
@@ -84,7 +86,7 @@ static ULONG get_cpu_cookie(void)
 int main(void)
 {
   ULONG count;
-  ULONG cpu;
+  ULONG cpu, mch;
 #if DBG_BOOT
   UBYTE *address;
 #endif
@@ -113,14 +115,26 @@ int main(void)
   }
 
   (void)Cconws("Hit RETURN to boot EmuTOS");
-  Cconin();
+  (void)Cconin();
 #endif
 
   /* supervisor */
 
   Super(0);
 
-  cpu = get_cpu_cookie();
+  cpu = get_cookie(_CPU);
+  mch = get_cookie(_MCH);
+
+#ifdef TARGET_256
+  /* prg256 variants don't support TT and beyond */
+  if (mch >= MCH_TT) {
+    (void)Cconws("EMU256*.PRG supports ST/MegaST/STe/MegaSTe.\r\n");
+    (void)Cconws("Use EMUTOS*.PRG instead.\r\n");
+    (void)Cconws("Hit RETURN to exit");
+    (void)Cconin();
+    return 1;
+  }
+#endif
 
   /* do the rest in assembler */
 
