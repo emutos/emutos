@@ -671,6 +671,12 @@ void scc_tx_interrupt_handler(WORD portnum)
     }
     out = &extiorec->out;
 
+    /* reset TX interrupt pending */
+    write_scc_reg0(port, SCC_RESET_TX_INT);
+
+    /* reset highest IUS, allows lower priority interrupts */
+    write_scc_reg0(port, SCC_RESET_HIGH_IUS);
+
     /* make sure TX buffer is empty ... unnecessary check? */
     empty = port->ctl & 0x04;
     RECOVERY_DELAY;
@@ -686,12 +692,6 @@ void scc_tx_interrupt_handler(WORD portnum)
         if (++out->head >= out->size)
             out->head = 0;
     }
-
-    /* reset TX interrupt pending */
-    write_scc_reg0(port, SCC_RESET_TX_INT);
-
-    /* reset highest IUS, allows lower priority interrupts */
-    write_scc_reg0(port, SCC_RESET_HIGH_IUS);
 }
 
 /*
