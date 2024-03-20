@@ -157,19 +157,13 @@ static WORD incr_tail(IOREC *iorec)
 #if (!CONF_WITH_COLDFIRE_RS232 && CONF_WITH_MFP_RS232 && !RS232_DEBUG_PRINT) || CONF_WITH_TT_MFP || CONF_WITH_SCC
 static void put_iorecbuf(IOREC *out, WORD b)
 {
-    WORD old_sr, tail;
-
-    /* disable interrupts */
-    old_sr = set_sr(0x2700);
+    WORD tail;
 
     *(out->buf + out->tail) = (UBYTE)b;
     tail = incr_tail(out);
     if (tail != out->head) {        /* buffer not full,  */
         out->tail = tail;           /*  so ok to advance */
     }
-
-    /* restore interrupts */
-    set_sr(old_sr);
 }
 #endif
 
@@ -294,6 +288,10 @@ LONG bcostat1(void)
 
 LONG bconout1(WORD dev, WORD b)
 {
+    WORD old_sr;
+
+    MAYBE_UNUSED(old_sr);
+
     /* Wait for transmit buffer to become empty */
     while(!bcostat1())
         ;
@@ -306,6 +304,9 @@ LONG bconout1(WORD dev, WORD b)
     MFP_BASE->udr = (char)b;
     return 1L;
 # else
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
+
     /*
      * If the buffer is empty & the port is empty, output directly.
      * otherwise queue the data.
@@ -315,6 +316,10 @@ LONG bconout1(WORD dev, WORD b)
     } else {
         put_iorecbuf(&iorec1.out, b);
     }
+
+    /* restore interrupts */
+    set_sr(old_sr);
+
     return 1L;
 # endif
 #else
@@ -412,9 +417,15 @@ static LONG bcostatTT(void)
 
 static LONG bconoutTT(WORD dev, WORD b)
 {
+    WORD old_sr;
+
     /* Wait for transmit buffer to become empty */
     while(!bcostatTT())
         ;
+
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
+
      /*
      * If the buffer is empty & the port is empty, output directly.
      * otherwise queue the data.
@@ -424,6 +435,10 @@ static LONG bconoutTT(WORD dev, WORD b)
     } else {
         put_iorecbuf(&iorecTT.out, b);
     }
+
+    /* restore interrupts */
+    set_sr(old_sr);
+
     return 1L;
 }
 
@@ -503,10 +518,14 @@ static LONG bconoutA(WORD dev, WORD b)
 {
     SCC *scc = (SCC *)SCC_BASE;
     IOREC *out;
+    WORD old_sr;
 
     /* Wait for transmit buffer to become available */
     while(!bcostatA())
         ;
+
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
 
      /*
      * If the buffer is empty & the port is empty, output directly.
@@ -519,6 +538,9 @@ static LONG bconoutA(WORD dev, WORD b)
     } else {
         put_iorecbuf(out, b);
     }
+
+    /* restore interrupts */
+    set_sr(old_sr);
 
     return 1L;
 }
@@ -564,8 +586,10 @@ LONG bconoutB(WORD dev, WORD b)
 {
     SCC *scc = (SCC *)SCC_BASE;
     IOREC *out;
+    WORD old_sr;
 
     MAYBE_UNUSED(out);
+    MAYBE_UNUSED(old_sr);
 
     while(!bcostatB())
         ;
@@ -574,6 +598,9 @@ LONG bconoutB(WORD dev, WORD b)
     scc->portB.data = (UBYTE)b;
     RECOVERY_DELAY;
 #else
+    /* disable interrupts */
+    old_sr = set_sr(0x2700);
+
     /*
      * If the buffer is empty & the port is empty, output directly.
      * otherwise queue the data.
@@ -585,6 +612,9 @@ LONG bconoutB(WORD dev, WORD b)
     } else {
         put_iorecbuf(out, b);
     }
+
+    /* restore interrupts */
+    set_sr(old_sr);
 #endif
 
     return 1L;
