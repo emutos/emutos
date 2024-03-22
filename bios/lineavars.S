@@ -348,7 +348,7 @@ _COLBIT5:       .ds.w   1       // we do not use them (yet?)
 _COLBIT6:       .ds.w   1
 _COLBIT7:       .ds.w   1
 _ext_mouse_cursor_save:         // covers the following five items; note that
-                                // this area is only used when v_planes == 8
+                                // this area is only used when v_planes > 4
 _ext_save_len:  .ds.w   1           // 1630 height of saved form
 _ext_save_addr: .ds.l   1           // 1632 screen addr of saved form
 _ext_save_stat: .ds.b   1           // 1636 save status
