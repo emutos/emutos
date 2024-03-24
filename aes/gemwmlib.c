@@ -1675,20 +1675,32 @@ BOOL wm_set(WORD w_handle, WORD w_field, WORD *pinwds)
         gl_newroot = pinwds[2];
         break;
     case WF_HSLSIZ:
-        pwin->w_hslsiz = pinwds[0];
-        gadget = W_HSLIDE;
+        if (pwin->w_hslsiz != pinwds[0])    /* size changed? */
+        {
+            pwin->w_hslsiz = pinwds[0];     /* yes, save new size */
+            gadget = W_HSLIDE;              /* & redraw slider    */
+        }
         break;
     case WF_VSLSIZ:
-        pwin->w_vslsiz = pinwds[0];
-        gadget = W_VSLIDE;
+        if (pwin->w_vslsiz != pinwds[0])    /* size changed? */
+        {
+            pwin->w_vslsiz = pinwds[0];     /* yes, save new size */
+            gadget = W_VSLIDE;              /* & redraw slider    */
+        }
         break;
     case WF_HSLIDE:
-        pwin->w_hslide = pinwds[0];
-        gadget = W_HSLIDE;
+        if (pwin->w_hslide != pinwds[0])    /* position changed? */
+        {
+            pwin->w_hslide = pinwds[0];     /* yes, save new posn */
+            gadget = W_HSLIDE;              /* & redraw slider    */
+        }
         break;
     case WF_VSLIDE:
-        pwin->w_vslide = pinwds[0];
-        gadget = W_VSLIDE;
+        if (pwin->w_vslide != pinwds[0])    /* position changed? */
+        {
+            pwin->w_vslide = pinwds[0];     /* yes, save new posn */
+            gadget = W_VSLIDE;              /* & redraw slider    */
+        }
         break;
 #if CONF_WITH_WINDOW_COLOURS
     case WF_COLOR:
