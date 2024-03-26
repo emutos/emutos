@@ -86,7 +86,7 @@ static ULONG get_cookie(ULONG id)
 int main(void)
 {
   ULONG count;
-  ULONG cpu, mch;
+  ULONG cpu;
 #if DBG_BOOT
   UBYTE *address;
 #endif
@@ -123,11 +123,10 @@ int main(void)
   Super(0);
 
   cpu = get_cookie(_CPU);
-  mch = get_cookie(_MCH);
 
 #ifdef TARGET_256
   /* prg256 variants don't support TT and beyond */
-  if (mch >= MCH_TT) {
+  if (get_cookie(_MCH) >= MCH_TT) {
     (void)Cconws("EMU256*.PRG supports ST/MegaST/STe/MegaSTe.\r\n");
     (void)Cconws("Use EMUTOS*.PRG instead.\r\n");
     (void)Cconws("Hit RETURN to exit");
