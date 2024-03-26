@@ -25,8 +25,11 @@
 #include "conout.h"
 
 
-
 #define PLANE_OFFSET    2       /* interleaved planes */
+
+#define TRUECOLOR_MODE  (v_planes > 8)
+#define FALCON_BLACK    0x0000
+#define FALCON_WHITE    0xffbf
 
 
 /*
@@ -67,20 +70,14 @@ static UBYTE *char_addr(WORD ch)
 /*
  * cell_addr - convert cell X,Y to a screen address.
  *
- *
  * convert cell X,Y to a screen address. also clip cartesian coordinates
  * to the limits of the current screen.
  *
- * latest update:
+ * input:
+ *  x       cell X
+ *  y       cell Y
  *
- * 18-sep-84
- * in:
- *
- * d0.w      cell X
- * d1.w      cell Y
- *
- * out:
- * a1      points to first byte of cell
+ * returns pointer to first byte of cell
  */
 
 static UBYTE *cell_addr(UWORD x, UWORD y)
@@ -94,15 +91,23 @@ static UBYTE *cell_addr(UWORD x, UWORD y)
     if (y > v_cel_my)
         y = v_cel_my;           /* clipped y */
 
-    /*
-     * v_planes cannot be more than 8, so as long as there are no more
-     * than 4000 characters per line, the result will fit in a word ...
-     *
-     * X displacement = even(X) * v_planes + Xmod2
-     */
-    disx = v_planes * (x & ~1);
-    if (IS_ODD(x)) {            /* Xmod2 = 0 ? */
-        disx++;                 /* Xmod2 = 1 */
+#if CONF_WITH_VIDEL
+    if (TRUECOLOR_MODE) {       /* chunky pixels */
+        disx = v_planes * x;
+    }
+    else
+#endif
+    {
+        /*
+         * v_planes cannot be more than 8, so as long as there are no more
+         * than 4000 characters per line, the result will fit in a word ...
+         *
+         * X displacement = even(X) * v_planes + Xmod2
+         */
+        disx = v_planes * (x & ~1);
+        if (IS_ODD(x)) {        /* Xmod2 = 0 ? */
+            disx++;             /* Xmod2 = 1 */
+        }
     }
 
     /* Y displacement = Y // cell conversion factor */
@@ -114,6 +119,60 @@ static UBYTE *cell_addr(UWORD x, UWORD y)
      */
     return v_bas_ad + disy + disx + v_cur_of;
 }
+
+
+
+#if CONF_WITH_VIDEL
+/*
+ * cell_xfer16 - cell_xfer() for Falcon 16-bit graphics
+ *
+ * see the comments in cell_xfer() for more details
+ */
+static void cell_xfer16(UBYTE *src, UBYTE *dst)
+{
+    UWORD *p;
+    UWORD fg, fgcol;
+    UWORD bg, bgcol;
+    WORD fnt_wr, line_wr, i, mask;
+
+    MAYBE_UNUSED(fg);
+    MAYBE_UNUSED(bg);
+
+    fnt_wr = v_fnt_wr;
+    line_wr = v_lin_wr;
+
+#if 0           /* CONF_WITH_VDI_16BIT */
+    if (v_stat_0 & M_REVID) {   /* handle reversed foreground and background colours */
+        fg = v_col_bg;
+        bg = v_col_fg;
+    } else {
+        fg = v_col_fg;
+        bg = v_col_bg;
+    }
+    fgcol = phys_work.ext->palette[fg];
+    bgcol = phys_work.ext->palette[bg];
+#else
+    /*
+     * the foreground & backround colours should really come from the
+     * physical workstation, but that requires 16-bit support in the VDI
+     */
+    if (v_stat_0 & M_REVID) {   /* handle reversed foreground and background colours */
+        fgcol = FALCON_WHITE;
+        bgcol = FALCON_BLACK;
+    } else {
+        fgcol = FALCON_BLACK;
+        bgcol = FALCON_WHITE;
+    }
+#endif
+    for (i = v_cel_ht; i--; ) {
+        for (mask = 0x80, p = (UWORD *)dst; mask; mask >>= 1) {
+            *p++ = (*src & mask) ? fgcol : bgcol;
+        }
+        dst += line_wr;
+        src += fnt_wr;
+    }
+}
+#endif
 
 
 
@@ -141,6 +200,13 @@ static void cell_xfer(UBYTE *src, UBYTE *dst)
     UWORD bg;
     int fnt_wr, line_wr;
     int plane;
+
+#if CONF_WITH_VIDEL
+    if (TRUECOLOR_MODE) {
+        cell_xfer16(src, dst);
+        return;
+    }
+#endif
 
     fnt_wr = v_fnt_wr;
     line_wr = v_lin_wr;
@@ -212,15 +278,14 @@ static void cell_xfer(UBYTE *src, UBYTE *dst)
  * neg_cell - negates
  *
  * This routine negates the contents of an arbitrarily-tall byte-wide cell
- * composed of an arbitrary number of (Atari-style) bit-planes.
+ * composed of 1 to 8 Atari-style bit-planes, or of Falcon-style 16-bit
+ * graphics.
  * Cursor display can be accomplished via this procedure.  Since a second
  * negation restores the original cell condition, there is no need to save
  * the contents beneath the cursor block.
  *
- * in:
- * a1.l      points to destination (1st plane, top of block)
- *
- * out:
+ * input:
+ *  cell    points to destination (1st plane, top of block)
  */
 
 static void neg_cell(UBYTE *cell)
@@ -231,16 +296,31 @@ static void neg_cell(UBYTE *cell)
 
     v_stat_0 |= M_CRIT;                 /* start of critical section. */
 
-    for (plane = v_planes; plane--; ) {
-        UBYTE * addr = cell;            /* top of current dest plane */
-
-        /* reset cell length counter */
+#if CONF_WITH_VIDEL
+    if (TRUECOLOR_MODE) {               /* chunky pixels */
         for (len = cell_len; len--; ) {
-            *addr = ~*addr;
-            addr += lin_wr;
+            WORD i;
+            UWORD *addr;
+            for (i = 8, addr = (UWORD *)cell; i--; addr++)
+                *addr = ~*addr;
+            cell += lin_wr;
         }
-        cell += PLANE_OFFSET;           /* a1 -> top of block in next plane */
     }
+    else
+#endif
+    {
+        for (plane = v_planes; plane--; ) {
+            UBYTE * addr = cell;        /* top of current dest plane */
+
+            /* reset cell length counter */
+            for (len = cell_len; len--; ) {
+                *addr = ~*addr;
+                addr += lin_wr;
+            }
+            cell += PLANE_OFFSET;       /* a1 -> top of block in next plane */
+        }
+    }
+
     v_stat_0 &= ~M_CRIT;                /* end of critical section. */
 }
 
@@ -272,6 +352,13 @@ static BOOL next_cell(void)
     }
 
     v_cur_cx += 1;                      /* next cell to right */
+
+#if CONF_WITH_VIDEL
+    if (TRUECOLOR_MODE) {               /* chunky pixels */
+        v_cur_ad += 16;
+        return 0;
+    }
+#endif
 
     /* if X is even, move to next word in the plane */
     if (IS_ODD(v_cur_cx)) {
@@ -440,6 +527,49 @@ void ascii_out(int ch)
 
 
 
+#if CONF_WITH_VIDEL
+/*
+ * blank_out16 - blank_out() for Falcon 16-bit graphics
+ *
+ * see the header comments in blank_out() for more details
+ */
+static void blank_out16(int topx, int topy, int botx, int boty)
+{
+    UWORD *addr;
+    UWORD bgcol;
+    WORD i, j;
+    WORD offs, rows, width;
+
+    width = (botx - topx + 1) * 8;          /* in words */
+
+    /* calculate the offset from the end of row to next row start */
+    offs = v_lin_wr/sizeof(WORD) - width;   /* in words */
+
+    rows = (boty - topy + 1) * v_cel_ht;    /* in pixels */
+
+#if 0           /* CONF_WITH_VDI_16BIT */
+    /* get pixel value from physical workstation's palette */
+    bgcol = phys_work.ext->palette[v_col_bg];
+#else
+    /*
+     * the backround colour should really come from the physical
+     * workstation, but that requires 16-bit support in the VDI
+     */
+     bgcol = FALCON_WHITE;
+#endif
+
+    addr = (UWORD *)cell_addr(topx, topy);  /* running pointer to screen */
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < width; j++) {
+            *addr++ = bgcol;
+        }
+        addr += offs;
+    }
+}
+#endif
+
+
+
 /*
  * blank_out - Fills region with the background color.
  *
@@ -460,9 +590,20 @@ void ascii_out(int ch)
 
 void blank_out(int topx, int topy, int botx, int boty)
 {
-    UWORD color = v_col_bg;             /* bg color value */
+    UWORD color;
     int pair, pairs, row, rows, offs;
-    UBYTE * addr = cell_addr(topx, topy);   /* running pointer to screen */
+    UBYTE *addr;
+
+#if CONF_WITH_VIDEL
+    if (TRUECOLOR_MODE) {
+        blank_out16(topx, topy, botx, boty);
+        return;
+    }
+#endif
+
+    color = v_col_bg;                   /* bg color value */
+
+    addr = cell_addr(topx, topy);       /* running pointer to screen */
 
     /*
      * # of cell-pairs per row in region - 1

@@ -1144,8 +1144,7 @@ WORD setscreen(UBYTE *logLoc, const UBYTE *physLoc, WORD rez, WORD videlmode)
     vblsem = 0;
     /* Re-initialize line-a, VT52 etc: */
     linea_init();
-    if (v_planes < 16)
-        vt52_init();
+    vt52_init();
     /* Restart VBL processing */
     vblsem = 1;
 
