@@ -1,3 +1,4 @@
+    rol.w  #1,d1
 /*
  * vectors.S - exception vectors
  *
@@ -879,10 +880,11 @@ pi_not30:
         cmpi.b  #60,_mcpu+3
         jne     pi_next
 
-        // on 68040 and 68060, invalidate the line holding the opcode only
+        // on 68040 and 68060, push the whole dcache and invalidate the entire icache
+        // as we have no guarantee that physical = virtual
 pi_inval:
         nop
-        CINVL_IC_A0                     // cinvl   ic,(a0)
+        CPUSHA_BC
         nop
 
 pi_next:
