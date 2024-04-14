@@ -34,8 +34,8 @@ typedef struct _mcs {
         WORD    len;            /* height of saved form */
         UWORD   *addr;          /* screen address of saved form */
         UBYTE    stat;          /* save status */
-        char    reserved;
-        ULONG   area[8*16];     /* handle up to 8 video planes */
+        UBYTE   width;          /* width of saved form (16-bit support only) */
+        ULONG   area[8*16];     /* handle up to 8 video planes (also 16-bit) */
 } MCS;
 /* defines for 'stat' above */
 #define MCS_VALID   0x01        /* save area is valid */
