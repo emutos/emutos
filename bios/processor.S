@@ -390,9 +390,12 @@ _instruction_cache_kludge:
  * First, the data cache is flushed to push changes into the RAM.
  * Then the instruction cache is invalidated for the specified zone.
  *
- * We're lazy here and invalidate all the cache. A real implementation
- * would invalidate only the needed pages using several cinvp ic,(a0).
- * It is not worth the trouble for EmuTOS right now.
+ * We're cautious here and invalidate all the cache. Since not all systems
+ * map all memory 1:1, being more precise would require either knowing the
+ * physical address of line(s) to be cleaned/invalidated, or performing address
+ * translation on the range.
+ * This quickly becomes more expensive than just cleaning the caches and paying
+ * the cost to repopulate them later.
  */
 
 _invalidate_instruction_cache:
@@ -419,8 +422,12 @@ ii_not30:
         jne     ii_done
 
 ii_inval:
+        // If the 040/060 MMU is enabled, or the DTTs have been configured
+        // for copyback mode, there may be dirty lines in the data cache
+        // containing instructions, so we need to flush the data cache as well
+        // as invalidating the instruction cache.
         nop
-        CINVA_IC                // invalidate the instruction cache
+        CPUSHA_BC
         nop
 ii_done:
 #endif /* CONF_WITH_ADVANCED_CPU */
@@ -444,13 +451,19 @@ _flush_data_cache:
         jra     cpushl_loop
 #else
 #if CONF_WITH_ADVANCED_CPU
-//
-// 68030 data caches are always write-through, so no action is necessary
-//
-// 68040/68060 data caches are either write-through or copyback, depending
-// on how the system is set up.  at this time, the data TTRs are set up so
-// that the cache is write-through, so no action is necessary here either.
-//
+
+        // 68020 has no data cache, 68030 data cache is always write-through,
+        // in either case no action is necessary.
+        cmpi.b  #40,_mcpu+3
+        jmi     fd_no_dirty
+
+        // 68040/68060 data caches are either write-through or copyback
+        // depending on how the DTTs / MMU are set up, so we need to push them
+        // here.
+        nop
+        CPUSHA_DC
+        nop
+fd_no_dirty:
 #endif
         rts
 #endif
@@ -482,8 +495,12 @@ ic_not30:
         jne     ic_done
 
 ic_inval:
+        // We can't simply invalidate the data cache, as there may
+        // be dirty lines resident, so we need to push those out.
+        // Note: this requires that the 060's CACR.DPI bit is not set
+        //       in order for lines to be invalidated.
         nop
-        CINVA_DC                // invalidate the data cache
+        CPUSHA_DC
         nop
 ic_done:
 #endif /* CONF_WITH_ADVANCED_CPU */
@@ -572,7 +589,14 @@ _set_cache:
         jeq     sc_exit             // no cache, do nothing
         moveq.l #0,d0               // assume disable
         tst.w   4(sp)
-        jeq     sc_cacr             // it is, go do it
+        jne     sc_enable           // no, enable
+        cmpi.b  #40,_mcpu+3         // possible dirty data in cache?
+        jmi     sc_cacr             // no, go do it
+        nop
+        CPUSHA_DC                   // 040/060: yes, clean the data cache first
+        nop
+        jra     sc_cacr             // now go do it
+sc_enable:
         move.l  cacr_enable,d0      // enabling: set processor-appropriate value
         cmpi.b  #40,_mcpu+3         // 040/060 ?
         jmi     sc_cacr             // no, just go set cacr
