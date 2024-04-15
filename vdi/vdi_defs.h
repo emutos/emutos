@@ -19,6 +19,9 @@
 
 #define EXTENDED_PALETTE (CONF_WITH_VIDEL || CONF_WITH_TT_SHIFTER)
 
+#define TRUECOLOR_MODE  (v_planes > 8)
+
+
 #if CONF_WITH_VIDEL
 # define UDPAT_PLANES   32      /* actually 16, but each plane occupies 2 WORDs */
 #elif CONF_WITH_TT_SHIFTER
@@ -147,6 +150,14 @@ typedef struct {
 #define VDI_CLIP(wvk) ((VwkClip*)(&(wvk->xmn_clip)))
 
 
+#if CONF_WITH_VDI_16BIT
+/* virtual workstation extension, used for VDI Trucolor (16-bit) support */
+typedef struct {
+    UWORD palette[256];         /* pseudo-palette with pixel value RRRRRGGGGG0BBBBB */
+    WORD req_col[256][3];       /* requested colour */
+} VwkExt;
+#endif
+
 /* Structure to hold data for a virtual workstation */
 
 /* NOTE 1: for backwards compatibility with all versions of TOS, the
@@ -200,6 +211,9 @@ struct Vwk_ {
     WORD xmx_clip;              /* High x point of clipping rectangle   */
     WORD ymn_clip;              /* Low y point of clipping rectangle    */
     WORD ymx_clip;              /* High y point of clipping rectangle   */
+#if CONF_WITH_VDI_16BIT
+    VwkExt *ext;                /* 16 bit colour management */
+#endif
     /* newly added */
 #if HAVE_BEZIER
     WORD bez_qual;              /* actual quality for bezier curves */
@@ -224,6 +238,17 @@ typedef struct {
     WORD x1,y1;
     WORD x2,y2;
 } Line;
+
+
+/*
+ * the following line-A variables contain the VDI color palette entries.
+ * REQ_COL contains the first 16 entries; req_col2 contains entries
+ * 16-255 (only applicable for 8-plane resolutions).  Note that the
+ * location of req_col2 is not documented by Atari, but is derived from
+ * disassembly of TOS ROMs, and source code for MagiC's VDI.
+ */
+extern WORD REQ_COL[16][3];     /* defined in lineavars.S */
+extern WORD req_col2[240][3];   /* defined in lineavars.S */
 
 
 /* External definitions for internal use */
@@ -281,6 +306,7 @@ void set_LN_MASK(Vwk *vwk);
 void st_fl_ptr(Vwk *);
 void gdp_justified(Vwk *);
 WORD validate_color_index(WORD colnum);
+void set_color16(Vwk *vwk, WORD colnum, WORD *rgb);
 
 /* drawing primitives */
 void draw_pline(Vwk *vwk);

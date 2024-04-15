@@ -1597,6 +1597,14 @@
 #endif
 
 /*
+ * Set CONF_WITH_VDI_16BIT to 1 to include VDI support for the Falcon's
+ * 16-bit graphics modes.
+ */
+#ifndef CONF_WITH_VDI_16BIT
+# define CONF_WITH_VDI_16BIT 0
+#endif
+
+/*
  * Set CONF_WITH_VDI_TEXT_SPEEDUP to 1 to improve some VDI text output
  * performance
  */
@@ -2133,6 +2141,12 @@
 #if !CONF_WITH_EXTENDED_OBJECTS
 # if CONF_WITH_ALT_DESKTOP_GRAPHICS
 #  error CONF_WITH_ALT_DESKTOP_GRAPHICS requires CONF_WITH_EXTENDED_OBJECTS.
+# endif
+#endif
+
+#if !CONF_WITH_VIDEL
+# if CONF_WITH_VDI_16BIT
+#  error CONF_WITH_VDI_16BIT requires CONF_WITH_VIDEL
 # endif
 #endif
 

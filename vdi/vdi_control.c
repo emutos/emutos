@@ -17,6 +17,7 @@
 #include "biosext.h"
 #include "asm.h"
 #include "string.h"
+#include "has.h"
 #include "intmath.h"
 #include "bdosbind.h"
 #include "tosvars.h"
@@ -24,6 +25,7 @@
 #define FIRST_VDI_HANDLE    1
 #define LAST_VDI_HANDLE     (FIRST_VDI_HANDLE+NUM_VDI_HANDLES-1)
 #define VDI_PHYS_HANDLE     FIRST_VDI_HANDLE
+
 
 /*
  * Mxalloc() mode used when allocating the virtual workstation.  This
@@ -45,7 +47,9 @@ MCS *mcs_ptr;
  */
 static Vwk *vwk_ptr[NUM_VDI_HANDLES+1];
 extern Vwk phys_work;       /* attribute area for physical workstation */
-
+#if CONF_WITH_VDI_16BIT
+static VwkExt phys_work_ext;
+#endif
 
 /*
  * template for SIZ_TAB - Returns text, line and marker sizes in device
@@ -347,6 +351,17 @@ static void init_wk(Vwk * vwk)
     for (l = 0; l < 12; l++)
         *pointer++ = *src_ptr++;
 
+#if CONF_WITH_VDI_16BIT
+    /* set up virtual palette stuff if we're not using a real one */
+    if (TRUECOLOR_MODE) {
+        memcpy(vwk->ext->req_col, REQ_COL, sizeof(REQ_COL));
+        memcpy(vwk->ext->req_col+16, req_col2, sizeof(req_col2));
+        /* convert requested colour values to pseudo-palette */
+        for (l = 0; l < 255; l++)
+            set_color16(vwk, l, vwk->ext->req_col[l]);
+    }
+#endif
+
 #if HAVE_BEZIER
     /* setup initial bezier values */
     vwk->bez_qual = 7;
@@ -392,6 +407,7 @@ static void build_vwk_chain(void)
 void vdi_v_opnvwk(Vwk * vwk)
 {
     WORD handle;
+    LONG size;
     Vwk **p;
 
     /*
@@ -419,11 +435,22 @@ void vdi_v_opnvwk(Vwk * vwk)
      * To avoid problems when running FreeMiNT with memory protection, we
      * must allocate the virtual workstations in supervisor-accessible memory.
      */
-    vwk = (Vwk *)Mxalloc(sizeof(Vwk), MX_SUPER);
+    size = sizeof(Vwk);
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)
+        size += sizeof(VwkExt); /* for simplicity, allocate them together */
+#endif
+    vwk = (Vwk *)Mxalloc(size, MX_SUPER);
     if (vwk == NULL) {
         CONTRL[6] = 0;  /* No memory available, exit */
         return;
     }
+
+#if CONF_WITH_VDI_16BIT
+    vwk->ext = NULL;
+    if (TRUECOLOR_MODE)
+        vwk->ext = (VwkExt *)(vwk + 1); /* immediately follows Vwk */
+#endif
 
     vwk_ptr[handle] = vwk;
     vwk->handle = CONTRL[6] = handle;
@@ -523,6 +550,12 @@ void vdi_v_opnwk(Vwk * vwk)
     init_colors();              /* Initialize palette etc. */
 
     text_init();                /* initialize the SIZ_TAB info */
+
+#if CONF_WITH_VDI_16BIT
+    vwk->ext = NULL;
+    if (TRUECOLOR_MODE)
+        vwk->ext = &phys_work_ext;  /* workstation extension */
+#endif
 
     init_wk(vwk);
 

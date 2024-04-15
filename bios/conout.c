@@ -23,14 +23,16 @@
 #include "sound.h"              /* for bell() */
 #include "string.h"
 #include "conout.h"
-
+#include "../vdi/vdi_defs.h"    /* for phys_work stuff */
 
 #define PLANE_OFFSET    2       /* interleaved planes */
 
-#define TRUECOLOR_MODE  (v_planes > 8)
 #define FALCON_BLACK    0x0000
 #define FALCON_WHITE    0xffbf
 
+#if CONF_WITH_VDI_16BIT
+extern Vwk phys_work;           /* attribute area for physical workstation */
+#endif
 
 /*
  * char_addr - retrieve the address of the source cell
@@ -141,7 +143,7 @@ static void cell_xfer16(UBYTE *src, UBYTE *dst)
     fnt_wr = v_fnt_wr;
     line_wr = v_lin_wr;
 
-#if 0           /* CONF_WITH_VDI_16BIT */
+#if CONF_WITH_VDI_16BIT
     if (v_stat_0 & M_REVID) {   /* handle reversed foreground and background colours */
         fg = v_col_bg;
         bg = v_col_fg;
@@ -547,7 +549,7 @@ static void blank_out16(int topx, int topy, int botx, int boty)
 
     rows = (boty - topy + 1) * v_cel_ht;    /* in pixels */
 
-#if 0           /* CONF_WITH_VDI_16BIT */
+#if CONF_WITH_VDI_16BIT
     /* get pixel value from physical workstation's palette */
     bgcol = phys_work.ext->palette[v_col_bg];
 #else
