@@ -16,6 +16,7 @@
 #include "vdi_defs.h"
 #include "vdistub.h"
 #include "blitter.h"
+#include "tosvars.h"
 #include "biosext.h"    /* for cache control routines */
 #include "lineavars.h"
 #include "has.h"        /* for blitter-related items */
@@ -71,6 +72,15 @@ static WORD q_circle[MAX_QC_LINES]; /* Holds the circle DDA */
 
 /* Wide line attribute save areas */
 static WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
+
+
+/* the following should be a #define shared with vdimouse.c */
+#if CONF_WITH_VDI_16BIT
+static __inline__ UWORD *get_start_addr16(const WORD x, const WORD y)
+{
+    return (UWORD *)(v_bas_ad + (x * sizeof(WORD)) + muls(y, v_lin_wr));
+}
+#endif
 
 
 /*
@@ -435,6 +445,121 @@ static void hwblit_rect_common(const VwkAttrib *attr, const Rect *rect)
 #endif
 
 
+#if CONF_WITH_VDI_16BIT
+/*
+ * swblit_rect_common16 - draw one or more horizontal lines via software, 16-bit mode
+ *
+ * this is much simpler than the corresponding bitplane code (see swblit_rect_common())
+ *
+ * FIXME: notes to self
+ * . do we need OPTIMIZE_SMALL?
+ * . pay attention to notes in Compendium for vswr_mode re ERASE & TRANS
+ */
+static void OPTIMIZE_SMALL swblit_rect_common16(const VwkAttrib *attr, const Rect *rect)
+{
+    const UWORD patmsk = attr->patmsk;
+    const int yinc = v_lin_wr >> 1;     /* in WORDs */
+    UWORD *addr, *work, *palette;
+    UWORD bgcol, fgcol, mask, pattern;
+    int x, y, patind;
+
+    addr = get_start_addr16(rect->x1, rect->y1);
+    palette = CUR_WORK->ext->palette;
+    fgcol = palette[attr->color];
+    bgcol = palette[0];     //FIXME ??
+
+    switch(attr->wrt_mode) {
+    case WM_ERASE:          /* erase (reverse transparent) mode */
+        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+            work = addr;
+            patind = patmsk & y;            /* starting pattern index */
+            pattern = attr->patptr[patind];
+            if (pattern == 0x0000) {        /* simple case */
+                for (x = rect->x1; x <= rect->x2; x++) {
+                    *work++ = fgcol;
+                }
+            } else {
+                mask = 1U << (15 - (rect->x1 & 0x000f));
+                for (x = rect->x1; x <= rect->x2; x++, work++) {
+                    if (!(pattern & mask)) {
+                        *work = fgcol;
+                    }
+                    rorw1(mask);
+                }
+            }
+        }
+        break;
+    case WM_XOR:            /* xor mode */
+        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+            UWORD temp;
+
+            work = addr;
+            patind = patmsk & y;            /* starting pattern index */
+            pattern = attr->patptr[patind];
+            if (pattern == 0xffff) {        /* common case */
+                for (x = rect->x1; x <= rect->x2; x++) {
+                    temp = *work;
+                    *work++ = ~temp;        /* complement the existing colour */
+                }
+            } else {
+                mask = 1U << (15 - (rect->x1 & 0x000f));
+                for (x = rect->x1; x <= rect->x2; x++, work++) {
+                    if (pattern & mask) {
+                        temp = *work;
+                        *work = ~temp;      /* complement the existing colour */
+                    }
+                    rorw1(mask);
+                }
+            }
+        }
+        break;
+    case WM_TRANS:          /* transparent mode */
+        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+            work = addr;
+            patind = patmsk & y;            /* starting pattern index */
+            pattern = attr->patptr[patind];
+            if (pattern == 0xffff) {        /* common case */
+                for (x = rect->x1; x <= rect->x2; x++) {
+                    *work++ = fgcol;
+                }
+            } else {
+                mask = 1U << (15 - (rect->x1 & 0x000f));
+                for (x = rect->x1; x <= rect->x2; x++, work++) {
+                    if (pattern & mask) {
+                        *work = fgcol;
+                    }
+                    rorw1(mask);
+                }
+            }
+        }
+        break;
+    default:                /* replace mode */
+        for (y = rect->y1; y <= rect->y2; y++, addr += yinc) {
+            work = addr;
+            patind = patmsk & y;            /* starting pattern index */
+            pattern = attr->patptr[patind];
+            if (pattern == 0xffff) {        /* common case */
+                for (x = rect->x1; x <= rect->x2; x++) {
+                    *work++ = fgcol;
+                }
+            } else {
+                mask = 1U << (15 - (rect->x1 & 0x000f));
+                for (x = rect->x1; x <= rect->x2; x++) {
+                    if (pattern & mask) {
+                        *work++ = fgcol;
+                    } else {
+                        *work++ = bgcol;
+                    }
+                    rorw1(mask);
+                }
+            }
+        }
+        break;
+    }
+}
+#endif
+
+
 /*
  * swblit_rect_common - draw one or more horizontal lines via software
  *
@@ -674,6 +799,11 @@ static void OPTIMIZE_SMALL swblit_rect_common(const VwkAttrib *attr, const Rect 
  */
 void draw_rect_common(const VwkAttrib *attr, const Rect *rect)
 {
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)
+        swblit_rect_common16(attr, rect);
+    else
+#endif
 #if CONF_WITH_BLITTER
     if (blitter_is_enabled)
     {
@@ -1492,6 +1622,163 @@ void arrow(Vwk * vwk, Point * point, int count)
 }
 
 
+#if CONF_WITH_VDI_16BIT
+/*
+ * draw_line16 - draw a line (general purpose) in 16-bit graphics
+ *
+ * see draw_line() below for further info
+ */
+static void draw_line16(const Line *line, WORD wrt_mode, UWORD color)
+{
+    UWORD *addr, *palette;
+    UWORD bgcol, fgcol, linemask;
+    WORD dx, dy, yinc;
+    WORD eps, e1, e2;       /* epsilon, epsilon 1, epsilon 2 */
+    WORD loopcnt;
+
+    dx = line->x2 - line->x1;
+    dy = line->y2 - line->y1;
+    yinc = v_lin_wr / 2;        /* in words */
+
+    if (dy < 0) {
+        dy = -dy;               /* make dy absolute */
+        yinc = -yinc;           /* subtract a line */
+    }
+
+    addr = get_start_addr16(line->x1, line->y1);    /* init address counter */
+    palette = CUR_WORK->ext->palette;
+    fgcol = palette[color];
+    bgcol = palette[0];
+
+    linemask = LN_MASK;
+
+    if (dx >= dy) {
+        e1 = 2*dy;
+        eps = -dx;
+        e2 = 2*dx;
+
+        switch(wrt_mode) {
+        case WM_ERASE:      /* reverse transparent  */
+            for (loopcnt = dx; loopcnt >= 0; loopcnt--) {
+                rolw1(linemask);        /* get next bit of line style */
+                if (!(linemask&0x0001))
+                    *addr = fgcol;
+                addr++;
+                eps += e1;
+                if (eps >= 0 ) {
+                    eps -= e2;
+                    addr += yinc;       /* increment y */
+                }
+            }
+            break;
+        case WM_XOR:        /* xor */
+            for (loopcnt = dx; loopcnt >= 0; loopcnt--) {
+                rolw1(linemask);        /* get next bit of line style */
+                if (linemask&0x0001)
+                    *addr = ~*addr;
+                addr++;
+                eps += e1;
+                if (eps >= 0 ) {
+                    eps -= e2;
+                    addr += yinc;       /* increment y */
+                }
+            }
+            break;
+        case WM_TRANS:      /* transparent */
+            for (loopcnt = dx; loopcnt >= 0; loopcnt--) {
+                rolw1(linemask);        /* get next bit of line style */
+                if (linemask&0x0001)
+                    *addr = fgcol;
+                addr++;
+                eps += e1;
+                if (eps >= 0 ) {
+                    eps -= e2;
+                    addr += yinc;       /* increment y */
+                }
+            }
+            break;
+        case WM_REPLACE:    /* replace */
+            for (loopcnt = dx; loopcnt >= 0; loopcnt--) {
+                rolw1(linemask);        /* get next bit of line style */
+                if (linemask&0x0001)
+                    *addr = fgcol;
+                else
+                    *addr = bgcol;
+                addr++;
+                eps += e1;
+                if (eps >= 0 ) {
+                    eps -= e2;
+                    addr += yinc;       /* increment y */
+                }
+            }
+        }
+    } else {        /* dx < dy */
+        e1 = 2*dx;
+        eps = -dy;
+        e2 = 2*dy;
+
+        switch(wrt_mode) {
+        case WM_ERASE:      /* reverse transparent */
+            for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+                rolw1(linemask);        /* get next bit of line style */
+                if (!(linemask&0x0001))
+                    *addr = fgcol;
+                addr += yinc;
+                eps += e1;
+                if (eps >= 0 ) {
+                    eps -= e2;
+                    addr++;
+                }
+            }
+            break;
+        case WM_XOR:        /* xor */
+            for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+                rolw1(linemask);        /* get next bit of line style */
+                if (linemask&0x0001)
+                    *addr = ~*addr;
+                addr += yinc;
+                eps += e1;
+                if (eps >= 0 ) {
+                    eps -= e2;
+                    addr++;
+                }
+            }
+            break;
+        case WM_TRANS:      /* transparent */
+            for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+                rolw1(linemask);        /* get next bit of line style */
+                if (linemask&0x0001)
+                    *addr = fgcol;
+                addr += yinc;
+                eps += e1;
+                if (eps >= 0 ) {
+                    eps -= e2;
+                    addr++;
+                }
+            }
+            break;
+        case WM_REPLACE:    /* replace */
+            for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+                rolw1(linemask);        /* get next bit of line style */
+                if (linemask&0x0001)
+                    *addr = fgcol;
+                else
+                    *addr = bgcol;
+                addr += yinc;
+                eps += e1;
+                if (eps >= 0 ) {
+                    eps -= e2;
+                    addr++;
+                }
+            }
+        }
+    }
+
+    LN_MASK = linemask;
+}
+#endif
+
+
 /*
  * draw_line - draw a line (general purpose)
  *
@@ -1798,6 +2085,74 @@ static void draw_line(const Line *line, WORD wrt_mode, UWORD color)
 
 
 #if CONF_WITH_VDI_VERTLINE
+#if CONF_WITH_VDI_16BIT
+/*
+ * swblit_vertical_line16 - draw a vertical line in 16-bit graphics
+ */
+static void swblit_vertical_line16(const Line *line, WORD wrt_mode, UWORD color)
+{
+    UWORD *addr, *palette;
+    WORD dy;                    /* length of line */
+    WORD yinc;                  /* in/decrease for each y step */
+    WORD loopcnt;
+    UWORD bgcol, fgcol, linemask;
+
+    /* calculate increase value for y to add to actual address */
+    dy = line->y2 - line->y1;
+    yinc = v_lin_wr / 2;        /* one line of words */
+
+    if (dy < 0) {
+        dy = -dy;               /* make dy absolute */
+        yinc = -yinc;           /* sub one line of words */
+    }
+
+    addr = get_start_addr16(line->x1, line->y1);    /* init address counter */
+    palette = CUR_WORK->ext->palette;
+    fgcol = palette[color];
+    bgcol = palette[0];     //FIXME ??
+
+    linemask = LN_MASK;
+
+    switch(wrt_mode) {
+    case WM_ERASE:          /* reverse transparent */
+        for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+            rolw1(linemask);        /* get next bit of line style */
+            if (!(linemask & 0x0001))
+                *addr = fgcol;
+            addr += yinc;
+        }
+        break;
+    case WM_XOR:            /* xor */
+        for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+            rolw1(linemask);        /* get next bit of line style */
+            if (linemask & 0x0001)
+                *addr = ~*addr;
+            addr += yinc;
+        }
+        break;
+    case WM_TRANS:          /* transparent */
+        for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+            rolw1(linemask);        /* get next bit of line style */
+            if (linemask & 0x0001)
+                *addr = fgcol;
+            addr += yinc;
+        }
+        break;
+    case WM_REPLACE:        /* replace */
+        for (loopcnt = dy; loopcnt >= 0; loopcnt--) {
+            rolw1(linemask);        /* get next bit of line style */
+            if (linemask & 0x0001)
+                *addr = fgcol;
+            else
+                *addr = bgcol;
+            addr += yinc;
+        }
+    }
+
+    LN_MASK = linemask;
+}
+#endif
+
 /*
  * vertical_line - draw a vertical line
  *
@@ -1926,6 +2281,14 @@ void abline(const Line *line, const WORD wrt_mode, UWORD color)
      * optimize drawing of vertical lines
      */
     if (line->x1 == line->x2) {
+#if CONF_WITH_VDI_16BIT
+        if (TRUECOLOR_MODE)
+        {
+            swblit_vertical_line16(line, wrt_mode, color);
+            return;
+        }
+        else
+#endif
 #if CONF_WITH_BLITTER
         if (blitter_is_enabled)
         {
@@ -1998,6 +2361,11 @@ void abline(const Line *line, const WORD wrt_mode, UWORD color)
     ordered.y1 = y1;
     ordered.x2 = x2;
     ordered.y2 = y2;
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)
+        draw_line16(&ordered, wrt_mode, color);
+    else
+#endif
     draw_line(&ordered, wrt_mode, color);
 }
 
