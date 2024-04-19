@@ -235,8 +235,16 @@ static BOOL ok_for_direct_blit(Vwk *vwk, WORD width, JUSTINFO *justified)
     if (justified)
         return FALSE;
 
-    if (DESTX & 0x0007)
-        return FALSE;
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)     /* always byte-aligned */
+    {
+    }
+    else
+#endif
+    {
+        if (DESTX & 0x0007)
+            return FALSE;
+    }
 
     fnt_ptr = vwk->cur_font;
 

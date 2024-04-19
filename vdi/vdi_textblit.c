@@ -117,6 +117,14 @@ static UBYTE reverse_nybble[] =
     0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
 
 
+#if CONF_WITH_VDI_16BIT
+static __inline__ UWORD *get_start_addr16(const WORD x, const WORD y)
+{
+    return (UWORD *)(v_bas_ad + (x * sizeof(WORD)) + muls(y, v_lin_wr));
+}
+#endif
+
+
 /*
  * check for clipping
  *
@@ -741,6 +749,93 @@ void scale(LOCALVARS *vars)
 
 
 #if CONF_WITH_VDI_TEXT_SPEEDUP
+#if CONF_WITH_VDI_16BIT
+/*
+ * output the font directly to the 16-bit screen
+ */
+static void direct_screen_blit16(WORD count, WORD *str)
+{
+    WORD fgcol, bgcol, height, mode, n;
+    WORD src_width, dst_width;
+    UBYTE mask;
+    UBYTE *src, *p;
+    UWORD *dst, *save_dst, *q, *palette;
+
+    height = DELY;
+    mode = WRT_MODE;
+    src_width = FWIDTH;
+    dst_width = v_lin_wr / sizeof(UWORD);
+
+    palette = CUR_WORK->ext->palette;
+    fgcol = palette[TEXTFG];
+    bgcol = palette[0];
+
+    dst = get_start_addr16(DESTX, DESTY);
+
+    for ( ; count > 0; count--)
+    {
+        src = (UBYTE *)FBASE + *str++;
+        save_dst = dst;
+
+        switch(mode) {
+        default:    /* WM_REPLACE */
+            for (n = height, p = src; n > 0; n--)
+            {
+                for (mask = 0x80, q = dst; mask; mask >>= 1)
+                {
+                    *q++ = (*p & mask) ? fgcol : bgcol;
+                }
+                p += src_width;
+                dst += dst_width;
+            }
+            break;
+        case WM_TRANS:
+            for (n = height, p = src; n > 0; n--)
+            {
+                for (mask = 0x80, q = dst; mask; mask >>= 1)
+                {
+                    if (*p & mask)
+                        *q = fgcol;
+                    q++;
+                }
+                p += src_width;
+                dst += dst_width;
+            }
+            break;
+        case WM_XOR:
+            for (n = height, p = src; n > 0; n--)
+            {
+                for (mask = 0x80, q = dst; mask; mask >>= 1)
+                {
+                    if (*p & mask)
+                        *q = ~*q;
+                    q++;
+                }
+                p += src_width;
+                dst += dst_width;
+            }
+            break;
+        case WM_ERASE:
+            for (n = height, p = src; n > 0; n--)
+            {
+                for (mask = 0x80, q = dst; mask; mask >>= 1)
+                {
+                    if (!(*p & mask))
+                        *q = fgcol;
+                    q++;
+                }
+                p += src_width;
+                dst += dst_width;
+            }
+            break;
+        }
+
+        dst = save_dst + 8;
+    }
+}
+#endif
+
+
 /*
  * output the font directly to the screen
  *
@@ -757,6 +852,14 @@ void direct_screen_blit(WORD count, WORD *str)
     mode = WRT_MODE;
     src_width = FWIDTH;
     dst_width = v_lin_wr;
+
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)
+    {
+        direct_screen_blit16(count, str);
+        return;
+    }
+#endif
 
     dst = (UBYTE *)get_start_addr(DESTX, DESTY);
     if (DESTX & 0x0008)
