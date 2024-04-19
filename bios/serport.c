@@ -1101,7 +1101,7 @@ LONG bconmap(WORD dev)
      * in the 'old_dev' slot of the mapping table.  this preserves
      * any changes that may have been made to them.
      */
-    maptabptr = &maptable[old_dev-BCONMAP_START_HANDLE];
+    maptabptr = &bconmap_root.maptab[old_dev-BCONMAP_START_HANDLE];
     maptabptr->Bconstat = bconstat_vec[1];
     maptabptr->Bconin = bconin_vec[1];
     maptabptr->Bcostat = bcostat_vec[1];
@@ -1110,7 +1110,7 @@ LONG bconmap(WORD dev)
     maptabptr->Iorec = rs232iorecptr;
 
     /* now we update the low-memory vectors */
-    maptabptr = &maptable[map_index];
+    maptabptr = &bconmap_root.maptab[map_index];
     bconstat_vec[1] = maptabptr->Bconstat;
     bconin_vec[1] = maptabptr->Bconin;
     bcostat_vec[1] = maptabptr->Bcostat;
