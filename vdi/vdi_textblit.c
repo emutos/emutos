@@ -751,7 +751,9 @@ void scale(LOCALVARS *vars)
 #if CONF_WITH_VDI_TEXT_SPEEDUP
 #if CONF_WITH_VDI_16BIT
 /*
- * output the font directly to the 16-bit screen
+ * output a character string directly to the 16-bit screen
+ *
+ * see direct_screen_blit() for details of usage
  */
 static void direct_screen_blit16(WORD count, WORD *str)
 {
@@ -837,7 +839,11 @@ static void direct_screen_blit16(WORD count, WORD *str)
 
 
 /*
- * output the font directly to the screen
+ * output a character string directly to the screen
+ *
+ * this is used for the special (but common) case of a string with no
+ * special effects, no rotation, no justification, left-alignment,
+ * byte-aligned output, using a monospaced font with a cell width of 8
  *
  * note: like Atari TOS, we assume that the font contains the full
  * character set, i.e. first_ade==0, last_ade==255
@@ -957,7 +963,12 @@ void direct_screen_blit(WORD count, WORD *str)
 
 
 /*
- * output a block to the screen
+ * output a glyph to the screen
+ *
+ * this is called each time a character is output to the screen, unless
+ * CONF_WITH_VDI_TEXT_SPEEDUP is configured, and the string to be output
+ * has no special features, in which case direct_screen_blit() is used
+ * to output a whole string at once.
  */
 static void screen_blit(LOCALVARS *vars)
 {
