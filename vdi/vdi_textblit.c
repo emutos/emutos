@@ -822,6 +822,11 @@ static void direct_screen_blit16(WORD count, WORD *str)
             {
                 for (mask = 0x80, q = dst; mask; mask >>= 1)
                 {
+                    /*
+                     * note: here we differ from TOS 4.04 which seems to
+                     * behave as though the assignment below was "*q = bgcol;".
+                     * the TOS4.04 behaviour is a bug IMO.
+                     */
                     if (!(*p & mask))
                         *q = fgcol;
                     q++;
@@ -962,6 +967,115 @@ void direct_screen_blit(WORD count, WORD *str)
 #endif
 
 
+#if CONF_WITH_VDI_16BIT
+/*
+ * output a glyph to the 16-bit screen
+ */
+static void screen_blit16(LOCALVARS *vars)
+{
+    UWORD *palette, *p, *q;
+    UBYTE *src, *dst;
+    WORD fgcol, bgcol, h, w;
+    UWORD src_mask, mask;
+
+    /*
+     * set up source stuff
+     */
+    src = vars->sform;
+    src_mask = 0x8000 >> vars->tsdad;
+
+    /*
+     * set up destination stuff
+     */
+    vars->dform = v_bas_ad;
+    vars->dform += vars->DESTX * sizeof(WORD);      /* add x coordinate part of addr */
+    vars->dform += (UWORD)(vars->DESTY+vars->DELY-1) * (ULONG)v_lin_wr; /* add y coordinate part of addr */
+    vars->d_next = -v_lin_wr;
+    dst = vars->dform;
+
+    /*
+     * set up colours
+     */
+    palette = CUR_WORK->ext->palette;
+    fgcol = palette[vars->forecol];
+    bgcol = palette[0];
+
+    switch(vars->WRT_MODE) {
+    /*
+     * when called via lineA, modes 4-19 (corresponding to BitBlt modes 0-15)
+     * are theoretically possible.  however, at this time we do not support them.
+     */
+    default:    /* WM_REPLACE */
+        for (h = vars->height; h > 0; h--, src += vars->s_next, dst += vars->d_next)
+        {
+            p = (UWORD *)src;
+            q = (UWORD *)dst;
+            for (w = vars->width, mask = src_mask; w > 0; w--)
+            {
+                *q++ = (*p & mask) ? fgcol : bgcol;
+                rorw1(mask);
+                if (mask == 0x8000)
+                    p++;
+            }
+        }
+        break;
+    case WM_TRANS:
+        for (h = vars->height; h > 0; h--, src += vars->s_next, dst += vars->d_next)
+        {
+            p = (UWORD *)src;
+            q = (UWORD *)dst;
+            for (w = vars->width, mask = src_mask; w > 0; w--)
+            {
+                if (*p & mask)
+                    *q = fgcol;
+                q++;
+                rorw1(mask);
+                if (mask == 0x8000)
+                    p++;
+            }
+        }
+        break;
+    case WM_XOR:
+        for (h = vars->height; h > 0; h--, src += vars->s_next, dst += vars->d_next)
+        {
+            p = (UWORD *)src;
+            q = (UWORD *)dst;
+            for (w = vars->width, mask = src_mask; w > 0; w--)
+            {
+                if (*p & mask)
+                    *q = ~*q;
+                q++;
+                rorw1(mask);
+                if (mask == 0x8000)
+                    p++;
+            }
+        }
+        break;
+    case WM_ERASE:
+        for (h = vars->height; h > 0; h--, src += vars->s_next, dst += vars->d_next)
+        {
+            p = (UWORD *)src;
+            q = (UWORD *)dst;
+            for (w = vars->width, mask = src_mask; w > 0; w--)
+            {
+                /*
+                 * behaviour here differs from TOS 4.04 - for further info,
+                 * see the comments in screen_blit16()
+                 */
+                if (!(*p & mask))
+                    *q = fgcol;
+                q++;
+                rorw1(mask);
+                if (mask == 0x8000)
+                    p++;
+            }
+        }
+        break;
+    }
+}
+#endif
+
+
 /*
  * output a glyph to the screen
  *
@@ -988,6 +1102,14 @@ static void screen_blit(LOCALVARS *vars)
     offset = (SOURCEY+vars->DELY-1) * (LONG)vars->s_next + ((SOURCEX >> 3) & ~1);
     vars->sform += offset;
     vars->s_next = -vars->s_next;   /* we draw from the bottom up */
+
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)
+    {
+        screen_blit16(vars);
+        return;
+    }
+#endif
 
     /*
      * calculate the screen address
