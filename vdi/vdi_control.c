@@ -599,12 +599,23 @@ void vdi_v_clswk(Vwk * vwk)
 void vdi_v_clrwk(Vwk * vwk)
 {
     ULONG size;
+    UBYTE fill;
 
     /* Calculate screen size */
     size = (ULONG)v_lin_wr * V_REZ_VT;
 
     /* clear the screen */
-    bzero(v_bas_ad, size);
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)
+    {
+        fill = 0xff;
+    }
+    else
+#endif
+    {
+        fill = 0x00;
+    }
+    memset(v_bas_ad, fill, size);
 }
 
 
