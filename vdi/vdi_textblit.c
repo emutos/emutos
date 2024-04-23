@@ -1179,6 +1179,7 @@ void text_blt(void)
     LOCALVARS vars;
     WORD clipped, delx, dely, weight;
     WORD temp;
+    BOOL need_preblit = FALSE;
 
     vars.swap_tmps = 0;
 
@@ -1250,20 +1251,25 @@ void text_blt(void)
     }
 
     /*
-     * the following is equivalent to:
+     * decide if we need to copy the source glyph to a temporary buffer
+     * so we can manipulate it before the actual screen blit
+     *
+     * we copy in the following situations:
      *  if outlining, OR
      *     rotating AND (skewing OR thickening), OR
      *     skewing AND clipping-is-required,
      *      call pre_blit()
      */
-    if (vars.STYLE & (F_SKEW|F_THICKEN|F_OUTLINE))
+    if (vars.STYLE & F_OUTLINE)
+        need_preblit = TRUE;
+    else if (CHUP && (vars.STYLE & (F_SKEW|F_THICKEN)))
+        need_preblit = TRUE;
+    else if ((vars.STYLE & F_SKEW) && clipped)
+        need_preblit = TRUE;
+
+    if (need_preblit)
     {
-        if (CHUP
-         || ((vars.STYLE & F_SKEW) && clipped)
-         || (vars.STYLE & F_OUTLINE))
-        {
-            pre_blit(&vars);
-        }
+        pre_blit(&vars);
     }
 
     if (CHUP)
