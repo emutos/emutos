@@ -1060,7 +1060,7 @@ static void screen_blit16(LOCALVARS *vars)
             {
                 /*
                  * behaviour here differs from TOS 4.04 - for further info,
-                 * see the comments in screen_blit16()
+                 * see the comments in direct_screen_blit16()
                  */
                 if (!(*p & mask))
                     *q = fgcol;
