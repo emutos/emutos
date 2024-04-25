@@ -975,8 +975,8 @@ static void screen_blit16(LOCALVARS *vars)
 {
     UWORD *palette, *p, *q;
     UBYTE *src, *dst;
-    WORD fgcol, bgcol, h, w;
-    UWORD src_mask, mask;
+    WORD fgcol, bgcol, h, w, skew;
+    UWORD src_mask, mask, skew_mask;
 
     /*
      * set up source stuff
@@ -1000,6 +1000,9 @@ static void screen_blit16(LOCALVARS *vars)
     fgcol = palette[vars->forecol];
     bgcol = palette[0];
 
+    skew = LOFF + ROFF;
+    skew_mask = (UWORD)vars->skew_msk;
+
     switch(vars->WRT_MODE) {
     /*
      * when called via lineA, modes 4-19 (corresponding to BitBlt modes 0-15)
@@ -1017,6 +1020,26 @@ static void screen_blit16(LOCALVARS *vars)
                 if (mask == 0x8000)
                     p++;
             }
+            /*
+             * special handling for skewed text: since the character cells
+             * are effectively slanted, we must shift the starting position
+             * of a cell rightwards as we go up the character.
+             *
+             * note that we can't test for skewed text using vars->STYLE,
+             * since pre_blit() clears F_SKEW and F_THICKEN after it has
+             * processed them.
+             */
+            if (skew)           /* skewed text ? */
+            {
+                rolw1(skew_mask);
+                if (skew_mask & 0x8000)
+                {
+                    rorw1(src_mask);
+                    if (src_mask == 0x8000)
+                        src++;
+                    dst += sizeof(UWORD);
+                }
+            }
         }
         break;
     case WM_TRANS:
@@ -1033,6 +1056,21 @@ static void screen_blit16(LOCALVARS *vars)
                 if (mask == 0x8000)
                     p++;
             }
+            /*
+             * see comments for WM_REPLACE (above) for an explanation of
+             * the following
+             */
+            if (skew)           /* skewed text ? */
+            {
+                rolw1(skew_mask);
+                if (skew_mask & 0x8000)
+                {
+                    rorw1(src_mask);
+                    if (src_mask == 0x8000)
+                        src++;
+                    dst += sizeof(UWORD);
+                }
+            }
         }
         break;
     case WM_XOR:
@@ -1048,6 +1086,21 @@ static void screen_blit16(LOCALVARS *vars)
                 rorw1(mask);
                 if (mask == 0x8000)
                     p++;
+            }
+            /*
+             * see comments for WM_REPLACE (above) for an explanation of
+             * the following
+             */
+            if (skew)           /* skewed text ? */
+            {
+                rolw1(skew_mask);
+                if (skew_mask & 0x8000)
+                {
+                    rorw1(src_mask);
+                    if (src_mask == 0x8000)
+                        src++;
+                    dst += sizeof(UWORD);
+                }
             }
         }
         break;
@@ -1068,6 +1121,21 @@ static void screen_blit16(LOCALVARS *vars)
                 rorw1(mask);
                 if (mask == 0x8000)
                     p++;
+            }
+            /*
+             * see comments for WM_REPLACE (above) for an explanation of
+             * the following
+             */
+            if (skew)           /* skewed text ? */
+            {
+                rolw1(skew_mask);
+                if (skew_mask & 0x8000)
+                {
+                    rorw1(src_mask);
+                    if (src_mask == 0x8000)
+                        src++;
+                    dst += sizeof(UWORD);
+                }
             }
         }
         break;
@@ -1255,11 +1323,17 @@ void text_blt(void)
      * so we can manipulate it before the actual screen blit
      *
      * we copy in the following situations:
+     *  (in 16-bit mode) if (skewing OR thickening OR outlining), OR
      *  if outlining, OR
      *     rotating AND (skewing OR thickening), OR
      *     skewing AND clipping-is-required,
      *      call pre_blit()
      */
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE && (vars.STYLE & (F_SKEW|F_THICKEN|F_OUTLINE)))
+        need_preblit = TRUE;
+    else
+#endif
     if (vars.STYLE & F_OUTLINE)
         need_preblit = TRUE;
     else if (CHUP && (vars.STYLE & (F_SKEW|F_THICKEN)))
