@@ -975,8 +975,58 @@ static void screen_blit16(LOCALVARS *vars)
 {
     UWORD *palette, *p, *q;
     UBYTE *src, *dst;
-    WORD fgcol, bgcol, h, w, skew;
+    WORD fgcol, bgcol, h, w, skew, skew_start;
     UWORD src_mask, mask, skew_mask;
+
+    /*
+     * set skew-related values
+     *
+     * NOTE: we can't test for skewed text using vars->STYLE, since
+     * pre_blit() clears F_SKEW and F_THICKEN after it has processed them.
+     */
+    skew = LOFF + ROFF;
+    skew_mask = (UWORD)vars->skew_msk;
+    skew_start = vars->height;
+
+    /*
+     * the following adjustments are for skewed+outlined text, and make
+     * the output almost the same as produced by TOS4.
+     *
+     * 1. since the source of skewed and/or outlined text must be an
+     *    intermediate buffer, SOURCEX *must* be 0, and we force that.
+     *    NOTE: in versions of TOS prior to TOS4 (& in TOS4 non-TC
+     *    resolutions), this adjustment is not made.  As a result, text
+     *    output is typically clipped.
+     *
+     * 2. a negative value for the nominal destination position is OK,
+     *    because outlining has adjusted the starting position of characters
+     *    leftwards.  however, such values are prohibited by do_clip(),
+     *    which adjusts var->DESTX.  we adjust it back here ...
+     *    NOTE: this situation can only happen at the beginning of a
+     *    screen line.
+     *
+     * 3. for bigger fonts, skewing must not start at the bottom of the
+     *    buffer, otherwise parts of the outline are clipped too agressively.
+     *    at the moment, this fix is a bit of a kludge, though it works well
+     *    enough.
+     */
+    if (skew && (vars->STYLE&F_OUTLINE))
+    {
+        if (SOURCEX)
+        {
+            KDEBUG(("SOURCEX (was %d) forced to zero for intermediate buffer\n",SOURCEX));
+            SOURCEX = 0;
+            vars->tsdad = 0;    /* this was set from SOURCEX in screen_blit() */
+        }
+
+        if (DESTX < 0)
+        {
+            KDEBUG(("vars->DESTX (was %d) set to DESTX (%d)\n",vars->DESTX,DESTX));
+            vars->DESTX = DESTX;
+        }
+        if (vars->height > 8)       /* not a 6-point font */
+            skew_start -= OUTLINE_THICKNESS;
+    }
 
     /*
      * set up source stuff
@@ -1000,9 +1050,6 @@ static void screen_blit16(LOCALVARS *vars)
     fgcol = palette[vars->forecol];
     bgcol = palette[0];
 
-    skew = LOFF + ROFF;
-    skew_mask = (UWORD)vars->skew_msk;
-
     switch(vars->WRT_MODE) {
     /*
      * when called via lineA, modes 4-19 (corresponding to BitBlt modes 0-15)
@@ -1024,12 +1071,8 @@ static void screen_blit16(LOCALVARS *vars)
              * special handling for skewed text: since the character cells
              * are effectively slanted, we must shift the starting position
              * of a cell rightwards as we go up the character.
-             *
-             * note that we can't test for skewed text using vars->STYLE,
-             * since pre_blit() clears F_SKEW and F_THICKEN after it has
-             * processed them.
              */
-            if (skew)           /* skewed text ? */
+            if (skew && (h <= skew_start))  /* OK to shift box for skewed text? */
             {
                 rolw1(skew_mask);
                 if (skew_mask & 0x8000)
@@ -1060,7 +1103,7 @@ static void screen_blit16(LOCALVARS *vars)
              * see comments for WM_REPLACE (above) for an explanation of
              * the following
              */
-            if (skew)           /* skewed text ? */
+            if (skew && (h <= skew_start))  /* OK to shift box for skewed text? */
             {
                 rolw1(skew_mask);
                 if (skew_mask & 0x8000)
@@ -1091,7 +1134,7 @@ static void screen_blit16(LOCALVARS *vars)
              * see comments for WM_REPLACE (above) for an explanation of
              * the following
              */
-            if (skew)           /* skewed text ? */
+            if (skew && (h <= skew_start))  /* OK to shift box for skewed text? */
             {
                 rolw1(skew_mask);
                 if (skew_mask & 0x8000)
@@ -1126,7 +1169,7 @@ static void screen_blit16(LOCALVARS *vars)
              * see comments for WM_REPLACE (above) for an explanation of
              * the following
              */
-            if (skew)           /* skewed text ? */
+            if (skew && (h <= skew_start))  /* OK to shift box for skewed text? */
             {
                 rolw1(skew_mask);
                 if (skew_mask & 0x8000)
