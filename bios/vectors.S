@@ -1,4 +1,3 @@
-    rol.w  #1,d1
 /*
  * vectors.S - exception vectors
  *
