@@ -1147,7 +1147,7 @@ static void vrt_cpyfm16(struct blit_frame *info)
     /*
      * init source area variables
      */
-    src_width = info->b_wd >> 4;            /* width in words */
+    src_width = info->s_nxln / sizeof(WORD);/* width in words */
     src_off = info->s_xmin >> 4;            /* starting x offset in words */
     bit_mask = src_mask = 0x8000U >> (info->s_xmin&0x000f); /* starting bit mask */
     p = src = info->s_form + ((LONG)info->s_ymin * src_width) + src_off;
