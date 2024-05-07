@@ -59,6 +59,7 @@
 #include "memory.h"
 #include "nova.h"
 #include "tosvars.h"
+#include "dana.h"
 #include "amiga.h"
 #include "lisa.h"
 #include "coldfire.h"
@@ -226,6 +227,10 @@ static void bios_init(void)
 #if CONF_WITH_UAE
     KDEBUG(("amiga_uae_init()\n"));
     amiga_uae_init();
+#endif
+#if defined(MACHINE_DANA)
+    KDEBUG(("dana_init()\n"));
+    dana_init();
 #endif
 
     /* Initialize the processor */
@@ -1245,3 +1250,6 @@ BOOL is_text_pointer(const void *p)
 }
 
 #endif /* CONF_WITH_EXTENDED_MOUSE */
+
+/* vim: set ts=4 sw=4 et: */
+

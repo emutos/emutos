@@ -67,5 +67,9 @@ void Initmous(WORD , struct param *, PFVOID);
 
 void mouse_int(void);           /* mouse interrupt vector */
 
+#if CONF_WITH_TOUCHSCREEN_XBIOS
+extern void ts_rawread(UWORD* x, UWORD* y, UWORD* state);
+extern void ts_calibrate(LONG c[7]);
+#endif
 
 #endif /* MOUSE_H */

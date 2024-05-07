@@ -523,6 +523,23 @@ _int_timerc:
 #else
         movem.l d0-d7/a0-a6,-(sp)       // save registers
 #endif
+        // Dana polled keyboard and pen handling
+#ifdef MACHINE_DANA
+        jsr     _dana_poll_keyboard
+        jsr     _dana_poll_touchscreen
+#endif
+
+        // Faked VBL for platforms which don't have one
+#ifdef CONF_WITH_FAKE_VBL
+        move.b  vbl_tick_count, d0
+        addq.b  #1, d0
+        cmp.b   #4, d0                  // 200Hz / 50Hz
+        bne.b   no_vbl
+        jsr     _int_vbl
+        clr.b   d0
+no_vbl:
+        move.b  d0, vbl_tick_count
+#endif
 
         // repeat keys
         jsr     _kb_timerc_int
@@ -1434,6 +1451,12 @@ _keyclick:
 // ==== Variables ============================================================
 
         .bss
+
+#ifdef CONF_WITH_FAKE_VBL
+vbl_tick_count:
+        .dc.b    0
+#endif
+
         .even
 
         .ds.w    256            // this stack is only used by dopanic()
@@ -1443,3 +1466,6 @@ panic_stack:
 save_beg:       .ds.w   24*3    // d3-d7/a3-a7, sr, pc, vo = 24 words,
                                 // multiplied by 3 ("3 level deep reentrant")
 _trap_save_area:                     // End of Save storage
+
+/* vim: set ts=4 sw=4 et: */
+
