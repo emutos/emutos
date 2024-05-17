@@ -32,7 +32,12 @@
 #include "intmath.h"
 #include "string.h"
 #include "nls.h"
+#include "../vdi/vdi_defs.h"    /* for phys_work stuff */
 
+
+#if CONF_WITH_VDI_16BIT
+extern Vwk phys_work;           /* attribute area for physical workstation */
+#endif
 
 /*******  LOCALS  **********************/
 
@@ -327,8 +332,6 @@ static void expand_cicondata(WORD *src, WORD *dst, WORD *mask, WORD w, WORD h, W
 
     /*
      * 4. AND the mask plane into all destination planes
-     *
-     * NOTE: this may need to be modified for 16-bit colour
      */
     q = dst;
     for (i = 0; i < dst_planes; i++)
@@ -341,8 +344,6 @@ static void expand_cicondata(WORD *src, WORD *dst, WORD *mask, WORD w, WORD h, W
 
 /*
  * transform a colour icon from device-independent to device-dependent form
- *
- * NOTE: this may need to be modified for 16-bit colour
  */
 static void transform_cicon(WORD *src, WORD *dest, WORD w, WORD h, WORD planes)
 {
@@ -354,6 +355,44 @@ static void transform_cicon(WORD *src, WORD *dest, WORD w, WORD h, WORD planes)
     gl_dst.fd_nplanes = planes;
 
     vrn_trnfm(&gl_src, &gl_dst);
+
+#if CONF_WITH_VDI_16BIT
+    /*
+     * for Truecolor, we now have the VDI colour code (0-255) in each
+     * word/pixel.  however, the value is reversed: the least significant
+     * bit is bit 15 and the most significant is bit 8.  we reverse it
+     * manually, then use the value of 0-255 to look up the corresponding
+     * pixel value in the palette associated with the physical workstation.
+     *
+     * NOTE: it might be faster to reverse the value by using a lookup
+     * table, but we leave this as a possible future optimisation.
+     */
+    if (planes > 8)
+    {
+        WORD *p, i, n;
+        for (i = w*h, p = dest; i > 0; i--, p++)
+        {
+            n = 0;              /* index into palette array */
+            if (*p&0x8000)
+                n |= 0x0001;
+            if (*p&0x4000)
+                n |= 0x0002;
+            if (*p&0x2000)
+                n |= 0x0004;
+            if (*p&0x1000)
+                n |= 0x0008;
+            if (*p&0x0800)
+                n |= 0x0010;
+            if (*p&0x0400)
+                n |= 0x0020;
+            if (*p&0x0200)
+                n |= 0x0040;
+            if (*p&0x0100)
+                n |= 0x0080;
+            *p = phys_work.ext->palette[n];
+        }
+    }
+#endif
 }
 
 /*
