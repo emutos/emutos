@@ -642,6 +642,7 @@ static void gr_gblt(WORD *pimage, GRECT *pi, WORD col1, WORD col2)
 static void gr_colourblit(WORD *pdata, GRECT *pi, WORD num_planes)
 {
     WORD pxyarray[8];
+    WORD mode;
 
     gsx_fix(&gl_src, pdata, pi->g_w/8, pi->g_h);
     gl_src.fd_nplanes = num_planes;
@@ -660,7 +661,14 @@ static void gr_colourblit(WORD *pdata, GRECT *pi, WORD num_planes)
     pxyarray[7] = pi->g_y + pi->g_h - 1;
     gsx_mon();
 
-    vro_cpyfm(S_OR_D, pxyarray, &gl_src, &gl_dst);
+    mode = S_OR_D;
+
+#if CONF_WITH_VDI_16BIT
+    if (num_planes > 8)     /* Truecolor mode */
+        mode = S_AND_D;
+#endif
+
+    vro_cpyfm(mode, pxyarray, &gl_src, &gl_dst);
 }
 
 
