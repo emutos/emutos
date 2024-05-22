@@ -659,7 +659,6 @@ static void gr_colourblit(WORD *pdata, GRECT *pi, WORD num_planes)
     pxyarray[5] = pi->g_y;
     pxyarray[6] = pi->g_x + pi->g_w - 1;
     pxyarray[7] = pi->g_y + pi->g_h - 1;
-    gsx_mon();
 
     mode = S_OR_D;
 
@@ -669,6 +668,7 @@ static void gr_colourblit(WORD *pdata, GRECT *pi, WORD num_planes)
 #endif
 
     vro_cpyfm(mode, pxyarray, &gl_src, &gl_dst);
+    gsx_mon();
 }
 
 
