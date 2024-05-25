@@ -20,6 +20,12 @@
 #include "tosvars.h"
 #include "lineavars.h"
 
+#if CONF_WITH_VDI_16BIT
+static __inline__ UWORD *get_start_addr16(const WORD x, const WORD y)
+{
+    return (UWORD *)(v_bas_ad + (x * sizeof(WORD)) + muls(y, v_lin_wr));
+}
+#endif
 
 /* special values used in y member of SEGMENT */
 #define EMPTY       0xffff          /* this entry is unused */
@@ -1034,6 +1040,18 @@ get_pix(void)
 /*
  * put_pix - plot a pixel (just for line-A)
  *
+ * NOTE: this does not work for Truecolor modes in TOS4 due to a bug.
+ * Register a4 is used to reference the lineA pointer table, but has
+ * never been set; the code should be using a1 instead.  So we can
+ * safely assume that no existing program is expecting this to work.
+ *
+ * However, because EmuTOS aims to be better than TOS, a functioning
+ * Truecolor mode has been implemented.  The EmuTOS Truecolor code
+ * is based on what TOS4 apparently intends to do, i.e. just stores
+ * the word passed in INTIN[0] as-is.  This also meshes with the
+ * operation of linea2 in TOS4 Truecolor modes, which just retrieves
+ * the word at the specified address.
+ *
  * input:
  *     INTIN(0) = pixel value.
  *     PTSIN(0) = x coordinate.
@@ -1049,6 +1067,20 @@ put_pix(void)
 
     const WORD x = PTSIN[0];
     const WORD y = PTSIN[1];
+
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)
+    {
+        /*
+         * convert x,y to start address & validate
+         */
+        addr = get_start_addr16(x, y);
+        if (addr < (UWORD*)v_bas_ad || addr >= get_start_addr(V_REZ_HZ, V_REZ_VT))
+            return;
+        *addr = INTIN[0];   /* store 16-bit Truecolor value */
+        return;
+    }
+#endif
 
     /* convert x,y to start address */
     addr = get_start_addr(x, y);
