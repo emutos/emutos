@@ -20,6 +20,7 @@
 #include "vdi_defs.h"
 #include "vdistub.h"
 #include "lineavars.h"
+#include "vdi_inline.h"
 #include "biosext.h"
 
 
@@ -115,14 +116,6 @@ static UBYTE reverse_nybble[] =
 {   0x00, 0x08, 0x04, 0x0c, 0x02, 0x0a, 0x06, 0x0e,
 /*  1000  1001  1010  1011  1100  1101  1110  1111  */
     0x01, 0x09, 0x05, 0x0d, 0x03, 0x0b, 0x07, 0x0f };
-
-
-#if CONF_WITH_VDI_16BIT
-static __inline__ UWORD *get_start_addr16(const WORD x, const WORD y)
-{
-    return (UWORD *)(v_bas_ad + (x * sizeof(WORD)) + muls(y, v_lin_wr));
-}
-#endif
 
 
 /*

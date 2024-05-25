@@ -19,6 +19,7 @@
 #include "tosvars.h"
 #include "biosext.h"    /* for cache control routines */
 #include "lineavars.h"
+#include "vdi_inline.h"
 #include "has.h"        /* for blitter-related items */
 
 
@@ -72,15 +73,6 @@ static WORD q_circle[MAX_QC_LINES]; /* Holds the circle DDA */
 
 /* Wide line attribute save areas */
 static WORD s_begsty, s_endsty, s_fil_col, s_fill_per;
-
-
-/* the following should be a #define shared with vdimouse.c */
-#if CONF_WITH_VDI_16BIT
-static __inline__ UWORD *get_start_addr16(const WORD x, const WORD y)
-{
-    return (UWORD *)(v_bas_ad + (x * sizeof(WORD)) + muls(y, v_lin_wr));
-}
-#endif
 
 
 /*

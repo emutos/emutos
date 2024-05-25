@@ -19,13 +19,8 @@
 #include "vdistub.h"
 #include "tosvars.h"
 #include "lineavars.h"
+#include "vdi_inline.h"
 
-#if CONF_WITH_VDI_16BIT
-static __inline__ UWORD *get_start_addr16(const WORD x, const WORD y)
-{
-    return (UWORD *)(v_bas_ad + (x * sizeof(WORD)) + muls(y, v_lin_wr));
-}
-#endif
 
 /* special values used in y member of SEGMENT */
 #define EMPTY       0xffff          /* this entry is unused */

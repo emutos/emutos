@@ -22,6 +22,7 @@
 #include "tosvars.h"
 #include "biosext.h"
 #include "lineavars.h"
+#include "vdi_inline.h"
 #if WITH_AES
 #include "../aes/aesstub.h"
 #endif
@@ -107,14 +108,6 @@ static const MFORM arrow_mform = {
     }
 };
 #define default_mform() &arrow_mform
-#endif
-
-
-#if CONF_WITH_VDI_16BIT
-static __inline__ UWORD *get_start_addr16(const WORD x, const WORD y)
-{
-    return (UWORD *)(v_bas_ad + (x * sizeof(WORD)) + muls(y, v_lin_wr));
-}
 #endif
 
 
