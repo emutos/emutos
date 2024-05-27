@@ -1019,6 +1019,15 @@ void vdi_v_get_pixel(Vwk * vwk)
     /* Get the requested pixel */
     pel = (WORD)pixelread(x,y);
 
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)
+    {
+        INTOUT[0] = 0;
+        INTOUT[1] = pel;
+        return;
+    }
+#endif
+
     INTOUT[0] = pel;
     INTOUT[1] = REV_MAP_COL[pel];
 }
