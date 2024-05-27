@@ -658,19 +658,30 @@ get_color (UWORD mask, UWORD * addr)
 
 
 /*
- * pixelread - gets a pixel's color index value
+ * pixelread - gets a pixel's colour
+ *
+ * For palette-based resolutions, this returns the colour index; for
+ * Truecolor resolutions, this returns the 16-bit RGB colour.
  *
  * input:
  *     PTSIN(0) = x coordinate.
  *     PTSIN(1) = y coordinate.
  * output:
- *     pixel value
+ *     pixel colour
  */
 static UWORD
 pixelread(const WORD x, const WORD y)
 {
     UWORD *addr;
     UWORD mask;
+
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)
+    {
+        addr = get_start_addr16(x, y);
+        return *addr;                   /* just return the data at the address */
+    }
+#endif
 
     /* convert x,y to start address and bit mask */
     addr = get_start_addr(x, y);
