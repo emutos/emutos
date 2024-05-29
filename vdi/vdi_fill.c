@@ -138,11 +138,6 @@ static const UWORD HATCH1[96] = {
 const UWORD HOLLOW = 0;
 const UWORD SOLID = 0xFFFF;
 
-/*
- * this used by contourfill() to limit the value of the search colour,
- * according to the number of planes in the current resolution.
- */
-static const WORD plane_mask[] = { 1, 3, 7, 15, 31, 63, 127, 255 };
 
 
 /*
@@ -892,15 +887,7 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
         /* Range check the color and convert the index to a pixel value */
         if (search_color >= numcolors)
             return;
-
-        /*
-         * We mandate that white is all bits on.  Since this yields 15
-         * in rom, we must limit it to how many planes there really are.
-         * Anding with the mask is only necessary when the driver supports
-         * move than one resolution.
-         */
-        search_color =
-            (MAP_COL[search_color] & plane_mask[INQ_TAB[4] - 1]);
+        search_color = MAP_COL[search_color];
         seed_type = 0;
     }
 
