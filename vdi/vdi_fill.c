@@ -1090,7 +1090,7 @@ put_pix(void)
          * convert x,y to start address & validate
          */
         addr = get_start_addr16(x, y);
-        if (addr < (UWORD*)v_bas_ad || addr >= get_start_addr(V_REZ_HZ, V_REZ_VT))
+        if (addr < (UWORD*)v_bas_ad || addr >= get_start_addr16(V_REZ_HZ, V_REZ_VT))
             return;
         *addr = INTIN[0];   /* store 16-bit Truecolor value */
         return;
