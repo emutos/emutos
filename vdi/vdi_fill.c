@@ -21,6 +21,9 @@
 #include "lineavars.h"
 #include "vdi_inline.h"
 
+extern Vwk phys_work;           /* attribute area for physical workstation */
+
+#define OVERLAY_BIT 0x0020      /* for 16-bit resolutions */
 
 /* special values used in y member of SEGMENT */
 #define EMPTY       0xffff          /* this entry is unused */
@@ -688,6 +691,84 @@ pixelread(const WORD x, const WORD y)
 
 
 
+#if CONF_WITH_VDI_16BIT
+/*
+ * search_to_right16() - Truecolor version of search_to_right()
+ */
+static UWORD search_to_right16(const VwkClip *clip, WORD x, const UWORD search_col, UWORD *addr)
+{
+    UWORD pixel, search;
+
+    search = search_col & ~OVERLAY_BIT; /* ignore overlay bit in search colour */
+
+    /*
+     * scan upwards until pixel of different colour found
+     */
+    for ( ; x <= clip->xmx_clip; x++)
+    {
+        pixel = *addr++ & ~OVERLAY_BIT; /* ignore overlay bit on screen */
+        if (pixel != search)
+            break;
+    }
+
+    return x - 1;
+}
+
+
+
+/*
+ * search_to_left16() - Truecolor version of search_to_left()
+ */
+static UWORD search_to_left16(const VwkClip *clip, WORD x, const UWORD search_col, UWORD *addr)
+{
+    UWORD pixel, search;
+
+    search = search_col & ~OVERLAY_BIT; /* ignore overlay bit in search colour */
+
+    /*
+     * scan downwards until pixel of different colour found
+     */
+    for ( ; x >= clip->xmn_clip; x--)
+    {
+        pixel = *addr-- & ~OVERLAY_BIT; /* ignore overlay bit on screen */
+        if (pixel != search)
+            break;
+    }
+
+    return x + 1;
+}
+
+
+
+/*
+ * end_pts16() - Truecolor version of end_pts()
+ */
+static WORD end_pts16(const VwkClip *clip, WORD x, WORD y, WORD *xleftout, WORD *xrightout)
+{
+    UWORD color;
+    UWORD *addr;
+
+    /*
+     * convert x,y to start address and get colour
+     */
+    addr = get_start_addr16(x, y);
+    color = *addr & ~OVERLAY_BIT;    /* ignore overlay bit on screen */
+
+    /*
+     * get left and right end
+     */
+    *xrightout = search_to_right16(clip, x, color, addr);
+    *xleftout = search_to_left16(clip, x, color, addr);
+
+    if (color != search_color)
+        return seed_type ^ 1;   /* return segment not of search color */
+
+    return seed_type ^ 0;       /* return segment is of search color */
+}
+#endif
+
+
+
 static UWORD
 search_to_right (const VwkClip * clip, WORD x, UWORD mask, const UWORD search_col, UWORD * addr)
 {
@@ -761,6 +842,13 @@ static WORD end_pts(const VwkClip *clip, WORD x, WORD y, WORD *xleftout, WORD *x
     /* see, if we are in the y clipping range */
     if ( y < clip->ymn_clip || y > clip->ymx_clip)
         return 0;
+
+#if CONF_WITH_VDI_16BIT
+    if (TRUECOLOR_MODE)
+    {
+        return end_pts16(clip, x, y, xleftout, xrightout);
+    }
+#endif
 
     /* convert x,y to start address and bit mask */
     addr = get_start_addr(x, y);
@@ -888,6 +976,13 @@ void contourfill(const VwkAttrib * attr, const VwkClip *clip)
         if (search_color >= numcolors)
             return;
         search_color = MAP_COL[search_color];
+#if CONF_WITH_VDI_16BIT
+        if (TRUECOLOR_MODE)
+        {
+            /* convert search_color to 16-bit pixel value */
+            search_color = phys_work.ext->palette[search_color];
+        }
+#endif
         seed_type = 0;
     }
 
