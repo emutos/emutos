@@ -387,6 +387,17 @@ long xrmdir(char *p)
  *  Error returns:
  *                  EPTHNF
  *                  EFILNF
+ *
+ *  Some notes on the Fattrib() implementation in Atari TOS and EmuTOS
+ *  ------------------------------------------------------------------
+ *  In TOS versions prior to TOS4, Fattrib() only works with files, not
+ *  folders: trying to get or set the attributes of a folder always
+ *  returns EFILNF.  In TOS4, this restriction is lifted and you may
+ *  use Fattrib() to get/set attributes for both files and folders.
+ *  The only restrictions in TOS4 Fattrib() are on changing attributes:
+ *    (1) you may not change a file to a folder or vice-versa
+ *    (2) you may not set the Volume Label bit on a folder.
+ *  At this time, EmuTOS behaves like Atari TOS 1-3.
  */
 long xchmod(char *p, int wrt, UBYTE mod)
 {
