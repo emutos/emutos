@@ -59,6 +59,9 @@
  * Defaults for the ARAnyM target
  */
 #ifdef MACHINE_ARANYM
+# ifndef CONF_WITH_VDI_16BIT        /* temporary */
+#  define CONF_WITH_VDI_16BIT 0
+# endif
 # ifndef CONF_WITH_APOLLO_68080
 #  define CONF_WITH_APOLLO_68080 0
 # endif
@@ -352,6 +355,9 @@
 # ifndef CONF_WITH_EXTENDED_MOUSE
 #  define CONF_WITH_EXTENDED_MOUSE 0
 # endif
+# ifndef CONF_WITH_VDI_16BIT
+#  define CONF_WITH_VDI_16BIT 0
+# endif
 # ifndef CONF_WITH_VDI_VERTLINE
 #  define CONF_WITH_VDI_VERTLINE 0
 # endif
@@ -430,6 +436,9 @@
 # ifndef CONF_WITH_MENU_EXTENSION
 #  define CONF_WITH_MENU_EXTENSION 0
 # endif
+# ifndef CONF_WITH_VDI_16BIT
+#  define CONF_WITH_VDI_16BIT 0
+# endif
 # ifndef MAX_VERTICES
 #  define MAX_VERTICES 512
 # endif
@@ -490,6 +499,9 @@
 # endif
 # ifndef CONF_WITH_EXTENDED_MOUSE
 #  define CONF_WITH_EXTENDED_MOUSE 0
+# endif
+# ifndef CONF_WITH_VDI_16BIT
+#  define CONF_WITH_VDI_16BIT 0
 # endif
 # ifndef CONF_WITH_VDI_TEXT_SPEEDUP
 #  define CONF_WITH_VDI_TEXT_SPEEDUP 0
@@ -784,6 +796,9 @@
 # endif
 # ifndef CONF_WITH_3D_OBJECTS
 #  define CONF_WITH_3D_OBJECTS 0 /* Like ST, not Falcon */
+# endif
+# ifndef CONF_WITH_VDI_16BIT
+#  define CONF_WITH_VDI_16BIT 0 /* Like ST, not Falcon */
 # endif
 #endif
 
@@ -1601,7 +1616,7 @@
  * 16-bit graphics modes.
  */
 #ifndef CONF_WITH_VDI_16BIT
-# define CONF_WITH_VDI_16BIT 0
+# define CONF_WITH_VDI_16BIT 1
 #endif
 
 /*
