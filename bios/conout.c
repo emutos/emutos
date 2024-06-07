@@ -549,15 +549,16 @@ static void blank_out16(int topx, int topy, int botx, int boty)
 
     rows = (boty - topy + 1) * v_cel_ht;    /* in pixels */
 
+    /* set standard background colour */
+    bgcol = FALCON_WHITE;
+
 #if CONF_WITH_VDI_16BIT
-    /* get pixel value from physical workstation's palette */
-    bgcol = phys_work.ext->palette[v_col_bg];
-#else
     /*
-     * the backround colour should really come from the physical
-     * workstation, but that requires 16-bit support in the VDI
+     * if we're already in 16-bit mode, we can get the pixel value of
+     * the background colour from the physical workstation's palette instead
      */
-     bgcol = FALCON_WHITE;
+    if (phys_work.ext)
+        bgcol = phys_work.ext->palette[v_col_bg];
 #endif
 
     addr = (UWORD *)cell_addr(topx, topy);  /* running pointer to screen */
