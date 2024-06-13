@@ -603,9 +603,8 @@ ROM_ARANYM = emutos-aranym.img
 .PHONY: aranym
 NODEP += aranym
 aranym: override DEF += -DMACHINE_ARANYM
-aranym: OPTFLAGS = $(SMALL_OPTFLAGS)
 aranym: CPUFLAGS = -m68040
-aranym: ROMSIZE = 512
+aranym: ROMSIZE = 1024
 aranym: ROM_PADDED = $(ROM_ARANYM)
 aranym:
 	@echo "# Building ARAnyM EmuTOS into $(ROM_PADDED)"

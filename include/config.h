@@ -59,8 +59,8 @@
  * Defaults for the ARAnyM target
  */
 #ifdef MACHINE_ARANYM
-# ifndef CONF_WITH_VDI_16BIT        /* temporary */
-#  define CONF_WITH_VDI_16BIT 0
+# ifndef CONF_WITH_VDI_16BIT
+#  define CONF_WITH_VDI_16BIT 1
 # endif
 # ifndef CONF_WITH_APOLLO_68080
 #  define CONF_WITH_APOLLO_68080 0
