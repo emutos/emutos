@@ -599,7 +599,7 @@ void machine_detect(void)
 #endif
 
     detected_busses = check_busses();
-    KDEBUG(("detected_busses = 0x%04x\n", detected_busses));
+    KDEBUG(("detected_busses = 0x%lx\n", detected_busses));
 
 #if CONF_WITH_MONSTER
     detect_monster();
