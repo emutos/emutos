@@ -18,7 +18,7 @@
 BOOL detect_ide(void);
 void ide_init(void);
 LONG ide_ioctl(WORD dev, UWORD ctrl, void *arg);
-LONG ide_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev, BOOL need_byteswap);
+LONG ide_rw(WORD rw,ULONG sector,UWORD count,UBYTE *buf,WORD dev,BOOL need_byteswap);
 
 #if CONF_WITH_SCSI_DRIVER
 /*

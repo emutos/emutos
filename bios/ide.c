@@ -204,12 +204,18 @@ struct IDE
 #define IDE_CMD_NOP             0x00
 #define IDE_CMD_READ_SECTOR     0x20
 #define IDE_CMD_WRITE_SECTOR    0x30
+#define IDE_CMD_READ_SECTOR_EX  0x24
+#define IDE_CMD_WRITE_SECTOR_EX 0x34
 #define IDE_CMD_READ_MULTIPLE       0xc4
 #define IDE_CMD_WRITE_MULTIPLE      0xc5
+#define IDE_CMD_READ_MULTIPLE_EX    0x29
+#define IDE_CMD_WRITE_MULTIPLE_EX   0x39
 #define IDE_CMD_SET_MULTIPLE_MODE   0xc6
 
 #define IDE_CMD_ATAPI_PACKET    0xa0    /* ATAPI-only commands */
 #define IDE_CMD_ATAPI_IDENTIFY  0xa1
+
+#define IDE_CAPABILITY_LBA48    0x0400
 
 #define IDE_MODE_CHS    (0 << 6)
 #define IDE_MODE_LBA    (1 << 6)
@@ -217,6 +223,7 @@ struct IDE
 
 #define IDE_CONTROL_nIEN (1 << 1)
 #define IDE_CONTROL_SRST (1 << 2)
+#define IDE_CONTROL_HOB  (1 << 7)       /* LBA48 */
 
 #define IDE_STATUS_ERR  (1 << 0)
 #define IDE_STATUS_DRQ  (1 << 3)
@@ -257,6 +264,7 @@ struct IFINFO {
 #define DEVTYPE_ATAPI   3
 
 #define MULTIPLE_MODE_ACTIVE    0x01    /* for 'options' */
+#define LBA48_ACTIVE            0x02
 
 #define INVALID_OPCODE  1               /* for 'sense' */
 #define INVALID_SECTOR  2
@@ -348,6 +356,7 @@ static void ide_detect_devices(UWORD ifnum);
 static LONG ata_identify(WORD dev);
 static int ide_select_device(volatile struct IDE *interface,UWORD dev);
 static void set_multiple_mode(WORD dev,UWORD multi_io);
+static void set_lba48_mode(WORD dev, UWORD lba48);
 static UWORD get_start_count(volatile struct IDE *interface);
 static void set_start_count(volatile struct IDE *interface,UBYTE sector,UBYTE count);
 static int wait_for_not_BSY(volatile struct IDE *interface,LONG timeout);
@@ -604,8 +613,10 @@ void ide_init(void)
 
     /* set multiple mode for all devices that we have info for */
     for (i = 0; i < DEVICES_PER_BUS; i++)
-        if (ata_identify(i) == 0)
+        if (ata_identify(i) == 0) {
             set_multiple_mode(i,identify.multiple_io_info);
+            set_lba48_mode(i,identify.cmds_supported[1]);
+        }
 
 #if CONF_WITH_SCSI_DRIVER
     /* set packet size for all ATAPI devices */
@@ -842,9 +853,30 @@ static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,U
 {
     KDEBUG(("ide_rw_start(%p, %u, %lu, %u, 0x%02x)\n", interface, dev, sector, count, cmd));
 
-    set_start_count(interface,LOBYTE(sector),LOBYTE(count));
-    set_cylinder(interface,(UWORD)((sector & 0xffff00) >> 8));
-    set_command_head(interface,cmd,IDE_MODE_LBA|IDE_DEVICE(dev)|(UBYTE)((sector>>24)&0x0f));
+    if (cmd == IDE_CMD_READ_SECTOR_EX ||
+        cmd == IDE_CMD_WRITE_SECTOR_EX ||
+        cmd == IDE_CMD_READ_MULTIPLE_EX ||
+        cmd == IDE_CMD_WRITE_MULTIPLE_EX) {
+        set_start_count(interface,(sector>>24),(count>>8));
+        set_start_count(interface,(sector),(count));
+
+        /*
+         * We should do this, but for now we only support 2^32
+         * sector sizes, i.e. max 2TB disks. It would mean using
+         * ULLONG for sector to support 2^48 disk sizes.
+         * Additionally, XHDI, etc would need extensions.
+         *
+         *   set_cylinder(interface,(UWORD)((sector & 0xffff00000000UL) >> 32));
+         */
+        set_cylinder(interface,0);
+
+        set_cylinder(interface,(UWORD)((sector & 0xffff00) >> 8));
+        set_command_head(interface,cmd,IDE_MODE_LBA|IDE_DEVICE(dev));
+    } else {
+        set_start_count(interface,LOBYTE(sector),LOBYTE(count));
+        set_cylinder(interface,(UWORD)((sector & 0xffff00) >> 8));
+        set_command_head(interface,cmd,IDE_MODE_LBA|IDE_DEVICE(dev)|(UBYTE)((sector>>24)&0x0f));
+    }
 }
 
 /*
@@ -1008,13 +1040,27 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
 
     /*
      * if READ SECTOR and MULTIPLE MODE, set cmd & spi accordingly
+     *
+     * If the sector is > LBA28 range use LBA48 if supported.
+     * This aids performance in for LBA28 addressable sectors.
      */
     spi = 1;
     if ((cmd == IDE_CMD_READ_SECTOR)
      && (info->dev[dev].options & MULTIPLE_MODE_ACTIVE)) {
-        cmd = IDE_CMD_READ_MULTIPLE;
+        if ((info->dev[dev].options & LBA48_ACTIVE) &&
+            (sector > 0x0FFFFFFFUL)) {
+            cmd = IDE_CMD_READ_MULTIPLE_EX;
+        } else {
+            cmd = IDE_CMD_READ_MULTIPLE;
+        }
         spi = info->dev[dev].spi;
         KDEBUG(("spi=%u\n", spi));
+    }
+
+    if ((info->dev[dev].options & LBA48_ACTIVE) &&
+        (sector > 0x0FFFFFFFUL) &&
+        (cmd == IDE_CMD_READ_SECTOR)) {
+       cmd = IDE_CMD_READ_SECTOR_EX;
     }
 
     ide_rw_start(interface,dev,sector,count,cmd);
@@ -1168,12 +1214,25 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
 
     /*
      * if WRITE SECTOR and MULTIPLE MODE, set cmd & spi accordingly
+     *
+     * If the sector is > LBA28 range use LBA48 if supported.
+     * This aids performance in for LBA28 addressable sectors.
      */
     spi = 1;
     if ((cmd == IDE_CMD_WRITE_SECTOR)
      && (info->dev[dev].options & MULTIPLE_MODE_ACTIVE)) {
-        cmd = IDE_CMD_WRITE_MULTIPLE;
+        if ((info->dev[dev].options & LBA48_ACTIVE) &&
+            (sector > 0x0FFFFFFFUL))
+            cmd = IDE_CMD_WRITE_MULTIPLE_EX;
+        else
+            cmd = IDE_CMD_WRITE_MULTIPLE;
         spi = info->dev[dev].spi;
+    }
+
+    if ((info->dev[dev].options & LBA48_ACTIVE) &&
+        (sector > 0x0FFFFFFFUL) &&
+        (cmd == IDE_CMD_WRITE_SECTOR)) {
+       cmd = IDE_CMD_WRITE_SECTOR_EX;
     }
 
     ide_rw_start(interface,dev,sector,count,cmd);
@@ -1224,7 +1283,7 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
     return rc;
 }
 
-LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswap)
+LONG ide_rw(WORD rw,ULONG sector,UWORD count,UBYTE *buf,WORD dev,BOOL need_byteswap)
 {
     UBYTE *p;
     UWORD ifnum;
@@ -1267,7 +1326,7 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
         ret = rw ? ide_write(IDE_CMD_WRITE_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap)
                 : ide_read(IDE_CMD_READ_SECTOR,ifnum,dev,sector,numsecs,p,need_byteswap);
         if (ret < 0) {
-            KDEBUG(("ide_rw(%d,%d,%d,%ld,%u,%p,%d) ret=%ld\n",
+            KDEBUG(("ide_rw(%d,%d,%d,%lu,%u,%p,%d) ret=%ld\n",
                     rw,ifnum,dev,sector,numsecs,p,need_byteswap,ret));
             if (clear_multiple_mode(ifnum,dev)) /* retry after multiple mode reset ? */
                 continue;                       /* yes, do so                        */
@@ -1283,6 +1342,21 @@ LONG ide_rw(WORD rw,LONG sector,WORD count,UBYTE *buf,WORD dev,BOOL need_byteswa
     }
 
     return E_OK;
+}
+
+static void set_lba48_mode(WORD dev, UWORD lba48)
+{
+    UWORD ifnum;
+
+    if (!(lba48 & IDE_CAPABILITY_LBA48))
+        return;
+
+    ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
+    dev &= 1;           /* 0 or 1 */
+
+    KDEBUG(("Setting lba48 for ifnum %d dev %d\n",ifnum,dev));
+
+    ifinfo[ifnum].dev[dev].options |= LBA48_ACTIVE;
 }
 
 /*
@@ -1368,8 +1442,21 @@ LONG ide_ioctl(WORD dev,UWORD ctrl,void *arg)
     case GET_DISKINFO:
         ret = ata_identify(dev);    /* reads into identify structure */
         if (ret >= 0) {
-            info[0] = MAKE_ULONG(identify.numsecs_lba28[1],
-                        identify.numsecs_lba28[0]);
+            if (identify.cmds_supported[1] & IDE_CAPABILITY_LBA48) {
+                if (identify.maxsec_lba48[2] ||
+                    identify.maxsec_lba48[3]) {
+                    /*
+                     * Should we return an error here ?
+                     */
+                    KDEBUG(("Disk size >= 2^32 sectors, unsupported\n"));
+                }
+
+                info[0] = MAKE_ULONG(identify.maxsec_lba48[1],
+                                     identify.maxsec_lba48[0]);
+            } else {
+                info[0] = MAKE_ULONG(identify.numsecs_lba28[1],
+                                     identify.numsecs_lba28[0]);
+            }
             info[1] = SECTOR_SIZE;  /* note: could be different under ATAPI 7 */
             ret = E_OK;
         }
@@ -1572,7 +1659,21 @@ static LONG handle_ata_device(WORD dev, IDECmd *cmd)
         ret = ata_identify(dev);
         if (ret)
             break;
-        info[0] = MAKE_ULONG(identify.numsecs_lba28[1], identify.numsecs_lba28[0]) - 1;
+        if (identify.cmds_supported[1] & IDE_CAPABILITY_LBA48) {
+            if (identify.maxsec_lba48[2] ||
+                identify.maxsec_lba48[3]) {
+                /*
+                 * Should we return an error here ?
+                 */
+                KDEBUG(("Disk size >= 2^32 sectors, unsupported\n"));
+            }
+
+            info[0] = MAKE_ULONG(identify.maxsec_lba48[1],
+                                 identify.maxsec_lba48[0]) - 1;
+        } else {
+            info[0] = MAKE_ULONG(identify.numsecs_lba28[1],
+                                 identify.numsecs_lba28[0]) - 1;
+        }
         info[1] = SECTOR_SIZE;
         memcpy(cmd->bufptr, (void *)info, 2*sizeof(LONG));
         break;
