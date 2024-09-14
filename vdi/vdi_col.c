@@ -734,7 +734,7 @@ void init_colors(void)
 
     /* set up vdi pen -> hardware colour register mapping */
     memcpy(MAP_COL, MAP_COL_ROM, sizeof(MAP_COL_ROM));
-    MAP_COL[1] = MAXCOLOURS - 1;
+    MAP_COL[1] = numcolors - 1; /* pen 1 varies according to # of colours available */
 
 #if EXTENDED_PALETTE
     for (i = 16; i < MAXCOLOURS-1; i++)
@@ -743,7 +743,7 @@ void init_colors(void)
 #endif
 
     /* set up reverse mapping (hardware colour register -> vdi pen) */
-    for (i = 0; i < MAXCOLOURS; i++)
+    for (i = 0; i < numcolors; i++)
         REV_MAP_COL[MAP_COL[i]] = i;
 
     /* now initialise the hardware */
