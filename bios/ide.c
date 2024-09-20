@@ -245,10 +245,12 @@ struct IDE
 /* interface/device info */
 
 struct IFINFO {
-    struct {
+    struct IFINFO_DEV {
         UBYTE type;
         UBYTE options;
         UBYTE spi;          /* # sectors transferred between interrupts */
+        UBYTE sectors;      /* sectors per track (CHS mode only) */
+        UBYTE heads;        /* heads per cylinder (CHS mode only) */
 #if CONF_WITH_SCSI_DRIVER
         UBYTE sense;        /* ATA: current sense condition on device */
         UBYTE packet_size;  /* ATAPI: packet size */
@@ -272,6 +274,33 @@ struct IFINFO {
 #define INVALID_LUN     4
 
 #define ATAPI_MAX_BYTECOUNT     (127*512U)  /* largest multiple of 512 in UWORD */
+
+
+/* data returned by IDENTIFY DEVICE command */
+
+struct IDENTIFY {
+    UWORD general_config;       /* ATAPI */
+    UWORD logical_cylinders;    /* for CHS mode only */
+    UWORD filler02;
+    UWORD logical_heads;        /* for CHS mode only */
+    UWORD filler04[2];
+    UWORD logical_spt;          /* for CHS mode only */
+    UWORD filler07[16];
+    char firmware_revision[8];  /* also in ATAPI */
+    char model_number[40];      /* also in ATAPI */
+    UWORD multiple_io_info;
+    UWORD filler30;
+    UWORD capabilities;
+    UWORD filler32[10];
+    UWORD numsecs_lba28[2]; /* number of sectors for LBA28 cmds */
+    UWORD filler3e[20];
+    UWORD cmds_supported[3];
+    UWORD filler55[15];
+    UWORD maxsec_lba48[4];  /* max sector number for LBA48 cmds */
+    UWORD filler68[152];
+};
+
+#define LBA_SUPPORTED   0x0200  /* in 'capabilities' field of IDENTIFY struct */
 
 
 /* timing stuff */
@@ -299,26 +328,15 @@ struct IFINFO {
 #define XFER_TIMEOUT    (3*CLOCKS_PER_SEC)  /* 3 seconds for data xfer */
 #define LONG_TIMEOUT    (3*CLOCKS_PER_SEC)  /* 3 seconds for reset */
 
+/*
+ * basic data used by IDE driver
+ */
 static int has_ide;
 static struct IFINFO ifinfo[NUM_IDE_INTERFACES];
 static ULONG delay400ns;
 static ULONG delay5us;
-static struct {
-    UWORD general_config;       /* ATAPI */
-    UWORD filler01[22];
-    char firmware_revision[8];  /* also in ATAPI */
-    char model_number[40];      /* also in ATAPI */
-    UWORD multiple_io_info;
-    UWORD filler2f;
-    UWORD capabilities;
-    UWORD filler32[10];
-    UWORD numsecs_lba28[2]; /* number of sectors for LBA28 cmds */
-    UWORD filler3e[20];
-    UWORD cmds_supported[3];
-    UWORD filler55[15];
-    UWORD maxsec_lba48[4];  /* max sector number for LBA48 cmds */
-    UWORD filler68[152];
-} identify;
+static struct IDENTIFY identify;
+
 
 #if CONF_WITH_SCSI_DRIVER
 static struct {
