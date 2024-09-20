@@ -271,7 +271,7 @@ struct IFINFO {
 #define INVALID_CDB     3
 #define INVALID_LUN     4
 
-#define ATAPI_MAX_BYTECOUNT     65012   /* largest multiple of 512 in UWORD */
+#define ATAPI_MAX_BYTECOUNT     (127*512U)  /* largest multiple of 512 in UWORD */
 
 
 /* timing stuff */
