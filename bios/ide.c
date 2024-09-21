@@ -867,9 +867,12 @@ static void set_command_head(volatile struct IDE *interface,UBYTE cmd,UBYTE head
 /*
  * set device / command / sector start / count / LBA mode in IDE registers
  */
-static void ide_rw_start(volatile struct IDE *interface,UWORD dev,ULONG sector,UWORD count,UBYTE cmd)
+static void ide_rw_start(UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UBYTE cmd)
 {
-    KDEBUG(("ide_rw_start(%p, %u, %lu, %u, 0x%02x)\n", interface, dev, sector, count, cmd));
+    volatile struct IDE *interface = ifinfo[ifnum].base_address;
+
+    KDEBUG(("ide_rw_start(%p, %u, %u, %lu, %u, 0x%02x)\n",
+            interface, ifnum, dev, sector, count, cmd));
 
     if (cmd == IDE_CMD_READ_SECTOR_EX ||
         cmd == IDE_CMD_WRITE_SECTOR_EX ||
@@ -908,7 +911,7 @@ static LONG ide_nodata(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count)
     if (ide_select_device(interface,dev) < 0)
         return EGENRL;
 
-    ide_rw_start(interface,dev,sector,count,cmd);
+    ide_rw_start(ifnum,dev,sector,count,cmd);
 
     if (wait_for_not_BSY(interface,SHORT_TIMEOUT))  /* should vary depending on command? */
         return EGENRL;
@@ -1081,7 +1084,7 @@ static LONG ide_read(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UB
        cmd = IDE_CMD_READ_SECTOR_EX;
     }
 
-    ide_rw_start(interface,dev,sector,count,cmd);
+    ide_rw_start(ifnum,dev,sector,count,cmd);
 
     /*
      * each iteration of this loop handles one DRQ block
@@ -1253,7 +1256,7 @@ static LONG ide_write(UBYTE cmd,UWORD ifnum,UWORD dev,ULONG sector,UWORD count,U
        cmd = IDE_CMD_WRITE_SECTOR_EX;
     }
 
-    ide_rw_start(interface,dev,sector,count,cmd);
+    ide_rw_start(ifnum,dev,sector,count,cmd);
 
     if (wait_for_not_BSY(interface,SHORT_TIMEOUT))
         return EWRITF;
