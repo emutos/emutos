@@ -12,7 +12,7 @@
  */
 
 /*
- * Note: this driver does not support CHS addressing.
+ * Note: CHS addressing is now supported in addition to LBA.
  */
 
 /* #define ENABLE_KDEBUG */
@@ -201,6 +201,7 @@ struct IDE
 /* IDE defines */
 
 #define IDE_CMD_IDENTIFY_DEVICE 0xec
+#define IDE_CMD_INIT_DEV_PARAMS 0x91    /* used for CHS drives only */
 #define IDE_CMD_NOP             0x00
 #define IDE_CMD_READ_SECTOR     0x20
 #define IDE_CMD_WRITE_SECTOR    0x30
@@ -267,6 +268,7 @@ struct IFINFO {
 
 #define MULTIPLE_MODE_ACTIVE    0x01    /* for 'options' */
 #define LBA48_ACTIVE            0x02
+#define CHS_MODE                0x04
 
 #define INVALID_OPCODE  1               /* for 'sense' */
 #define INVALID_SECTOR  2
@@ -373,6 +375,7 @@ static WORD clear_multiple_mode(UWORD ifnum,UWORD dev);
 static void ide_detect_devices(UWORD ifnum);
 static LONG ata_identify(WORD dev);
 static int ide_select_device(volatile struct IDE *interface,UWORD dev);
+static void set_chs_mode(WORD dev,struct IDENTIFY *identify);
 static void set_multiple_mode(WORD dev,UWORD multi_io);
 static void set_lba48_mode(WORD dev, UWORD lba48);
 static UWORD get_start_count(volatile struct IDE *interface);
@@ -632,6 +635,7 @@ void ide_init(void)
     /* set multiple mode for all devices that we have info for */
     for (i = 0; i < DEVICES_PER_BUS; i++)
         if (ata_identify(i) == 0) {
+            set_chs_mode(i,&identify);
             set_multiple_mode(i,identify.multiple_io_info);
             set_lba48_mode(i,identify.cmds_supported[1]);
         }
@@ -869,11 +873,36 @@ static void set_command_head(volatile struct IDE *interface,UBYTE cmd,UBYTE head
  */
 static void ide_rw_start(UWORD ifnum,UWORD dev,ULONG sector,UWORD count,UBYTE cmd)
 {
-    volatile struct IDE *interface = ifinfo[ifnum].base_address;
+    struct IFINFO *info = &ifinfo[ifnum];
+    struct IFINFO_DEV *devinfo = &info->dev[dev];
+    volatile struct IDE *interface = info->base_address;
 
     KDEBUG(("ide_rw_start(%p, %u, %u, %lu, %u, 0x%02x)\n",
             interface, ifnum, dev, sector, count, cmd));
 
+    /*
+     * handle CHS device
+     */
+    if (devinfo->options & CHS_MODE) {
+        UWORD n, cylnum;
+        UBYTE headnum, secnum;
+
+        n = divu(sector,devinfo->sectors);
+        secnum = (UBYTE)(sector-(n*devinfo->sectors) + 1);  /* sectors start at 1 */
+        cylnum = n / devinfo->heads;
+        headnum = (UBYTE)(n-(cylnum*devinfo->heads));
+
+        KDEBUG((" CHS mode: %u/%u/%u\n",cylnum,headnum,secnum));
+
+        set_start_count(interface,secnum,LOBYTE(count));
+        set_cylinder(interface,cylnum);
+        set_command_head(interface,cmd,IDE_MODE_CHS|IDE_DEVICE(dev)|headnum);
+        return;
+    }
+
+    /*
+     * handle LBA device
+     */
     if (cmd == IDE_CMD_READ_SECTOR_EX ||
         cmd == IDE_CMD_WRITE_SECTOR_EX ||
         cmd == IDE_CMD_READ_MULTIPLE_EX ||
@@ -1363,6 +1392,40 @@ LONG ide_rw(WORD rw,ULONG sector,UWORD count,UBYTE *buf,WORD dev,BOOL need_bytes
     }
 
     return E_OK;
+}
+
+static void set_chs_mode(WORD dev,struct IDENTIFY *identify)
+{
+    UWORD ifnum, ifdev;
+    struct IFINFO_DEV *info;
+
+    if (identify->capabilities & LBA_SUPPORTED) /* normal case */
+        return;
+
+    ifnum = dev / 2;    /* i.e. primary IDE, secondary IDE, ... */
+    ifdev = dev & 1;    /* 0 or 1 */
+
+    info = &ifinfo[ifnum].dev[ifdev];
+    info->options |= CHS_MODE;
+    info->sectors = identify->logical_spt;
+    info->heads = identify->logical_heads;
+
+    KDEBUG(("CHS mode detected: ifnum=%d, dev=%d, heads=%d, spt=%d\n",ifnum,ifdev,info->heads,info->sectors));
+
+    /*
+     * here we issue INITIALIZE_DEVICE_PARAMETERS, since some ATA-1
+     * devices are reported to require it before media access.  as
+     * specified in the ATA-2 spec, we use the default translation
+     * mode from the IDENTIFY DEVICE command.
+     *
+     * we set the sector number to pass to ide_nodata() such that the
+     * device/head register will contain (number of logical heads - 1),
+     * as required by the command.
+     *
+     * we don't care about the result, since some ATA-1 implementations
+     * may not return an error indication even if the command fails.
+     */
+    ide_nodata(IDE_CMD_INIT_DEV_PARAMS,ifnum,ifdev,(info->heads-1)*info->sectors,info->sectors);
 }
 
 static void set_lba48_mode(WORD dev, UWORD lba48)
