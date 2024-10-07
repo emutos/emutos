@@ -128,7 +128,7 @@ void call_mousevec(SBYTE *packet);
 #ifdef MACHINE_AMIGA
 void call_joyvec(UBYTE *packet);
 #endif
-#if CONF_WITH_FLEXCAN || CONF_SERIAL_IKBD || defined(MACHINE_LISA)
+#if CONF_WITH_FLEXCAN || CONF_SERIAL_IKBD || defined(MACHINE_LISA) || defined(MACHINE_DANA)
 void call_ikbdraw(UBYTE b);
 #endif
 

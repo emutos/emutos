@@ -39,6 +39,7 @@
 #include "coldfire.h"
 #include "amiga.h"
 #include "lisa.h"
+#include "dana.h"
 
 
 /* forward declarations */
@@ -965,6 +966,8 @@ void ikbd_writeb(UBYTE b)
     coldfire_flexcan_ikbd_writeb(b);
 #elif defined(MACHINE_AMIGA)
     amiga_ikbd_writeb(b);
+#elif defined(MACHINE_DANA)
+    dana_ikbd_writeb(b);
 #endif
 }
 
@@ -1084,6 +1087,10 @@ void kbd_init(void)
     lisa_kbd_init();
 #endif
 
+#ifdef MACHINE_DANA
+    dana_kbd_init();
+#endif
+
     /* initialize the IKBD */
     ikbd_reset();
 
@@ -1105,3 +1112,6 @@ void kbd_init(void)
 
     bioskeys();
 }
+
+/* vim: set ts=4 sw=4 et: */
+

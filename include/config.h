@@ -33,7 +33,7 @@
 /*
  * Determine if this EmuTOS is built for ROM or RAM
  */
-#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_AMIGA_FLOPPY) || defined(TARGET_LISA_FLOPPY)
+#if defined(TARGET_PRG) || defined(TARGET_FLOPPY) || defined(TARGET_AMIGA_FLOPPY) || defined(TARGET_LISA_FLOPPY) || defined(TARGET_DANA)
 #  define EMUTOS_LIVES_IN_RAM 1
 # else
 #  define EMUTOS_LIVES_IN_RAM 0
@@ -556,6 +556,67 @@
 #ifdef TARGET_FLOPPY
 # ifndef MAX_VERTICES
 #  define MAX_VERTICES 512
+# endif
+#endif
+
+/*
+ * Defaults for the AlphaSmart Dana ROM target
+ */
+#ifdef TARGET_DANA
+# define MACHINE_DANA
+#endif
+
+/*
+ * Defaults for the Amiga machine
+ */
+#ifdef MACHINE_DANA
+# ifndef CONF_ATARI_HARDWARE
+#  define CONF_ATARI_HARDWARE 0
+# endif
+# ifndef CONF_WITH_IDE
+#  define CONF_WITH_IDE 0
+# endif
+# ifndef CONF_WITH_UAE
+#  define CONF_WITH_UAE 0
+# endif
+# ifndef CONF_WITH_SDMMC
+#  define CONF_WITH_SDMMC 1
+# endif
+# ifndef CONF_WITH_ADVANCED_CPU
+#  define CONF_WITH_ADVANCED_CPU 0
+# endif
+# ifndef CONF_WITH_CACHE_CONTROL
+#  define CONF_WITH_CACHE_CONTROL 0
+# endif
+# ifndef CONF_WITH_APOLLO_68080
+#  define CONF_WITH_APOLLO_68080 0
+# endif
+# ifndef DANA_DEBUG_PRINT
+#  define DANA_DEBUG_PRINT 1
+# endif
+# ifndef RS232_DEBUG_PRINT
+#  define RS232_DEBUG_PRINT 0
+# endif
+# ifndef USE_STOP_INSN_TO_FREE_HOST_CPU
+#  define USE_STOP_INSN_TO_FREE_HOST_CPU 1
+# endif
+# ifndef CONF_SERIAL_CONSOLE
+#  define CONF_SERIAL_CONSOLE 0
+# endif
+# ifndef CONF_SERIAL_CONSOLE_ANSI
+#  define CONF_SERIAL_CONSOLE_ANSI 0
+# endif
+# ifndef CONF_WITH_3D_OBJECTS
+#  define CONF_WITH_3D_OBJECTS 0
+# endif
+# ifndef CONF_WITH_EXTENDED_MOUSE
+#  define CONF_WITH_EXTENDED_MOUSE 0
+# endif
+# ifndef CONF_WITH_FAKE_VBL
+#  define CONF_WITH_FAKE_VBL 1
+# endif
+# ifndef CONF_WITH_TOUCHSCREEN_XBIOS
+#  define CONF_WITH_TOUCHSCREEN_XBIOS 1
 # endif
 #endif
 
@@ -1978,8 +2039,15 @@
 # define MIDI_DEBUG_PRINT 0
 #endif
 
+/*
+ * Set DANA_DEBUG_PRINT to 1 to redirect debug prints to the Dana console.
+ */
+#ifndef DANA_DEBUG_PRINT
+# define DANA_DEBUG_PRINT 0
+#endif
+
 /* Determine if kprintf() is available */
-#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || CONSOLE_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT || MIDI_DEBUG_PRINT
+#if CONF_WITH_UAE || DETECT_NATIVE_FEATURES || STONX_NATIVE_PRINT || CONSOLE_DEBUG_PRINT || RS232_DEBUG_PRINT || SCC_DEBUG_PRINT || DANA_DEBUG_PRINT || COLDFIRE_DEBUG_PRINT || MIDI_DEBUG_PRINT
 #  define HAS_KPRINTF 1
 # else
 #  define HAS_KPRINTF 0
@@ -2012,6 +2080,14 @@
  */
 #ifndef CONF_WITH_BUS_ERROR
 # define CONF_WITH_BUS_ERROR 1
+#endif
+
+/*
+ * Set CONF_WITH_TOUCHSCREEN_XBIOS if you want the 0x8e and 0x8f XBIOS calls
+ * for calibrating a touchscreen.
+ */
+#ifndef CONF_WITH_TOUCHSCREEN_XBIOS
+# define CONF_WITH_TOUCHSCREEN_XBIOS 0
 #endif
 
 /*
@@ -2181,8 +2257,8 @@
 # endif
 #endif
 
-#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT) > 1
-# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1.
+#if (CONSOLE_DEBUG_PRINT + RS232_DEBUG_PRINT + SCC_DEBUG_PRINT + DANA_DEBUG_PRINT + COLDFIRE_DEBUG_PRINT + MIDI_DEBUG_PRINT) > 1
+# error Only one of CONSOLE_DEBUG_PRINT, RS232_DEBUG_PRINT, SCC_DEBUG_PRINT, DANA_DEBUG_PRINT, COLDFIRE_DEBUG_PRINT or MIDI_DEBUG_PRINT must be set to 1.
 #endif
 
 
