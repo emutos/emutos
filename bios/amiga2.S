@@ -1,7 +1,7 @@
 /*
  * amiga2.S - Amiga specific assembler functions
  *
- * Copyright (C) 2013-2022 The EmuTOS development team
+ * Copyright (C) 2013-2024 The EmuTOS development team
  *
  * Authors:
  *  VRI   Vincent Rivière
@@ -17,6 +17,7 @@
         .extern _amiga_rs232_rbf_interrupt
         .extern _amiga_screen_width_in_bytes
         .extern _amiga_screenbase
+        .extern _amiga_is_ntsc
         .extern _int_vbl
         .extern _kbdvecs
         .extern _longframe
@@ -106,9 +107,13 @@ _amiga_init_keyboard_interrupt:
         move.b  #0,0xbfee01             // CIAA control register A (serial)
         move.b  #0,0xbfef01             // CIAA control register B (Timer 200 Hz)
 
-        // CIAA Timer B: 200 Hz system timer, value = 3547
+        // CIAA Timer B: 200 Hz system timer, value = 3547 (PAL), 3580 (NTSC)
         move.b  #0x0d,0xbfe701
         move.b  #0xdb,0xbfe601
+        tst.w   _amiga_is_ntsc
+        jeq     is_pal
+        move.b  #0xfc,0xbfe601
+is_pal:
 
         // CIAA control register
         move.b  #0b00000001,0xbfef01    // CIAA control register B (Timer 200 Hz)
