@@ -140,7 +140,7 @@ static void vecs_init(void)
      * By default, any unexpected exception calls dopanic().
      */
     init_exc_vec();
-    init_user_vec();
+    init_user_vec(FIRST_BOOT);
 
     /* Some user drivers may install interrupt handlers and call the previous
      * ones. For example, ARAnyM's network driver for MiNT (nfeth.xif) and fVDI

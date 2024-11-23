@@ -101,7 +101,6 @@
 
 /* basically initialize the 62 exception vectors. */
 _init_exc_vec:
-        clr.l   _proc_lives.w
         lea     deflt_vec_table, a0
         lea     8, a1
         move.l  #61, d0
@@ -118,11 +117,18 @@ set_vec:
 buggy_jit_save_registers_before_bus_error:
         rts
 
-/* initialize the 192 user vectors. */
+/* Initialize the user vectors.
+ * On a cold boot, all 192 user vectors are initialized.
+ * On a warm boot, only the first 64 vectors are reinitialized.
+ * This avoids overwriting crash dumps starting at address 0x380.
+ */
 _init_user_vec:
         lea     user_vec, a0
         lea     256, a1
-        move.l  #191, d0
+        moveq   #63, d0
+        tst.w   4(sp)           // check FIRST_BOOT
+        jeq     set_uvec
+        move.w  #191, d0
 set_uvec:
         move.l  a0, (a1)+
 #ifdef __mcoldfire__

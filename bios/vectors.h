@@ -16,7 +16,7 @@
 /* initialize default exception vectors */
 
 void init_exc_vec(void);
-void init_user_vec(void);
+void init_user_vec(UWORD first_boot);
 
 /* initialise acia vectors */
 
