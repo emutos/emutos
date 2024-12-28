@@ -74,6 +74,10 @@ static const WORD std_skewtab[] =
  { 1, 2, 3, 4, 5, 6, 7, 8, 9,
    1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
+static const WORD k800_skewtab[] =
+ { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10,
+   1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+
 static const WORD hd_skewtab[] =
  { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18,
    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18 };
@@ -1440,18 +1444,24 @@ static WORD format_floppy(OBJECT *tree, WORD max_width, WORD incr)
     skewtab = std_skewtab;
     trackskew = 2;
 
-    switch(inf_gindex(tree, FMT_SS, 3))
+    switch(inf_gindex(tree, FMT_SS, 4))
     {
     case 0:             /* single sided */
         numsides = 1;
         disktype = 2;
         trackskew = 3;  /* skew between tracks */
         break;
-    case 2:             /* high density */
+    case 2:             /* 800K */
+        disktype = 6;
+        spt = 10;
+        skewtab = k800_skewtab;
+        break;
+    case 3:             /* high density */
         disktype = 4;
         spt = 18;
         skewtab = hd_skewtab;
         trackskew = 3;
+        break;
     }
 
     buf = dos_alloc_stram(FMTBUFLEN);
