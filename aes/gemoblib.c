@@ -1023,7 +1023,7 @@ static WORD get_prev(OBJECT *tree, WORD parent, WORD obj)
  *
  *  For example, consider an i-box surrounding a set of radio buttons,
  *  where the i-box has the same x coordinate as the leftmost button.
- *  The buttons will be expanded when displayed but the i-box will not. 
+ *  The buttons will be expanded when displayed but the i-box will not.
  *  Then, if the user clicks just inside the leftmost radio button, mx/my
  *  may NOT be inside the i-box.  In this case, ob_find() will not find
  *  the radio button object, and the click will (probably) be ignored.
