@@ -475,12 +475,13 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
     LONG spec;
     WORD tmpx, tmpy, tmpth;
     char ch;
-    GRECT t, c;
+    GRECT t, c;             /* 'c' is used as a temporary copy of 't' */
     TEDINFO edblk;
     BITBLK bi;
     ICONBLK ib;
     CICON *cicon;
 #if CONF_WITH_3D_OBJECTS
+    GRECT effect_grect;     /* saved copy of 't', used by add_3d_effect() */
     WORD effect_th;
     BOOL movetext, changecol;
 #endif
@@ -541,7 +542,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
     }
 
 #if CONF_WITH_3D_OBJECTS
-    rc_copy(&t, &c);    /* save for add_3d_effect() at the end */
+    rc_copy(&t, &effect_grect); /* save for add_3d_effect() at the end */
 #endif
 
     /*
@@ -947,7 +948,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
      * do 3D effect for activators, indicators
      */
     if (flags & FL3DOBJ)
-        add_3d_effect(&c, state, effect_th, icol);
+        add_3d_effect(&effect_grect, state, effect_th, icol);
 #endif
 } /* just_draw */
 
