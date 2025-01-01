@@ -731,30 +731,30 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
             FALLTHROUGH; /* to gr_gtext */
         case G_TEXT:
         case G_BOXTEXT:
-            gr_inside(&t, tmpth);
+            /*
+             * we need to pass a modified grect to gr_gtext(), so make a copy
+             */
+            rc_copy(&t, &c);
+            gr_inside(&c, tmpth);
 #if CONF_WITH_3D_OBJECTS
             /*
-             * for TEXT/BOXTEXT/BOXCHAR/FTEXT/FBOXTEXT objects,
-             * shift text position as required
+             * for TEXT/BOXTEXT/BOXCHAR/FTEXT/FBOXTEXT objects, check
+             * if the text should be moved when toggling SELECTED.
+             *
+             * if so, assuming the 'base' position is (x,y), the
+             * positions will be:
+             *  unselected: (x,y-1)
+             *  selected:   (x+1,y)
              */
-            if (movetext && !(state & SELECTED))
+            if (movetext)
             {
-                t.g_x--;
-                t.g_y--;
+                if (state & SELECTED)
+                    c.g_x++;
+                else
+                    c.g_y--;
             }
 #endif
-            gr_gtext(edblk.te_just, edblk.te_font, edblk.te_ptext, &t);
-#if CONF_WITH_3D_OBJECTS
-            /*
-             * restore shifted text position
-             */
-            if (movetext && !(state & SELECTED))
-            {
-                t.g_x++;
-                t.g_y++;
-            }
-#endif
-            gr_inside(&t, -tmpth);
+            gr_gtext(edblk.te_just, edblk.te_font, edblk.te_ptext, &c);
             break;
         case G_IMAGE:
             bi = *((BITBLK *)spec);
