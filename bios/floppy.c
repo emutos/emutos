@@ -107,9 +107,6 @@ struct flop_info {
 
 /*==== Internal prototypes ==============================================*/
 
-/* set intel words */
-static void setiword(UBYTE *addr, UWORD value);
-
 /* floppy read/write */
 static WORD flopio(UBYTE *buf, WORD rw, WORD dev,
                    WORD sect, WORD track, WORD side, WORD count);
@@ -661,27 +658,30 @@ void flop_eject(void)
  */
 
 struct _protobt {
-    WORD bps;
+    UBYTE bps[2];
     UBYTE spc;
-    WORD res;
+    UBYTE res[2];
     UBYTE fat;
-    WORD dir;
-    WORD sec;
+    UBYTE dir[2];
+    UBYTE sec[2];
     UBYTE media;
-    WORD spf;
-    WORD spt;
-    WORD sides;
-    WORD hid;
-};
+    UBYTE spf[2];
+    UBYTE spt[2];
+    UBYTE sides[2];
+    UBYTE hid[2];
+} PACKED ;
 
 static const struct _protobt protobt_data[] = {
-    { SECTOR_SIZE, 1, 1, 2,  64,  360, 0xfc, 2, 9, 1, 0 },
-    { SECTOR_SIZE, 2, 1, 2, 112,  720, 0xfd, 2, 9, 2, 0 },
-    { SECTOR_SIZE, 2, 1, 2, 112,  720, 0xf9, 5, 9, 1, 0 },
-    { SECTOR_SIZE, 2, 1, 2, 112, 1440, 0xf9, 5, 9, 2, 0 },
-    { SECTOR_SIZE, 2, 1, 2, 224, 2880, 0xf0, 5, 18, 2, 0 },  /* for HD floppy */
-    { SECTOR_SIZE, 2, 1, 2, 224, 5760, 0xf0, 10, 36, 2, 0 }, /* for ED floppy */
-    { SECTOR_SIZE, 2, 1, 2, 112, 1600, 0xf9, 5, 10, 2, 0 }   /* for 800K floppy */
+/* encode a little-endian 16bit word */
+#define LEW(x) { (x) & 0xff, (x) / 0x100 }
+    { LEW(SECTOR_SIZE), 1, LEW(1), 2, LEW( 64), LEW( 360), 0xfc, LEW( 2), LEW( 9), LEW(1), LEW(0) },
+    { LEW(SECTOR_SIZE), 2, LEW(1), 2, LEW(112), LEW( 720), 0xfd, LEW( 2), LEW( 9), LEW(2), LEW(0) },
+    { LEW(SECTOR_SIZE), 2, LEW(1), 2, LEW(112), LEW( 720), 0xf9, LEW( 5), LEW( 9), LEW(1), LEW(0) },
+    { LEW(SECTOR_SIZE), 2, LEW(1), 2, LEW(112), LEW(1440), 0xf9, LEW( 5), LEW( 9), LEW(2), LEW(0) },
+    { LEW(SECTOR_SIZE), 2, LEW(1), 2, LEW(224), LEW(2880), 0xf0, LEW( 5), LEW(18), LEW(2), LEW(0) }, /* for HD floppy */
+    { LEW(SECTOR_SIZE), 2, LEW(1), 2, LEW(224), LEW(5760), 0xf0, LEW(10), LEW(36), LEW(2), LEW(0) }, /* for ED floppy */
+    { LEW(SECTOR_SIZE), 2, LEW(1), 2, LEW(112), LEW(1600), 0xf9, LEW( 5), LEW(10), LEW(2), LEW(0) }  /* for 800K floppy */
+#undef LEW
 };
 #define NUM_PROTOBT_ENTRIES ARRAY_SIZE(protobt_data)
 
@@ -702,19 +702,12 @@ void protobt(UBYTE *buf, LONG serial, WORD type, WORD exec)
     }
 
     if (type >= 0 && type < NUM_PROTOBT_ENTRIES) {
-        const struct _protobt *bt = &protobt_data[type];
+        const UBYTE *bt = &protobt_data[type].bps[0];
+        UBYTE *dst = &b->bps[0];
+        unsigned int i;
 
-        setiword(b->bps, bt->bps);
-        b->spc = bt->spc;
-        setiword(b->res, bt->res);
-        b->fat = bt->fat;
-        setiword(b->dir, bt->dir);
-        setiword(b->sec, bt->sec);
-        b->media = bt->media;
-        setiword(b->spf, bt->spf);
-        setiword(b->spt, bt->spt);
-        setiword(b->sides, bt->sides);
-        setiword(b->hid, bt->hid);
+        for (i = 0; i < sizeof(struct _protobt); i++)
+            *dst++ = *bt++;
     }
 
     /*
@@ -740,14 +733,6 @@ void protobt(UBYTE *buf, LONG serial, WORD type, WORD exec)
         b->cksum[1]++;
 }
 
-
-/*==== boot-sector utilities ==============================================*/
-
-static void setiword(UBYTE *addr, UWORD value)
-{
-    addr[0] = LOBYTE(value);
-    addr[1] = HIBYTE(value);
-}
 
 /*==== xbios floprd, flopwr ===============================================*/
 
