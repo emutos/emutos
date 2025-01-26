@@ -47,6 +47,12 @@
 #define SPRINTF_STYLE
 #endif
 
+#ifdef __GNUC__
+#define PACKED __attribute__ ((packed))
+#else
+#define PACKED
+#endif
+
 /* Convenience macros to test the versions of glibc and gcc.
    Use them like this:
    #if __GNUC_PREREQ (2,8)
