@@ -499,6 +499,14 @@ that it does not crash is pure chance; when run under TOS 2.06, it does
 crash.
 
 
+Program: Tango 1.0x
+-------------------
+Error: panic
+
+Bug analysis:
+See entry on Cubase. (Tango also uses Steinberg's M-ROS.)
+
+
 Program: Turbo ST 1.8 (and possibly other versions)
 ---------------------------------------------------
 Error: Screen drawing errors
