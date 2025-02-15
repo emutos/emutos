@@ -802,8 +802,22 @@ static WORD d_dofileren(char *oldname, char *newname, BOOL is_folder)
          * we cannot rename because the file/folder exists, so
          * prompt for new name
          */
-        if (get_new_name(newname) <= 0)
+        ret = get_new_name(newname);
+
+        /* user clicked stop or skip */
+        if (ret <= 0)
             break;
+
+        /*
+         * handle the case where a user wants to move (rename) a
+         * file to replace an existing file. this makes no sense when
+         * oldname == newname. but when the user enters a different
+         * name and confirms that name by not changing it in the
+         * dialog that pops up next, we delete the existing file so
+         * that rename will succeed.
+         */
+        if ((ret == 1) && (strcmp(oldname,newname) != 0))
+            dos_delete(newname);
     }
 
     return FALSE;
