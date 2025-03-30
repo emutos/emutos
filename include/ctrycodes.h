@@ -50,6 +50,7 @@
 #define COUNTRY_RU 19   /* Russia */
 #define COUNTRY_RO 24   /* Romania */
 #define COUNTRY_GR 31   /* Greece */
+#define COUNTRY_CA 54   /* Catalan, NOT Canada! */
 
 /*
  * Special value of os_conf to indicate that the display and keyboard languages
