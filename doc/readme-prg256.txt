@@ -18,6 +18,7 @@ TT, Falcon or equivalent hardware.
 
 The desktop features are comparable to Atari TOS 2.
 
+emu256ca.prg - Catalan (PAL)
 emu256cz.prg - Czech (PAL)
 emu256de.prg - German (PAL)
 emu256es.prg - Spanish (PAL)

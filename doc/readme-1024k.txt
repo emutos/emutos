@@ -25,6 +25,7 @@ is included with Hatari:
     https://www.hatari-emu.org/doc/emutos.txt
 
 The default language is English.  Other supported languages are:
+- Catalan
 - Czech
 - Dutch
 - Finnish

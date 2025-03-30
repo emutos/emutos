@@ -1,0 +1,1690 @@
+# -*-C-*- I hate emacs po mode.
+#
+# ca.po: the catalan translations.
+#
+msgid ""
+msgstr ""
+"Last-Translator: Dragan Rosu <midyex201@outlook.com>\n"
+"Language-Team: Catalan\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=ISO-8859-1\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: bios/bios.c
+msgid "Memory test"
+msgstr "Prova de memòria"
+
+#: bios/bios.c
+msgid "complete"
+msgstr "completat"
+
+#: bios/bios.c
+msgid "aborted"
+msgstr "aturat"
+
+#: bios/bios.c
+msgid ""
+"System halted!\n"
+msgstr ""
+"Sistema aturat!\n"
+
+#: bios/initinfo.c
+msgid "GEMDOS drives"
+msgstr "Unitats GEMDOS"
+
+#: bios/initinfo.c
+msgid "MB"
+msgstr "MB"
+
+#: bios/initinfo.c desk/deskinf.c
+msgid "KB"
+msgstr "KB"
+
+#: bios/initinfo.c
+msgid "EmuTOS Version"
+msgstr "Versió EmuTOS"
+
+#: bios/initinfo.c
+msgid "CPU type"
+msgstr "Tipus CPU"
+
+#: bios/initinfo.c
+msgid "Machine"
+msgstr "Màquina"
+
+#: bios/initinfo.c
+msgid "Boot time"
+msgstr "Temps d'arrencada"
+
+#: bios/initinfo.c
+msgid "Hold <Control> to skip AUTO/ACC"
+msgstr "Sostén <Ctrl> per ometre AUTO/ACC"
+
+#: bios/initinfo.c
+msgid "Hold <Alternate> to skip HDD boot"
+msgstr "Sostén <Alt> per ometre arrencada disc dur"
+
+#: bios/initinfo.c
+msgid "Press key 'X' to boot from X:"
+msgstr "'X' per arrencar des X:"
+
+#: bios/initinfo.c
+msgid "Press <Esc> to run an early console"
+msgstr "<Esc> per executar una consola"
+
+#: bios/initinfo.c
+msgid "Hold <Shift> to pause this screen"
+msgstr "<Shift> per pausar aquesta pantalla"
+
+#: bios/kprint.c
+msgid ""
+"\n"
+"*** Press any key to continue ***"
+msgstr ""
+"\n"
+"* Premeu qualsevol tecla per continuar *"
+
+#: bdos/osmem.c
+msgid ""
+"\033EOut of internal memory.\n"
+"Use FOLDR100.PRG to get more.\n"
+"System halted!\n"
+msgstr ""
+"\033ESense memòria interna.\n"
+"Utilitzeu FOLDR100.PRG per\n"
+"obtenir més. Sistema aturat!\n"
+
+#: aes/gem_rsc.c
+msgid "Selection: ________.___"
+msgstr "Selecció: ________.___"
+
+#: aes/gem_rsc.c
+msgid "Directory:"
+msgstr "Directori:"
+
+#: aes/gem_rsc.c desk/desk_rsc.c
+msgid "Drive:"
+msgstr "Unitat:"
+
+#: aes/gem_rsc.c desk/desk_rsc.c
+msgid "OK"
+msgstr "D'acord"
+
+#: aes/gem_rsc.c desk/desk_rsc.c
+msgid "Cancel"
+msgstr "Cancel·la"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"The disk in drive %c: is|"
+"physically write-protected.]"
+"[Cancel|Retry]"
+msgstr "[1]["
+"El disc d'unitat %c: està|"
+"físicament protegit.]"
+"[Cancel·la|Reintenta]"
+
+#: aes/gem_rsc.c
+msgid "[2]["
+"Drive %c: is not responding.|"
+"Please check the disk drive,|"
+"or insert a disk.]"
+"[Cancel|Retry]"
+msgstr "[2]["
+"Unitat %c: no respon. Comproveu|"
+"l'unitat de disc o inseriu disc.]"
+"[Cancel·la|Reintenta]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"Data on the disk in drive %c:|"
+"may be damaged.]"
+"[Cancel|Retry]"
+msgstr "[1]["
+"Dades de disc d'unitat %c:|"
+"poden estar danyades.]"
+"[Cancel·la|Reintenta]"
+
+#: aes/gem_rsc.c
+msgid "[2]["
+"This application cannot read|"
+"data on the disk in drive %c:.]"
+"[Cancel|Retry]"
+msgstr "[2]["
+"Aquesta aplicació no pot llegir|"
+"dades al disc d'unitat %c:.]"
+"[Cancel·la|Reintenta]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"Your output device is not|"
+"receiving data.]"
+"[Cancel|Retry]"
+msgstr "[1]["
+"Teu dispositiu de sortida|"
+"no rep dades.]"
+"[Cancel·la|Reintenta]"
+
+#: aes/gem_rsc.c
+msgid "[3]["
+"An error has occurred in GEM.|"
+"Please contact the EmuTOS|"
+"Development Team.]"
+"[Cancel]"
+msgstr "[3]["
+"S'ha produït un error a GEM.|"
+"Contacta amb l'equip de|"
+"desenvolupament d'EmuTOS.]"
+"[Cancel·la]"
+
+#: aes/gem_rsc.c
+msgid "[2]["
+"This application cannot|"
+"find the folder or file|"
+"you just tried to access.]"
+"[  OK  ]"
+msgstr "[2]["
+"Aquesta aplicació no pot|"
+"trobar la carpeta o fitxer|"
+"a qual acabes d'intentar|"
+"accedir.]"
+"[D'acord]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"This application does not|"
+"have room to open another|"
+"document.  To make room,|"
+"close any document that|"
+"you do not need.]"
+"[  OK  ]"
+msgstr "[1]["
+"Aquesta aplicació no té espai|"
+"per obrir altre document. Per|"
+"fer espai, tanca qualsevol|"
+"document que no necessita.]"
+"[D'acord]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"An item with this name|"
+"already exists in the|"
+"directory, or this item|"
+"is set to Read Only status.]"
+"[  OK  ]"
+msgstr "[1]["
+"Un element amb aquest nom|"
+"ja existeix al directori o|"
+"aquest element està configurat|"
+"en estat de Només lectura.]"
+"[D'acord]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"The drive you specified|"
+"does not exist.]"
+"[Cancel]"
+msgstr "[1]["
+"L'unitat que heu|"
+"especificat no existeix.]"
+"[Cancel·la]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"There is not enough memory|"
+"in your computer for the|"
+"application you just tried|"
+"to run.]"
+"[  OK  ]"
+msgstr "[1]["
+"No hi ha prou memòria|"
+"a ordinador per a l'aplicació|"
+"que acaba d'intentar executar.]"
+"[D'acord]"
+
+#: aes/gem_rsc.c
+msgid "[3]["
+"TOS error #%u.]"
+"[Cancel]"
+msgstr "[3]["
+"Error TOS #%u.]"
+"[Cancel·la]"
+
+#: aes/gem_rsc.c
+msgid "[3]["
+"Unsupported AES function #%d.]"
+"[Cancel]"
+msgstr "[3]["
+"Funció AES no compatible #%d.]"
+"[Cancel·la]"
+
+#: aes/gem_rsc.c
+msgid "[1]["
+"Not enough memory for|"
+"this directory]"
+"[  OK  ]"
+msgstr "[1]["
+"No hi ha prou memòria|"
+"per a  aquest directori]"
+"[D'acord]"
+
+#: aes/gem_rsc.c
+msgid "ITEM SELECTOR"
+msgstr "SELECTOR D'ELEMENTS"
+
+#: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "Nom: ________.___"
+
+#: desk/desk_rsc.c
+msgid "Number of folders:         _____"
+msgstr " Nombre de carpetes:       _____"
+
+#: desk/desk_rsc.c
+msgid "Number of files:         _____"
+msgstr "Nombre de fitxers:       _____"
+
+#: desk/desk_rsc.c
+msgid "Skip"
+msgstr "Salta"
+
+#: desk/desk_rsc.c
+msgid "Install"
+msgstr "Instal·la"
+
+#: desk/desk_rsc.c
+msgid "Remove"
+msgstr "Elimina"
+
+#: desk/desk_rsc.c
+msgid "Yes"
+msgstr "Sí"
+
+#: desk/desk_rsc.c
+msgid "No"
+msgstr "No"
+
+#: desk/desk_rsc.c
+msgid "Size:   __________"
+msgstr "Mida:   __________"
+
+#: desk/desk_rsc.c
+msgid "Date:   __________"
+msgstr "Data:   __________"
+
+#: desk/desk_rsc.c
+msgid "Time:   __:__ __  "
+msgstr "Hora:   __:__ __  "
+
+#: desk/desk_rsc.c
+msgid "Drive identifier:  _           "
+msgstr " Identif. d'unitat: _          "
+
+#: desk/desk_rsc.c
+msgid "Disk label:  ________.___"
+msgstr "Etiqueta de disc:________.___"
+
+#: desk/desk_rsc.c
+msgid "Bytes used:    __________"
+msgstr "Bytes utilitzats:  __________"
+
+#: desk/desk_rsc.c
+msgid "Bytes available:    __________"
+msgstr "Bytes disponibiles:  __________"
+
+#: desk/desk_rsc.c
+msgid "Identifier: _:"
+msgstr "Identificador: _:"
+
+#: desk/desk_rsc.c
+msgid "Label: ____________"
+msgstr "Etiqueta: ____________"
+
+#: desk/desk_rsc.c
+msgid "Application name: ________.___"
+msgstr "Nom d'aplicació: ________.___"
+
+#: desk/desk_rsc.c
+msgid "Arguments: ___________"
+msgstr "Arguments: ___________"
+
+#: desk/desk_rsc.c
+msgid "Document type: ___"
+msgstr "Tipus de document: ___"
+
+#: desk/desk_rsc.c
+msgid "Install as: F__"
+msgstr "Instal·la com: F__"
+
+#: desk/desk_rsc.c
+msgid "Current name: ________.___"
+msgstr "Nom actual:   ________.___"
+
+#: desk/desk_rsc.c
+msgid "Copy's name: ________.___"
+msgstr "Nom de còpia: ________.___"
+
+#: desk/desk_rsc.c
+msgid "Key: ^_"
+msgstr "Tecla: ^_"
+
+#: desk/desk_rsc.c
+msgid "Free RAM: _____________________"
+msgstr "RAM lliure: _____________________"
+
+#: desk/desk_rsc.c
+msgid "Label: ________.___"
+msgstr "Etiqueta: ________.___"
+
+#: desk/desk_rsc.c
+msgid " Desk "
+msgstr " Escriptori "
+
+#: desk/desk_rsc.c
+msgid " File "
+msgstr " Fitxer "
+
+#: desk/desk_rsc.c
+msgid " View "
+msgstr " Vista "
+
+#: desk/desk_rsc.c
+msgid " Options "
+msgstr " Opcions "
+
+#: desk/desk_rsc.c
+msgid "  Desktop info..."
+msgstr "  Info d'esciptori..."
+
+#: desk/desk_rsc.c
+msgid "  Open"
+msgstr "  Obre"
+
+#: desk/desk_rsc.c
+msgid "  Info/Rename..."
+msgstr "  Info/Canvia nom..."
+
+#: desk/desk_rsc.c
+msgid "  Search..."
+msgstr "  Cerca..."
+
+#: desk/desk_rsc.c
+msgid "  New folder..."
+msgstr "  Carpeta nova..."
+
+#: desk/desk_rsc.c
+msgid "  Close folder"
+msgstr "  Tanca carpeta"
+
+#: desk/desk_rsc.c
+msgid "  Close top window"
+msgstr "  Tanca finestra superior"
+
+#: desk/desk_rsc.c
+msgid "  Cycle windows"
+msgstr "  Cicla finestres"
+
+#: desk/desk_rsc.c
+msgid "  Select all items"
+msgstr "  Selecciona tots elements"
+
+#: desk/desk_rsc.c
+msgid "  Set file mask..."
+msgstr "  Estableix màscara de fitxer..."
+
+#: desk/desk_rsc.c
+msgid "  Delete..."
+msgstr "  Suprimeix..."
+
+#: desk/desk_rsc.c
+msgid "  Format floppy..."
+msgstr "  Formata disquet..."
+
+#: desk/desk_rsc.c
+msgid "  Eject floppy"
+msgstr "  Expulsa disquet"
+
+#: desk/desk_rsc.c
+msgid "  Execute EmuCON"
+msgstr "  Executa EmuCON"
+
+#: desk/desk_rsc.c
+msgid "  Shutdown"
+msgstr "  Apaga"
+
+#: desk/desk_rsc.c
+msgid "  Show as icons"
+msgstr "  Mostra com a icones"
+
+#: desk/desk_rsc.c
+msgid "  Show as text"
+msgstr "  Mostra com a text"
+
+#: desk/desk_rsc.c
+msgid "  Sort by name"
+msgstr "  Ordena per nom"
+
+#: desk/desk_rsc.c
+msgid "  Sort by type"
+msgstr "  Ordena per tipus"
+
+#: desk/desk_rsc.c
+msgid "  Sort by size"
+msgstr "  Ordena per mida"
+
+#: desk/desk_rsc.c
+msgid "  Sort by date"
+msgstr "  Ordena per data"
+
+#: desk/desk_rsc.c
+msgid "  No sort"
+msgstr "  No ordena"
+
+#: desk/desk_rsc.c
+msgid "  Size to fit"
+msgstr "  Adapta mida"
+
+#: desk/desk_rsc.c
+msgid "  Set background..."
+msgstr "  Estableix fons..."
+
+#: desk/desk_rsc.c
+msgid "  Install icon..."
+msgstr "  Instal·la icona..."
+
+#: desk/desk_rsc.c
+msgid "  Install application..."
+msgstr "  Instal·la aplicació..."
+
+#: desk/desk_rsc.c
+msgid "  Install devices"
+msgstr "  Instal·la dispositius"
+
+#: desk/desk_rsc.c
+msgid "  Remove desktop icon"
+msgstr "  Elimina icona d'escriptori"
+
+#: desk/desk_rsc.c
+msgid "  Set preferences..."
+msgstr "  Estableix preferències..."
+
+#: desk/desk_rsc.c
+msgid "  Desktop configuration..."
+msgstr "  Configuració d'escriptori..."
+
+#: desk/desk_rsc.c
+msgid "  Change resolution..."
+msgstr "  Canvia resolució..."
+
+#: desk/desk_rsc.c
+msgid "  Read .INF file..."
+msgstr "  Llegeix fitxer .INF..."
+
+#: desk/desk_rsc.c
+msgid "  Save desktop..."
+msgstr "  Desa escriptori..."
+
+#: desk/desk_rsc.c
+msgid "  Blitter"
+msgstr "  Blitter"
+
+#: desk/desk_rsc.c
+msgid "  Cache"
+msgstr "  Memòria cau"
+
+#: desk/desk_rsc.c
+msgid "Read/Write"
+msgstr "Lectura/escriptura"
+
+#: desk/desk_rsc.c
+msgid "Read-Only"
+msgstr "Numés lectura"
+
+#: desk/desk_rsc.c
+msgid "DISK INFORMATION"
+msgstr "INFORMACIó DE DISC"
+
+#: desk/desk_rsc.c
+msgid "Version"
+msgstr "Versió"
+
+#: desk/desk_rsc.c
+msgid "Copyright \275 2001-"
+msgstr "Copyright © 2001-"
+
+#: desk/desk_rsc.c
+msgid "The EmuTOS development team"
+msgstr "L'equip de desenvolupament d'EmuTOS"
+
+#: desk/desk_rsc.c
+msgid "Based on 'GPLed' sources"
+msgstr "Basat en fonts de GPLades"
+
+#: desk/desk_rsc.c
+msgid "\275 1987 Digital Research, Inc."
+msgstr "© 1987 Digital Research, Inc."
+
+#: desk/desk_rsc.c
+msgid "\275 1999 Caldera Thin Clients, Inc."
+msgstr "© 1999 Caldera Thin Clients, Inc."
+
+#: desk/desk_rsc.c
+msgid "\275 2001 Lineo, Inc."
+msgstr "© 2001 Lineo, Inc."
+
+#: desk/desk_rsc.c
+msgid "EmuTOS is distributed under the GPL"
+msgstr "EmuTOS es distribueix sota la GPL"
+
+#: desk/desk_rsc.c
+msgid "See doc\\license.txt for details"
+msgstr "doc\\license.txt per més informació"
+
+#: desk/desk_rsc.c
+msgid "OPEN APPLICATION"
+msgstr "OBRE APLICACIó"
+
+#: desk/desk_rsc.c
+msgid "Parameters:"
+msgstr "Paràmetres:"
+
+#: desk/desk_rsc.c
+msgid "INSTALL DESKTOP ICON"
+msgstr "INSTAL·LA ICONA D'ESCRIPTORI"
+
+#: desk/desk_rsc.c
+msgid "Item type:"
+msgstr "Tipus d'element:"
+
+#: desk/desk_rsc.c
+msgid "Drive"
+msgstr "Unitat"
+
+#: desk/desk_rsc.c
+msgid "Trash can"
+msgstr "Paperera"
+
+#: desk/desk_rsc.c
+msgid "Printer"
+msgstr "Impressora"
+
+#: desk/desk_rsc.c
+msgid "Icon:"
+msgstr "Icona:"
+
+#: desk/desk_rsc.c
+msgid "INSTALL APPLICATION"
+msgstr "INSTAL·LA APLICACIó"
+
+#: desk/desk_rsc.c
+msgid "Boot status:"
+msgstr "Estat d'arrenc.:"
+
+#: desk/desk_rsc.c
+msgid "Auto"
+msgstr "Auto"
+
+#: desk/desk_rsc.c
+msgid "Normal"
+msgstr "Normal"
+
+#: desk/desk_rsc.c
+msgid "Application type:"
+msgstr "Tipus d'aplicació:"
+
+#: desk/desk_rsc.c
+msgid "Default dir:"
+msgstr "Dir predeterm.:"
+
+#: desk/desk_rsc.c
+msgid "Application"
+msgstr "Aplicació"
+
+#: desk/desk_rsc.c
+msgid "Window"
+msgstr "Finestra"
+
+#: desk/desk_rsc.c
+msgid "Parameter:"
+msgstr "Paràmetre:"
+
+#: desk/desk_rsc.c
+msgid "Full path"
+msgstr "Camí compl."
+
+#: desk/desk_rsc.c
+msgid "File name"
+msgstr "Nom fitxer"
+
+#: desk/desk_rsc.c
+msgid "NAME CONFLICT DURING COPY"
+msgstr "CONFLICTE DE NOM DURANT CòPIA"
+
+#: desk/desk_rsc.c
+msgid "Stop"
+msgstr "Atura"
+
+#: desk/desk_rsc.c
+msgid "NEW FOLDER"
+msgstr "CARPETA NOVA"
+
+#: desk/desk_rsc.c
+msgid "SEARCH FILE"
+msgstr "CERCA FITXER"
+
+#: desk/desk_rsc.c
+msgid "PRINT FILE"
+msgstr "IMPRIMEIX FITXER"
+
+#: desk/desk_rsc.c
+msgid "SET PREFERENCES"
+msgstr "ESTABLEIX PREFERENCIES"
+
+#: desk/desk_rsc.c
+msgid "Confirm deletes:"
+msgstr "Confirma supressions:"
+
+#: desk/desk_rsc.c
+msgid "Confirm copies:"
+msgstr "Confirma còpies:"
+
+#: desk/desk_rsc.c
+msgid "Confirm overwrites:"
+msgstr "Confirma sobreescritures:"
+
+#: desk/desk_rsc.c
+msgid "Double-click speed:"
+msgstr "Velocitat de doble clic:"
+
+#: desk/desk_rsc.c
+msgid "Time format:"
+msgstr "Format horari:"
+
+#: desk/desk_rsc.c
+msgid "Default"
+msgstr "Predeterminat"
+
+#: desk/desk_rsc.c
+msgid "12H"
+msgstr "12 hores"
+
+#: desk/desk_rsc.c
+msgid "24H"
+msgstr "24 hores"
+
+#: desk/desk_rsc.c
+msgid "Date format:"
+msgstr "Format de data:"
+
+#: desk/desk_rsc.c
+msgid "MDY"
+msgstr "MDA"
+
+#: desk/desk_rsc.c
+msgid "DMY"
+msgstr "DMA"
+
+#: desk/desk_rsc.c
+msgid "SET FILE MASK"
+msgstr "ESTABLEIX MÀSCARA DE FITXER"
+
+#: desk/desk_rsc.c
+msgid "DESKTOP CONFIGURATION"
+msgstr "CONFIGURACIó D'ESCRIPTORI"
+
+#: desk/desk_rsc.c
+msgid "Function keys:"
+msgstr "Tecles de funció:"
+
+#: desk/desk_rsc.c
+msgid "Menu shortcut keys:"
+msgstr "Tecles de drecera de menú:"
+
+#: desk/desk_rsc.c
+msgid "Clear all"
+msgstr "Esborra tot"
+
+#: desk/desk_rsc.c
+msgid "SET SCREEN RESOLUTION"
+msgstr "ESTABLEIX RESOLUCIó DE PANTALLA"
+
+#: desk/desk_rsc.c
+msgid "ST Low"
+msgstr "ST baixa"
+
+#: desk/desk_rsc.c
+msgid "ST Medium"
+msgstr "ST mitjà"
+
+#: desk/desk_rsc.c
+msgid "ST High"
+msgstr "ST alta"
+
+#: desk/desk_rsc.c
+msgid "TT Low"
+msgstr "TT baixa"
+
+#: desk/desk_rsc.c
+msgid "TT Medium"
+msgstr "TT mitjà"
+
+#: desk/desk_rsc.c
+msgid "High"
+msgstr "Alta"
+
+#: desk/desk_rsc.c
+msgid "Medium"
+msgstr "Mitjà"
+
+#: desk/desk_rsc.c
+msgid "Low"
+msgstr "Baixa"
+
+#: desk/desk_rsc.c
+msgid "ST Compatible"
+msgstr "Compat. amb ST"
+
+#: desk/desk_rsc.c
+msgid "INSTALL WINDOW ICON"
+msgstr "INSTAL·LA ICONA DE FINESTRA"
+
+#: desk/desk_rsc.c
+msgid "Folder"
+msgstr "Carpeta"
+
+#: desk/desk_rsc.c
+msgid "File"
+msgstr "Fitxer"
+
+#: desk/desk_rsc.c
+msgid "Monochrome only"
+msgstr "Només monocrom"
+
+#: desk/desk_rsc.c
+msgid "FORMAT FLOPPY DISKETTE"
+msgstr "FORMATA DISQUET"
+
+#: desk/desk_rsc.c
+msgid "Single sided"
+msgstr "Sola cara"
+
+#: desk/desk_rsc.c
+msgid "Double sided"
+msgstr "Doble cara"
+
+#: desk/desk_rsc.c
+msgid "High density"
+msgstr "Alta densitat"
+
+#: desk/desk_rsc.c
+msgid "SS 360 K"
+msgstr "Sola cara 360KB"
+
+#: desk/desk_rsc.c
+msgid "DS 720 K"
+msgstr "Doble cara 720KB"
+
+#: desk/desk_rsc.c
+msgid "DS 800 K"
+msgstr "Sola cara 880KB"
+
+#: desk/desk_rsc.c
+msgid "HD 1.44 M"
+msgstr "Alta dens. 1.44MB"
+
+#: desk/desk_rsc.c
+msgid "SET BACKGROUND"
+msgstr "ESTABLEIX FONS"
+
+#: desk/desk_rsc.c
+msgid "Select:"
+msgstr "Selecciona:"
+
+#: desk/desk_rsc.c
+msgid "Desktop"
+msgstr "Escriptori"
+
+#: desk/desk_rsc.c
+msgid "Style:"
+msgstr "Estil:"
+
+#: desk/desk_rsc.c
+msgid "Color:"
+msgstr "Color:"
+
+#: desk/desk_rsc.c
+msgid " %ld bytes used in %d items."
+msgstr " %ld bytes utilitzats en %d elements."
+
+#: desk/desk_rsc.c
+msgid " %ld bytes used in %d selected items."
+msgstr " %ld bytes utilitzats en %d elements seleccionats."
+
+#: desk/desk_rsc.c
+msgid "FILE INFORMATION"
+msgstr "INFORMACIó DE FITXER"
+
+#: desk/desk_rsc.c
+msgid "FOLDER INFORMATION"
+msgstr "INFORMACIó DE CARPETA"
+
+#: desk/desk_rsc.c
+msgid "COPY FILE(S)"
+msgstr "COPIA FITXER(S)"
+
+#: desk/desk_rsc.c
+msgid "MOVE FILE(S)"
+msgstr "MOU FITXER(S)"
+
+#: desk/desk_rsc.c
+msgid "DELETE FILE(S)"
+msgstr "SUPRIMEIX FITXER(S)"
+
+#: desk/desk_rsc.c
+msgid "DISK"
+msgstr "DISC"
+
+#: desk/desk_rsc.c
+msgid "TRASH"
+msgstr "PAPERERA"
+
+#: desk/desk_rsc.c
+msgid "PRINTER"
+msgstr "IMPRESSORA"
+
+#: desk/desk_rsc.c
+msgid "-More-"
+msgstr "-Més-"
+
+#: desk/desk_rsc.c
+msgid "-End of file-"
+msgstr "-Final de fitxer-"
+
+#: desk/desk_rsc.c
+msgid "-File read error-"
+msgstr "-Error de lectura de fitxer-"
+
+#: desk/desk_rsc.c
+msgid "Locate item"
+msgstr "Localitza element"
+
+#: desk/desk_rsc.c
+msgid "Select .INF file"
+msgstr "Selecciona fitxer .INF"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Switch resolution?]"
+"[ Yes | No ]"
+msgstr "[2]["
+"Canvia resolució?]"
+"[ Sí | No ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Show or print this document?]"
+"[Show|Print|Cancel]"
+msgstr "[2]["
+"Mostra o imprimeix|"
+"aquest document?]"
+"[Mostra|Imprimeix|Cancel·la]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Print error!]"
+"[ Retry | Cancel ]"
+msgstr "[1]["
+"Error d'impressió!]"
+"[Reintenta|Cancel·la]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"This document type has no|"
+"associated application.]"
+"[  OK  ]"
+msgstr "[1]["
+"Aquest tipus de document no|"
+"té cap aplicació associada.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"The GEM Desktop has no more|"
+"windows.  Please close a|"
+"window that you are not|"
+"using.]"
+"[  OK  ]"
+msgstr "[1]["
+"L'Escriptori GEM no té més|"
+"finestres. Tanca una|"
+"finestra que no fes servir.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal directory operation!]"
+"[ Skip | Abort ]"
+msgstr "[1]["
+"Operació de directori il·legal!]"
+"[ Salta | Atura ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal operation!]"
+"[  OK  ]"
+msgstr "[1]["
+"Operació il·legal!]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Abort this operation?]"
+"[ Yes | No ]"
+msgstr "[2]["
+"Aturar aquesta operació?]"
+"[ Sí | No ]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Do you want to delete all|"
+"the files on drive %c: ?]"
+"[Yes| No ]"
+msgstr "[2]["
+"Suprimir tots els fitxers|"
+"d'unitat %c:?]"
+"[ Sí | No ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Sorry, the desktop cannot|"
+"install any more icons|"
+"or applications.]"
+"[  OK  ]"
+msgstr "[1]["
+"Perdó, l'escriptori no pot|"
+"instal·lar més icones|"
+"o aplicacions.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"You cannot create a folder|"
+"with that name. Please retry|"
+"with a new name, or cancel.]"
+"[Cancel|Retry]"
+msgstr "[2]["
+"No puda crear una carpeta|"
+"amb aquest nom. Reintenta|"
+"amb nom nou o cancel·la.]"
+"[Cancel·la|Reintenta]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Drive %c: does not have|"
+"enough room for this|"
+"operation.]"
+"[  OK  ]"
+msgstr "[1]["
+"Unitat %c: no té prou|"
+"espai per a aquesta|"
+"operació.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[3]["
+"You cannot create or|"
+"access a folder this far|"
+"down the directory path.]"
+"[  OK  ]"
+msgstr "[3]["
+"No pots crear ni accedir|"
+"a una carpeta tan lluny|"
+"del camí del directori.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[3]["
+"You cannot create or access|"
+"a file or folder with that|"
+"name, because the pathname|"
+"is too long.]"
+"[  OK  ]"
+msgstr "[3]["
+"No pots crear ni accedir|"
+"a un fitxer o carpeta amb|"
+"aquest nom, perquè el nom|"
+"de camí és massa llarg.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s is used to|"
+"permanently delete files|"
+"or folders.]"
+"[  OK  ]"
+msgstr "[1]["
+"%s s'utilitza per suprimir|"
+"fitxers o carpetes|"
+"permanentment.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s|"
+"is a printer.]"
+"[  OK  ]"
+msgstr "[1]["
+"%s|"
+"és una impressora.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"You cannot drag applications,|"
+"files or folders onto the|"
+"Desktop.]"
+"[  OK  ]"
+msgstr "[1]["
+"No pots arrossegar aplicacions,|"
+"fitxers o carpetes|"
+"a l'Escriptori.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Save Desktop?]"
+"[  OK  |Cancel]"
+msgstr "[2]["
+"Desa l'Escriptori?]"
+"[D'acord|Cancel·la]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Do you want to remove icons|"
+"or delete files?]"
+"[Icons|Files|Cancel]"
+msgstr "[2]["
+"Elimina icones o|"
+"suprimi fitxers?]"
+"[Icones|Fitxers|Cancel·la]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Invalid function key value.]"
+"[  OK  ]"
+msgstr "[1]["
+"Valor de tecla de funció|"
+"no vàlid.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Function key already assigned.|"
+"Do you want to reassign it?]"
+"[  OK  |Cancel]"
+msgstr "[2]["
+"Tecla de funció ja assignada.|"
+"Reassignar-la?]"
+"[D'acord|Cancel·la]"
+
+#: desk/desk_rsc.c
+msgid "[3]["
+"Not enough memory to|"
+"initialise EmuDesk.|"
+"You must reboot.]"
+"[  OK  ]"
+msgstr "[3]["
+"No hi ha prou memòria per|"
+"inicialitzar EmuDesk.|"
+"Heu de reiniciar.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"%s not found.|"
+"Do you want to remove the|"
+"icon or locate the item?]"
+"[Remove|Locate|Cancel]"
+msgstr "[2]["
+"%s no s'ha trobat.|"
+"Elimina l'icona o|"
+"localitza l'element?]"
+"[Elimina|Localitza|Cancel·la]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Please select icon type.]"
+"[Desktop|Window|Cancel]"
+msgstr "[1]["
+"Selecciona tipus d'icona.]"
+"[Escriptori|Finestra|Cancel·la]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No matching file type.]"
+"[  OK  ]"
+msgstr "[1]["
+"No hi ha cap coincident|"
+"tipus de fitxer.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[3]["
+"Formatting error. The target|"
+"disk may be write-protected|"
+"or unusable.]"
+"[ Retry | Abort ]"
+msgstr "[3]["
+"Error de format. El disc|"
+"del destinació pot estar|"
+"protegit contra escriptura|"
+"o inutilitzable.]"
+"[Reintenta| Atura ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"This disk has %ld bytes|"
+"available to the user.]"
+"[ Continue | Quit ]"
+msgstr "[1]["
+"Aquest disc té %ld bytes|"
+"disponibles per a l'usuari.]"
+"[Continua| Surt ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Drive %s: does not exist.]"
+"[ Cancel ]"
+msgstr "[1]["
+"Unitat %s: no existeix.]"
+"[Cancel·la]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No drive identifier.]"
+"[ Retry ]"
+msgstr "[1]["
+"No hi ha identificador|"
+"d'unitat.]"
+"[Reintenta]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot delete file|"
+"%s]"
+"[ Skip | Retry | Abort ]"
+msgstr "[1]["
+"No es pot suprimir fitxer|"
+"%s]"
+"[ Salta |Reintenta| Atura ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot delete directory|"
+"%s]"
+"[ Skip | Retry | Abort ]"
+msgstr "[1]["
+"No es pot suprimir directori|"
+"%s]"
+"[ Salta |Reintenta| Atura ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Not enough memory.]"
+"[  OK  ]"
+msgstr "[1]["
+"No hi ha prou memòria.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"%s not found.]"
+"[  OK  ]"
+msgstr "[1]["
+"%s no s'ha trobat.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot open file|"
+"%s]"
+"[ Skip | Retry | Abort ]"
+msgstr "[1]["
+"No es pot obrir fitxer|"
+"%s]"
+"[ Salta|Reintenta| Atura ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot create file|"
+"%s]"
+"[ Skip | Retry | Abort ]"
+msgstr "[1]["
+"No es pot crear fitxer|"
+"%s]"
+"[ Salta |Reintenta| Atura ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot read file|"
+"%s]"
+"[ Skip | Abort ]"
+msgstr "[1]["
+"No es pot llegir fitxer|"
+"%s]"
+"[ Salta | Atura ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Cannot write file|"
+"%s]"
+"[ Skip | Abort ]"
+msgstr "[1]["
+"No es pot escriure fitxer|"
+"%s]"
+"[ Salta | Atura ]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Rename error!]"
+"[ Retry | Cancel ]"
+msgstr "[1]["
+"Error de canvi de nom!]"
+"[Reintenta|Cancel·la]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Failed to set default|"
+"directory.]"
+"[  OK  ]"
+msgstr "[1]["
+"No s'ha pogut establir|"
+"directori predeterminat.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"Illegal .INF file format.]"
+"[  OK  ]"
+msgstr "[1]["
+"Format de fitxer .INF il·legal.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Continue to search?]"
+"[  OK  |Cancel]"
+msgstr "[2]["
+"Continuar cercant?]"
+"[D'acord|Cancel·la]"
+
+#: desk/desk_rsc.c
+msgid "[1]["
+"No more files.]"
+"[  OK  ]"
+msgstr "[1]["
+"No hi ha més fitxers.]"
+"[D'acord]"
+
+#: desk/desk_rsc.c
+msgid "[2]["
+"Last key is already assigned.|"
+"Do you want to reassign it?]"
+"[  OK  |Cancel]"
+msgstr "[2]["
+"última tecla ja està assignada.|"
+"Reassignar-la?]"
+"[D'acord|Cancel·la]"
+
+#: cli/cmdint.c
+msgid "Copy <filespec> ... to standard output"
+msgstr "Copia <especfitx> ... a sortida estàndard"
+
+#: cli/cmdint.c
+msgid "Change current directory to <dir>"
+msgstr "Canvia directori actual a <dir>"
+
+#: cli/cmdint.c
+msgid "or display current directory"
+msgstr "o mostra directori actual"
+
+#: cli/cmdint.c
+msgid "Change attributes for <filename>"
+msgstr "Canvia atributs de <nomedelfitxer>"
+
+#: cli/cmdint.c
+msgid "<mode> specifies the new attribute(s):"
+msgstr "<mode> especifica nou(s) atribut(s)"
+
+#: cli/cmdint.c
+msgid "r=read-only  h=hidden  s=system  -=none"
+msgstr "r=només lectura  h=ocult  s=sistema  -=cap"
+
+#: cli/cmdint.c
+msgid "Clear screen"
+msgstr "Esborra pantalla"
+
+#: cli/cmdint.c
+msgid "Copy files matching <filespec> to <dest>"
+msgstr "Copia fitxers que coincideixin amb <especfitx> a <dest>"
+
+#: cli/cmdint.c
+msgid "If <filespec> matches multiple files,"
+msgstr "Si <especfitx> coincideixin amb diversos fitxers,"
+
+#: cli/cmdint.c
+msgid "<dest> must be a directory"
+msgstr "<dest> ha de ser un directori"
+
+#: cli/cmdint.c
+msgid "Copy <string> ... to standard output"
+msgstr "Copia <cadena> ... a sortida estàndard"
+
+#: cli/cmdint.c
+msgid "Strings may be surrounded by \"\""
+msgstr "Cadenes poden estar envoltades de \"\""
+
+#: cli/cmdint.c
+msgid "Exit EmuCON2"
+msgstr "Surt EmuCON2"
+
+#: cli/cmdint.c
+msgid "Get help about <cmd> or list available commands"
+msgstr "Obteniu ajuda sobre <cmd> o llista ordres disponibles"
+
+#: cli/cmdint.c
+msgid "Use HELP ALL for help on all commands"
+msgstr "Utilitza HELP ALL per ajuda en totes ordres"
+
+#: cli/cmdint.c
+msgid "Use HELP EDIT for help on line editing"
+msgstr "Utilitza HELP EDIT per ajuda en edició en línia"
+
+#: cli/cmdint.c
+msgid "List files (default terse, horizontal)"
+msgstr "Llista fitxers (predeterminat curt, horitzonal)"
+
+#: cli/cmdint.c
+msgid "Specify -l for detailed list"
+msgstr "Especifica -l per llista detallada"
+
+#: cli/cmdint.c
+msgid "Create directory <dir>"
+msgstr "Crea directori <dir>"
+
+#: cli/cmdint.c
+msgid "Set or display console settings:"
+msgstr "Estableix o mostra configuració de consola:"
+
+#: cli/cmdint.c
+msgid "res for screen resolution (0,1)[ST] (0,1,2,4,7)[TT];"
+msgstr "res per resolució de pantalla (0,1)[ST] (0,1,2,4,7)[TT];"
+
+#: cli/cmdint.c
+msgid "delay/rate for the keyboard"
+msgstr "delay/rate per la teclat"
+
+#: cli/cmdint.c
+msgid "Copy <filespec> to standard output,"
+msgstr "Copia <especfitx> a sortida estàndard,"
+
+#: cli/cmdint.c
+msgid "pausing every screenful"
+msgstr "pausand cada pantalla"
+
+#: cli/cmdint.c
+msgid "Copy files matching <filespec> to <dir>,"
+msgstr "Copia fitxers que coincideixin amb <especfitx> a <dir>,"
+
+#: cli/cmdint.c
+msgid "then delete input files"
+msgstr "després suprimeix fitxers d'entrada"
+
+#: cli/cmdint.c
+msgid "Set search path for external programs"
+msgstr "Estableix camí de cerca per programes externs"
+
+#: cli/cmdint.c
+msgid "or display current search path"
+msgstr "o mostra camí de cerca actual"
+
+#: cli/cmdint.c
+msgid "Display current drive and directory"
+msgstr "Mostra unitat i directori actuals"
+
+#: cli/cmdint.c
+msgid "Rename <oldname> to <newname>"
+msgstr "Canvia nom de <nomvell> a <nomnou>"
+
+#: cli/cmdint.c
+msgid "Delete files matching <filespec>"
+msgstr "Suprimeix fitxers que coincideixin amb <specfiº>"
+
+#: cli/cmdint.c
+msgid "Specify -q to be prompted each time"
+msgstr "Especifica -q per demanar cada cop"
+
+#: cli/cmdint.c
+msgid "Delete directory <dir>"
+msgstr "Suprimeix directori <dir>"
+
+#: cli/cmdint.c
+msgid "Show info for <drive> or current drive"
+msgstr "Mostra informació de unitat <unitate> o actual"
+
+#: cli/cmdint.c
+msgid "Display GEMDOS version"
+msgstr "Mostra versió de GEMDOS"
+
+#: cli/cmdint.c
+msgid "Set line wrap or show current status"
+msgstr "Estableix ajustament de línia o mostra estat actual"
+
+#: cli/cmdint.c
+msgid "up/down arrow = previous/next line in history"
+msgstr "fletxa amunt/avall = línia anterior/següent de història"
+
+#: cli/cmdint.c
+msgid "left/right arrow = previous/next character"
+msgstr "fletxa esquerra/dreta = caràcter anterior/següent"
+
+#: cli/cmdint.c
+msgid "control-left/right arrow = previous/next word"
+msgstr "control-fletxa esquerra/dreta = paraula anterior/següent"
+
+#: cli/cmdint.c
+msgid "invalid mode argument"
+msgstr "argument de mode no vàlid"
+
+#: cli/cmdint.c
+msgid "Builtin commands:"
+msgstr "Ordres incorporades:"
+
+#: cli/cmdint.c
+msgid "Listing of "
+msgstr "Llista de "
+
+#: cli/cmdint.c
+msgid "Status for CON:"
+msgstr "Estat de CON:"
+
+#: cli/cmdint.c
+msgid "  Resolution:     "
+msgstr "  Rezolució: "
+
+#: cli/cmdint.c
+msgid "  Keyboard delay: "
+msgstr "  Retard del teclat: "
+
+#: cli/cmdint.c
+msgid "  Keyboard rate:  "
+msgstr "  Velocitat del teclat: "
+
+#: cli/cmdint.c
+msgid "(empty)"
+msgstr "(buit)"
+
+#: cli/cmdint.c
+msgid "Delete ALL matching files"
+msgstr "Suprimeix TOTS fitxers coincideints"
+
+#: cli/cmdint.c
+msgid "Delete file "
+msgstr "Suprimeix fitxer "
+
+#: cli/cmdint.c
+msgid "Allocation info for drive "
+msgstr "Info d'assignació d'unitat "
+
+#: cli/cmdint.c
+msgid "  Size (bytes):   "
+msgstr "  Mida (byte): "
+
+#: cli/cmdint.c
+msgid "  Bytes used:     "
+msgstr "  Bytes utilitzats: "
+
+#: cli/cmdint.c
+msgid "  Bytes free:     "
+msgstr "  Bytes lliures: "
+
+#: cli/cmdint.c
+msgid "  Total clusters: "
+msgstr "  Clústers totals: "
+
+#: cli/cmdint.c
+msgid "  Free clusters:  "
+msgstr "  Clústers lliures: "
+
+#: cli/cmdint.c
+msgid "  Sectors/cluster:"
+msgstr "  Sectors/clúster: "
+
+#: cli/cmdint.c
+msgid "  Bytes/sector:   "
+msgstr "  Bytes/sector: "
+
+#: cli/cmdint.c
+msgid " is not a directory"
+msgstr " no és un directori"
+
+#: cli/cmdint.c
+msgid " and "
+msgstr " i "
+
+#: cli/cmdint.c
+msgid "Copying "
+msgstr "Copiant "
+
+#: cli/cmdint.c
+msgid " to "
+msgstr " a "
+
+#: cli/cmdint.c
+msgid " ... deleting "
+msgstr " ... suprimint "
+
+#: cli/cmdint.c
+msgid " ... done"
+msgstr " ... fat"
+
+#: cli/cmdint.c
+msgid " or "
+msgstr " o "
+
+#: cli/cmdint.c
+msgid "CR to continue ..."
+msgstr "Enter per continuar..."
+
+#: cli/cmdint.c
+msgid "--More--"
+msgstr "--Més--"
+
+#: cli/cmdmain.c
+msgid "Welcome to EmuCON2 version "
+msgstr "Benvingut a EmuCON2 versió "
+
+#: cli/cmdmain.c
+msgid "Type HELP for builtin commands"
+msgstr "Escriu HELP per ordres incorporades"
+
+#: cli/cmdmain.c
+msgid "warning: no history buffers"
+msgstr "advertència: no hi ha buffers d'historial"
+
+#: cli/cmdparse.c
+msgid "more than one redirection"
+msgstr "més d'una redirecció"
+
+#: cli/cmdparse.c
+msgid "no filename for redirection"
+msgstr "cap nom de fitxer per la redirecció"
+
+#: cli/cmdparse.c
+msgid "error in quoted field"
+msgstr "error al camp citat"
+
+#: cli/cmdparse.c
+msgid "error parsing line"
+msgstr "error en anàlisi de línia"
+
+#: cli/cmdutil.c
+msgid "file not found"
+msgstr "fitxer no trobat"
+
+#: cli/cmdutil.c
+msgid "path not found"
+msgstr "camí no trobat"
+
+#: cli/cmdutil.c
+msgid "no more file handles"
+msgstr "no hi ha més manetes de fitxers"
+
+#: cli/cmdutil.c
+msgid "can't create file"
+msgstr "no es pot crear fitxer"
+
+#: cli/cmdutil.c
+msgid "not enough memory"
+msgstr "no hi ha prou memòria"
+
+#: cli/cmdutil.c
+msgid "invalid drive"
+msgstr "unitat no vàlid"
+
+#: cli/cmdutil.c
+msgid "interrupted"
+msgstr "interromput"
+
+#: cli/cmdutil.c
+msgid "invalid path"
+msgstr "camí no valid"
+
+#: cli/cmdutil.c
+msgid "can't write to disk (full?)"
+msgstr "nu es pot escriure al disc (plet?)"
+
+#: cli/cmdutil.c
+msgid "cmdline too long"
+msgstr "línia d'ordres massa llarga"
+
+#: cli/cmdutil.c
+msgid "directory not empty"
+msgstr "directori no buit"
+
+#: cli/cmdutil.c
+msgid "can't delete file (read-only?)"
+msgstr "no es pot suprimir fitxer (només de lectura?)"
+
+#: cli/cmdutil.c
+msgid "invalid parameter"
+msgstr "paràmetre no vàlid"
+
+#: cli/cmdutil.c
+msgid "wrong number of arguments"
+msgstr "nombre incorrecte d'arguments"
+
+#: cli/cmdutil.c
+msgid "error code %ld"
+msgstr "codi d'error %ld"
+
