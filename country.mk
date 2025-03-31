@@ -7,7 +7,7 @@
 # option any later version.  See doc/license.txt for details.
 #
 
-COUNTRIES = us de fr cz gr es fi sg ru it uk no se nl pl hu tr ro
+COUNTRIES = us de fr cz gr es fi sg ru it uk no se nl pl hu tr ro ca
 ifeq (,$(findstring $(COUNTRY),$(COUNTRIES)))
 $(error Unknown COUNTRY=$(COUNTRY))
 endif
