@@ -54,6 +54,7 @@ static country_t countries[] = {
         { 19, "Russia" },
         { 24, "Romania" },
         { 31, "Greece" },
+        { 54, "Catalan" },
         {127, "Multilanguage (all countries are supported, TOS >= v4.0)" },
         {COUNTRY_ERROR, NULL }
 };
