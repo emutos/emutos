@@ -274,7 +274,7 @@ msgstr "SELECTOR D'ELEMENTS"
 
 #: desk/desk_rsc.c
 msgid "Name: ________.___"
-msgstr "Nom:  ________.___"
+msgstr "Nom: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Number of folders:         _____"
@@ -815,6 +815,22 @@ msgstr "Doble cara"
 #: desk/desk_rsc.c
 msgid "High density"
 msgstr "Alta densitat"
+
+#: desk/desk_rsc.c
+msgid "SS 360 K"
+msgstr "Sola cara 360KB"
+
+#: desk/desk_rsc.c
+msgid "DS 720 K"
+msgstr "Doble cara 720KB"
+
+#: desk/desk_rsc.c
+msgid "DS 800 K"
+msgstr "Sola cara 880KB"
+
+#: desk/desk_rsc.c
+msgid "HD 1.44 M"
+msgstr "Alta dens. 1.44MB"
 
 #: desk/desk_rsc.c
 msgid "SET BACKGROUND"
