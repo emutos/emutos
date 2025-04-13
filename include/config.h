@@ -125,6 +125,9 @@
  * Defaults for the FireBee target
  */
 #ifdef MACHINE_FIREBEE
+# ifndef CONF_WITH_ST_MMU
+#  define CONF_WITH_ST_MMU 0
+# endif
 # ifndef CONF_WITH_TT_MMU
 #  define CONF_WITH_TT_MMU 0
 # endif
