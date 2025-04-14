@@ -139,7 +139,7 @@ EmuTOS multi-lingual:
     David Gálvez <dgalvez75 at gmail.com>
     Jordi Mestres Ruiz <ataristfan at gmail.com>
 
-- Romanian translation
+- Romanian and Catalan translation
     Dragan Roşu <midyex201@outlook.com>
 
 - Russian translation
