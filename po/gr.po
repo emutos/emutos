@@ -820,16 +820,20 @@ msgid "FORMAT FLOPPY DISKETTE"
 msgstr "ƒˆ€‹”—‘† ƒˆ‘‰„’€‘"
 
 #: desk/desk_rsc.c
-msgid "Single sided"
-msgstr "‹¦¤ã §¢œ¬¨á"
+msgid "SS 360 K"
+msgstr "SS 360 KB"
 
 #: desk/desk_rsc.c
-msgid "Double sided"
-msgstr "ƒ §¢ã §¢œ¬¨á"
+msgid "DS 720 K"
+msgstr "DS 720 KB"
 
 #: desk/desk_rsc.c
-msgid "High density"
-msgstr "“¯¢ã §¬¡¤æ««˜"
+msgid "DS 800 K"
+msgstr "DS 800 KB"
+
+#: desk/desk_rsc.c
+msgid "HD 1.44 M"
+msgstr "HD 1.44 MB"
 
 #: desk/desk_rsc.c
 msgid "SET BACKGROUND"
