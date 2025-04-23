@@ -542,7 +542,7 @@ msgstr "Numés lectura"
 
 #: desk/desk_rsc.c
 msgid "DISK INFORMATION"
-msgstr "INFORMACIÓ DE DISC"
+msgstr "INFORMACIó DE DISC"
 
 #: desk/desk_rsc.c
 msgid "Version"
@@ -582,7 +582,7 @@ msgstr "doc\\license.txt per més informació"
 
 #: desk/desk_rsc.c
 msgid "OPEN APPLICATION"
-msgstr "OBRE APLICACIÓ"
+msgstr "OBRE APLICACIó"
 
 #: desk/desk_rsc.c
 msgid "Parameters:"
@@ -614,7 +614,7 @@ msgstr "Icona:"
 
 #: desk/desk_rsc.c
 msgid "INSTALL APPLICATION"
-msgstr "INSTAL·LA APLICACIÓ"
+msgstr "INSTAL·LA APLICACIó"
 
 #: desk/desk_rsc.c
 msgid "Boot status:"
@@ -678,7 +678,7 @@ msgstr "IMPRIMEIX FITXER"
 
 #: desk/desk_rsc.c
 msgid "SET PREFERENCES"
-msgstr "ESTABLEIX PREFERÈNCIES"
+msgstr "ESTABLEIX PREFERENCIES"
 
 #: desk/desk_rsc.c
 msgid "Confirm deletes:"
@@ -730,7 +730,7 @@ msgstr "ESTABLEIX MÀSCARA DE FITXER"
 
 #: desk/desk_rsc.c
 msgid "DESKTOP CONFIGURATION"
-msgstr "CONFIGURACIÓ D'ESCRIPTORI"
+msgstr "CONFIGURACIó D'ESCRIPTORI"
 
 #: desk/desk_rsc.c
 msgid "Function keys:"
@@ -746,7 +746,7 @@ msgstr "Esborra tot"
 
 #: desk/desk_rsc.c
 msgid "SET SCREEN RESOLUTION"
-msgstr "ESTABLEIX RESOLUCIÓ DE PANTALLA"
+msgstr "ESTABLEIX RESOLUCIó DE PANTALLA"
 
 #: desk/desk_rsc.c
 msgid "ST Low"
@@ -862,11 +862,11 @@ msgstr " %ld bytes utilitzats en %d elements seleccionats."
 
 #: desk/desk_rsc.c
 msgid "FILE INFORMATION"
-msgstr "INFORMACIÓ DE FITXER"
+msgstr "INFORMACIó DE FITXER"
 
 #: desk/desk_rsc.c
 msgid "FOLDER INFORMATION"
-msgstr "INFORMACIÓ DE CARPETA"
+msgstr "INFORMACIó DE CARPETA"
 
 #: desk/desk_rsc.c
 msgid "COPY FILE(S)"
@@ -1332,7 +1332,7 @@ msgid "[2]["
 "Do you want to reassign it?]"
 "[  OK  |Cancel]"
 msgstr "[2]["
-"Última tecla ja està assignada.|"
+"última tecla ja està assignada.|"
 "Reassignar-la?]"
 "[D'acord|Cancel·la]"
 
