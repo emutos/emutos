@@ -810,16 +810,20 @@ msgid "FORMAT FLOPPY DISKETTE"
 msgstr "FORMATAÞI DISCHETA"
 
 #: desk/desk_rsc.c
-msgid "Single sided"
-msgstr "Singurã faþã"
+msgid "SS 360 K"
+msgstr "Singurã faþã 360K"
 
 #: desk/desk_rsc.c
-msgid "Double sided"
-msgstr "Faþã dublã"
+msgid "DS 720 K"
+msgstr "Douã feþe 720K"
 
 #: desk/desk_rsc.c
-msgid "High density"
-msgstr "Densitate mare"
+msgid "DS 800 K"
+msgstr "Douã feþe 800K"
+
+#: desk/desk_rsc.c
+msgid "HD 1.44 M"
+msgstr "Dens. mare 1.44M"
 
 #: desk/desk_rsc.c
 msgid "SET BACKGROUND"

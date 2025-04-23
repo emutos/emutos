@@ -808,16 +808,20 @@ msgid "FORMAT FLOPPY DISKETTE"
 msgstr "FORMATUJ DYSKIETKÊ"
 
 #: desk/desk_rsc.c
-msgid "Single sided"
-msgstr "Jedno-stronna"
+msgid "SS 360 K"
+msgstr "SS 360 K"
 
 #: desk/desk_rsc.c
-msgid "Double sided"
-msgstr "Dwu-stronna"
+msgid "DS 720 K"
+msgstr "DS 720 K"
 
 #: desk/desk_rsc.c
-msgid "High density"
-msgstr "Wysoka gêsto¶æ"
+msgid "DS 800 K"
+msgstr "DS 800 K"
+
+#: desk/desk_rsc.c
+msgid "HD 1.44 M"
+msgstr "HD 1.44 M"
 
 #: desk/desk_rsc.c
 msgid "SET BACKGROUND"

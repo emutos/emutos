@@ -336,12 +336,7 @@ after_tt_memconf:
  * the memory bus are floating and may present the good pattern value.
  * That's why a 200 bytes pattern test are used in the TOS 1.6 ROM to avoid this issue.
  */
-#ifdef __mcoldfire__
-        lea     0xffff8001.w,a0
-        move.b  #0xa,(a0)               // set hw to 2 banks by 2 mb (reg 0xffff8001 - memorycontroller)
-#else
         move.b  #0xa,0xffff8001.w       // set hw to 2 banks by 2 mb (reg 0xffff8001 - memorycontroller)
-#endif
 
 /* init the test pattern in bank 0 and 1 */
         movea.w #0x000008,a0            // bank 0
@@ -350,11 +345,7 @@ after_tt_memconf:
 init_pattern_loop:
         move.w  d0,(a0)+                // bank 0
         move.w  d0,(a1)+                // bank 1
-#ifdef __mcoldfire__
-        add.l   #0xfa54,d0              // next pattern data
-#else
         add.w   #0xfa54,d0              // next pattern data
-#endif
         cmpa.l  #0x200,a0               // 200 word done?
         jne     init_pattern_loop
 
@@ -372,11 +363,7 @@ init_pattern_loop:
 
         /* test the presence of a 128k bank config */
 test_128k:
-#ifdef __mcoldfire__
-        lsr.l   #2,d6                   // switch bank in configuration byte
-#else
         lsr.w   #2,d6                   // switch bank in configuration byte
-#endif
         move.l  #0x20000,d4             // 128 KB bank memory size
         movea.l #0x40008,a0             // 128k test for STE
         lea     test_128k_ST,a5         // return point of test pattern
@@ -419,18 +406,10 @@ last_return:
         jne     bank_test_end           // Pattern not found!  -> D6=0x0 - NO RAM
         move.l  #0x200000,d4            // Pattern found!      -> D6=0x6 - 2m
 
-#ifdef __mcoldfire__
-        addq.l  #4,d6
-#else
         addq.w  #4,d6
-#endif
 
 bank_test_end_512k:
-#ifdef __mcoldfire__
-        addq.l  #4,d6
-#else
         addq.w  #4,d6
-#endif
 
 bank_test_end:
         add.l   d4,d5                   // compute total memory size
@@ -458,11 +437,7 @@ check_test_pattern:
 check_test_pattern_loop:
         cmp.w   (a0)+,d0                // is the data valid ?
         jne     end_check_test_pattern
-#ifdef __mcoldfire__
-        add.l   #0xfa54,d0              // next pattern word to test
-#else
         add.w   #0xfa54,d0              // next pattern word to test
-#endif
         cmpa.l  a0,a1                   // at the end of the pattern ?
         jne     check_test_pattern_loop
 end_check_test_pattern:

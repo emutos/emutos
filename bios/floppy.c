@@ -179,8 +179,10 @@ static void fdc_start_dma_write(WORD count);
  * the following delay is used between toggling dma out.  in Atari TOS 3
  * & TOS 4, the delay is provided by an instruction sequence which takes
  * about 5usec on a Falcon.  EmuTOS uses 5usec (see flop_hdv_init()).
+ * the same delay is also used before checking the FDC interrupt signal.
  */
 #define toggle_delay() delay_loop(loopcount_toggle)
+#define irq_delay() delay_loop(loopcount_toggle)
 
 
 /*==== Internal floppy status =============================================*/
@@ -1545,6 +1547,9 @@ static WORD flopcmd(WORD cmd)
         reg = FDC_CS;
     }
     set_fdc_reg(reg, cmd);
+
+    /* give the FDC some time to update its interrupt line */
+    irq_delay();
 
     if (timeout_gpip(timeout)) {
         set_fdc_reg(FDC_CS,FDC_IRUPT);  /* Force Interrupt */
