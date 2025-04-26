@@ -25,6 +25,7 @@ Other languages can be used by setting the NVRAM appropriately.
 
 Alternatively, you can add the -k xx option on the ARAnyM command line
 to force a specific language, where xx is:
+ca - Catalan
 cz - Czech
 de - German
 es - Spanish
