@@ -13,6 +13,7 @@ The desktop features are comparable to Atari TOS 2.
 
 Each ROM contains a single language:
 
+etos256ca.img - Catalan (PAL)
 etos256cz.img - Czech (PAL)
 etos256de.img - German (PAL)
 etos256es.img - Spanish (PAL)
