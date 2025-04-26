@@ -15,6 +15,7 @@ The desktop features are comparable to Atari TOS 2.
 
 Each ROM contains a single language:
 
+etospak3ca.img - Catalan (PAL)
 etospak3cz.img - Czech (PAL)
 etospak3de.img - German (PAL)
 etospak3es.img - Spanish (PAL)
