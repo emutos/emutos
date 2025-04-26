@@ -7,6 +7,7 @@ The desktop features are comparable to Atari TOS 4.
 
 Each ROM contains a single language for display:
 
+etosfbca.s16 - Catalan (PAL)
 etosfbcz.s19 - Czech (PAL)
 etosfbde.s19 - German (PAL)
 etosfbes.s19 - Spanish (PAL)
