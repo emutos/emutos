@@ -6,6 +6,7 @@ This is the simplest way to test EmuTOS on real hardware.
 The drawback is less available RAM compared to ROM versions.
 
 emutos.prg - Multilanguage
+emutosca.prg - Catalan (PAL)
 emutoscz.prg - Czech (PAL)
 emutosde.prg - German (PAL)
 emutoses.prg - Spanish (PAL)
