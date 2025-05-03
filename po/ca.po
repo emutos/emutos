@@ -430,7 +430,7 @@ msgstr "  Selecciona tots elements"
 
 #: desk/desk_rsc.c
 msgid "  Set file mask..."
-msgstr "  Estableix màscara de fitxer..."
+msgstr "  Màscara de fitxer..."
 
 #: desk/desk_rsc.c
 msgid "  Delete..."
