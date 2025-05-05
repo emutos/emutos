@@ -805,18 +805,6 @@ msgid "FORMAT FLOPPY DISKETTE"
 msgstr "FORMATA DISQUET"
 
 #: desk/desk_rsc.c
-msgid "Single sided"
-msgstr "Sola cara"
-
-#: desk/desk_rsc.c
-msgid "Double sided"
-msgstr "Doble cara"
-
-#: desk/desk_rsc.c
-msgid "High density"
-msgstr "Alta densitat"
-
-#: desk/desk_rsc.c
 msgid "SS 360 K"
 msgstr "Sola cara 360KB"
 
