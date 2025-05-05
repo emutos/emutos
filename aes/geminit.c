@@ -763,7 +763,10 @@ void gem_main(void)
     dos_conws("\033f\033E");    /* cursor off, clear screen */
 
     /* read in first part of emudesk.inf */
-    n = readfile(INF_FILE_NAME, INF_SIZE, infbuf);
+    if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
+        n = 0;
+    else
+        n = readfile(INF_FILE_NAME, INF_SIZE, infbuf);
 
     if (n < 0L)
         n = 0L;
