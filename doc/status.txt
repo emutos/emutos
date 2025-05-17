@@ -10,11 +10,12 @@ a ROM version of EmuTOS.
   system              |  ok?  | who |   date      |  details
   --------------------+-------+-----+-------------+----------------
   Emulators           |       |     |             |
-  ARAnyM 1.1.0        |  yes  | CZ  | 17 Feb 2024 |
-  Hatari v2.4.1       |  yes  | VRI | 14 Mar 2024 |
+  ARAnyM 1.1.0        |  yes  | CZ  | 17 May 2025 | 512k ROM, (C)
+  ARAnyM git 2472761  |  yes  | CZ  | 17 May 2025 | 1M ROM, (C)
+  Hatari v2.5.0       |  yes  | CZ  | 17 May 2025 |
   PaCifiST v0.48      |   no  | (7) | 21 Jul 2021 | see (B)
   SainT v2.40         |  yes  | RFB | 29 Aug 2020 | 192k ROM only
-  Steem SSE 4.1.2 R14 |  yes  | CZ  | 17 Feb 2024 | (Win 32 D3D)
+  Steem SSE 4.1.2 R17 |  yes  | CZ  | 17 May 2025 | (Win 32 D3D)
   STonC v0.8.1        |  yes  | LVL |  9 Feb 2003 |
   STonX 0.6.7.6       |  yes  | THH | 14 Nov 2008 |
   STonX DOS           |  yes  | CZ  | 22 Jul 2021 | see (A)
@@ -46,6 +47,8 @@ Remarks:
   (A) StonX DOS: EmuTOS 1.1 and 1.1.1 are known to be incompatible.
       Newer snapshots are ok again.
   (B) Last version tested OK under PaCifiST: EmuTOS 0.8.7, 192k ROMs
+  (C) ARAnyM versions prior to March 6 2021 only support 512k ROMs.
+      See doc/readme-aranym.txt for details.
 
 Abbreviations for testers:
     CZ:  Christian Zietz
