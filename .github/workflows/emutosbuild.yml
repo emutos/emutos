@@ -4,6 +4,8 @@ on:
   push:
     branches:
     - master
+    tags:
+    - VERSION_*
 
 jobs:
   build:
@@ -44,13 +46,25 @@ jobs:
         lftp --version
         hatari --version || true
         aranym --version
-    - name: Build binaries
+    - name: Build binaries for snapshot
+      if: ${{ ! startsWith(github.ref, 'refs/tags/VERSION') }}
       run: |
         export VERSION=$(date -u +%Y%m%d-%H%M%S)-$(git rev-parse --short ${GITHUB_SHA})
         echo VERSION=$VERSION >> $GITHUB_ENV
         echo VERSION=$VERSION
         make clean
         make release VERSION=$VERSION
+    - name: Build binaries for release
+      if: ${{ startsWith(github.ref, 'refs/tags/VERSION') }}
+      run: |
+        export VERSION=$(make version)
+        echo VERSION=$VERSION >> $GITHUB_ENV
+        echo VERSION=$VERSION
+        # Safety check that version.mk was changed for the release,
+        # will fail if the version string is a date
+        make version | grep '[0-9]\.[0-9]'
+        make clean
+        make release
     - name: Add README.md
       env:
         COMPARE_URL: ${{ github.event.compare }}
@@ -64,9 +78,12 @@ jobs:
         unzip release-archives/emutos-1024k-*.zip
         make test EMUTOS=$(ls $PWD/emutos-1024k-*/etos1024k.img)
     - name: Deploy to SourceForge
+      if: ${{ ! startsWith(github.ref, 'refs/tags/VERSION') }}
       run: .scripts/deploy.sh
-#    - name: Save binaries as build artifacts
-#      uses: actions/upload-artifact@v4
-#      with:
-#        name: emutos-${{env.VERSION}}
-#        path: release-archives/
+    - name: Temporarily store release as build artifact
+      if: ${{ startsWith(github.ref, 'refs/tags/VERSION') }}
+      uses: actions/upload-artifact@v4
+      with:
+        name: emutos-${{env.VERSION}}
+        path: release-archives/
+        retention-days: 1
