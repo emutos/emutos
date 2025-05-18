@@ -10,8 +10,8 @@ a ROM version of EmuTOS.
   system              |  ok?  | who |   date      |  details
   --------------------+-------+-----+-------------+----------------
   Emulators           |       |     |             |
-  ARAnyM 1.1.0        |  yes  | CZ  | 17 May 2025 | 512k ROM, (C)
-  ARAnyM git 2472761  |  yes  | CZ  | 17 May 2025 | 1M ROM, (C)
+  ARAnyM 1.1.0        |  yes  | CZ  | 17 May 2025 | 512k ROM, see (C)
+  ARAnyM git 2472761  |  yes  | CZ  | 17 May 2025 | 1M ROM, see (C)
   Hatari v2.5.0       |  yes  | CZ  | 17 May 2025 |
   PaCifiST v0.48      |   no  | (7) | 21 Jul 2021 | see (B)
   SainT v2.40         |  yes  | RFB | 29 Aug 2020 | 192k ROM only
@@ -24,12 +24,12 @@ a ROM version of EmuTOS.
   WinUAE 5.2.0        |  yes  | VRI | 14 Mar 2024 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
-  STf & STfm          |  yes  | CZ  | 17 Feb 2024 |
-  Mega ST             |  yes  | CZ  | 17 Feb 2024 | tested w/ prg256
-  STe                 |  yes  | CZ  | 17 Feb 2024 |
-  Mega STe            |  yes  | CZ  | 17 Feb 2024 |
-  TT030               |  yes  | CZ  | 17 Feb 2024 |
-  Falcon030           |  yes  | CZ  | 17 Feb 2024 |
+  STf & STfm          |  yes  | CZ  | 18 May 2025 |
+  Mega ST             |  yes  | CZ  | 18 May 2025 | tested w/ prg256
+  STe                 |  yes  | CZ  | 18 May 2025 |
+  Mega STe            |  yes  | CZ  | 18 May 2025 |
+  TT030               |  yes  | CZ  | 18 May 2025 |
+  Falcon030           |  yes  | CZ  | 18 May 2025 |
   Falcon030 + CT60    |  yes  | RFB | 10 Mar 2024 | tested with PRG
   Suska III-C (2K15B) |  yes  | (3) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
