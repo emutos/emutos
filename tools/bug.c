@@ -2,7 +2,7 @@
  * bug.c - Basic Unencumbering Gettext, a minimal gettext-like tool
  *         (any better name is welcome)
  *
- * Copyright (C) 2001-2022 The EmuTOS development team
+ * Copyright (C) 2001-2025 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

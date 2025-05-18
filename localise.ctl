@@ -1,7 +1,7 @@
 #
 # localise.ctl - control file for 'localise'
 #
-# Copyright (C) 2021-2024 The EmuTOS development team
+# Copyright (C) 2021-2025 The EmuTOS development team
 #
 # This file is distributed under the GPL, version 2 or at your
 # option any later version.  See doc/license.txt for details.

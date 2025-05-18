@@ -1,7 +1,7 @@
 /*
  * asmdefs.h - definitions to include in top of all assembler files
  *
- * Copyright (C) 2001-2020 The EmuTOS development team
+ * Copyright (C) 2001-2025 The EmuTOS development team
  *
  * Authors:
  *  LVL   Laurent Vogel

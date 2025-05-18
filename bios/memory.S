@@ -1,7 +1,7 @@
 /*
  * memory.S - memory initialization
  *
- * Copyright (C) 2001-2022 by Authors:
+ * Copyright (C) 2001-2025 by Authors:
  *
  * Authors:
  *  MAD  Martin Doering

@@ -2,7 +2,7 @@
  * vdi_defs.h - Definitions for virtual workstations
  *
  * Copyright 1999 by Caldera, Inc.
- * Copyright 2005-2022 The EmuTOS development team.
+ * Copyright 2005-2025 The EmuTOS development team.
  *
  * This file is distributed under the GPL, version 2 or at your
  * option any later version.  See doc/license.txt for details.
