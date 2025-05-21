@@ -54,6 +54,7 @@
 #include "scancode.h"
 #include "biosext.h"
 #include "lineavars.h"      /* for MOUSE_BT, V_REZ_HZ */
+#include "asm.h"
 
 /* Needed to force media change */
 #define MEDIACHANGE     0x02
@@ -515,6 +516,9 @@ static WORD get_key(void)
             return 'Q';
         if (MOUSE_BT & 0x0001)  /* left mouse button means next page */
             return ' ';
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+        Supexec((LONG)stop_until_interrupt);
+#endif
     }
 
     c = bios_conin();
