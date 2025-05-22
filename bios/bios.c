@@ -397,7 +397,7 @@ static void bios_init(void)
     set_sr(0x2000);
 #endif
 
-#if defined(MACHINE_ARANYM) || defined(TARGET_1024)
+#ifdef TARGET_1024
     /* ARAnyM 1.1.0 loads only the first half of 1024k ROMs.
      * Detect this situation and warn the user.
      * This method is ugly, but safe for releases as they are thoroughly tested.
