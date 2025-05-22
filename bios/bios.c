@@ -397,6 +397,32 @@ static void bios_init(void)
     set_sr(0x2000);
 #endif
 
+#if defined(MACHINE_ARANYM) || defined(TARGET_1024)
+    /* ARAnyM 1.1.0 loads only the first half of 1024k ROMs.
+     * Detect this situation and warn the user.
+     * This method is ugly, but safe for releases as they are thoroughly tested.
+     */
+    if (IS_ARANYM && ULONG_AT(0x00e80000) == 0)
+    {
+        kcprintf(
+            "\r\n"
+            "ERROR: This 1024k ROM isn't supported by your ARAnyM version.\r\n"
+            "Please use etos512*.img instead, until next ARAnyM release.\r\n"
+        );
+
+        /* Don't use halt() on ARAnyM, as it causes an infinite loop
+           with the message: "STOPed with interrupts disabled, exiting;".
+           FIXME: Fix halt() instead.
+        */
+        for(;;)
+        {
+#if USE_STOP_INSN_TO_FREE_HOST_CPU
+            stop_until_interrupt();
+#endif
+        }
+    }
+#endif
+
     /* Initialize the RS-232 port(s) */
     KDEBUG(("chardev_init()\n"));
     chardev_init();     /* Initialize low-memory bios vectors */
