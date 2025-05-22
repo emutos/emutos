@@ -75,8 +75,8 @@ jobs:
       run: ls -l release-archives
     - name: Test the build
       run: |
-        unzip release-archives/emutos-1024k-*.zip
-        make test EMUTOS=$(ls $PWD/emutos-1024k-*/etos1024k.img)
+        unzip release-archives/emutos-512k-*.zip
+        make test EMUTOS=$(ls $PWD/emutos-512k-*/etos512us.img)
     - name: Deploy to SourceForge
       if: ${{ ! startsWith(github.ref, 'refs/tags/VERSION') }}
       run: .scripts/deploy.sh
