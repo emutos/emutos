@@ -1246,7 +1246,7 @@ static void vrt_cpyfm16(struct blit_frame *info)
     /*
      * init destination area variables
      */
-    dst_width = v_lin_wr / sizeof(WORD);    /* in words */
+    dst_width = info->d_nxln / sizeof(WORD);    /* in words */
     q = dst = info->d_form + ((LONG)info->d_ymin * dst_width) + info->d_xmin;
 
     switch(mode) {
