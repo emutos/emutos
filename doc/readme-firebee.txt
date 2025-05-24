@@ -1,7 +1,7 @@
 EmuTOS - FireBee version
 
 These ROMs are suitable for FireBee hardware.  See:
-http://firebee.org/
+https://firebee.org/
 
 The desktop features are comparable to Atari TOS 4.
 
@@ -47,7 +47,7 @@ https://www.nxp.com/downloads/en/programmers/CFFLASHER.zip
 This tool runs on MS Windows and requires additional hardware.
 
 2) Didier Méquignon's FLASH060.PRG
-https://didierm.pagesperso-orange.fr/firebee.htm
+http://didier.mequignon.free.fr/firebee.htm
 Get it from the tos060.lzh archive, in the tos060/flash.too folder.
 On your FireBee, start FireTOS, run FLASH060.PRG and flash etosfbXX.s19,
 where XX is the country code with the desired language.
