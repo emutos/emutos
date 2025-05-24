@@ -21,7 +21,7 @@ a ROM version of EmuTOS.
   STonX DOS           |  yes  | CZ  | 22 Jul 2021 | see (A)
   TOSBox 1.10a        |   no  |  ?  |  < Sep 2002 |
   WinSTon v0.5        |   no  | RFB | 29 Aug 2020 |
-  WinUAE 5.2.0        |  yes  | VRI | 14 Mar 2024 |
+  WinUAE 5.3.1        |  yes  | VRI | 24 May 2025 |
   --------------------+-------+-----+-------------+----------------
   Atari & compatibles |       |     |             |
   STf & STfm          |  yes  | CZ  | 18 May 2025 |
