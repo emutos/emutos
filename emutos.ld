@@ -119,8 +119,11 @@ SECTIONS
     {
         CREATE_OBJECT_SYMBOLS
         __text = .;
-        *(.text)
-        *(.rodata .rodata.*) /* Only present in ELF objects */
+        *(.text .rodata .rodata.*)
+        /* Note: .rodata sections are only present in ELF objects.
+         * We mix .text and .rodata to keep critical parts (such as BIOS
+         * and fonts) at the beginning of the ROM.
+         */
         __etext = .;
     } >REGION_READ_ONLY =0x4afc
 
