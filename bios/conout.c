@@ -159,10 +159,13 @@ static void cell_xfer16(UBYTE *src, UBYTE *dst)
      * if we have 16-bit support in VDI and if the VDI workstation is initialized,
      * we use its palette, otherwise, e.g. at boot, we use a default palette.
      */
-    if (CONF_WITH_VDI_16BIT && phys_work.ext) {
+#if CONF_WITH_VDI_16BIT
+    if (phys_work.ext) {
         fgcol = phys_work.ext->palette[fg];
         bgcol = phys_work.ext->palette[bg];
-    } else {
+    } else
+#endif
+    {
         fgcol = falcon_default_palette[fg & 0xf];
         bgcol = falcon_default_palette[bg & 0xf];
     }
