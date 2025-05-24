@@ -27,8 +27,12 @@
 
 #define PLANE_OFFSET    2       /* interleaved planes */
 
-#define FALCON_BLACK    0x0000
-#define FALCON_WHITE    0xffbf
+#if CONF_WITH_VIDEL
+static const UWORD falcon_default_palette[16] = {
+    0xffdf, 0xf800, 0x07c0, 0xffc0, 0x001f, 0xf81f, 0x07df, 0xbdd7,
+    0x8c51, 0xa800, 0x0540, 0xad40, 0x0015, 0xa815, 0x0555, 0x0000
+};
+#endif
 
 #if CONF_WITH_VDI_16BIT
 extern Vwk phys_work;           /* attribute area for physical workstation */
@@ -143,7 +147,6 @@ static void cell_xfer16(UBYTE *src, UBYTE *dst)
     fnt_wr = v_fnt_wr;
     line_wr = v_lin_wr;
 
-#if CONF_WITH_VDI_16BIT
     if (v_stat_0 & M_REVID) {   /* handle reversed foreground and background colours */
         fg = v_col_bg;
         bg = v_col_fg;
@@ -151,21 +154,19 @@ static void cell_xfer16(UBYTE *src, UBYTE *dst)
         fg = v_col_fg;
         bg = v_col_bg;
     }
-    fgcol = phys_work.ext->palette[fg];
-    bgcol = phys_work.ext->palette[bg];
-#else
+
     /*
-     * the foreground & backround colours should really come from the
-     * physical workstation, but that requires 16-bit support in the VDI
+     * if we have 16-bit support in VDI and if the VDI workstation is initialized,
+     * we use its palette, otherwise, e.g. at boot, we use a default palette.
      */
-    if (v_stat_0 & M_REVID) {   /* handle reversed foreground and background colours */
-        fgcol = FALCON_WHITE;
-        bgcol = FALCON_BLACK;
+    if (CONF_WITH_VDI_16BIT && phys_work.ext) {
+        fgcol = phys_work.ext->palette[fg];
+        bgcol = phys_work.ext->palette[bg];
     } else {
-        fgcol = FALCON_BLACK;
-        bgcol = FALCON_WHITE;
+        fgcol = falcon_default_palette[fg & 0xf];
+        bgcol = falcon_default_palette[bg & 0xf];
     }
-#endif
+
     for (i = v_cel_ht; i--; ) {
         for (mask = 0x80, p = (UWORD *)dst; mask; mask >>= 1) {
             *p++ = (*src & mask) ? fgcol : bgcol;
@@ -550,7 +551,7 @@ static void blank_out16(int topx, int topy, int botx, int boty)
     rows = (boty - topy + 1) * v_cel_ht;    /* in pixels */
 
     /* set standard background colour */
-    bgcol = FALCON_WHITE;
+    bgcol = falcon_default_palette[v_col_bg & 0xf];
 
 #if CONF_WITH_VDI_16BIT
     /*
