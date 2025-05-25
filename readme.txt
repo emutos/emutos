@@ -1,6 +1,4 @@
-This release has been built on Linux Mint (a Ubuntu derivative), using
-Vincent Rivière's GCC 4.6.4 cross-compiler.  The custom tools used in
-the build process were built with native GCC 10.2.0
+This release has been built using Vincent Rivière's GCC 4.6.4 cross-compiler.
 
 The source package and other binary packages are available at:
 https://sourceforge.net/projects/emutos/files/emutos/1.3/

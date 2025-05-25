@@ -4,8 +4,8 @@ These ROMs are suitable for the following hardware:
 - ST or Mega ST with a PAK68/3 board
 
 Note 1: These ROMs do _not_ require special boot ROMs on the original
-motherboard to work; they work correctly with any original TOS ROMs on
-the motherboard.
+motherboard to work; when they are installed on the PAK68/3 they work
+correctly with any original TOS ROMs on the motherboard.
 
 Note 2: Extra hardware is autodetected, but the following TT- and
 Falcon-specific hardware is not supported: memory control unit,

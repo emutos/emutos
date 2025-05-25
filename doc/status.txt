@@ -313,7 +313,7 @@ TOS v4.00:
  T 0x8d Buffptr
 
 TOS v4 extended XBIOS functionality:
- t 16-bit Videl resolution setting
+ T 16-bit Videl resolution setting
 
 
  GEMDOS Functions
@@ -523,7 +523,7 @@ GEMDOS v0.30 (TOS v4):
  T 131      vqt_fontinfo
 
  TOS v4 extended VDI functionality:
- -          16-bit support for graphics functions (for now, use fVDI)
+ T          16-bit support for graphics functions
 
 
  AES functions

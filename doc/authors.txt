@@ -31,8 +31,23 @@ The following is a list of 'recent' contributors - individuals involved in the
 EmuTOS project. In this project virtually everybody modifies every file;
 nevertheless here is an attempt at identifying who's guilty of what:
 
-Roger Burrows (RFB) <roger.burrows at cantab.net>
+Christian Zietz <czietz at gmx.net>
 - Current project admin
+- ROM tests on real ST/STe/TT/Falcon hardware
+- Invaluable low-level investigation of real hardware
+- Re-implemented automatic builds via GitHub Actions
+- Fixed floppy/ACSI bug
+- Fixed memory detection to support STs as well as STes
+- Support for extended MBR partitions
+- Many IDE improvements: 'twisted cable' support, performance, device detection
+- Fixed cold boot problems caused by some ST MMUs
+- Fixed screen corruption after a reset on some Mega(STe) systems
+- Add-on graphics support: Nova/ET4000, Nova/Mach32, Vofa/ET4000, Wittich/ET4000
+- Added Magnum Alt-RAM support
+- Added initial support for NTSC on Amiga
+- Various bug fixes and cleanups
+
+Roger Burrows (RFB) <roger.burrows at cantab.net>
 - Support for SD/MMC Cards on the FireBee
 - SCSI support
 - Improvements to IDE, CompactFlash, ACSI, and other mass-storage support
@@ -44,6 +59,7 @@ Roger Burrows (RFB) <roger.burrows at cantab.net>
 - Desktop and file selector improvements
 - EmuCON2
 - Tools: erd, draft, and localise
+- Support for 16-bit video modes
 - Various bug fixes and cleanups
 
 Vincent Rivière (VRI) <vincent.riviere at freesbee.fr>
@@ -66,20 +82,6 @@ Thomas Huth (THH) <huth at tuxfamily.org>
 - Integration and maintenance of the AES and GEM-Desktop
 - XBIOS DMA sound functions
 - Automated tests at build time
-
-Christian Zietz <czietz at gmx.net>
-- ROM tests on real ST/STe/Falcon hardware
-- Invaluable low-level investigation of real hardware
-- Re-implemented automatic builds via GitHub Actions
-- Fixed floppy/ACSI bug
-- Fixed memory detection to support STs as well as STes
-- Support for extended MBR partitions
-- Many IDE improvements: 'twisted cable' support, performance, device detection
-- Fixed cold boot problems caused by some ST MMUs
-- Fixed screen corruption after a reset on some Mega(STe) systems
-- Add-on graphics support: Nova/ET4000, Nova/Mach32, Vofa/ET4000, Wittich/ET4000
-- Added Magnum Alt-RAM support
-- Various bug fixes and cleanups
 
 Charles Curley <charlescurley at charlescurley.com>
 - EmuTOS User Manual
