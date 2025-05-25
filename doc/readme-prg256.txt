@@ -5,7 +5,8 @@ These special versions allow EmuTOS to be loaded from the filesystem
 This is the simplest way to test EmuTOS on real hardware.
 The drawback is less available RAM compared to ROM versions.
 
-These versions are ONLY suitable for the following hardware:
+These versions are smaller than the PRG versions but ONLY suitable for
+the following hardware:
 - ST(e)
 - Mega ST(e)
 - emulators of the above

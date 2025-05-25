@@ -36,6 +36,7 @@ versions of the Atari TOS desktop.
 Notes:
 - these versions are compatible with any Atari hardware (except the FireBee)
 - TT and Falcon 030 are supported
+- on the ST(e)/MegaST(e) you can also use the smaller PRG256 versions
 - the language of the Norwegian/Swedish versions is English; however the
   keyboard layouts are Norwegian/Swedish
 - when using these versions with a Magnum ST/STE alt-RAM card, the Magnum
