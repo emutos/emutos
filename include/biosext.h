@@ -103,6 +103,7 @@ BOOL is_text_pointer(const void *p);
 /* VIDEL routines */
 WORD get_videl_mode(void);
 #ifdef MACHINE_AMIGA
+extern int amiga_is_ntsc;
 WORD amiga_vgetmode(void);
 #endif
 
