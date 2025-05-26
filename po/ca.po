@@ -58,11 +58,11 @@ msgstr "Temps d'arrencada"
 
 #: bios/initinfo.c
 msgid "Hold <Control> to skip AUTO/ACC"
-msgstr "Sostén <Ctrl> per ometre AUTO/ACC"
+msgstr "Sostén <Ctrl>: ometre AUTO/ACC"
 
 #: bios/initinfo.c
 msgid "Hold <Alternate> to skip HDD boot"
-msgstr "Sostén <Alt> per ometre arrencada disc dur"
+msgstr "Sostén <Alt>: ometre arrencada disc dur"
 
 #: bios/initinfo.c
 msgid "Press key 'X' to boot from X:"
