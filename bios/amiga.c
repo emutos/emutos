@@ -510,10 +510,15 @@ static void add_uae_32bit_chip_ram(void);
 /* Detect Alt-RAM directly from hardware */
 static void add_alt_ram_from_hardware(void)
 {
-    /* Add the slowest RAM first to put it at the end of the Alt-RAM pool */
-    add_slow_ram();
-    add_processor_slot_fast_ram();
-    add_motherboard_fast_ram();
+    /* 24-bit RAM is really SLOW since GOLD 2.12, don't use it. */
+    if (!IS_APOLLO_68080)
+    {
+        /* Add the slowest RAM first to put it at the end of the Alt-RAM pool */
+        add_slow_ram();
+        add_processor_slot_fast_ram();
+        add_motherboard_fast_ram();
+    }
+
     add_expansion_ram();
 #if CONF_WITH_UAE
     add_uae_32bit_chip_ram();
@@ -533,6 +538,11 @@ static void add_alt_ram_from_loader(void)
     {
         UBYTE *address = altram_regions[i].address;
         ULONG size = altram_regions[i].size;
+
+        /* 24-bit RAM is really SLOW since GOLD 2.12, don't use it. */
+        if (IS_APOLLO_68080 && !IS_32BIT_POINTER(address))
+            continue;
+
         KDEBUG(("xmaddalt(%p, %lu)\n", address, size));
         xmaddalt(address, size);
     }

@@ -35,7 +35,7 @@ a ROM version of EmuTOS.
   --------------------+-------+-----+-------------+----------------
   Other systems       |       |     |             |
   Amiga Blizzard 1260 |  yes  | (1) |    Aug 2012 | tested with BlizKick
-  Amiga 500 + Vampire |  yes  | VRI | 13 Oct 2019 | GOLD2.11
+  Amiga 500 + Vampire |  yes  | VRI |  2 Jun 2025 | GOLD 2.17 BRONTO3
   Amiga 600 + Vampire |  yes  | (4) |    Mar 2017 |
   Amiga 1000          |  yes  | (2) |    Jul 2012 |
   FireBee             |  yes  | VRI | 27 May 2025 |
