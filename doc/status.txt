@@ -29,7 +29,7 @@ a ROM version of EmuTOS.
   STe                 |  yes  | CZ  | 18 May 2025 |
   Mega STe            |  yes  | CZ  | 18 May 2025 |
   TT030               |  yes  | CZ  | 18 May 2025 |
-  Falcon030           |  yes  | CZ  | 18 May 2025 |
+  Falcon030           |  yes  | CZ  |  3 Jun 2025 |
   Falcon030 + CT60    |  yes  | RFB | 10 Mar 2024 | tested with PRG
   Suska III-C (2K15B) |  yes  | (3) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
@@ -40,7 +40,7 @@ a ROM version of EmuTOS.
   Amiga 1000          |  yes  | (2) |    Jul 2012 |
   FireBee             |  yes  | VRI | 27 May 2025 |
   M5484LITE           |  yes  | VRI | 27 May 2025 |
-  Vampire V4-SA       |  yes  | CZ  | 18 May 2025 | Core 10000 + MAPROM
+  Vampire V4-SA       |  yes  | CZ  |  3 Jun 2025 | Core 10000 + MAPROM
   Apple Lisa          |  yes  | (8) |  4 Feb 2021 |
 
 Remarks:
