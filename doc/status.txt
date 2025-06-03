@@ -30,7 +30,7 @@ a ROM version of EmuTOS.
   Mega STe            |  yes  | CZ  | 18 May 2025 |
   TT030               |  yes  | CZ  | 18 May 2025 |
   Falcon030           |  yes  | CZ  |  3 Jun 2025 |
-  Falcon030 + CT60    |  yes  | RFB | 10 Mar 2024 | tested with PRG
+  Falcon030 + CT60    |  yes  | RFB |  3 Jun 2025 | tested with PRG
   Suska III-C (2K15B) |  yes  | (3) | 23 Apr 2016 |
   --------------------+-------+-----+-------------+----------------
   Other systems       |       |     |             |
