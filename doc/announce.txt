@@ -3,7 +3,7 @@ Dear Atari Community!
 
 We are happy to announce a new public release of EmuTOS:
 
-EmuTOS 1.3 -- March 17, 2024
+EmuTOS 1.4 -- June 7, 2025
 
 
 

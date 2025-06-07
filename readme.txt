@@ -1,7 +1,7 @@
 This release has been built using Vincent Rivière's GCC 4.6.4 cross-compiler.
 
 The source package and other binary packages are available at:
-https://sourceforge.net/projects/emutos/files/emutos/1.3/
+https://sourceforge.net/projects/emutos/files/emutos/1.4/
 
 An online manual is available at the following URL:
 https://emutos.github.io/manual/
