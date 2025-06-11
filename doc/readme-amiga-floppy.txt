@@ -53,6 +53,7 @@ Supported Atari features:
 Unsupported Atari features:
 - Color video modes
 - Sound
+- Serial and Parallel ports
 
 Special features of emutos-vampire.adf:
 - Optimized for 68040 (best option for Apollo 68080)

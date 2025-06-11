@@ -61,6 +61,7 @@ Supported Atari features:
 Unsupported Atari features:
 - Color video modes
 - Sound
+- Serial and Parallel ports
 
 This ROM image has been built using:
 make amiga
