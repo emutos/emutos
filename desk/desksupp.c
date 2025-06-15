@@ -1423,7 +1423,7 @@ static WORD init_start(char *buf, WORD disktype, WORD drive, char *label)
 static BOOL retry_format(void)
 {
     graf_mouse(ARROW,NULL);
-    if (fun_alert(3, STFMTERR) == 2)
+    if (fun_alert(1, STFMTERR) == 2)
         return FALSE;
     graf_mouse(HGLASS,NULL);    /* say we're busy again */
 
