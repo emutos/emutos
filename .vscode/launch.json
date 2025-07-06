@@ -1,0 +1,23 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug EmuTOS on QEMU",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/kernel.elf",
+      "miDebuggerServerAddress": "localhost:1234",
+      "miDebuggerPath": "/opt/homebrew/opt/arm-none-eabi-gcc/bin/arm-none-eabi-gdb",
+      "cwd": "${workspaceFolder}",
+      "setupCommands": [
+        {
+          "description": "Enable pretty printing",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "Start QEMU GDB Server",
+      "externalConsole": false
+    }
+  ]
+}
