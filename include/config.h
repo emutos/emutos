@@ -19,6 +19,7 @@
 
 #ifndef _CONFIG_H
 #define _CONFIG_H
+#endif
 
 /*
  * File localconf.h will be included if reported present by the Makefile.
@@ -199,6 +200,17 @@
 # endif
 # ifndef CONF_WITH_FORMAT
 #  define CONF_WITH_FORMAT 0
+# endif
+#endif
+
+/*
+ * Defaults for the Rapberry Pi Zero target
+ */
+#ifdef MACHINE_RPI0
+# ifndef CONF_ATARI_HARDWARE
+#  define CONF_ATARI_HARDWARE 0
+# ifndef CONF_SERIAL_CONSOLE
+#  define CONF_SERIAL_CONSOLE 1
 # endif
 #endif
 

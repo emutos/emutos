@@ -30,7 +30,7 @@
 #define Kbshift(a) bios_l_w(0xb,a)
 
 
-
+#ifndef RPI0
 static __inline__ void bios_v_l(int op, long a)
 {
     __asm__ volatile (
@@ -163,4 +163,5 @@ bios_l_wlwwwl(int op, short a, long b, short c, short d, short e, long f)
     return retval;
 }
 
+#endif /* RPI0 */
 #endif /* BIOSBIND_H */

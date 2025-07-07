@@ -54,6 +54,7 @@ help:
 	@echo "aranym  $(ROM_ARANYM), optimized for ARAnyM"
 	@echo "firebee $(SREC_FIREBEE), to be flashed on the FireBee"
 	@echo "firebee-prg emutos.prg, a RAM tos for the FireBee"
+	@echo "rpi0   emutos-rpi0.img, EmuTOS for Raspberry Pi 0"
 	@echo "amiga   $(ROM_AMIGA), EmuTOS ROM for Amiga hardware"
 	@echo "amigavampire $(VAMPIRE_ROM_AMIGA), EmuTOS ROM for Amiga optimized for Vampire V2"
 	@echo "v4sa    $(V4_ROM_AMIGA), EmuTOS ROM for Amiga Vampire V4 Standalone"
@@ -201,7 +202,7 @@ NODEP += %.c %.h %.pot
 #
 
 # Override with 1 to use the ELF toolchain instead of the MiNT one
-ELF = 0
+ELF = 1
 
 ifeq (1,$(ELF))
 # Standard ELF toolchain
@@ -730,6 +731,7 @@ firebee-prg:
 	@echo "# Building FireBee $(EMUTOS_PRG)"
 	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' OPTFLAGS='$(OPTFLAGS)' prg
 
+
 CPUFLAGS_M548X = -mcpu=5475
 
 .PHONY: m548x-prg
@@ -763,7 +765,79 @@ m548x-bas:
 	$(MAKE) COLDFIRE=1 CPUFLAGS='$(CPUFLAGS)' DEF='$(DEF)' UNIQUE=$(UNIQUE) LMA=0xe0100000 SRECFILE=$(SREC_M548X_BAS) $(SREC_M548X_BAS) REF_OS=TOS404
 	@printf "$(LOCALCONFINFO)"
 
+
 #
+# RaspBerry Pi images
+#
+
+.PHONY: rpi0
+NODEP += rpi0
+
+rpi0: override DEF += -DMACHINE_RPI0 -DRPI0
+rpi0: makefile.dep localise tools
+	@echo "→ Building minimal EmuTOS image for Raspberry Pi Zero → rpitos.img"
+
+# 1) assemble startup stub
+	arm-none-eabi-gcc \
+		-DELF_TOOLCHAIN -march=armv6 -marm -O2 \
+		-nostdlib -nostartfiles \
+		-T board/rpi0/link.ld \
+		-Iinclude \
+		-c board/rpi0/startup.S \
+		-o board/rpi0/startup.o
+
+# 2) compile our little C boot‐hello
+	arm-none-eabi-gcc \
+		-DELF_TOOLCHAIN -march=armv6 -marm -O2 \
+		-nostdlib -nostartfiles \
+		-T board/rpi0/link.ld \
+		-Iinclude \
+		-c board/rpi0/rpiboot.c \
+		-o board/rpi0/rpiboot.o
+
+# 3) compile emutos bios/bios.c
+	arm-none-eabi-gcc \
+		-DELF_TOOLCHAIN -march=armv6 -marm -O2 \
+		-DRPI0 \
+		-nostdlib -nostartfiles \
+		-T board/rpi0/link.ld \
+		-Iinclude \
+		-c bios/bios.c \
+		-o board/rpi0/bios.o
+
+# 4) compile emutos bios/natfeats.c
+	arm-none-eabi-gcc \
+		-DELF_TOOLCHAIN -march=armv6 -marm -O2 \
+		-DRPI0 \
+		-nostdlib -nostartfiles \
+		-T board/rpi0/link.ld \
+		-Iinclude \
+		-c bios/natfeats.c \
+		-o board/rpi0/natfeats.o
+
+# 5) link into an ELF
+	arm-none-eabi-gcc \
+		-nostdlib -nostartfiles \
+		-T board/rpi0/link.ld \
+		board/rpi0/startup.o board/rpi0/rpiboot.o board/rpi0/natfeats.o board/rpi0/bios.o \
+		-o rpitos.elf
+
+# 6) strip to a flat binary
+	arm-none-eabi-objcopy -O binary rpitos.elf rpitos.img
+	arm-none-eabi-size rpitos.elf
+
+board/rpi0/rpiboot.o: board/rpi0/rpiboot.c
+	$(CC) $(TOOLCHAIN_CFLAGS) -Iinclude -c $< -o $@
+
+board/rpi0/startup.o: board/rpi0/startup.S
+	$(CC) $(TOOLCHAIN_CFLAGS) -Iinclude -c $< -o $@
+
+rpitos.elf: board/rpi0/start.o board/rpi0/rpiboot.o
+	$(LD) $(LDFLAGS) $^ -o $@
+
+rpitos.img: rpitos.elf
+	$(OBJCOPY) -O binary $< $@
+
 # Special variants of EmuTOS running in RAM instead of ROM.
 # In this case, emutos.img needs to be loaded into RAM by some loader.
 #

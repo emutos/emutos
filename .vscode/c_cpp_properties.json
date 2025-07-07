@@ -1,0 +1,20 @@
+{
+  "version": 4,
+  "configurations": [
+    {
+      "name": "EmuTOS-RPi0",
+      "compilerPath": "/opt/homebrew/opt/arm-none-eabi-gcc/bin/arm-none-eabi-gcc",
+      "cStandard": "c17",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "gcc-arm",
+      "includePath": [
+        "${workspaceFolder}",
+        "${workspaceFolder}/**"
+      ],
+      "defines": [
+        "__ARM_ARCH_6__",
+        "RPI0"
+      ]
+    }
+  ]
+}

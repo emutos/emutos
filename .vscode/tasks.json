@@ -1,0 +1,88 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Compile BIOS",
+      "type": "shell",
+      "command": "arm-none-eabi-gcc",
+      "args": [
+        "-nostdlib","-nostartfiles","-ffreestanding","-O0","-g","-Wall","-march=armv6",
+        "-c","bios.c","-o","bios.o"
+      ],
+      "group": "build",
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Compile main",
+      "type": "shell",
+      "command": "arm-none-eabi-gcc",
+      "args": [
+        "-nostdlib","-nostartfiles","-ffreestanding","-O0","-g","-Wall","-march=armv6",
+        "-c","main.c","-o","main.o"
+      ],
+      "group": "build",
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Compile start",
+      "type": "shell",
+      "command": "arm-none-eabi-gcc",
+      "args": [
+        "-nostdlib","-nostartfiles","-ffreestanding","-O0","-g","-Wall","-march=armv6",
+        "-c","start.S","-o","start.o"
+      ],
+      "group": "build",
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Link Kernel",
+      "type": "shell",
+      "command": "arm-none-eabi-gcc",
+      "args": [
+        "-nostdlib","-nostartfiles","-ffreestanding","-O0","-g","-Wall","-march=armv6",
+        "-T","link.ld","-o","kernel.elf","start.o","bios.o","main.o"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "Make Image",
+      "type": "shell",
+      "command": "arm-none-eabi-objcopy",
+      "args": [
+        "-O","binary","kernel.elf","kernel.img"
+      ],
+      "dependsOn": ["Link Kernel"]
+    },
+    {
+      "label": "Build All",
+      "dependsOrder": "sequence",
+      "dependsOn": [
+        "Compile BIOS",
+        "Compile main",
+        "Compile start",
+        "Link Kernel",
+        "Make Image"
+      ],
+      "group": "build"
+    },
+    {
+      "label": "Start QEMU GDB Server",
+      "type": "shell",
+      "command": "qemu-system-arm",
+      "args": [
+        "-M","raspi0",
+        "-cpu","arm1176",
+        "-kernel","kernel.img",
+        "-nographic",
+        "-device", "loader,file=kernel.img,addr=0x8000",
+        "-S",
+        "-gdb","tcp::1234"
+      ],
+      "problemMatcher": []
+    }
+  ]
+}

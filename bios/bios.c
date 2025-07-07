@@ -109,6 +109,7 @@ void (*vector_5ms)(void);       /* 200 Hz system timer */
 
 /*==== BOOT ===============================================================*/
 
+#ifndef RPI0
 
 /*
  * setup all vectors
@@ -203,6 +204,7 @@ static void vecs_init(void)
 }
 
 extern PFVOID vbl_list[8]; /* Default array for vblqueue */
+#endif
 
 /*
  * Initialize the BIOS
@@ -230,6 +232,7 @@ static void bios_init(void)
 
     /* Initialize the processor */
     KDEBUG(("processor_init()\n"));
+#ifndef RPI0
     processor_init();   /* Set CPU type, longframe and FPU type */
 
 #if CONF_WITH_ADVANCED_CPU
@@ -570,9 +573,10 @@ static void bios_init(void)
         }
     }
 #endif
-
+#endif /* !RPI0 */
     KDEBUG(("bios_init() end\n"));
 }
+#ifndef RPI0
 
 #if DETECT_NATIVE_FEATURES
 
@@ -765,7 +769,7 @@ BOOL can_shutdown(void)
 }
 
 #endif /* CONF_WITH_SHUTDOWN */
-
+#endif /* RPI0 */
 /*
  * biosmain - c part of the bios init code
  *
@@ -779,7 +783,7 @@ void biosmain(void)
     ULONG shiftbits;
 
     bios_init();                /* Initialize the BIOS */
-
+#ifndef RPI0
     /* Steem needs this to initialize its GEMDOS hard disk emulation.
      * This may change drvbits. See Steem sources:
      * File steem/code/emulator.cpp, function intercept_bios(). */
@@ -870,9 +874,10 @@ void biosmain(void)
 
     kcprintf(_("System halted!\n"));
     halt();
+#endif
 }
 
-
+#ifndef RPI0
 
 /**
  * bios_0 - (getmpb) Load Memory parameter block
@@ -1271,3 +1276,4 @@ BOOL is_text_pointer(const void *p)
 }
 
 #endif /* CONF_WITH_EXTENDED_MOUSE */
+#endif /* !RPI0 */
