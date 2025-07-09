@@ -35,7 +35,7 @@ int sprintf(char *RESTRICT str, const char *RESTRICT fmt, ...) SPRINTF_STYLE;
 
 /* Inline string routines: */
 #if USE_STATIC_INLINES
-static __inline__ char *strcpy(char *RESTRICT dest, const char *RESTRICT src)
+static __inline__ __attribute__((always_inline)) char *inline_strcpy(char *RESTRICT dest, const char *RESTRICT src)
 {
     register char *tmp = dest;
 
@@ -43,6 +43,8 @@ static __inline__ char *strcpy(char *RESTRICT dest, const char *RESTRICT src)
         ;
     return dest;
 }
+
+#define strcpy(dest, src) inline_strcpy(dest, src)
 #endif
 
 /* block memory routines */
