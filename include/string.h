@@ -35,13 +35,19 @@ int sprintf(char *RESTRICT str, const char *RESTRICT fmt, ...) SPRINTF_STYLE;
 
 /* Inline string routines: */
 #if USE_STATIC_INLINES
-static __inline__ __attribute__((always_inline)) char *inline_strcpy(char *RESTRICT dest, const char *RESTRICT src)
+static __inline__ __attribute__((always_inline)) void inline_strcpy(char *RESTRICT dest, const char *RESTRICT src)
 {
-    register char *tmp = dest;
-
-    while( (*tmp++ = *src++) )
-        ;
-    return dest;
+    /* Until gcc is able to generate such compact code... we do this manually. */
+    /* NB: For simplification, this block returns void. */
+    __asm__ volatile
+    (
+        "1:\n\t"
+        "move.b  (%1)+,(%0)+\n\t"
+        "jne     1b"
+    : "+a"(dest), "+a"(src) /* outputs */
+    : /* inputs */
+    : CLOBBER_MEMORY /* clobbered */
+    );
 }
 
 #define strcpy(dest, src) inline_strcpy(dest, src)
