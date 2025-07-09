@@ -1678,6 +1678,23 @@
 
 
 
+/************************************************************
+ *  S O F T W A R E   S E C T I O N   -   G E N E R A L     *
+ ************************************************************/
+
+/*
+ * With this switch you can control if some functions should be used as
+ * static-inlines. This is generally a good idea if your compiler supports
+ * this (the current GCC does). It will shrink the size of the ROM since
+ * only very small functions will be used as static inlines, and it will
+ * also make the code faster!
+ */
+#ifndef USE_STATIC_INLINES
+# define USE_STATIC_INLINES 1
+#endif
+
+
+
 /************************************
  *  D E S K T O P   S E C T I O N   *
  ************************************/

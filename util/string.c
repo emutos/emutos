@@ -20,7 +20,11 @@
 #include "doprintf.h"
 #include "string.h"
 
-char *strcpy(char *RESTRICT dest, const char *RESTRICT src)
+
+/* The following functions are either used as inlines in string.h
+   or here as normal functions */
+#if !(USE_STATIC_INLINES)
+char *strcpy(char *dest, const char *src)
 {
     char *tmp = dest;
 
@@ -28,6 +32,7 @@ char *strcpy(char *RESTRICT dest, const char *RESTRICT src)
         ;
     return dest;
 }
+#endif
 
 /*
  * strlcpy: a better strcnpy()
