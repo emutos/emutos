@@ -17,10 +17,7 @@
 
 /* string routines */
 
-#if !(USE_STATIC_INLINES)
 char *strcpy(char *RESTRICT dest, const char *RESTRICT src);
-#endif
-
 size_t strlcpy(char *RESTRICT dest,const char *RESTRICT src,size_t count);
 size_t strlen(const char *s);
 short strlencpy(char *RESTRICT dest, const char *RESTRICT src);
@@ -31,19 +28,6 @@ int strncasecmp(const char *a, const char *b, size_t n);
 char *strchr(const char *s, int c);
 int toupper(int c);
 int sprintf(char *RESTRICT str, const char *RESTRICT fmt, ...) SPRINTF_STYLE;
-
-
-/* Inline string routines: */
-#if USE_STATIC_INLINES
-static __inline__ char *strcpy(char *RESTRICT dest, const char *RESTRICT src)
-{
-    register char *tmp = dest;
-
-    while( (*tmp++ = *src++) )
-        ;
-    return dest;
-}
-#endif
 
 /* block memory routines */
 
