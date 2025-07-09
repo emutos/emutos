@@ -24,7 +24,7 @@
 /* The following functions are either used as inlines in string.h
    or here as normal functions */
 #if !(USE_STATIC_INLINES)
-char *strcpy(char *dest, const char *src)
+char *strcpy(char *RESTRICT dest, const char *RESTRICT src)
 {
     char *tmp = dest;
 
