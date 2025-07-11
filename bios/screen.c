@@ -40,6 +40,7 @@
 
 void detect_monitor_change(void);
 static void setphys(const UBYTE *addr);
+static ULONG calc_vram_size(void);
 
 #if CONF_WITH_VIDEL
 LONG video_ram_size;        /* these are used by Srealloc() */
@@ -740,7 +741,7 @@ static const struct video_mode vmode_table[] = {
  * because some programs (e.g. NVDI) rely on this and write past what
  * should be the end of screen memory.
  */
-ULONG calc_vram_size(void)
+static ULONG calc_vram_size(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();

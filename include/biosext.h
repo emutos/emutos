@@ -46,7 +46,6 @@ extern UBYTE bootflags;
 extern LONG video_ram_size;
 extern void *video_ram_addr;
 #endif
-ULONG calc_vram_size(void);
 #define EXTRA_VRAM_SIZE 256UL   /* amount to overallocate, like Atari TOS */
 
 void flush_data_cache(void *start, long size);
