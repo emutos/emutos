@@ -582,8 +582,14 @@ int init_nova(void)
     if (!has_nova)
         return 0;
 
-    /* Detect ATI Mach32 (as opposed to ET4000). */
-    is_mach32 = (detect_mach() == MACH_32);
+    if (!is_crazydots) {
+        /* Detect ATI Mach32 (as opposed to ET4000). */
+        is_mach32 = (detect_mach() == MACH_32);
+    } else {
+        /* Crazydots always has a ET4000 */
+        is_mach32 = 0;
+    }
+
     if (is_mach32) {
         novamembase += 0x0A0000UL;
         init_mach32();
