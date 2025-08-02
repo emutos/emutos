@@ -35,6 +35,7 @@ void coldfire_early_init(void)
 #if defined(MACHINE_M548X) && CONF_WITH_IDE && !CONF_WITH_BAS_MEMORY_MAP
     m548x_init_cpld();
 #endif
+    coldfire_rs232_disable_interrupt();
 }
 
 MCF_COOKIE cookie_mcf;
@@ -189,6 +190,25 @@ void coldfire_rs232_enable_interrupt(void)
     /* Allow the reception of the interrupt */
     MCF_INTC_IMRH &= ~MCF_INTC_IMRH_INT_MASK35;
 }
+
+void coldfire_rs232_disable_interrupt(void)
+{
+    WORD old_sr;
+
+    /* Mask all interrupt sources within the PSC */
+    MCF_PSC0_PSCIMR = 0;
+
+    /*
+     * Mask the reception of the interrupt.
+     * Note that according to the MCF547x Reference Manual masking
+     * an interrupt should always be done while the IPL is higher
+     * than the level configured for the respective interrupt.
+     */
+    old_sr = set_sr(0x2700);
+    MCF_INTC_IMRH |= MCF_INTC_IMRH_INT_MASK35;
+    set_sr(old_sr);
+}
+
 
 /* Called from assembler routine coldfire_int_35 */
 void coldfire_rs232_interrupt_handler(void)
