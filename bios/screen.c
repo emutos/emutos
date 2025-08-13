@@ -40,6 +40,7 @@
 
 void detect_monitor_change(void);
 static void setphys(const UBYTE *addr);
+static ULONG calc_vram_size(void);
 
 #if CONF_WITH_VIDEL
 LONG video_ram_size;        /* these are used by Srealloc() */
@@ -740,7 +741,7 @@ static const struct video_mode vmode_table[] = {
  * because some programs (e.g. NVDI) rely on this and write past what
  * should be the end of screen memory.
  */
-ULONG calc_vram_size(void)
+static ULONG calc_vram_size(void)
 {
 #ifdef MACHINE_AMIGA
     return amiga_initial_vram_size();
@@ -749,8 +750,21 @@ ULONG calc_vram_size(void)
 #else
     ULONG vram_size;
 
-    if (HAS_VIDEL)
-        return FALCON_VRAM_SIZE + EXTRA_VRAM_SIZE;
+#if CONF_WITH_VIDEL
+    if (has_videl)
+    {
+        /* mode is already set */
+        vram_size = vgetsize(vsetmode(-1));
+        KDEBUG(("calc_vram_size: minimum required size %ld bytes\n", vram_size));
+        /*
+         * for compatibility with previous EmuTOS versions allocate at least
+         * FALCON_VRAM_SIZE+EXTRA_VRAM_SIZE
+         */
+        if (vram_size < FALCON_VRAM_SIZE)
+            vram_size = FALCON_VRAM_SIZE;
+        return vram_size + EXTRA_VRAM_SIZE;
+    }
+#endif
 
     vram_size = (ULONG)BYTES_LIN * V_REZ_VT;
 

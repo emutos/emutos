@@ -24,7 +24,7 @@
 /* The following functions are either used as inlines in string.h
    or here as normal functions */
 #if !(USE_STATIC_INLINES)
-char *strcpy(char *dest, const char *src)
+char *strcpy(char *RESTRICT dest, const char *RESTRICT src)
 {
     char *tmp = dest;
 
@@ -32,6 +32,18 @@ char *strcpy(char *dest, const char *src)
         ;
     return dest;
 }
+
+char *strcat(char *RESTRICT dest, const char *RESTRICT src)
+{
+    char *tmp = dest;
+    while( *tmp++ )
+        ;
+    tmp --;
+    while( (*tmp++ = *src++) )
+        ;
+    return dest;
+}
+
 #endif
 
 /*
@@ -90,17 +102,6 @@ size_t strlen(const char *s)
 
     for (n = 0; *s++; n++);
     return (n);
-}
-
-char *strcat(char *RESTRICT dest, const char *RESTRICT src)
-{
-    char *tmp = dest;
-    while( *tmp++ )
-        ;
-    tmp --;
-    while( (*tmp++ = *src++) )
-        ;
-    return dest;
 }
 
 int strcmp(const char *a, const char *b)

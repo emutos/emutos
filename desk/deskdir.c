@@ -177,8 +177,9 @@ static void sub_path(char *path)
 char *add_fname(char *path, char *new_name)
 {
     path = filename_start(path);
+    strcpy(path, new_name);
 
-    return strcpy(path, new_name);
+    return path;
 }
 
 
