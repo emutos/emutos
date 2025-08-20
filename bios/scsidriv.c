@@ -424,16 +424,17 @@ static LONG scsidriv_InquireSCSI(WORD what, BusInfo *info)
     ULONG bit;
 
     if (what == cInqFirst)
-        info->private.busavail = detected_busses;
+        info->private.busavail = 0;
 
-    if (info->private.busavail == 0)    /* no (more) busses */
+    /*  have we reported all busses we know? */
+    if ((info->private.busavail & detected_busses) == detected_busses)
         return EUNDEV;                  /* this is what HDDRIVER returns */
 
     for (bus = 0, bit = 1; bus <= MAX_BUS; bus++, bit <<= 1)
     {
-        if (info->private.busavail & bit)
+        if ((detected_busses & bit) && !(info->private.busavail & bit))
         {
-            info->private.busavail &= ~bit;     /* don't report again */
+            info->private.busavail |= bit;     /* don't report again */
             break;
         }
     }
