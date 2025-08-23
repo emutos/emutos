@@ -1575,6 +1575,19 @@ BOOL wm_get(WORD w_handle, WORD w_field, WORD *poutwds, WORD *pinwds)
         poutwds[2] = gl_wbcolor[gadget];
         break;
 #endif
+#if AES_VERSION >= 0x330
+    case WF_OWNER:
+        poutwds[0] = pwin->w_owner->p_pid;
+        poutwds[1] = (pwin->w_flags & VF_ISOPEN) != 0;
+        /*
+         * TODO: currently returns top-most and bottom-most window.
+         * A full implementation should walk the entire object tree
+         * to find the window immediately above and below.
+         */
+        poutwds[2] = gl_wtop;
+        poutwds[3] = W_TREE[ROOT].ob_head;
+        break;
+#endif
     default:
         return FALSE;
     }
