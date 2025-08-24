@@ -264,86 +264,87 @@ static long XHDOSLimits(UWORD which, ULONG limit)
             return ret;
     }
 
-    /* Currently setting new limits is not supported */
-    if (limit == 0) {
+    /*
+     * Currently setting new limits is not supported. According to XHDI spec,
+     * XHDOSLimits should always return the current value and not an error.
+     */
+    if (limit != 0) {
+        KDEBUG(("XHDOSLimits: setting limit %ld for %d not supported.\n", limit, which));
+    }
 
-        switch (which) {
-            case XH_DL_SECSIZ:
-                /* Maximum sector size (BIOS level) */
-                ret = MAX_LOGSEC_SIZE;
-                break;
+    switch (which) {
+        case XH_DL_SECSIZ:
+            /* Maximum sector size (BIOS level) */
+            ret = MAX_LOGSEC_SIZE;
+            break;
 
-            case XH_DL_MINFAT:
-                /* Minimum number of FATs */
-                ret = MIN_FATS;
-                break;
+        case XH_DL_MINFAT:
+            /* Minimum number of FATs */
+            ret = MIN_FATS;
+            break;
 
-            case XH_DL_MAXFAT:
-                /* Maximal number of FATs */
-                ret = MAX_FATS;
-                break;
+        case XH_DL_MAXFAT:
+            /* Maximal number of FATs */
+            ret = MAX_FATS;
+            break;
 
-            case XH_DL_MINSPC:
-                /* Minimum sectors per cluster */
-                ret = MIN_SECS_PER_CLUS;
-                break;
+        case XH_DL_MINSPC:
+            /* Minimum sectors per cluster */
+            ret = MIN_SECS_PER_CLUS;
+            break;
 
-            case XH_DL_MAXSPC:
-                /* Maximum sectors per cluster */
-                ret = MAX_SECS_PER_CLUS;
-                break;
+        case XH_DL_MAXSPC:
+            /* Maximum sectors per cluster */
+            ret = MAX_SECS_PER_CLUS;
+            break;
 
-            case XH_DL_CLUSTS:
-                /* Maximum number of clusters of a 16-bit FAT */
-                ret = MAX_FAT16_CLUSTERS;
-                break;
+        case XH_DL_CLUSTS:
+            /* Maximum number of clusters of a 16-bit FAT */
+            ret = MAX_FAT16_CLUSTERS;
+            break;
 
-            case XH_DL_MAXSEC:
-                /* Maximum number of sectors */
-                ret = XHDI_MAXSECS;
-                break;
+        case XH_DL_MAXSEC:
+            /* Maximum number of sectors */
+            ret = XHDI_MAXSECS;
+            break;
 
-            case XH_DL_DRIVES:
-                /* Maximum number of BIOS drives supported by the DOS */
-                ret = BLKDEVNUM;
-                break;
+        case XH_DL_DRIVES:
+            /* Maximum number of BIOS drives supported by the DOS */
+            ret = BLKDEVNUM;
+            break;
 
-            case XH_DL_CLSIZB:
-                /* Maximum cluster size */
-                ret = MAX_CLUSTER_SIZE;
-                break;
+        case XH_DL_CLSIZB:
+            /* Maximum cluster size */
+            ret = MAX_CLUSTER_SIZE;
+            break;
 
-            case XH_DL_RDLEN:
-                /* Max. number of root directory entries (not sectors) */
-                ret = XHDI_MAXRDLEN;
-                break;
+        case XH_DL_RDLEN:
+            /* Max. number of root directory entries (not sectors) */
+            ret = XHDI_MAXRDLEN;
+            break;
 
-            case XH_DL_CLUSTS12:
-                /* Max. number of clusters of a 12-bit FAT */
-                ret = MAX_FAT12_CLUSTERS;
-                break;
+        case XH_DL_CLUSTS12:
+            /* Max. number of clusters of a 12-bit FAT */
+            ret = MAX_FAT12_CLUSTERS;
+            break;
 
-            case XH_DL_CLUSTS32:
-                /* Max. number of clusters of a 32 bit FAT */
-                ret = EINVFN; /* No FAT32 support. */
-                break;
+        case XH_DL_CLUSTS32:
+            /* Max. number of clusters of a 32 bit FAT */
+            ret = EINVFN; /* No FAT32 support. */
+            break;
 
-            case XH_DL_BFLAGS:
-                /* Supported bits in bpb->bflags */
+        case XH_DL_BFLAGS:
+            /* Supported bits in bpb->bflags */
 #if CONF_WITH_1FAT_SUPPORT
-                ret = B_16 | B_1FAT;
+            ret = B_16 | B_1FAT;
 #else
-                ret = B_16;
+            ret = B_16;
 #endif
-                break;
+            break;
 
-            default:
-                ret = EINVFN;
-                break;
-        }
-
-    } else { /* limit != 0 */
-        ret = EINVFN;
+        default:
+            ret = EINVFN;
+            break;
     }
 
     return ret;
