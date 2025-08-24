@@ -93,9 +93,9 @@ union acsidma {
 /*
  * local variables
  */
-static ULONG loopcount_delay;   /* used by delay() macro */
-static ULONG next_acsi_time;    /* earliest time we can start the next i/o */
-
+static ULONG loopcount_delay;      /* used by delay() macro */
+static ULONG next_acsi_time;       /* earliest time we can start the next i/o */
+static BOOL register_access_16bit; /* use MOVE.W to access ACSI registers */
 
 /*
  * High-level ACSI stuff.
@@ -120,6 +120,15 @@ void acsi_init(void)
     loopcount_delay = 15 * loopcount_1_msec / 1000;
 
     next_acsi_time = hz_200;    /* immediate :-) */
+
+    /* whether to use MOVE.W to access ACSI registers,
+     * see dma_send_byte() for details
+     */
+    if ((cookie_mch == MCH_STE) || (cookie_mch == MCH_MSTE)) {
+        register_access_16bit = TRUE;
+    } else {
+        register_access_16bit = FALSE;
+    }
 }
 
 LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
@@ -562,11 +571,26 @@ int send_command(WORD dev,ACSICMD *cmd)
 }
 
 /*
- * send current byte plus the control for the _next_ byte
+ * send current byte plus the control for the _next_ byte.
+ *
+ * Atari recommended to do this in a single (32-bit) access. It is assumed
+ * that this is because of a bug in the C025913-20 DMA, used only in the
+ * very first STs. However, in STEs with a C025913-38 DMA, this 32-bit
+ * access can be the source of the 'bad DMA' issue that results in data
+ * corruption. In this case, two separate 16-bit accesses are proven to
+ * resolve the issue. Out of precaution, we only activate this workaround
+ * in STEs and MegaSTEs, where this workaround has been tested to have no
+ * discernible side effects. Other machines continue using 32-bit access.
  */
 static void dma_send_byte(UBYTE data, UWORD control)
 {
-    ACSIDMA->datacontrol = MAKE_ULONG(data, control);
+    if (register_access_16bit) {
+        ACSIDMA->s.data = data;
+        __asm volatile("nop");
+        ACSIDMA->s.control = control;
+    } else {
+        ACSIDMA->datacontrol = MAKE_ULONG(data, control);
+    }
 }
 
 
