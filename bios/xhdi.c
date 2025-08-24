@@ -25,7 +25,19 @@
 
 #if CONF_WITH_XHDI
 
-#define XHDI_MAXSECS    0x7fffffffL     /* returned by XHDOSLimits() */
+/* --- Limits returned by XHDOSLimits() --- */
+
+/* Maximum number of sectors per partition */
+#define XHDI_MAXSECS ((ULONG)MAX_FAT16_CLUSTERS * (ULONG)MAX_SECS_PER_CLUS)
+
+/* Maximum number of root sector entries:
+ * Note that this differs from the BPB's definition of rdlen. In the BPB the
+ * unit is sectors, in XHDI the unit is directory entries.
+ * EmuTOS imposes no restrictions other than those of the FAT 12/16 file
+ * system: number of root sector entries must fit into an UWORD, and it
+ * should be a multiple of 16 to fully fill a (512 byte) sector.
+ */
+#define XHDI_MAXRDLEN (0xFFF0UL)
 
 /*--- Global variables ---*/
 
@@ -302,8 +314,8 @@ static long XHDOSLimits(UWORD which, ULONG limit)
                 break;
 
             case XH_DL_RDLEN:
-                /* Max. (bpb->rdlen * bpb->recsiz/32) */
-                ret = EINVFN; /* meaning of XH_DL_RDLEN is unclear */
+                /* Max. number of root directory entries (not sectors) */
+                ret = XHDI_MAXRDLEN;
                 break;
 
             case XH_DL_CLUSTS12:
@@ -318,7 +330,11 @@ static long XHDOSLimits(UWORD which, ULONG limit)
 
             case XH_DL_BFLAGS:
                 /* Supported bits in bpb->bflags */
-                ret = 1; /* Bit 0 (16 bit fat) */
+#if CONF_WITH_1FAT_SUPPORT
+                ret = B_16 | B_1FAT;
+#else
+                ret = B_16;
+#endif
                 break;
 
             default:
