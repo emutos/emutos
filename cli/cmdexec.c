@@ -212,8 +212,10 @@ LONG rc;
     redir_handle = rc;
     old_stdout = Fdup(1);           /* remember current stdout */
     rc = Fforce(1,redir_handle);    /* redirect it */
-    if (rc < 0L)
+    if (rc < 0L) {
+        restore_stdout(redir);      /* undo the redirection */
         return rc;
+    }
 
     return 0;
 }
@@ -228,4 +230,5 @@ PRIVATE void restore_stdout(char *redir)
     Fclose(redir_handle);           /*  & original */
 
     redir[0] = '\0';                /* end redirection */
+    redir_handle = -1L;
 }
