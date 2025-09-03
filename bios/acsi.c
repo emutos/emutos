@@ -448,7 +448,11 @@ static int calculate_repeat(ACSICMD *cmd)
 }
 
 /*
- * send an ACSI command; return -1 if timeout
+ * send an ACSI command
+ *
+ * returns: 0       OK
+ *          -1      timeout
+ *          other   ACSI status byte
  *
  * note:
  * . we assume that the i/o buffer is WORD-aligned and allocated in ST RAM
