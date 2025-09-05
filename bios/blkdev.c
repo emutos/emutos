@@ -409,7 +409,7 @@ int add_partition(UWORD unit, LONG *devices_available, char id[], ULONG start, U
 
 static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LONG lrecnr)
 {
-    int retries = RWABS_RETRIES;
+    int retry_count, retries;
     int unit = dev;
     LONG lcount = cnt;
     LONG retval;
@@ -434,8 +434,7 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
     if (recnr != -1)            /* if long offset not used */
         lrecnr = (UWORD)recnr;  /* recnr as unsigned to enable 16-bit recn */
 
-    if (rw & RW_NORETRIES)
-        retries = 1;
+    retry_count = (rw & RW_NORETRIES) ? 1 : RWABS_RETRIES;
 
     /*
      * are we accessing a physical unit or a logical device?
@@ -515,6 +514,7 @@ static LONG blkdev_rwabs(WORD rw, UBYTE *buf, WORD cnt, WORD recnr, WORD dev, LO
         /* split the transfer to 15-bit count blocks (lowlevel functions take WORD count) */
         WORD scount = (lcount > CNTMAX) ? CNTMAX : lcount;
         do {        /* outer loop retries if critical event handler says we should */
+            retries = retry_count;
             do {    /* inner loop automatically retries */
                 retval = (unit<NUMFLOPPIES) ? floppy_rw(rw, buf, scount, lrecnr, geo->spt, geo->sides, unit)
                                             : disk_rw(unit, (rw & ~RW_NOTRANSLATE), lrecnr, scount, buf);
