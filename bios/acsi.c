@@ -255,7 +255,6 @@ LONG acsi_ioctl(UWORD dev, UWORD ctrl, void *arg)
     return rc;
 }
 
-#if CONF_WITH_SCSI_DRIVER
 /*
  * this is a bit messy, because some *real* ACSI devices only return 4 bytes
  * of request sense data compared to 16 from SCSI devices.  such devices would
@@ -294,7 +293,6 @@ LONG acsi_request_sense(WORD dev, UBYTE *buffer)
 
     return status;
 }
-#endif
 
 static LONG acsi_capacity(WORD dev, ULONG *info)
 {
@@ -383,14 +381,18 @@ static void acsi_end(void)
 
 /*
  * Internal implementation -
- * cnt <= 0xFF, no retry done, returns -1 if timeout, or the DMA status.
+ * cnt <= 0xFF, no retry done
+ * returns  0       OK
+ *          -1      timeout
+ *          EGENRL  ACSI check condition occurred and has been cleared
  */
 
 static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
 {
     ACSICMD cmd;
     UBYTE cdb[10];  /* allow for 10-byte read/write commands */
-    int cdblen;
+    UBYTE sensebuf[REQSENSE_LENGTH];
+    int cdblen, ret;
     LONG buflen = cnt * SECTOR_SIZE;
 
     /* emit command */
@@ -403,7 +405,18 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
     cmd.timeout = LARGE_TIMEOUT;
     cmd.rw = rw;
 
-    return send_command(dev,&cmd);
+    ret = send_command(dev,&cmd);
+
+    /*
+     * handle non-zero status byte from ACSI I/O: issue Request Sense
+     * to clear the check condition, then set negative return code
+     */
+    if (ret > 0) {
+        acsi_request_sense(dev,sensebuf);
+        ret = EGENRL;   /* this will cause alert AL02CRT to be issued */
+    }
+
+    return ret;
 }
 
 /*

@@ -32,9 +32,7 @@ typedef struct
 BOOL detect_acsi(void);
 void acsi_init(void);
 LONG acsi_ioctl(UWORD drv, UWORD ctrl, void *arg);
-#if CONF_WITH_SCSI_DRIVER
 LONG acsi_request_sense(WORD dev, UBYTE *buffer);
-#endif
 LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev);
 int send_command(WORD dev,ACSICMD *cmd);
 
