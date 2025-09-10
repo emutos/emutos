@@ -16,6 +16,7 @@
 #if CONF_WITH_ACSI || CONF_WITH_SCSI
 
 int build_rw_command(UBYTE *cdb, UWORD rw, ULONG sector, UWORD count);
+LONG decode_sense(UBYTE *sense);
 
 #endif
 

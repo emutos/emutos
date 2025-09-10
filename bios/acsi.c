@@ -171,7 +171,7 @@ LONG acsi_rw(WORD rw, LONG sector, WORD count, UBYTE *buf, WORD dev)
 
         for (retry = 0; retry < 2; retry++) {
             err = do_acsi_rw(rw, sector, numsecs, p, dev);
-            if (err == 0)
+            if ((err == 0) || (err == E_CHNG))  /* mustn't retry media change! */
                 break;
         }
 
@@ -384,9 +384,11 @@ static void acsi_end(void)
  * cnt <= 0xFF, no retry done
  * returns  0       OK
  *          -1      timeout
- *          EGENRL  ACSI check condition occurred and has been cleared
+ *      otherwise an ACSI check condition has been detected & a REQUEST
+ *      SENSE has been issued, with the following results:
+ *          -2      the REQUEST SENSE failed
+ *          other   the BIOS error code derived from REQUEST SENSE data
  */
-
 static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
 {
     ACSICMD cmd;
@@ -409,11 +411,13 @@ static int do_acsi_rw(WORD rw, LONG sector, WORD cnt, UBYTE *buf, WORD dev)
 
     /*
      * handle non-zero status byte from ACSI I/O: issue Request Sense
-     * to clear the check condition, then set negative return code
+     * and return code corresponding to sense data
      */
     if (ret > 0) {
-        acsi_request_sense(dev,sensebuf);
-        ret = EGENRL;   /* this will cause alert AL02CRT to be issued */
+        ret = acsi_request_sense(dev,sensebuf);
+        if (ret)            /* errors on request sense are bad */
+            return EDRVNR;
+        ret = decode_sense(sensebuf);
     }
 
     return ret;
