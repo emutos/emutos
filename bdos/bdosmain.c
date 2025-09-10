@@ -403,6 +403,25 @@ static void offree(DMD *d)
 
 
 /*
+ * mark_bcbs_invalid - mark the BCBs for the specified drive as invalid
+ */
+static void mark_bcbs_invalid(int drv)
+{
+    BCB *bx;
+    int i;
+
+    for (i = 0; i < 2; i++)
+    {
+        for (bx = bufl[i]; bx; bx = bx->b_link)
+        {
+            if (bx->b_bufdrv == drv)
+                bx->b_bufdrv = -1;
+        }
+    }
+}
+
+
+/*
  *  osif - C implementation of trap #1. Called by _enter.
  */
 long osif(short *pw);   /* called only from rwa.S */
@@ -410,7 +429,6 @@ long osif(short *pw)
 {
     char **pb, *pb2, *p, ctmp;
     BPB *b;
-    BCB *bx;
     DND *dn;
     int typ, h, i, fn;
     int num, max;
@@ -442,10 +460,7 @@ restrt:
             if (dn)
                 freetree(dn);
 
-            for (i = 0; i < 2; i++)
-                for (bx = bufl[i]; bx; bx = bx->b_link)
-                    if (bx->b_bufdrv == errdrv)
-                        bx->b_bufdrv = -1;
+            mark_bcbs_invalid(errdrv);
 
             /* then, in with the new */
             b = (BPB *)Getbpb(errdrv);
@@ -464,11 +479,8 @@ restrt:
         }
 
         /* else handle as hard error on disk for now */
+        mark_bcbs_invalid(errdrv);
 
-        for (i = 0; i < 2; i++)
-            for (bx = bufl[i]; bx; bx = bx->b_link)
-                if (bx->b_bufdrv == errdrv)
-                    bx->b_bufdrv = -1;
         return rc;
     }
 
