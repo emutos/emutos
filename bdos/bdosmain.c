@@ -429,6 +429,7 @@ long osif(short *pw)
 {
     char **pb, *pb2, *p, ctmp;
     BPB *b;
+    DMD *dmd;
     DND *dn;
     int typ, h, i, fn;
     int num, max;
@@ -452,10 +453,11 @@ restrt:
         if (rc == E_CHNG)
         {
             /* first, out with the old stuff */
-            dn = drvtbl[errdrv]->m_dtl;
-            offree(drvtbl[errdrv]);
-            xmfreblk(drvtbl[errdrv]);
-            drvtbl[errdrv] = 0;
+            dmd = drvtbl[errdrv];
+            dn = dmd->m_dtl;
+            offree(dmd);
+            xmfreblk(dmd);
+            drvtbl[errdrv] = NULL;
 
             if (dn)
                 freetree(dn);
