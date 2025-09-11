@@ -379,7 +379,10 @@ static void freetree(DND *d)
 
 
 /*
- *  offree -
+ *  offree - free up all handles associated with the specified DMD
+ *
+ *  this is used when media change is detected on a device, in order
+ *  to cause subsequent I/Os to that device for those handles to fail
  */
 static void offree(DMD *d)
 {
