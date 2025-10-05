@@ -48,6 +48,42 @@ typedef struct {
     UWORD bootsig;
 } MBR;
 
+typedef struct {
+    ULONG lba_low;
+    ULONG lba_high;
+} LBA64;
+
+typedef struct {
+    UBYTE signature[8];
+    ULONG version;
+    ULONG header_size;
+    ULONG header_crc;
+    ULONG fill0;
+    LBA64 current_lba;
+    LBA64 backup_lba;
+    LBA64 first_usable_lba;
+    LBA64 last_usable_lba;
+    UBYTE disk_guid[16];
+    LBA64 table_lba;
+    ULONG table_entries;
+    ULONG table_entry_size;
+    ULONG table_crc;
+} GPT_HEADER;
+
+typedef struct {
+    UBYTE parttype_guid[16];
+    UBYTE part_guid[16];
+    LBA64 first_lba;
+    LBA64 last_lba;
+    LBA64 attribute_flags;
+    UBYTE part_name[72];
+} GPT_ENTRY;
+
+typedef struct {
+    UBYTE parttype_guid[16];
+    char  parttype[3];
+} GPT_MAP;
+
 /*==== Global variables ===================================================*/
 
 UNIT units[UNITSNUM];
@@ -443,6 +479,8 @@ typedef union
     UBYTE sect[MAXPHYSSECTSIZE];
     struct rootsector rs;
     MBR mbr;
+    GPT_HEADER gpt_header;
+    GPT_ENTRY gpt_entries[4];
 } PHYSSECT;
 
 PHYSSECT physsect, physsect2;
@@ -496,6 +534,113 @@ static BOOL unit_is_byteswapped(UWORD unit)
 
 #endif /* CONF_WITH_IDE */
 
+#if CONF_WITH_GPT_SUPPORT
+
+#define LBA64_OVERFLOW(x) (((x).lba_high) != 0)
+#define LBA64_TO_32(y,x)  do { (y)=(x).lba_low; swpl(y); } while(0)
+
+#define GPT_MBR_TYPE 0xee
+#define GPT_MAGIC "EFI PART"
+
+/*
+ * see https://en.wikipedia.org/w/index.php?title=GUID_Partition_Table&oldid=1312797248#Partition_type_GUIDs
+ * note that the binary representation of GUIDs differs from their textual representation.
+ */
+static const GPT_MAP gpt_map[] =
+{
+    {.parttype_guid = {0xFE,0x5A,0x4E,0x73,0x1A,0xF6,0xE6,0x11,0xBC,0x64,0x92,0x36,0x1F,0x00,0x26,0x71},
+    .parttype = "BGM"},
+    {.parttype_guid = {0xA2,0xA0,0xD0,0xEB,0xE5,0xB9,0x33,0x44,0x87,0xC0,0x68,0xB6,0xB7,0x26,0x99,0xC7},
+    .parttype = "\0D\xE"},
+};
+
+static BOOL map_gpt_to_atari(const GPT_ENTRY* gpt, char* pid)
+{
+    int i;
+    for (i=0; i<ARRAY_SIZE(gpt_map); i++)
+    {
+        if (memcmp(gpt->parttype_guid, gpt_map[i].parttype_guid, sizeof(gpt_map[i].parttype_guid)) == 0)
+        {
+            memcpy(pid, gpt_map[i].parttype, sizeof(gpt_map[i].parttype));
+            return TRUE;
+        }
+    }
+    return FALSE;
+}
+
+/*
+ * process a GUID partition table (GPT)
+ *
+ * returns
+ *  -1  the maximum number of partitions is exceeded
+ *   0  in case of errors
+ *   1  otherwise
+ */
+static WORD process_gpt(UWORD unit, LONG *devices_available)
+{
+    UBYTE *sect = physsect.sect;
+    ULONG next_lba, first_lba, last_lba, n, i;
+    char pid[3];
+
+    /* read GPT and check header */
+    if (disk_rw(unit, RW_READ, 1, 1, sect))
+        return 0;
+
+    if (memcmp(physsect.gpt_header.signature, GPT_MAGIC, sizeof(physsect.gpt_header.signature)) != 0)
+        return 0;
+
+    KINFO(("Found GPT\n"));
+
+    /* for simplicity we only support the default GPT entry size of 128 bytes */
+    if (physsect.gpt_header.table_entry_size != (128ul<<24)) /* 128 in little endian */
+        return 0;
+
+    /* get the start and length of the GPT table */
+    if (LBA64_OVERFLOW(physsect.gpt_header.table_lba))
+        return 0;
+    LBA64_TO_32(next_lba, physsect.gpt_header.table_lba);
+
+    n = physsect.gpt_header.table_entries;
+    swpl(n);
+
+    for (i=0; i<n; i++)
+    {
+        if (i%4 == 0)
+        {
+            /* load next sector */
+            if (disk_rw(unit, RW_READ, next_lba, 1, sect))
+                return 0;
+            next_lba++;
+        }
+
+        /* check if partition type is supported */
+        if (map_gpt_to_atari(&physsect.gpt_entries[i%4], pid))
+        {
+            if (LBA64_OVERFLOW(physsect.gpt_entries[i%4].first_lba) ||
+                LBA64_OVERFLOW(physsect.gpt_entries[i%4].last_lba))
+                continue;
+
+            LBA64_TO_32(first_lba, physsect.gpt_entries[i%4].first_lba);
+            LBA64_TO_32(last_lba, physsect.gpt_entries[i%4].last_lba);
+
+            KDEBUG(("Supported GPT partition at entry %lu: start=%lu, end=%lu, type=$%02x%02x%02x\n",
+                    i, first_lba, last_lba, pid[0], pid[1], pid[2]));
+
+            if (add_partition(unit,devices_available,pid,first_lba,last_lba-first_lba+1))
+                return -1;
+        }
+        else
+        {
+            /* avoid complaining about empty entries */
+            if (physsect.gpt_entries[i%4].first_lba.lba_low != 0)
+                KDEBUG(("Unsupported GPT partition at entry %lu\n", i));
+        }
+    }
+    return 1;
+}
+
+#endif /* CONF_WITH_GPT_SUPPORT */
+
 /*
  * process DOS-style MBR
  *
@@ -512,6 +657,12 @@ static WORD process_dos_mbr(UWORD unit, LONG *devices_available)
                                 /*  to traverse the list of linked extended partitions */
     ULONG next_extended;        /* start sector of next extended boot record */
     int i;
+
+#if CONF_WITH_GPT_SUPPORT
+    /* check for protective MBR found in disks with GUID partition table */
+    if (mbr->entry[0].type == GPT_MBR_TYPE)
+        return process_gpt(unit, devices_available);
+#endif
 
     do {
         /* start sector of next extended boot record, if present */
