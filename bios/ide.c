@@ -739,7 +739,14 @@ static void ide_detect_devices(UWORD ifnum)
 
     IDE_WRITE_CONTROL(interface,IDE_CONTROL_nIEN);    /* no interrupts please */
 
-    /* initial check for devices */
+    /*
+     * initial check for devices
+     * Note that by itself this is not a sufficient way to detect the presence
+     * of device 1. According to the ATA standards (section on "Device 0 only
+     * configurations"), a device 0 might respond for device 1. For proper
+     * device detection, the recheck below is needed, that takes into account
+     * the signature and the status register.
+     */
     for (i = 0; i < 2; i++) {
         ide_select_device(interface,i);
         set_start_count(interface,0xaa,0x55);
