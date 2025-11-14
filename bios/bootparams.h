@@ -10,8 +10,8 @@
  * option any later version.  See doc/license.txt for details.
  */
 
-#ifndef IDE_H
-#define IDE_H
+#ifndef BOOTPARAMS_H
+#define BOOTPARAMS_H
 
 #ifdef MACHINE_AMIGA
 
@@ -33,4 +33,4 @@ extern const ALTRAM_REGION altram_regions[MAX_ALTRAM_REGIONS];
 
 #endif /* MACHINE_AMIGA */
 
-#endif /* IDE_H */
+#endif /* BOOTPARAMS_H */
