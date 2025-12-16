@@ -90,6 +90,10 @@ static int is_crazydots;
 #define R_MISC_CNTL     0x92EE
 
 /* ATI Mach64 only */
+static UBYTE m64_dac_type = 0;
+#define M64_DAC_ATI68860    5
+#define M64_DAC_CH8398      7
+
 #define M64_BUS_CNTL        0x4EEC
 #define M64_CONFIG_CHIP_ID  0x6EEC
 #define M64_SCRATCH_REG_1   0x46EC
@@ -394,13 +398,21 @@ static void init_mach64(void)
     VGAREG_W(M64_GEN_TEST_CNTL+2) = 0x0000;
     VGAREG_W(M64_MEM_CNTL) = 0xf101;        /* at least 1 MB of memory */
     VGAREG_W(M64_CONFIG_CNTL) = 0x1100;     /* linear aperture enabled */
+    VGAREG_W(M64_DAC_CNTL) = 0x0020;
+    m64_dac_type = VGAREG(M64_DAC_CNTL+2) & 0x7; /* RAM DAC type */
+
+    KDEBUG(("Detected DAC type %d\n", m64_dac_type));
 
     /* Switch to accelerator mode to have better access to clock gen and DAC */
     VGAREG(M64_CRTC_GEN_CNTL+3) = 0x03;
 
-    /* Program clock generator with pixel and memory clock */
-    prog_ics2595(PROG_VCLK4_50350_KHZ);
-    prog_ics2595(PROG_MCLK3_40000_KHZ);
+    /* ATI68860 RAM DAC is used with ICS-style clock generator */
+    if (m64_dac_type == M64_DAC_ATI68860)
+    {
+        /* Program clock generator with pixel and memory clock */
+        prog_ics2595(PROG_VCLK4_50350_KHZ);
+        prog_ics2595(PROG_MCLK3_40000_KHZ);
+    }
 
     /* Enable VGA mode */
     VGAREG(M64_CRTC_GEN_CNTL+3) = 0x02;     /* switch to VGA mode */
@@ -463,7 +475,7 @@ static void ramdac_hicolor_off(void)
     FORCE_READ(VGAREG(DAC_IW)); /* Back to normal mode */
 }
 
-/* Configure the ATI-68860 RAM DAC found on Mach64 */
+/* Configure the ATI-68860 RAM DAC found on some Mach64 */
 static void ramdac_68860_config(void)
 {
     /* Configure DAC */
@@ -471,6 +483,41 @@ static void ramdac_68860_config(void)
     VGAREG(DAC_PEL) = 0x1D;
     VGAREG(DAC_IR) = 0x80;
     VGAREG(DAC_IW) = 0x02;
+    set_idxreg(ATI_I, 0xA0, 0x08);
+}
+
+/* Unlock or lock the clock selection of the CH8398 RAM DAC.
+   Note that RS2 must be set to high before calling this function. */
+static void ramdac_ch8398_unlock(int unlock)
+{
+    /* Magic access sequence for Clock Select Register */
+    FORCE_READ(VGAREG(DAC_PEL));
+    FORCE_READ(VGAREG(DAC_IW));
+    FORCE_READ(VGAREG(DAC_IW));
+    FORCE_READ(VGAREG(DAC_IW));
+    FORCE_READ(VGAREG(DAC_IW));
+    /* reset or set the PLL frequency hold bit */
+    VGAREG(DAC_IW) = unlock?0x80:0x00;
+}
+
+/* Values from CH8398 data sheet: M = 3, N = 27, K = 1 = 50.11 MHz */
+#define PROG_PLL4_50MHZ ((3u<<8)|27u|(1u<<14))
+
+/* Configure the CH8398 RAM DAC found on some Mach64 */
+static void ramdac_ch8398_config(void)
+{
+    set_idxreg(ATI_I, 0xA0, 0x28);     /* RS2=1, select DAC registers 4 - 7 */
+    /* unlock clock settings */
+    ramdac_ch8398_unlock(1);
+
+    /* Access control register and set it to 8bpp mode */
+    VGAREG(DAC_PEL) = 0x04;
+
+    /* Configure the clock entry 4, which is used by this driver, for 50 MHz. */
+    VGAREG(DAC_IW) = 4;                /* program clock entry 4 */
+    VGAREG(DAC_D) = (UBYTE)PROG_PLL4_50MHZ;
+    VGAREG(DAC_D) = (UBYTE)(PROG_PLL4_50MHZ >> 8);
+
     set_idxreg(ATI_I, 0xA0, 0x08);
 }
 
@@ -545,7 +592,9 @@ static void init_nova_resolution(MACH_TYPE mach_type)
         set_idxreg(GDC_I, 0x51, 0x81);
     }
 
-    if (IS_MACH64) {
+    if (m64_dac_type == M64_DAC_CH8398) {
+        ramdac_ch8398_config();
+    } else if (m64_dac_type == M64_DAC_ATI68860) {
         ramdac_68860_config();
     }
 
@@ -589,6 +638,16 @@ static void init_nova_resolution(MACH_TYPE mach_type)
     set_idxreg(TS_I, 1, vga_TS_1_4[0] | 0x20); /* screen off */
     set_palette_entries(vga_palette);
     set_idxreg(TS_I, 1, vga_TS_1_4[0]); /* screen on */
+
+    /*
+     * after setting our mode / clock config lock the DAC,
+     * because Nova VDI expects to find it locked.
+     */
+    if (m64_dac_type == M64_DAC_CH8398) {
+        set_idxreg(ATI_I, 0xA0, 0x28);  /* RS2 = 1 */
+        ramdac_ch8398_unlock(0);
+        set_idxreg(ATI_I, 0xA0, 0x08);
+    }
 }
 
 /* Certain ET4000 graphic cards require a different clock divider.
