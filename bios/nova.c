@@ -344,6 +344,12 @@ static void init_mach32(void)
     VGAREG(ROM_PAGE_SEL) = 0x08;    /* Enable VGA */
 }
 
+/* Set address lines RS2 and RS3 of DAC on Mach64 */
+static void mach_dac_setrs2rs3(UBYTE rs2rs3)
+{
+    set_idxreg(ATI_I, 0xA0, ((rs2rs3&3)<<5) | 0x8);
+}
+
 /*
    Control word to program MCLK3 to 40 MHz:
    N = 0+257, PostDiv = 2, RefDiv = 46, RefFreq = 14.318 MHz.
@@ -481,11 +487,11 @@ static void ramdac_hicolor_off(void)
 static void ramdac_68860_config(void)
 {
     /* Configure DAC */
-    set_idxreg(ATI_I, 0xA0, 0x48);     /* select DAC registers 8 - 11 */
+    mach_dac_setrs2rs3(2);      /* select DAC registers 8 - 11 */
     VGAREG(DAC_PEL) = 0x1D;     /* always set to 0x1D */
     VGAREG(DAC_IR) = 0x80;      /* Graphic Mode register: VGA mode (?) */
     VGAREG(DAC_IW) = 0x02;      /* black level(?), always set to 2 */
-    set_idxreg(ATI_I, 0xA0, 0x08);
+    mach_dac_setrs2rs3(0);
 }
 
 /* Unlock or lock the clock selection of the CH8398 RAM DAC.
@@ -508,7 +514,7 @@ static void ramdac_ch8398_unlock(int unlock)
 /* Configure the CH8398 RAM DAC found on some Mach64 */
 static void ramdac_ch8398_config(void)
 {
-    set_idxreg(ATI_I, 0xA0, 0x28);     /* RS2=1, select DAC registers 4 - 7 */
+    mach_dac_setrs2rs3(1);    /* RS2=1, select DAC registers 4 - 7 */
     /* unlock clock settings */
     ramdac_ch8398_unlock(1);
 
@@ -520,7 +526,7 @@ static void ramdac_ch8398_config(void)
     VGAREG(DAC_D) = (UBYTE)PROG_PLL4_50MHZ;
     VGAREG(DAC_D) = (UBYTE)(PROG_PLL4_50MHZ >> 8);
 
-    set_idxreg(ATI_I, 0xA0, 0x08);
+    mach_dac_setrs2rs3(0);
 }
 
 /* Loads the Mach specific indexed registers */
@@ -647,9 +653,9 @@ static void init_nova_resolution(MACH_TYPE mach_type)
      * because Nova VDI expects to find it locked.
      */
     if (m64_dac_type == M64_DAC_CH8398) {
-        set_idxreg(ATI_I, 0xA0, 0x28);  /* RS2 = 1 */
+        mach_dac_setrs2rs3(1);  /* RS2 = 1 */
         ramdac_ch8398_unlock(0);
-        set_idxreg(ATI_I, 0xA0, 0x08);
+        mach_dac_setrs2rs3(0);
     }
 }
 
