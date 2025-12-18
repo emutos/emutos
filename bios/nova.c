@@ -224,7 +224,7 @@ void detect_nova(void)
 
     if (IS_BUS32 && HAS_VME && check_read_byte(0xFE900000UL+VIDSUB))
     {
-        /* Nova/Mach32 in Atari TT */
+        /* Nova/Mach in Atari TT */
         novaregbase = (UBYTE *)0xFE900000UL;
         novamembase = (UBYTE *)0xFE800000UL;
         has_nova = 1;
@@ -345,16 +345,18 @@ static void init_mach32(void)
 }
 
 /*
-   Control word to program MCLK3 to 40 MHz.
+   Control word to program MCLK3 to 40 MHz:
+   N = 0+257, PostDiv = 2, RefDiv = 46, RefFreq = 14.318 MHz.
    PPDDE7654321043210WS
    11100000000001001100 = 0xE004C
 */
 #define PROG_MCLK3_40000_KHZ 0xE004Cul
 /*
    Control word to program VCLK4 to 50.35 MHz,
-   twice the VGA pixel clock.
+   twice the VGA pixel clock:
+   N = 67+257, PostDiv = 2, RefDiv = 46, RefFreq = 14.318 MHz.
    PPDDE7654321043210WS
-   11100001011010010000 = 0xE2190
+   11100010000110010000 = 0xE2190
 */
 #define PROG_VCLK4_50350_KHZ 0xE2190ul
 
@@ -362,7 +364,7 @@ static void init_mach32(void)
 #define FS3(x) ((x)<<3)
 #define STROBE (1<<6)
 
-/* Program the ATI-18818 / ICS2595 clock generator found in Mach64. */
+/* Program the ATI-18818 / ICS2595 clock generator found in some Mach64. */
 static void prog_ics2595(ULONG prog)
 {
     /* start of programming sequence */
@@ -480,9 +482,9 @@ static void ramdac_68860_config(void)
 {
     /* Configure DAC */
     set_idxreg(ATI_I, 0xA0, 0x48);     /* select DAC registers 8 - 11 */
-    VGAREG(DAC_PEL) = 0x1D;
-    VGAREG(DAC_IR) = 0x80;
-    VGAREG(DAC_IW) = 0x02;
+    VGAREG(DAC_PEL) = 0x1D;     /* always set to 0x1D */
+    VGAREG(DAC_IR) = 0x80;      /* Graphic Mode register: VGA mode (?) */
+    VGAREG(DAC_IW) = 0x02;      /* black level(?), always set to 2 */
     set_idxreg(ATI_I, 0xA0, 0x08);
 }
 
@@ -566,7 +568,7 @@ static void set_palette_entries(const UBYTE* palette)
     }
 
     /* Load color 255 */
-    VGAREG(DAC_IW) = 255; /* color 0 */
+    VGAREG(DAC_IW) = 255; /* color 255 */
     for (k=0; k<3; k++)
     {
         VGAREG(DAC_D) = *palette++;
@@ -592,6 +594,7 @@ static void init_nova_resolution(MACH_TYPE mach_type)
         set_idxreg(GDC_I, 0x51, 0x81);
     }
 
+    /* Configure Mach64 DACs */
     if (m64_dac_type == M64_DAC_CH8398) {
         ramdac_ch8398_config();
     } else if (m64_dac_type == M64_DAC_ATI68860) {
@@ -604,7 +607,7 @@ static void init_nova_resolution(MACH_TYPE mach_type)
     set_idxreg(TS_I, 0x00, 0x03);
 
     if (!IS_MACH) {
-        unlock_et4000(); /* TODO: really required again? */
+        unlock_et4000(); /* required again after TS reset */
     }
 
     set_multiple_idxreg(TS_I, 1, sizeof(vga_TS_1_4), vga_TS_1_4);
