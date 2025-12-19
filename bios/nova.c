@@ -532,22 +532,28 @@ static void ramdac_ch8398_config(void)
 /* Loads the Mach specific indexed registers */
 static void set_mach_idxreg(void)
 {
-    int idx;
+    static const UBYTE initvalues[] = {
+    /* reg, val */
+      0x86, 0x7A,
+      0xA3, 0x00,
+      0xAD, 0x00, /* does not exist on Mach64, but writes are ignored */
+      0xAE, 0x00, /* does not exist on Mach64, but writes are ignored */
+      0xB0, 0x08,
+      0xB1, 0x00,
+      0xB2, 0x00,
+      0xB3, 0x00,
+      0xB4, 0x00,
+      0xB5, 0x00,
+      0xB6, 0x01,
+      0xBD, 0x04,
+      0xBF, 0x01,
+      0x00 };
 
-    set_idxreg(ATI_I, 0x86, 0x7A);
-    set_idxreg(ATI_I, 0xA3, 0x00);
-    set_idxreg(ATI_I, 0xAD, 0x00); /* does not exist on Mach64, but writes are ignored */
-    set_idxreg(ATI_I, 0xAE, 0x00); /* does not exist on Mach64, but writes are ignored */
-    set_idxreg(ATI_I, 0xB0, 0x08);
-    for (idx = 0xB1; idx <= 0xB5; idx++)
-    {
-        set_idxreg(ATI_I, idx, 0x00);
+    const UBYTE* p;
+
+    for (p = initvalues; *p != 0; p+=2) {
+        set_idxreg(ATI_I, *p, *(p+1));
     }
-    set_idxreg(ATI_I, 0xB6, 0x01);
-    set_idxreg(ATI_I, 0xB8, 0x00);
-    set_idxreg(ATI_I, 0xBD, 0x04);
-    set_idxreg(ATI_I, 0xBE, 0x08);
-    set_idxreg(ATI_I, 0xBF, 0x01);
 
     set_idxreg(TS_I, 0x00, 0x01);   /* Reset Timing Sequencer */
     set_idxreg(ATI_I, 0xB9, 0x42);  /* Configure clock generator */
@@ -555,8 +561,8 @@ static void set_mach_idxreg(void)
     set_idxreg(ATI_I, 0xBE, 0x00);
     VGAREG(MISC_W) = vga_MISC_W;    /* Needed again here. */
     set_idxreg(TS_I, 0x00, 0x03);
-
 }
+
 
 /* Loads the palette entries for colors 0 = white, 1 = black and 255 = overscan, also black */
 static void set_palette_entries(const UBYTE* palette)
