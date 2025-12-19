@@ -37,10 +37,10 @@ int has_nova;
  * work when the card is switched to 16 bit IO mode. On the Volksfarben,
  * these accesses will not work when the card is switched to 16 bit.
  */
-static int use_16bit_io;
+static BOOL use_16bit_io;
 
 /* CrazyDots has a special clock generator register. */
-static int is_crazydots;
+static BOOL is_crazydots;
 #define CRAZY_DOTS_CLK_SEL 0x000
 
 /* Macros for VGA register access */
@@ -187,7 +187,7 @@ static void set_multiple_atcreg(UBYTE startreg, UBYTE cnt, const UBYTE *values)
 }
 
 /* Check for presence of a VGA card using the ATC palette registers. */
-static int check_for_vga(void)
+static BOOL check_for_vga(void)
 {
     FORCE_READ(VGAREG(IS1_RC)); /* set ATC_IW to index */
 
@@ -201,11 +201,11 @@ static int check_for_vga(void)
     if (VGAREG(ATC_IW) == 0x0A)
     {
         VGAREG(ATC_IW) = 0x20; /* enable screen output */
-        return 1;
+        return TRUE;
     }
     else
     {
-        return 0;
+        return FALSE;
     }
 }
 
@@ -213,8 +213,8 @@ static int check_for_vga(void)
 void detect_nova(void)
 {
     has_nova = 0;
-    use_16bit_io = 1; /* Default for everything but Volksfarben/ST */
-    is_crazydots = 0;
+    use_16bit_io = TRUE; /* Default for everything but Volksfarben/ST */
+    is_crazydots = FALSE;
 
     if (IS_BUS32 && HAS_VME && check_read_byte(0xFE900000UL+VIDSUB))
     {
@@ -239,7 +239,7 @@ void detect_nova(void)
         novaregbase = (UBYTE *)0xFEBF0000UL;
         novamembase = (UBYTE *)0xFEC00000UL;
         has_nova = 1;
-        is_crazydots = 1;
+        is_crazydots = TRUE;
     }
     else if (((ULONG)phystop < 0x00C00000UL) && check_read_byte(0x00D00000UL+VIDSUB) &&
              check_read_byte(0x00C00000UL) && check_read_byte(0x00C80000UL))
@@ -252,7 +252,7 @@ void detect_nova(void)
         novaregbase = (UBYTE *)0x00D00000UL;
         novamembase = (UBYTE *)0x00C00000UL;
         has_nova = 1;
-        use_16bit_io = 0;
+        use_16bit_io = FALSE;
     }
 
     if (has_nova)
@@ -490,7 +490,7 @@ static void ramdac_68860_config(void)
 
 /* Unlock or lock the clock selection of the CH8398 RAM DAC.
    Note that RS2 must be set to high before calling this function. */
-static void ramdac_ch8398_unlock(int unlock)
+static void ramdac_ch8398_unlock(BOOL unlock)
 {
     /* Magic access sequence for Clock Select Register */
     FORCE_READ(VGAREG(DAC_PEL));
@@ -510,7 +510,7 @@ static void ramdac_ch8398_config(void)
 {
     mach_dac_setrs2rs3(1);    /* RS2=1, select DAC registers 4 - 7 */
     /* unlock clock settings */
-    ramdac_ch8398_unlock(1);
+    ramdac_ch8398_unlock(TRUE);
 
     /* Access control register and set it to 8bpp mode */
     VGAREG(DAC_PEL) = 0x04;
@@ -654,7 +654,7 @@ static void init_nova_resolution(MACH_TYPE mach_type)
      */
     if (m64_dac_type == M64_DAC_CH8398) {
         mach_dac_setrs2rs3(1);  /* RS2 = 1 */
-        ramdac_ch8398_unlock(0);
+        ramdac_ch8398_unlock(FALSE);
         mach_dac_setrs2rs3(0);
     }
 }
@@ -701,19 +701,19 @@ static void count_vbls(void)
 }
 
 /* Test that video memory is accessible */
-static int test_video_memory(void)
+static BOOL test_video_memory(void)
 {
     /* Note that novamembase is declared volatile,
        so the compiler won't optimize this out. */
     *novamembase = 0x00;
     if (*novamembase != 0x00)
-        return 0;
+        return FALSE;
 
     *novamembase = 0x55;
     if (*novamembase != 0x55)
-        return 0;
+        return FALSE;
 
-    return 1;
+    return TRUE;
 }
 
 /* Sets system variables so that EmuTOS will use the graphics card */
@@ -738,7 +738,7 @@ static void init_system_vars(void)
 }
 
 /* Initialize Nova card */
-int init_nova(void)
+BOOL init_nova(void)
 {
     MACH_TYPE mach_type;
 
@@ -746,7 +746,7 @@ int init_nova(void)
 
     /* Fail if detect_nova() hasn't found card */
     if (!has_nova)
-        return 0;
+        return FALSE;
 
     if (!is_crazydots) {
         /* Detect ATI Mach (as opposed to ET4000). */
@@ -773,7 +773,7 @@ int init_nova(void)
      */
     if (!check_for_vga()) {
         KDEBUG(("No Nova or no VGA card found\n"));
-        return 0;
+        return FALSE;
     }
 
     if (!IS_MACH) {   /* ET4000 */
@@ -794,12 +794,12 @@ int init_nova(void)
     if (!test_video_memory()) {
         KDEBUG(("Nova memory inaccessible\n"));
         /* TODO: Try alternative address, like driver does */
-        return 0;
+        return FALSE;
     }
 
     init_system_vars();
 
-    return 1;
+    return TRUE;
 }
 
 UBYTE* get_novamembase(void)

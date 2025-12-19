@@ -15,7 +15,7 @@
 
 #if CONF_WITH_NOVA
 void detect_nova(void);
-int init_nova(void);
+BOOL init_nova(void);
 UBYTE* get_novamembase(void);
 #endif
 
