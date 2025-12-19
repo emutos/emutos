@@ -11,7 +11,6 @@
  */
 
 /* #define ENABLE_KDEBUG */
-/* #define DEBUG_REGISTER_WRITES */
 
 #include "emutos.h"
 #include "asm.h"
@@ -162,11 +161,6 @@ static inline void set_idxreg(UWORD port, UBYTE reg, UBYTE value)
     VGAREG(port) = reg;
     SHORT_DELAY;
     VGAREG(port+1) = value;
-#ifdef DEBUG_REGISTER_WRITES
-    UBYTE readback = VGAREG(port+1);
-    if (readback != value)
-        KDEBUG(("error %03x(%02x): %02x!=%02x\n", port, reg, readback, value));
-#endif
 }
 
 /* Write multiple indexed VGA register */
