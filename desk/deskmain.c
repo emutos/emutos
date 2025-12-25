@@ -753,8 +753,10 @@ static WORD do_filemenu(WORD item)
         done = pro_run(FALSE, DEF_CONSOLE, G.g_work, -1, -1);
         if (done && pw)
         {
+#if CONF_WITH_PCGEM
             /*
              * set default directory according to path in topped window
+             * note: shel_wdef is only available with CONF_WITH_PCGEM
              */
             char *p;
 
@@ -762,6 +764,7 @@ static WORD do_filemenu(WORD item)
             p = filename_start(G.g_work);
             *p = '\0';
             shel_wdef("", G.g_work);
+#endif
         }
         break;
 #endif
