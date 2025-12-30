@@ -157,7 +157,7 @@ static long XHReserve(UWORD major, UWORD minor, UWORD do_reserve, UWORD key)
             return ret;
     }
 
-    return EINVFN;
+    return ERR;
 }
 
 static long XHLock(UWORD major, UWORD minor, UWORD do_lock, UWORD key)
@@ -168,7 +168,7 @@ static long XHLock(UWORD major, UWORD minor, UWORD do_lock, UWORD key)
             return ret;
     }
 
-    return EINVFN;
+    return ERR;
 }
 
 static long XHStop(UWORD major, UWORD minor, UWORD do_stop, UWORD key)
@@ -179,7 +179,7 @@ static long XHStop(UWORD major, UWORD minor, UWORD do_stop, UWORD key)
             return ret;
     }
 
-    return EINVFN;
+    return ERR;
 }
 
 static long XHEject(UWORD major, UWORD minor, UWORD do_eject, UWORD key)
@@ -190,7 +190,7 @@ static long XHEject(UWORD major, UWORD minor, UWORD do_eject, UWORD key)
             return ret;
     }
 
-    return EINVFN;
+    return ERR;
 }
 
 static long XHInqDriver(UWORD bios_device, char *name, char *version, char *company, UWORD *ahdi_version, UWORD *max_IPL)
@@ -358,7 +358,7 @@ static long XHLastAccess(UWORD major, UWORD minor, ULONG *ms)
             return ret;
     }
 
-    return EINVFN;
+    return ERR;
 }
 
 static long XHReaccess(UWORD major, UWORD minor)
@@ -369,7 +369,7 @@ static long XHReaccess(UWORD major, UWORD minor)
             return ret;
     }
 
-    return EINVFN;
+    return ERR;
 }
 
 /*=========================================================================*/
