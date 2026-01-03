@@ -125,12 +125,18 @@ jobs:
         echo VERSION=$VERSION >> $GITHUB_ENV
         echo VERSION=$VERSION
         cd tools
-        # macOS native x86_64
+        # macOS x86_64
         make clean
-        make install ARCH=macos-intel
+        make install ARCH=macos-intel CFLAGS='-target x86_64-apple-macos'
         # macOS Aarch64 / Apple Silicon
         make clean
         make install ARCH=macos-aarch64 CFLAGS='-target arm64-apple-macos'
+        # fat binaries
+        cd dist/macos-aarch64
+        mkdir ../macos
+        for bin in *; do lipo "$bin" "../macos-intel/$bin"  -create -output "../macos/$bin"; done
+        cd ../..
+        rm -rf dist/macos-aarch64/ dist/macos-intel/
     - name: Display resulting tree
       run: ls -lR tools/dist/
     - name: Package binaries
