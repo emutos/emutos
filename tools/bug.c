@@ -57,7 +57,7 @@
 #include <time.h>
 #include "../include/portab.h"
 
-#define VERSION "0.3"
+#define VERSION "0.4"
 
 #define ALERT_TEXT_WARNINGS 1   /* 1 => generate warning msgs */
 #define MAX_LINE_COUNT      5   /* validation values */
@@ -541,7 +541,10 @@ typedef struct {
     char *lasttrans;
     char *langteam;
     char *charset;
-    char *other;
+    char *mimeversion;
+    char *transfer_encoding;
+    char *language;
+    str *other;
 } ae_t;
 
 static void fill_pot_ae(ae_t *a)
@@ -549,7 +552,10 @@ static void fill_pot_ae(ae_t *a)
     a->lasttrans = "FULL NAME <EMAIL@ADDRESS>";
     a->langteam = "LANGUAGE";
     a->charset = "CHARSET";
-    a->other = "";
+    a->mimeversion = "1.0";
+    a->transfer_encoding = "8bit";
+    a->language = "";
+    a->other = NULL;
 }
 
 static char * ae_to_string(ae_t *a)
@@ -560,65 +566,100 @@ static char * ae_to_string(ae_t *a)
     s_addstr(s, "\nMIME-Version: 1.0\nContent-Type: text/plain; charset=");
     s_addstr(s, a->charset);
     s_addstr(s, "\nContent-Transfer-Encoding: 8bit\n");
-    s_addstr(s, a->other);
+    if (a->other)
+        s_addstr(s, s_detach(a->other));
     return s_detach(s);
-}
-
-static int ae_check_line(char **cc, char *start, char **end)
-{
-    char *c, *t;
-    int n = strlen(start);
-    int m;
-    c = *cc;
-    if (strncmp(c, start, n))
-    {
-        warn("Expecting \"%s\" in administrative entry", start);
-        return 0;
-    }
-    t = strchr(c+n, '\n');
-    if (t == NULL)
-    {
-        warn("Fields in administrative entry must end with \\n");
-        return 0;
-    }
-    *cc = t + 1;
-    m = t - (c+n);
-    t = xmalloc(m+1);
-    memmove(t, c+n, m);
-    t[m] = 0;
-    *end = t;
-    return 1;
 }
 
 static int parse_ae(char *msgstr, ae_t *a)
 {
     char *c = msgstr;
-    char *tmp;
-    if (!ae_check_line(&c, "Last-Translator: ", &a->lasttrans))
-        goto fail;
-    if (!ae_check_line(&c, "Language-Team: ", &a->langteam))
-        goto fail;
-    if (!ae_check_line(&c, "MIME-Version: ", &tmp))
-        goto fail;
-    if (strcmp(tmp, "1.0"))
+    char *t;
+    int m;
+    int ret = 1;
+
+    memset(a, 0, sizeof(*a));
+    if (msgstr == NULL || *msgstr == '\0')
+    {
+        warn("Empty administrative entry");
+        return 0;
+    }
+
+#define AE_CHECK(s, f) \
+    else if (strncmp(c, s, sizeof(s) - 1) == 0) \
+    { \
+        char *val = c + sizeof(s) - 1; \
+        while (*val == ' ') val++; \
+        m = t - val; \
+        a->f = xmalloc(m + 1); \
+        memcpy(a->f, val, m); \
+        a->f[m] = '\0'; \
+    }
+
+    for (;;)
+    {
+        t = strchr(c, '\n');
+        if (t == NULL)
+        {
+            warn("Fields in administrative entry must end with \\n");
+            return 0;
+        }
+        if (0) { }
+        AE_CHECK("Last-Translator:", lasttrans)
+        AE_CHECK("Language-Team:", langteam)
+        AE_CHECK("MIME-Version:", mimeversion)
+        AE_CHECK("Content-Type: text/plain; charset=", charset)
+        AE_CHECK("Content-Transfer-Encoding:", transfer_encoding)
+        AE_CHECK("Language:", language)
+        else
+        {
+            m = t - c;
+            /* warn("unsupported administrative entry %.*s", m, c); */
+            if (a->other == NULL)
+                a->other = s_new();
+            while (c <= t)
+            {
+                s_addch(a->other, *c);
+                c++;
+            }
+        }
+        c = t + 1;
+        if (*c == '\0')
+            break;
+    }
+#undef AE_CHECK
+
+    if (a->lasttrans == NULL)
+    {
+        warn("Expecting \"%s\" in administrative entry", "Last-Translator");
+        ret = 0;
+    }
+    if (a->langteam == NULL)
+    {
+        warn("Expecting \"%s\" in administrative entry", "Language-Team");
+        ret = 0;
+    }
+#if 0
+    if (a->language == NULL || *a->language == '\0')
+    {
+        warn("Expecting \"%s\" in administrative entry", "Language");
+        ret = 0;
+    }
+#endif
+    if (a->mimeversion == NULL || strcmp(a->mimeversion, "1.0") != 0)
     {
         warn("MIME version must be 1.0");
-        goto fail;
+        ret = 0;
     }
-    if (!ae_check_line(&c, "Content-Type: text/plain; charset=", &a->charset))
-        goto fail;
-    if (!ae_check_line(&c, "Content-Transfer-Encoding: ", &tmp))
-        goto fail;
-    if (strcmp(tmp, "8bit"))
+    if (a->transfer_encoding == NULL || strcmp(a->transfer_encoding, "8bit") != 0)
     {
         warn("Content-Transfer-Encoding must be 8bit");
-        goto fail;
+        ret = 0;
     }
-    a->other = xstrdup(c);
-    return 1;
-fail:
-    warn("Error in administrative entry");
-    return 0;
+    if (ret == 0)
+        warn("Error in administrative entry");
+
+    return ret;
 }
 
 
