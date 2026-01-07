@@ -664,6 +664,8 @@ static int write_i18n_file(char *path)
     {
         fprintf(fp, "#define CONF_MULTILANG 1\n");
         fprintf(fp, "#define CONF_WITH_NLS 1\n");
+        fprintf(fp, "#define NLS_USE_RAM_HASH 1\n");
+        fprintf(fp, "#define NLS_USE_ASM_HASH 1\n");
     }
 
     fclose(fp);

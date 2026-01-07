@@ -13,9 +13,12 @@
 #ifndef LANGS_H
 #define LANGS_H
 
+typedef unsigned short nls_key_offset;
+
 struct lang_info {
-  const char *name;
-  const char * const * const *hash;
+  char name[3]; /* LANG_LEN */
+  const char *translations;
+  const nls_key_offset *const *hash;
 };
 
 extern const struct lang_info * const langs[];

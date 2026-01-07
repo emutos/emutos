@@ -52,6 +52,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdarg.h>
 #include <getopt.h>
 #include <time.h>
@@ -85,6 +86,7 @@ static char *filelist_file = FILELIST_FILE;
 static char *messages_file = MESSAGES_FILE;
 
 static int wants_linenum_xrefs = 0; /* no linenumber xrefs by default */
+static int report_statistics = 0;
 
 static char *usagemsg[] = {
     "Usage: " TOOLNAME " [options] command\n",
@@ -107,6 +109,9 @@ static char *usagemsg[] = {
     "tool to create the C file(s) at the end, though.\n",
     NULL
 };
+
+#define INT_TO_PTR(p)    ((void *)(intptr_t)(p))
+#define INT_FROM_POINTER(p) ((int)(intptr_t)(p))
 
 /*
  * typedefs
@@ -1068,7 +1073,7 @@ parse_c_action pca_xgettext[] = { {
     pca_xgettext_other,
 } };
 
-static int print_canon(FILE *, const char *, const char *, bool);
+static int print_canon(FILE *, const char *, const char *, bool, bool);
 
 /* pcati - Parse C Action Translate Info */
 typedef struct pcati {
@@ -1098,7 +1103,7 @@ static void pca_translate_gstring(void *this, str *s, char *fname, int lineno)
             p->conv(t);  /* convert the string */
         }
     }
-    print_canon(p->f, t, NULL, TRUE);
+    print_canon(p->f, t, NULL, TRUE, FALSE);
     free(t);
 }
 
@@ -1108,7 +1113,7 @@ static void pca_translate_string(void *this, str *s)
     char *t;
 
     t = s_detach(s);
-    print_canon(p->f, t, NULL, TRUE);
+    print_canon(p->f, t, NULL, TRUE, FALSE);
     free(t);
 }
 
@@ -1702,7 +1707,7 @@ static int is_gem_alert(const char *t)
 #define CANON_GEM_ALERT 1
 
 static int print_canon(FILE *f, const char *t, const char *prefix,
-        int encode_extended_ascii)
+        bool encode_extended_ascii, bool eos)
 {
     unsigned a;
     int translate = 0;
@@ -1727,20 +1732,25 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
     {
         if (translate)
             fprintf(f,"\"\"\\\n");           /* insert backslash before newline */
-        else
-            fprintf(f, "\"\"\n%s", prefix);
+        else if (!eos)
+            fprintf(f, "\"\"\n");
     }
 
 #if CANON_GEM_ALERT
     if (is_gem_alert(t))
     {
-        fprintf(f, "\"[%c][\"\n%s", t[1], prefix);
+        if (eos)
+            fprintf(f, "%s\"[%c][\"\n", prefix, t[1]);
+        else
+            fprintf(f, "\"[%c][\"\n%s", t[1], prefix);
         t += 4;
         line_start = t;
         gem_alert = 1;
     }
 #endif /* CANON_GEM_ALERT */
 
+    if (eos)
+        fprintf(f, "%s", prefix);
     fprintf(f, "\"");
     while(*t)
     {
@@ -1817,6 +1827,8 @@ static int print_canon(FILE *f, const char *t, const char *prefix,
         }
         t++;
     }
+    if (eos)
+        fprintf(f, "\\0");
     fprintf(f, "\"");
 
     return rc;
@@ -1925,9 +1937,9 @@ static void print_po_file(FILE *f, oh *o)
             prefix = "";
         }
         fprintf(f, "%smsgid ", prefix);
-        print_canon(f, e->msgid.key, prefix, TRUE);
+        print_canon(f, e->msgid.key, prefix, TRUE, FALSE);
         fprintf(f, "\n%smsgstr ", prefix);
-        print_canon(f, e->msgstr, prefix, FALSE);
+        print_canon(f, e->msgstr, prefix, FALSE, FALSE);
         fputs("\n\n", f);
     }
 }
@@ -2302,6 +2314,10 @@ static converter_t get_converter(const char * from, const char * to)
 #define TH_MASK (TH_SIZE - 1)
 #define TH_BMASK ((1 << (16 - TH_BITS)) - 1)
 
+/*
+ * this hash function must be the same as the one used later to lookup the translations
+ * (nls.c, nslasm.S)
+ */
 static int compute_th_value(const char *t)
 {
     const uchar *u = (const uchar *) t;
@@ -2316,8 +2332,8 @@ static int compute_th_value(const char *t)
         a += *u++;
     }
     b = (a >> TH_BITS) & TH_BMASK;
-    a &= TH_MASK;
     a ^= b;
+    a &= TH_MASK;
     return a;
 }
 
@@ -2356,7 +2372,7 @@ static void make(void)
     int i, n, j, m;
     FILE *f;
     poe *eref;
-    char tmp[20];
+    char tmp[80];
     char *t;
     char lang[LANG_LEN];
     da *langs;
@@ -2364,6 +2380,9 @@ static void make(void)
     converter_t converter;
     int numref = 0;   /* number of entries in the reference */
     int numtransl;    /* number of translated entries */
+    str *keys; /* for all the key strings */
+    int num_collisions;
+    int total_translations;
 
     langs = da_new();
 
@@ -2391,35 +2410,54 @@ static void make(void)
     fprintf(f, "#if CONF_WITH_NLS\n\n");
     fprintf(f, "#include \"langs.h\"\n\n");
 
-    /* generate the default strings table, and store the
-     * name of the key string in msgstr
+    /* generate the default strings table, store the
+     * key strings in keys, and their offsets in msgstr
      */
     fprintf(f, "/*\n");
-    fprintf(f, " * The keys for hash tables below.\n");
+    fprintf(f, " * The strings for hash tables below.\n");
     fprintf(f, " */\n\n");
+    fprintf(f, "char const nls_key_strings[] = {\n");
+    fprintf(f, "  /* %5u */ \"\\0\"\n", 0);
 
+    keys = s_new();
+    /*
+     * must reserve first byte of keys
+     * since an offset of 0 terminates the hash table
+     */
+    s_addch(keys, '\0');
     m = o_len(oref);
     for (j = 0; j < m; j++)
     {
         eref = o_nth(oref, j);
-        if (eref->kind == KIND_NORM)
+        if (eref->kind == KIND_NORM && *eref->msgid.key != '\0')
         {
-            sprintf(tmp, "nls_key_%d", j);
-            eref->msgstr = xstrdup(tmp);
-            fprintf(f, "static const char %s [] __attribute__((unused)) = ", tmp);
-            print_canon(f, eref->msgid.key, "  ", TRUE);
-            fprintf(f, ";\n");
+            sprintf(tmp, "  /* %5u */ ", keys->len);
+            /* store offset to key */
+            eref->msgstr = INT_TO_PTR(keys->len);
+            s_addstr(keys, eref->msgid.key);
+            s_addch(keys, '\0');
+            print_canon(f, eref->msgid.key, tmp, TRUE, TRUE);
+            fprintf(f, "\n");
             numref++;
         }
     }
-    fprintf(f, "\n\n");
+    fprintf(f, "};\n\n");
+    if (report_statistics)
+        printf("%s: %u bytes\n", "en", keys->len);
+    if ((size_t)keys->len >= (size_t)65536)
+    {
+        fatal("%s: length of keys %d does not fit into nls_key_offset", messages_file, keys->len);
+    }
 
     /* for each language, generate a hash table, pointing
      * back to the keys output above
      */
     n = da_len(d);
+    total_translations = keys->len;
     for (i = 0; i < n; i++)
     {
+        str *translations;
+
         /* clear target hash */
         for (j = 0; j < TH_SIZE; j++)
         {
@@ -2453,9 +2491,17 @@ static void make(void)
 
         converter = get_converter(from_charset, to_charset);
 
+        translations = s_new();
+        /*
+         * must reserve first byte of translations,
+         * since an offset of 0 terminates the hash table
+         */
+        s_addch(translations, '\0');
+
         /* compare o to oref */
         numtransl = 0;
         m = o_len(o);
+        num_collisions = 0;
         for (j = 0; j < m; j++)
         {
             poe *e = o_nth(o, j);
@@ -2467,19 +2513,57 @@ static void make(void)
                     int a = compute_th_value(e->msgid.key);
                     if (th[a] == 0)
                         th[a] = da_new();
+                    else
+                        num_collisions++;
                     da_add(th[a], eref->msgstr);
                     /* translate into destination encoding */
                     converter(e->msgstr);
-                    da_add(th[a], e->msgstr);
+                    da_add(th[a], INT_TO_PTR(translations->len));
+                    s_addstr(translations, e->msgstr);
+                    s_addch(translations, '\0');
                     numtransl++;
                 }
             }
+        }
+        total_translations += translations->len;
+        if (report_statistics)
+        {
+            printf("%s: %u bytes\n", lang, translations->len);
+            /* key is always the same, so we need that info only once: */
+            if (i == 0)
+                printf("%d/%d hash collisions\n", num_collisions, numtransl);
+        }
+        if ((size_t)translations->len >= (size_t)65536)
+        {
+            fatal("po/%s.po: length of translations %d does not fit into nls_key_offset", lang, translations->len);
         }
 
         /* print stats if some entries are missing */
         if (numtransl < numref)
             printf("lang %s: %d untranslated entr%s\n",
                     lang, numref - numtransl, (numref - numtransl == 1)? "y" : "ies");
+
+        /* dump the translations */
+        fprintf(f, "/*\n");
+        fprintf(f, " * translations for lang %s.\n", lang);
+        fprintf(f, " */\n\n");
+        fprintf(f, "static char const msg_%s_translations[] = {\n", lang);
+        for (j = 0; j < translations->len; )
+        {
+            int rc;
+
+            t = translations->buf + j;
+            sprintf(tmp, "    /* %5u */ ", j);
+            rc = print_canon(f, t, tmp, TRUE, TRUE);
+            if (rc < 0) /* error in alert format */
+            {
+                sprintf(tmp, "msg_%s_translations[%u]", lang, j);
+                print_alert_warning(rc, lang, tmp);
+            }
+            fprintf(f, "\n");
+            j += strlen(t) + 1;
+        }
+        fprintf(f, "};\n\n");
 
         /* dump the hash table */
         fprintf(f, "/*\n");
@@ -2489,48 +2573,50 @@ static void make(void)
         {
             if (th[j] != 0)
             {
-                int ii, nn, rc;
-                fprintf(f, "static const char * const msg_%s_hash_%d[] = {\n", lang, j);
+                int ii, nn;
+                fprintf(f, "static nls_key_offset const msg_%s_hash_%d[] = {\n", lang, j);
                 nn = da_len(th[j]);
                 for (ii = 0; ii < nn; ii += 2)
                 {
-                    char *keyname, *translation;
-                    keyname = da_nth(th[j],ii);
-                    translation = da_nth(th[j],ii+1);
+                    int key_offset, translation_offset;
+                    key_offset = INT_FROM_POINTER(da_nth(th[j], ii));
+                    translation_offset = INT_FROM_POINTER(da_nth(th[j], ii+1));
 
-                    fprintf(f, "  %s, ", keyname);
-                    rc = print_canon(f, translation, "    ", TRUE);
-                    if (rc < 0) /* error in alert format */
-                        print_alert_warning(rc, lang, keyname);
-                    else        /* check for bad format of translated alerts */
+                    /* check for bad format of translated alerts */
+                    if (is_gem_alert(keys->buf + key_offset) != is_gem_alert(translations->buf + translation_offset))
                     {
-                        eref = o_nth(oref, atoi(keyname+8));
-                        if (is_gem_alert(eref->msgid.key) != is_gem_alert(translation))
-                            print_alert_warning(AC_MISMATCH, lang, keyname);
+                        sprintf(tmp, "nls_key_strings[%u]", key_offset);
+                        print_alert_warning(AC_MISMATCH, lang, tmp);
                     }
-                    fprintf(f, ",\n");
+                    fprintf(f, "  %u, %u,\n", key_offset, translation_offset);
                 }
                 fprintf(f, "  0\n};\n\n");
             }
         }
-        fprintf(f, "static const char * const * const msg_%s[] = {\n", lang);
+        fprintf(f, "static const nls_key_offset *const msg_%s[] = {\n", lang);
         for (j = 0; j < TH_SIZE; j++)
         {
+            fprintf(f, "  ");
             if (th[j])
             {
-                fprintf(f, "  msg_%s_hash_%d,\n", lang, j);
+                fprintf(f, "msg_%s_hash_%d", lang, j);
                 da_free(th[j]);
             }
             else
             {
-                fprintf(f, "  0,\n");
+                fprintf(f, "0");
             }
+            if (j < TH_SIZE - 1)
+                fprintf(f, ",");
+            fprintf(f, "\n");
         }
-        fprintf(f, "  0\n};\n\n");
+        fprintf(f, "};\n\n");
 
         /* free this po */
         o_free(o);
     }
+    if (report_statistics)
+        printf("%s: %u bytes\n", "total", total_translations);
 
     /* print a lang table */
     fprintf(f, "/*\n");
@@ -2540,7 +2626,7 @@ static void make(void)
     for (i = 0; i < n; i++)
     {
         t = da_nth(langs, i);
-        fprintf(f, "static const struct lang_info lang_%s = { \"%s\", msg_%s };\n", t, t, t);
+        fprintf(f, "static const struct lang_info lang_%s = { \"%s\", msg_%s_translations, msg_%s };\n", t, t, t, t);
     }
     fprintf(f, "\n");
     fprintf(f, "const struct lang_info * const langs[] = {\n");
@@ -2658,10 +2744,13 @@ int main(int argc, char **argv)
 {
 int n;
 
-    while((n=getopt(argc,argv,"LV")) != -1) {
+    while((n=getopt(argc,argv,"sLV")) != -1) {
         switch(n) {
         case 'L':
             wants_linenum_xrefs++;
+            break;
+        case 's':
+            report_statistics++;
             break;
         case 'V':
             fprintf(stderr, TOOLNAME " version " VERSION "\n");

@@ -13,31 +13,39 @@
 #include "asmdefs.h"
 #include "i18nconf.h"
 
-#if CONF_WITH_NLS
+#if CONF_WITH_NLS && NLS_USE_ASM_HASH
+
+#define RAM_HASH_SIZE 1024
+#define RAM_HASH_MASK ((RAM_HASH_SIZE-1)*8)
+
+#define TH_BITS 10
+#define TH_SIZE (1<<TH_BITS)
+#define TH_MASK (TH_SIZE-1)
+#define TH_BMASK ((1<<(16-TH_BITS))-1)
 
 // set this to one to first hash addresses in RAM before
 // computing actual string hashes. (experimental)
 
-#define USE_RAM_HASH 1
-
         .globl  _gettext
         .globl  _gettext_init
 
-        .extern _nls_hash       // current hash
+        .extern _nls_hash         // current hash
+        .extern _nls_key_strings
+        .extern _nls_translations // current translation strings
         .extern _memset
 
         .text
 
 _gettext_init:
 
-#if USE_RAM_HASH
+#if NLS_USE_RAM_HASH
 // clear the RAM hash
-        move.l  #(1024+10)*8,-(sp)
+        move.l  #(RAM_HASH_SIZE+10)*8,-(sp)
         clr.w   -(sp)
         pea     ram_hash
         jsr     _memset
         lea     10(sp),sp
-#endif  /* USE_RAM_HASH */
+#endif  /* NLS_USE_RAM_HASH */
         rts
 
 _gettext:
@@ -53,7 +61,7 @@ empty:
         move.l  a0,d0
         rts
 next:
-#if USE_RAM_HASH
+#if NLS_USE_RAM_HASH
         move.l  4(sp),d0
         move.l  d0,a1
         lsl.l   #3,d0
@@ -62,12 +70,12 @@ next:
         swap    d1
 #ifdef __mcoldfire__
         add.l   d1,d0
-        and.l   #0x1ff8,d0
+        and.l   #RAM_HASH_MASK,d0
         lea     ram_hash,a0
         add.l   d0,a0
 #else
         add.w   d1,d0
-        and.w   #0x1ff8,d0
+        and.w   #RAM_HASH_MASK,d0
         lea     ram_hash,a0
         add.w   d0,a0
 #endif
@@ -89,7 +97,7 @@ rh_found:
         move.l  (a0)+,d0
         rts
 rh_not_found:
-#endif  /* USE_RAM_HASH */
+#endif  /* NLS_USE_RAM_HASH */
 
         move.l  4(sp),a0
         moveq   #0,d0
@@ -121,18 +129,18 @@ hash_next:
         move.w  a1,d1
         lsl.l   #6,d1
         swap    d1
-        and.l   #0x003F,d1
+        and.l   #TH_BMASK,d1
         eor.l   d1,d0
-        and.l   #0x03FF,d0
+        and.l   #TH_MASK,d0
         lsl.l   #2,d0
         move.l  _nls_hash,a0
         move.l  (a0,d0.l),a0
         cmp.l   #0,a0
 #else
         rol.w   #6,d1
-        and.w   #0x003F,d1
+        and.w   #TH_BMASK,d1
         eor.w   d1,d0
-        and.w   #0x03FF,d0
+        and.w   #TH_MASK,d0
         lsl.w   #2,d0
         move.l  _nls_hash,a0
         move.l  (a0,d0.w),a0
@@ -142,14 +150,15 @@ hash_next:
 // not in hash, return original string
 not_found:
         move.l  4(sp),d0
-#if USE_RAM_HASH
+#if NLS_USE_RAM_HASH
         jra     store_ram_hash
 #else
         rts
 #endif
 
 search:
-        move.l  (a0)+,d1
+        moveq   #0,d1
+        move.w  (a0)+,d1
         jeq     not_found
 #ifdef __mcoldfire__
         move.l  a0,a1
@@ -158,6 +167,8 @@ search:
 #else
         exg     a0,d1
 #endif
+        lea     _nls_key_strings,a1
+        add.l   a1,a0
         move.l  4(sp),a1
 strcmp:
         move.b  (a0)+,d0
@@ -167,16 +178,18 @@ strcmp:
 // the strings differ, next
 strneq:
         move.l  d1,a0
-        addq.l  #4,a0
+        addq.l  #2,a0
         jra     search
 strend:
         tst.b   (a1)
         jne     strneq
 // strings are equal, return next string
         move.l  d1,a0
-        move.l  (a0),d0
+        moveq   #0,d0
+        move.w  (a0),d0
+        add.l   _nls_translations,d0
 
-#if USE_RAM_HASH
+#if NLS_USE_RAM_HASH
 store_ram_hash:
         move.l  d0,a1
         lsl.l   #3,d0
@@ -185,12 +198,12 @@ store_ram_hash:
         swap    d1
 #ifdef __mcoldfire__
         add.l   d1,d0
-        and.l   #0x1ff8,d0
+        and.l   #RAM_HASH_MASK,d0
         lea     ram_hash,a0
         add.l   d0,a0
 #else
         add.w   d1,d0
-        and.w   #0x1ff8,d0
+        and.w   #RAM_HASH_MASK,d0
         lea     ram_hash,a0
         add.w   d0,a0
 #endif
@@ -212,14 +225,14 @@ srh_free_slot:
         move.l  a1,(a0)
 srh_end:
         move.l  a1,d0
-#endif /* USE_RAM_HASH */
+#endif /* NLS_USE_RAM_HASH */
         rts
 
         .bss
-#if USE_RAM_HASH
+#if NLS_USE_RAM_HASH
 ram_hash:
-        .ds.l   2048    // 1024 entries
-        .ds.l   20      // 10 additional slots.
-#endif /* USE_RAM_HASH */
+        .ds.l   RAM_HASH_SIZE*2    // 1024 entries
+        .ds.l   10*2      // 10 additional slots.
+#endif /* NLS_USE_RAM_HASH */
 
 #endif /* CONF_WITH_NLS */
