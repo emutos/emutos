@@ -94,6 +94,7 @@ extern UNIT units[];
 /* physical disk functions */
 
 #if CONF_WITH_XHDI
+BOOL disk_valid_major(UWORD major);
 LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen);
 #endif
 

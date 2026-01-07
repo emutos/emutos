@@ -998,6 +998,20 @@ static LONG internal_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, c
 }
 
 #if CONF_WITH_XHDI
+
+/*
+ * is this hard disk managed by EmuTOS?
+ */
+BOOL disk_valid_major(UWORD major)
+{
+    UWORD unit = major + NUMFLOPPIES;
+    if (unit < UNITSNUM) {
+        return units[unit].valid != 0;
+    } else {
+        return FALSE;
+    }
+}
+
 /* Get unit information, whatever low-level driver is used. */
 LONG disk_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen)
 {
