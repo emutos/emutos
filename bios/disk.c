@@ -94,25 +94,97 @@ int ultrasatan_id;
 #endif
 
 /*==== Internal declarations ==============================================*/
+#if !CONF_WITH_EXTERNAL_DISK_DRIVER
 static int atari_partition(UWORD unit,LONG *devices_available);
+#endif
 #if DETECT_NATIVE_FEATURES
 static LONG natfeats_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen);
 #endif
 static LONG internal_inquire(UWORD unit, ULONG *blocksize, ULONG *deviceflags, char *productname, UWORD stringlen);
+
+/* scan disk majors in the following order */
+static const int majors[] =
+{
+#if CONF_WITH_IDE
+    16, 18, 17, 19, 20, 22, 21, 23,     /* IDE primary/secondary */
+#endif
+#if CONF_WITH_SCSI || CONF_WITH_ARANYM
+    8, 9, 10, 11, 12, 13, 14, 15,       /* SCSI */
+#endif
+#if CONF_WITH_ACSI
+    0, 1, 2, 3, 4, 5, 6, 7,             /* ACSI */
+#endif
+#if CONF_WITH_SDMMC
+    24, 25, 26, 27, 28, 29, 30, 31      /* SD/MMC */
+#endif
+};
+
+/* implementation of Atari TOS API for executing root sectors */
+static void dmaboot(UWORD unit, void *bootcode)
+{
+    __asm volatile(
+    "lea     -60(sp),sp\n\t"
+    "movem.l d0-d7/a0-a6,(sp)\n\t"
+    "moveq   #0,d4\n\t"
+    "move.w  %0,d4\n\t"  /* unit number */
+    "move.l  d4,d7\n\t"
+    "lsl.w   #5,d7\n\t"  /* ACSI unit number for old AHDI versions */
+    "move.l  #0x444D4172,d3\n\t" /* 'DMAr' */
+    "jsr     (%1)\n\t"
+    "movem.l (sp),d0-d7/a0-a6\n\t"
+    "lea     60(sp),sp"
+    : : "r"(unit-NUMFLOPPIES), "a"(bootcode)
+    : "memory");
+}
+
+/*
+ * scan hard disks found in disk_init_all with no partitions, and execute
+ * the first bootable root sector.
+ */
+void disk_try_dmaboot(void)
+{
+    int i;
+    LONG rc;
+
+    for(i = 0; i < ARRAY_SIZE(majors); i++) {
+        UWORD unit = NUMFLOPPIES + majors[i];
+        /* valid disk with no identified partitions? */
+        if (units[unit].valid && (units[unit].drivemap == 0)) {
+            KDEBUG(("disk_try_dmaboot(): trying unit %d\n", unit));
+            /* read root sector */
+            rc = disk_rw(unit, RW_READ, 0, 1, dskbufp);
+            if (rc == E_OK)
+            {
+                /* calculate checksum */
+                if (compute_cksum((UWORD*)dskbufp) == 0x1234)
+                {
+                    KDEBUG(("disk_try_dmaboot(): executing unit %d bootsector\n", unit));
+                    dmaboot(unit, dskbufp);
+                    /* only boot first bootable disk */
+                    break;
+                }
+            }
+        }
+    }
+}
 
 /*
  * scans one unit and adds all found partitions
  */
 static void disk_init_one(UWORD unit,LONG *devices_available)
 {
-    LONG bitmask, devs, rc;
+    UNIT *punit = &units[unit];
+    LONG rc;
+    WORD shift;
+    int i;
     ULONG blocksize = SECTOR_SIZE;
     ULONG blocks = 0;
-    ULONG device_flags;
-    WORD shift;
-    UNIT *punit = &units[unit];
-    int i, n;
     char productname[40];
+    ULONG device_flags;
+#if !CONF_WITH_EXTERNAL_DISK_DRIVER
+    int n;
+    LONG bitmask, devs;
+#endif
 
     punit->valid = 0;
     punit->features = 0;
@@ -163,6 +235,8 @@ static void disk_init_one(UWORD unit,LONG *devices_available)
     if (device_flags & XH_TARGET_REMOVABLE)
         punit->features |= UNIT_REMOVABLE;
 
+#if !CONF_WITH_EXTERNAL_DISK_DRIVER
+
     /* scan for ATARI partitions on this harddrive */
     devs = *devices_available;  /* remember initial set */
     atari_partition(unit,devices_available);
@@ -195,6 +269,8 @@ static void disk_init_one(UWORD unit,LONG *devices_available)
     }
 #endif /* CONF_WITH_ULTRASATAN_CLOCK */
 
+#endif /* ! CONF_WITH_EXTERNAL_DISK_DRIVER */
+
 }
 
 /*
@@ -210,22 +286,6 @@ LONG    drvrem;
  */
 void disk_init_all(void)
 {
-    /* scan disk majors in the following order */
-    static const int majors[] =
-    {
-#if CONF_WITH_IDE
-        16, 18, 17, 19, 20, 22, 21, 23,     /* IDE primary/secondary */
-#endif
-#if CONF_WITH_SCSI || CONF_WITH_ARANYM
-        8, 9, 10, 11, 12, 13, 14, 15,       /* SCSI */
-#endif
-#if CONF_WITH_ACSI
-        0, 1, 2, 3, 4, 5, 6, 7,             /* ACSI */
-#endif
-#if CONF_WITH_SDMMC
-        24, 25, 26, 27, 28, 29, 30, 31      /* SD/MMC */
-#endif
-    };
     int i;
     LONG devices_available = 0L;
     LONG bitmask;
@@ -384,6 +444,7 @@ void disk_rescan(UWORD unit)
 
 #define ICD_PARTS
 
+#if !CONF_WITH_EXTERNAL_DISK_DRIVER
 /* check if a partition entry looks valid -- Atari format is assumed if at
    least one of the primary entries is ok this way */
 static int VALID_PARTITION(struct partition_info *pi, unsigned long hdsiz)
@@ -472,7 +533,6 @@ static ULONG check_for_no_partitions(UBYTE *sect)
     return size;
 }
 
-
 #define MAXPHYSSECTSIZE 512
 typedef union
 {
@@ -483,7 +543,7 @@ typedef union
     GPT_ENTRY gpt_entries[4];
 } PHYSSECT;
 
-PHYSSECT physsect, physsect2;
+static PHYSSECT physsect, physsect2;
 
 #if CONF_WITH_IDE
 
@@ -917,7 +977,7 @@ static int atari_partition(UWORD unit,LONG *devices_available)
 
     return 1;
 }
-
+#endif /* !CONF_WITH_EXTERNAL_DISK_DRIVER */
 
 /*=========================================================================*/
 

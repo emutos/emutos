@@ -112,4 +112,6 @@ void disk_init_all(void);
 LONG disk_mediach(UWORD unit);
 void disk_rescan(UWORD unit);
 
+void disk_try_dmaboot(void);
+
 #endif /* DISK_H */

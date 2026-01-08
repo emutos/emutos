@@ -49,6 +49,7 @@
 #include "vectors.h"
 #include "asm.h"
 #include "chardev.h"
+#include "disk.h"
 #include "blkdev.h"
 #include "parport.h"
 #include "serport.h"
@@ -550,6 +551,8 @@ static void bios_init(void)
     /* Enable VBL processing */
     swv_vec = os_header.reseth; /* reset system on monitor change & jump to _main */
     vblsem = 1;
+
+    disk_try_dmaboot();
 
 #if CONF_WITH_CARTRIDGE
     {
