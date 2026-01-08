@@ -808,10 +808,13 @@ int main(int argc,char *argv[])
 {
 int n;
 
-    while((n=getopt(argc,argv,"dp:v")) != -1) {
+    while((n=getopt(argc,argv,"dnp:v")) != -1) {
         switch(n) {
         case 'd':
             debug++;
+            break;
+        case 'n':
+            num_shared = 0;
             break;
         case 'p':
             strcpy(prefix,optarg);

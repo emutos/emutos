@@ -18,138 +18,62 @@
 
 #if CONF_WITH_NLS
 
-/* used by nlsasm.S */
-const nls_key_offset *const *nls_hash;
-const char *nls_translations;
-
-void gettext_init(void); /* call each time the hash changes */
+static const nls_key_offset *nls_offsets;
+static const char *nls_translations;
+/* from generated langs.c */
+extern char const nls_key_strings[];
+extern nls_key_offset const msg_en_offsets[];
 
 /* initialisation */
 
 void nls_init(void)
 {
-  nls_hash = 0;
-  gettext_init();
+  nls_offsets = msg_en_offsets;
+  nls_translations = nls_key_strings;
 }
 
 /* functions to query the lang database and to set the lang */
 
 void nls_set_lang(const char *s)
 {
-  int i;
+  const struct lang_info *lang;
 
-  for(i = 0 ; langs[i] ; i++) {
-    if(!strcmp(s, langs[i]->name)) {
-      nls_hash = langs[i]->hash;
-      nls_translations = langs[i]->translations;
-      gettext_init();
+  for(lang = langs; lang->name[0]; lang++) {
+    if(!strcmp(s, lang->name)) {
+      nls_offsets = lang->offsets;
+      nls_translations = lang->translations;
       return ;
     }
   }
 }
 
-#if !NLS_USE_ASM_HASH
-
-#if NLS_USE_RAM_HASH
-#define RAM_HASH_SIZE 1024
-static const char *ram_hash[(RAM_HASH_SIZE + 10) * 2]; /* 1024 entries + 10 additional slots. */
-#endif
-
-void gettext_init(void)
+const char *etos_gettext(unsigned long msgid)
 {
-#if NLS_USE_RAM_HASH
-    memset(ram_hash, 0, sizeof(ram_hash));
-#endif
-}
-
-#define TH_BITS 10
-#define TH_SIZE (1 << TH_BITS)
-#define TH_MASK (TH_SIZE - 1)
-#define TH_BMASK ((1 << (16 - TH_BITS)) - 1)
-
-static unsigned int compute_th_value(const char *t)
-{
-    const unsigned char *u = (const unsigned char *) t;
-    unsigned short a, b;
-
-    a = 0;
-    while (*u)
-    {
-        a = (a << 1) | ((a >> 15) & 1);
-        a += *u++;
-    }
-    b = (a >> TH_BITS) & TH_BMASK;
-    a ^= b;
-    a &= TH_MASK;
-    return a;
-}
-
-/* from generated langs.c */
-extern char const nls_key_strings[];
-
-const char *gettext(const char *key)
-{
-    unsigned int hash;
-    const nls_key_offset *chain;
-    nls_key_offset cmp;
-#if NLS_USE_RAM_HASH
-    const char *entry;
-    int i;
-#define compute_ram_hash(key) (((((unsigned long)key << 3) + (((unsigned long)key << 9) >> 16)) & ((RAM_HASH_SIZE - 1) * (2 * sizeof(void *)))) / sizeof(void *))
-#endif
+  nls_key_offset offset;
 
 /* check for empty string - often used in RSC - must return original address */
-    if (nls_hash == NULL || *key == '\0')
-        return key;
+  if (msgid == 0)
+    return nls_key_strings;
 
-#if NLS_USE_RAM_HASH
-    hash = compute_ram_hash(key);
-    for (i = 0; i < 10; i++)
-    {
-        entry = ram_hash[hash++];
-        if (entry == NULL)
-            break;
-        if (entry == key)
-            return ram_hash[hash];
-        hash++;
-    }
-    /* not found in ram hash; do normal lookup */
-#endif
+  /*
+   * This function is also called on "real" strings, when they are compiled
+   * into a resource file, and are not marked with N_() and thus are not
+   * translated by "bug translate".
+   */
+  if (!(msgid & NLS_MSGID_FLAG))
+    return (const char *)msgid;
+  msgid &= ~NLS_MSGID_FLAG;
 
-    hash = compute_th_value(key);
-    if ((chain = nls_hash[hash]) != NULL)
-    {
-        while ((cmp = *chain++) != 0)
-        {
-            if (strcmp(&nls_key_strings[cmp], key) == 0)
-            {
-                /* strings are equal, return next string */
-#if NLS_USE_RAM_HASH
-                /* store found key in ram hash */
-                hash = compute_ram_hash(key);
-                for (i = 0; i < 10; i++)
-                {
-                    if (ram_hash[hash] == NULL)
-                    {
-                        ram_hash[hash++] = key;
-                        ram_hash[hash] = &nls_translations[*chain];
-                        break;
-                    }
-                    hash += 2;
-                }
-#endif
-                key = &nls_translations[*chain];
-                break;
-            }
-            /* the strings differ, next */
-            chain++;
-        }
-    }
-
-    /* not in hash, return original string */
-    return key;
+  /*
+   * If we can ensure that nls_offsets is always set before this function is called,
+   * the first check can be omitted
+   * (currently this is not the case; in bios_init(), it may be called
+   * before the current language has been set)
+   */
+  if (nls_offsets == NULL || (offset = nls_offsets[msgid - 1]) == 0)
+    /* no translation, return original string */
+    return nls_key_strings + msg_en_offsets[msgid - 1];
+  return nls_translations + offset;
 }
-
-#endif /* NLS_USE_ASM_HASH */
 
 #endif /* CONF_WITH_NLS */

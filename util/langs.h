@@ -18,9 +18,9 @@ typedef unsigned short nls_key_offset;
 struct lang_info {
   char name[3]; /* LANG_LEN */
   const char *translations;
-  const nls_key_offset *const *hash;
+  const nls_key_offset *offsets;
 };
 
-extern const struct lang_info * const langs[];
+extern struct lang_info const langs[];
 
 #endif /* LANGS_H */

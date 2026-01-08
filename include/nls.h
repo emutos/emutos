@@ -17,12 +17,14 @@
 
 /* the gettext-like macros */
 
-#define N_(a) a
-
 #if CONF_WITH_NLS
 
-# define _(a) gettext(a)
-const char *gettext(const char *);
+#define NLS_MSGID_FLAG 0x80000000UL
+
+# define _(a) etos_gettext(a)
+# define N_(a) ((char *)((unsigned long)(a) | NLS_MSGID_FLAG))
+# define gettext(a) etos_gettext((unsigned long)(a))
+const char *etos_gettext(unsigned long msgid);
 
 /* initialisation */
 
@@ -37,6 +39,7 @@ void nls_set_lang(const char *);
 /* Disable NLS / gettext completely */
 
 # define _(a) (a)
+# define N_(a) a
 # define gettext(a) (a)
 
 #endif

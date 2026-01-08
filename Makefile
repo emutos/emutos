@@ -135,6 +135,8 @@ UNIQUEARG =
 ifneq (,$(UNIQUE))
 COUNTRY = $(UNIQUE)
 UNIQUEARG = -u$(UNIQUE)
+else
+NOSHAREARG = -n
 endif
 
 #
@@ -326,7 +328,7 @@ bdos_src = bdosmain.c console.c fsbuf.c fsdir.c fsdrive.c fsfat.c fsglob.c \
 #
 
 util_src = cookie.c doprintf.c intmath.c langs.c memmove.S memset.S miscasm.S \
-           nls.c nlsasm.S setjmp.S string.c lisautil.S miscutil.c
+           nls.c setjmp.S string.c lisautil.S miscutil.c
 
 # The functions in the following modules are used by the AES and EmuDesk
 ifeq ($(WITH_AES),1)
@@ -1008,9 +1010,9 @@ GEN_SRC += $(ICONRSCGEN_BASE).c $(ICONRSCGEN_BASE).h $(MFORMRSCGEN_BASE).c $(MFO
 
 $(DESKRSCGEN_BASE)%c $(DESKRSCGEN_BASE)%h: draft erd $(DESKRSC_BASE)%rsc $(DESKRSC_BASE)%def
 	./draft $(DESKRSC_BASE) temp
-	./erd -pdesk temp $(DESKRSCGEN_BASE)
+	./erd $(NOSHAREARG) -pdesk temp $(DESKRSCGEN_BASE)
 $(GEMRSCGEN_BASE)%c $(GEMRSCGEN_BASE)%h: grd $(GEMRSC_BASE)%rsc $(GEMRSC_BASE)%def
-	./grd $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
+	./grd $(NOSHAREARG) $(GEMRSC_BASE) $(GEMRSCGEN_BASE)
 $(ICONRSCGEN_BASE)%c $(ICONRSCGEN_BASE)%h: ird $(ICONRSC_BASE)%rsc $(ICONRSC_BASE)%def
 	./ird -picon $(ICONRSC_BASE) $(ICONRSCGEN_BASE)
 $(MFORMRSCGEN_BASE)%c $(MFORMRSCGEN_BASE)%h: mrd $(MFORMRSC_BASE)%rsc $(MFORMRSC_BASE)%def
@@ -1146,7 +1148,8 @@ allfirebee:
 # .tr.c french translations). See target obj/country below.
 #
 
-TRANS_SRC = $(shell sed -e '/^[^a-z]/d;s/\.c/.tr&/' <po/POTFILES.in)
+TRANS_CSRC = $(shell sed -e '/^[^a-z]/d' <po/POTFILES.in)
+TRANS_SRC = $(subst .c,.tr.c,$(TRANS_CSRC))
 
 TOCLEAN += */*.tr.c
 
@@ -1157,6 +1160,22 @@ emutos.img: $(TRANS_SRC)
 %.tr.c : %.c po/$(ETOSLANG).po bug po/LINGUAS obj/country
 	./bug translate $(ETOSLANG) $<
 endif
+else
+emutos.img: $(TRANS_SRC)
+#
+# each of the *.tr.c files depends on all sources to be translated,
+# since we must assign unique msg ids for them
+#
+define TR_TEMPLATE
+$(1).tr.c : $(TRANS_CSRC) po/messages.pot bug po/LINGUAS
+
+endef
+
+$(foreach SRC,$(subst .c,,$(TRANS_CSRC)),$(eval $(call TR_TEMPLATE,$(SRC))))
+
+$(TRANS_SRC): po/messages.pot bug po/LINGUAS
+	./bug translate all $(TRANS_CSRC)
+
 endif
 
 #
