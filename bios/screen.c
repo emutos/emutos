@@ -127,6 +127,30 @@ static WORD shifter_get_monitor_type(void)
         return MON_MONO;
 }
 
+int screen_is_pal(void)
+{
+#if CONF_WITH_VIDEL
+    if (has_videl)
+    {
+        /* Falcon */
+        return 0;
+    }
+    else
+#endif
+    if (HAS_TT_SHIFTER)
+    {
+        /* TT */
+        return 0;
+    }
+    /* Atari ST/STe */
+    return 1;
+}
+
+void screen_toggle_pal(void)
+{
+    *(volatile UBYTE *) SYNCMODE ^= 0x02;
+}
+
 #endif /* CONF_WITH_ATARI_VIDEO */
 
 #if CONF_WITH_TT_SHIFTER
