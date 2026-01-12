@@ -948,7 +948,7 @@ bug: tools/bug.c
 
 # even if UNIQUE is specified, we ensure langs.c exists to avoid dependency problems
 util/langs.c: $(POFILES) po/LINGUAS bug po/messages.pot
-	./bug make
+	./bug make || { rm -f $@; false; }
 
 po/messages.pot: bug po/POTFILES.in $(shell grep -v '^#' po/POTFILES.in)
 	./bug xgettext
