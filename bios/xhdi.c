@@ -1,7 +1,7 @@
 /*
  * xhdi.c - XHDI handler
  *
- * Copyright (C) 2001-2025 The EmuTOS development team
+ * Copyright (C) 2001-2026 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
