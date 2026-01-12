@@ -2378,6 +2378,7 @@ static void make(void)
     int numtransl;    /* number of translated entries */
     str *keys; /* for all the key strings */
     int total_translations;
+    unsigned long total_savings;
 
     langs = da_new();
 
@@ -2464,12 +2465,15 @@ static void make(void)
      */
     n = da_len(d);
     total_translations = keys->len;
+    total_savings = 0;
     for (i = 0; i < n; i++)
     {
         str *translations;
         int *th;
         int *ti;
+        unsigned char *have_translation;
         int tr;
+        unsigned long savings;
 
         /* obtain destination charset from languages_file */
         t = da_nth(d, i);
@@ -2504,6 +2508,8 @@ static void make(void)
         memset(th, 0, numref * sizeof(*th));
         ti = xmalloc(numref * sizeof(*ti));
         memset(th, 0, numref * sizeof(*ti));
+        have_translation = xmalloc(numref * sizeof(*have_translation));
+        memset(have_translation, 0, numref * sizeof(*have_translation));
 
         /*
          * must reserve first byte of translations,
@@ -2515,6 +2521,7 @@ static void make(void)
         numtransl = 0;
         m = o_len(o);
         tr = 0;
+        savings = 0;
         for (j = 0; j < m; j++)
         {
             poe *e = o_nth(o, j);
@@ -2530,17 +2537,24 @@ static void make(void)
                         if (e->msgnum == 0)
                         {
                             e->msgnum = eref->msgnum;
+                            have_translation[eref->msgnum - 1] = TRUE;
                             /* translate into destination encoding */
                             converter(e->msgstr);
-                            th[eref->msgnum - 1] = translations->len;
-                            ti[tr] = eref->msgnum;
-                            tr++;
-                            s_addstr(translations, e->msgstr);
-                            s_addch(translations, '\0');
-                            /* check for bad format of translated alerts */
-                            if (is_gem_alert(e->msgid.key) != is_gem_alert(e->msgstr))
+                            if (strcmp(e->msgstr, e->msgid.key) == 0)
                             {
-                                print_alert_warning(AC_MISMATCH, lang, e->msgid.key);
+                                savings += strlen(e->msgstr) + 1;
+                            } else
+                            {
+                                th[eref->msgnum - 1] = translations->len;
+                                ti[tr] = eref->msgnum;
+                                tr++;
+                                s_addstr(translations, e->msgstr);
+                                s_addch(translations, '\0');
+                                /* check for bad format of translated alerts */
+                                if (is_gem_alert(e->msgid.key) != is_gem_alert(e->msgstr))
+                                {
+                                    print_alert_warning(AC_MISMATCH, lang, e->msgid.key);
+                                }
                             }
                         }
                         else
@@ -2566,9 +2580,13 @@ static void make(void)
             }
         }
         total_translations += translations->len;
+        total_savings += savings;
         if (report_statistics)
         {
-            printf("%s: %u bytes\n", lang, translations->len);
+            printf("%s: %u bytes", lang, translations->len);
+            if (savings != 0)
+                printf(" + %lu bytes in duplicate strings", savings);
+            printf("\n");
         }
         if ((size_t)translations->len >= (size_t)65536)
         {
@@ -2612,16 +2630,22 @@ static void make(void)
         fprintf(f, "static const nls_key_offset msg_%s_offsets[] = {\n", lang);
         for (j = 0; j < numref; j++)
         {
-            fprintf(f, "    /* %5u */ %u,%s\n", j + 1, th[j], th[j] == 0 ? " /* missing translation */" : "");
+            fprintf(f, "    /* %5u */ %u,%s\n", j + 1, th[j], th[j] == 0 ? (have_translation[j] ? " /* original string */" : " /* missing translation */") : "");
         }
         fprintf(f, "};\n\n");
         /* free this po */
         o_free(o);
+        free(have_translation);
         free(ti);
         free(th);
     }
     if (report_statistics)
-        printf("%s: %u bytes\n", "total", total_translations);
+    {
+        printf("%s: %u bytes", "total", total_translations);
+        if (total_savings != 0)
+            printf(" (%lu bytes in duplicate strings)", total_savings);
+        printf("\n");
+    }
 
     /* print a lang table */
     fprintf(f, "\n");
