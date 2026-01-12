@@ -963,6 +963,10 @@ static int get_c_string(IFILE *f, str *s)
                     a += (c - '0');
                     c = inextc(f);
                 }
+                if (a == 0)
+                {
+                    fatal("%s:%d: EOS in string constant", f->fname, f->lineno);
+                }
                 s_addch(s, a);
                 iback(f);
             }
@@ -986,6 +990,10 @@ static int get_c_string(IFILE *f, str *s)
                         a += (c - 'a' + 10);
                     }
                     c = inextc(f);
+                }
+                if (a == 0)
+                {
+                    fatal("%s:%d: EOS in string constant", f->fname, f->lineno);
                 }
                 s_addch(s, a);
                 iback(f);
