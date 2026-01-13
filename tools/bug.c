@@ -13,7 +13,6 @@
 
 /*
  * Bugs and limitations:
- * - double quotes within simple quotes are not handled
  * - free comments in po files are put to the end when updating
  * - only _() and N_() macros are handled
  * - no fuzzy or printf-format parameters
@@ -1029,8 +1028,6 @@ static int get_c_string(IFILE *f, str *s)
  * parse c files
  * put strings surrounded by _("...") or N_("...") into the ordered-hash
  *
- * state means :
- * 0 outside names, 1 after 'N', 2 after '_', 3 after '(', 4 in a name
  * when anything meaningful has been parsed, the corresponding structure of
  * the action structure is called.
  */
@@ -1172,9 +1169,10 @@ parse_c_action const pca_translate = {
  *  state   meaning
  *    0     valid place to start token
  *    1     within token starting with 'N'
- *    2     within 'N_' or '_' token
- *    3     valid token ended by '(', can now parse string
- *    4     within invalid token
+ *    2     within '_' or  'N_' token
+ *    3     valid '_(' or  'N_(', can now parse string
+ *    4     parsing some other identifier
+ *    5     inside single quote
  */
 static void parse_c_file(char *fname, const parse_c_action *pca, void *this)
 {
@@ -1245,6 +1243,11 @@ static void parse_c_file(char *fname, const parse_c_action *pca, void *this)
                 /* handle the string */
                 pca->gstring(this, s, fname, lineno);
                 pca->other(this, ')');
+                state = 0;
+            }
+            else if (state == 5)
+            {
+                pca->other(this, c);
             }
             else
             {
@@ -1283,9 +1286,21 @@ static void parse_c_file(char *fname, const parse_c_action *pca, void *this)
                     state = 0;
             }
             else if (is_letter(c) || is_digit(c))
+            {
                 state = 4;
+            }
+            else if (c == '\'')
+            {
+                if (state == 5)
+                    state = 0;
+                else
+                    state = 5;
+            }
             else
-                state = 0;
+            {
+                if (state < 5)
+                    state = 0;
+            }
             pca->other(this, c);
         }
     }
