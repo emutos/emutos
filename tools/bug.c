@@ -1164,7 +1164,7 @@ parse_c_action const pca_translate = {
 /*
  * parse C code
  *
- * the state machine appears to have the following states
+ * the state machine has the following states
  * (info supplied by Eero Tamminen):
  *  state   meaning
  *    0     valid place to start token
@@ -1172,7 +1172,7 @@ parse_c_action const pca_translate = {
  *    2     within '_' or  'N_' token
  *    3     valid '_(' or  'N_(', can now parse string
  *    4     parsing some other identifier
- *    5     inside single quote
+ *    5     inside single quotes
  */
 static void parse_c_file(char *fname, const parse_c_action *pca, void *this)
 {
@@ -1180,6 +1180,14 @@ static void parse_c_file(char *fname, const parse_c_action *pca, void *this)
     int state;
     str *s;
     int lineno;
+    enum {              /* for state machine */
+        OK_TO_START,        /* valid place to start token */
+        WITHIN_N_TOKEN,     /* within token starting with 'N' */
+        WITHIN_TOKEN,       /* within '_' or  'N_' token */
+        OK_TO_PARSE,        /* valid '_(' or  'N_(', can now parse string */
+        PARSING_OTHER,      /* parsing some other identifier */
+        WITHIN_SQUOTES      /* inside single quotes */
+    };
 
     IFILE *f = ifopen(fname);
     if (f == NULL)
@@ -1190,7 +1198,7 @@ static void parse_c_file(char *fname, const parse_c_action *pca, void *this)
 
 /* TODO - merge parse_c_comment into this, rewrite the parser */
 
-    state = 0;
+    state = OK_TO_START;
     for ( ; ; )
     {
         c = inextc(f);
@@ -1206,7 +1214,7 @@ static void parse_c_file(char *fname, const parse_c_action *pca, void *this)
             }
             ibackn(f,2);
             c = '/';
-            state = 0;
+            state = OK_TO_START;
             if (! try_c_comment(f))
             {
                 pca->other(this, c);
@@ -1218,7 +1226,7 @@ static void parse_c_file(char *fname, const parse_c_action *pca, void *this)
         }
         else if (c == '\"')
         {
-            if (state == 3)
+            if (state == OK_TO_PARSE)
             {
                 /* this is a new gettext string */
                 s = s_new();
@@ -1237,15 +1245,15 @@ static void parse_c_file(char *fname, const parse_c_action *pca, void *this)
                     warn("_(\"...\" with no closing )");
                     warn("the string is %s", t);
                     free(t);
-                    state = 0;
+                    state = OK_TO_START;
                     continue;
                 }
                 /* handle the string */
                 pca->gstring(this, s, fname, lineno);
                 pca->other(this, ')');
-                state = 0;
+                state = OK_TO_START;
             }
-            else if (state == 5)
+            else if (state == WITHIN_SQUOTES)
             {
                 pca->other(this, c);
             }
@@ -1261,45 +1269,45 @@ static void parse_c_file(char *fname, const parse_c_action *pca, void *this)
         {
             if (c == '(')
             {
-                if (state == 2)
-                    state = 3;
+                if (state == WITHIN_TOKEN)
+                    state = OK_TO_PARSE;
                 else
-                    state = 0;
+                    state = OK_TO_START;
             }
             else if (c == '_')
             {
-                if (state < 2)
-                    state = 2;
+                if (state < WITHIN_TOKEN)   /* i.e. OK_TO_START or WITHIN_N_TOKEN */
+                    state = WITHIN_TOKEN;
                 else
-                    state = 4;
+                    state = PARSING_OTHER;
             }
             else if (c == 'N')
             {
-                if (state == 0)
-                    state = 1;
+                if (state == OK_TO_START)
+                    state = WITHIN_N_TOKEN;
                 else
-                    state = 4;
+                    state = PARSING_OTHER;
             }
             else if (is_white(c))
             {
-                if ((state == 1) || (state == 4))
-                    state = 0;
+                if ((state == WITHIN_N_TOKEN) || (state == PARSING_OTHER))
+                    state = OK_TO_START;
             }
             else if (is_letter(c) || is_digit(c))
             {
-                state = 4;
+                state = PARSING_OTHER;
             }
             else if (c == '\'')
             {
-                if (state == 5)
-                    state = 0;
+                if (state == WITHIN_SQUOTES)
+                    state = OK_TO_START;
                 else
-                    state = 5;
+                    state = WITHIN_SQUOTES;
             }
             else
             {
-                if (state < 5)
-                    state = 0;
+                if (state < WITHIN_SQUOTES) /* i.e. not within single quotes */
+                    state = OK_TO_START;
             }
             pca->other(this, c);
         }
