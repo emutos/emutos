@@ -204,10 +204,16 @@ static void disk_init_one(UWORD unit,LONG *devices_available)
         /* Try our internal drivers */
         for (i = 0; i <= HD_DETECT_RETRIES; i++)
         {
-            rc = internal_inquire(unit, NULL, &device_flags, productname, sizeof productname);
-            if (rc == 0)
+            /* identify valid devices by reading root sector */
+            rc = disk_rw(unit, RW_READ, 0, 1, dskbufp);
+            if (rc == 0) {
+                punit->valid = 1;
                 break;
+            }
         }
+
+        /* only use internal driver for disks that respond to INQUIRE */
+        rc = internal_inquire(unit, NULL, &device_flags, productname, sizeof productname);
         if (rc) {
             KDEBUG(("disk_init_one(): internal_inquire(%d) returned %ld\n",unit,rc));
             return;
