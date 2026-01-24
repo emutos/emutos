@@ -608,6 +608,8 @@ static BOOL unit_is_byteswapped(UWORD unit)
 #define GPT_MBR_TYPE 0xee
 #define GPT_MAGIC "EFI PART"
 
+#define GPT_ATTR_EFI_HIDDEN (0x02ul<<24)    /* bit 1 in little endian */
+
 /*
  * see https://en.wikipedia.org/w/index.php?title=GUID_Partition_Table&oldid=1312797248#Partition_type_GUIDs
  * note that the binary representation of GUIDs differs from their textual representation.
@@ -682,6 +684,10 @@ static WORD process_gpt(UWORD unit, LONG *devices_available)
         /* check if partition type is supported */
         if (map_gpt_to_atari(&physsect.gpt_entries[i%4], pid))
         {
+            /* skip 'EFI hidden' partitions, note that the bitmask is little endian */
+            if (physsect.gpt_entries[i%4].attribute_flags.lba_low & GPT_ATTR_EFI_HIDDEN)
+                continue;
+
             if (LBA64_OVERFLOW(physsect.gpt_entries[i%4].first_lba) ||
                 LBA64_OVERFLOW(physsect.gpt_entries[i%4].last_lba))
                 continue;
