@@ -165,17 +165,17 @@ static LONG pgmld01(FH h, PD *pdptr, PGMHDR01 *hd)
         KDEBUG(("BDOS pgmld01: flen=0x%lx, pi_slen=0x%lx\n",flen,pi->pi_slen));
 
         r = xlseek(flen+pi->pi_slen+0x1c,h,0);
-        if (r < 0L)
-            return r;
 
-        r = xread(h,(long)sizeof(relst),&relst);
+        if (!(r < 0L))
+            r = xread(h,(long)sizeof(relst),&relst);
 
         KDEBUG(("BDOS pgmld01: relst=0x%lx\n",relst));
 
-        if (r < 0L)
-            return r;
-
-        if (relst != 0)
+        /*
+         * Atari TOS does not fail loading a program if reading the relocation
+         * start address fails. In this case, it just does not relocate.
+         */
+        if ((r > 0) && (relst != 0))
         {
             cp = pi->pi_tbase + relst;
 
