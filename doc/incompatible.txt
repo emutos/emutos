@@ -371,6 +371,17 @@ NOTE: the program also crashes on all versions of Atari TOS except 1.00,
 although the actual details of the crash are slightly different.
 
 
+Program: Neurobotix (game)
+--------------------------
+Error: Immediately terminates
+
+Bug analysis:
+This Falcon-only game checks the hard-coded memory address 0x98c, which
+corresponds to the _VDO cookie value on Atari TOS 4.04, instead of accessing
+the cookie jar via 'p_cookies'. It quits after not finding the expected _VDO
+cookie value.
+
+
 Program: Protracker v2 STE (Equinox version)
 --------------------------------------------
 Error: crash when "DISK OP." button is selected
