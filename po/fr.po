@@ -76,6 +76,10 @@ msgstr "Tapez <Esc> pour lancer la console"
 msgid "Hold <Shift> to pause this screen"
 msgstr "<Shift> pour maintenir cet écran"
 
+#: bios/initinfo.c
+msgid "Press <Tab> to switch PAL mode"
+msgstr "<Tab> pour changer la fréquence PAL"
+
 #: bios/kprint.c
 msgid ""
 "\n"
