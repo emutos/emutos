@@ -123,18 +123,25 @@ static const int majors[] =
 static void dmaboot(UWORD unit, void *bootcode)
 {
     __asm volatile(
-    "lea     -60(sp),sp\n\t"
-    "movem.l d0-d7/a0-a6,(sp)\n\t"
+    "lea     -36(sp),sp\n\t"
+    "movem.l d3-d7/a3-a6,(sp)\n\t"
     "moveq   #0,d4\n\t"
-    "move.w  %0,d4\n\t"  /* unit number */
+    /* unit number */
+    "move.w  %0,d4\n\t"
+    /* ACSI unit number for old AHDI versions */
     "move.l  d4,d7\n\t"
-    "lsl.w   #5,d7\n\t"  /* ACSI unit number for old AHDI versions */
-    "move.l  #0x444D4172,d3\n\t" /* 'DMAr' */
+    "lsl.w   #5,d7\n\t"
+    /* magic number 'DMAr' */
+    "move.l  #0x444D4172,d3\n\t"
+    /* A2 is not a documented part of the TOS API. However, the ACSI2STM
+     * GEMDRIVE boot code expects A2 to point to some writable scratch memory.
+     */
+    "lea     0x200(%1),a2\n\t"
     "jsr     (%1)\n\t"
-    "movem.l (sp),d0-d7/a0-a6\n\t"
-    "lea     60(sp),sp"
+    "movem.l (sp),d3-d7/a3-a6\n\t"
+    "lea     36(sp),sp"
     : : "r"(unit-NUMFLOPPIES), "a"(bootcode)
-    : "memory");
+    : "d0","d1","d2","a0","a1","a2", "memory");
 }
 
 /*
