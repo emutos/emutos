@@ -40,6 +40,7 @@ static ULONG detect_ttram_size(void)
     return CONF_TTRAM_SIZE;
 #else
     volatile UBYTE *addr;
+    volatile UBYTE *const memdetect_start = TTRAM_START + 1024UL*1024 - 1;
 
     /* By design, TT-RAM is always in 32-bit address space */
     if (!IS_BUS32)
@@ -50,22 +51,33 @@ static ULONG detect_ttram_size(void)
 
     /* Detect TT-RAM size. Assume that the size is always a multiple of 1 MB.
      * Try to read the last byte of each TT-RAM megabyte. If it does not cause
-     * a Bus Error, assume that that megabyte is valid TT-RAM.
+     * a Bus Error, write a value to check memory exists and is not mirrored.
+     * The check for mirrored TT-RAM is needed on the FRAK/2 (PAK3 add-on).
      * We artificially limit TT-RAM detection to positive addresses to avoid
      * shocking BDOS. */
-    for (addr = TTRAM_START + 1024UL*1024 - 1;
+    for (addr = memdetect_start;
         (long)addr > 0; addr += 1024UL*1024)
     {
+        /* Write unique test pattern to first MB to enable mirror test */
+        const UBYTE pat  = (addr == memdetect_start)? 0x21 : 0x12;
+        const UBYTE pat2 = 0x34;
+
         /* First check for bus error, then try writing to memory and
          * reading back. */
         if (!check_read_byte((long)addr))
             break;
 
-        *addr     = 0x12;
-        *(addr-1) = 0x34;
+        *addr     = pat;
+        *(addr-1) = pat2;
         invalidate_data_cache((UBYTE *)(addr-1), 2);
-        if ((*addr != 0x12) || (*(addr-1) != 0x34))
+        invalidate_data_cache((UBYTE *)(memdetect_start-1), 2);
+        if ((*addr != pat) || (*(addr-1) != pat2))
             break;
+        /* If the value written was mirrored into the first MB of TT-RAM,
+         * the end of actual TT-RAM has been reached. */
+        if (*memdetect_start == 0x12)
+            break;
+
     }
 
     /* Valid TT-RAM stops at the beginning of current megabyte */
