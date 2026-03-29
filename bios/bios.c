@@ -552,8 +552,6 @@ static void bios_init(void)
     swv_vec = os_header.reseth; /* reset system on monitor change & jump to _main */
     vblsem = 1;
 
-    disk_try_dmaboot();
-
 #if CONF_WITH_CARTRIDGE
     {
         WORD save_hz = V_REZ_HZ, save_vt = V_REZ_VT, save_pl = v_planes;
@@ -573,6 +571,10 @@ static void bios_init(void)
         }
     }
 #endif
+
+    /* Boot hard disks */
+    KDEBUG(("disk_try_dmaboot()\n"));
+    disk_try_dmaboot();
 
     KDEBUG(("bios_init() end\n"));
 }
