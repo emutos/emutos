@@ -1,7 +1,7 @@
 /*
  * disk.c - disk routines
  *
- * Copyright (C) 2001-2024 The EmuTOS development team
+ * Copyright (C) 2001-2026 The EmuTOS development team
  *
  * Authors:
  *  PES   Petr Stehlik
