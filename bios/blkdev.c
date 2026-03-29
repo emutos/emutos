@@ -1,7 +1,7 @@
 /*
  * blkdev.c - BIOS block device functions
  *
- * Copyright (C) 2002-2025 The EmuTOS development team
+ * Copyright (C) 2002-2026 The EmuTOS development team
  *
  * Authors:
  *  MAD     Martin Doering
@@ -35,13 +35,6 @@
 #include "xhdi.h"
 #include "intmath.h"
 
-
-/*
- * undefine the following to enable booting from hard disk.
- * note that this is experimental and, as of march 2015,
- * will cause a crash if used with hard disk drivers ...
- */
-#define DISABLE_HD_BOOT
 
 /*
  * Global variables
@@ -245,10 +238,13 @@ LONG blkdev_boot(void)
     if (bootflags & BOOTFLAG_SKIP_AUTO_ACC)
         return 0;
 
-#ifdef DISABLE_HD_BOOT
-    if (bootdev >= NUMFLOPPIES) /* don't attempt to boot from hard disk */
+    /*
+     * don't attempt to boot the boot sector from hard disk,
+     * hard disk booting (if applicable) is handled by
+     * disk_try_dmaboot().
+     */
+    if (bootdev >= NUMFLOPPIES)
         return 0;
-#endif
 
     /*
      * execute the bootsector code (if present)
