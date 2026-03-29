@@ -130,7 +130,7 @@ static void dmaboot(UWORD unit, void *bootcode)
     "move.w  %0,d4\n\t"
     /* ACSI unit number for old AHDI versions */
     "move.l  d4,d7\n\t"
-    "lsl.w   #5,d7\n\t"
+    "lsl.l   #5,d7\n\t"
     /* magic number 'DMAr' */
     "move.l  #0x444D4172,d3\n\t"
     /* A2 is not a documented part of the TOS API. However, the ACSI2STM
