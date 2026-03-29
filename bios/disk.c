@@ -218,6 +218,10 @@ static void disk_init_one(UWORD unit,LONG *devices_available)
                 break;
             }
         }
+        /* if disk_rw failed with 'unknown device' there is no point in continuing */
+        if (rc == EUNDEV) {
+            return;
+        }
 
         /* only use internal driver for disks that respond to INQUIRE */
         rc = internal_inquire(unit, NULL, &device_flags, productname, sizeof productname);
