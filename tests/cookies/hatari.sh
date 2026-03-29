@@ -24,7 +24,7 @@ export SDL_AUDIODRIVER=dummy
 run_hatari() {
     rm -f COOKIES.TXT
     outtxt=$(mktemp)
-    hatari --log-level fatal --sound off --fast-forward on --run-vbls 400 \
+    hatari --log-level fatal --sound off --fast-forward on --run-vbls 1200 \
         --fast-boot on --natfeats on --tos "$EMUTOS" -d . "$@" >"$outtxt" 2>&1
     if [ $? -ne 0 ]; then
         echo "ERROR: Failed to run hatari:"
