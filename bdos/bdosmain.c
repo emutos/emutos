@@ -476,7 +476,10 @@ restrt:
             }
 
             if (log_media(b,errdrv))
+            {
+                drvsel &= ~(1L<<errdrv);
                 return ENSMEM;
+            }
 
             rwerr = 0;
             errdrv = 0;
