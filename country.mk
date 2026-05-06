@@ -23,7 +23,8 @@ FONTOBJ_L2 = fnt_l2_6x6.o fnt_l2_8x8.o fnt_l2_8x16.o
 FONTOBJ_GR = fnt_gr_6x6.o fnt_gr_8x8.o fnt_gr_8x16.o
 FONTOBJ_RU = fnt_ru_6x6.o fnt_ru_8x8.o fnt_ru_8x16.o
 FONTOBJ_TR = fnt_tr_6x6.o fnt_tr_8x8.o fnt_tr_8x16.o
-FONTOBJ_ALL = $(FONTOBJ_ST) $(FONTOBJ_L2) $(FONTOBJ_GR) $(FONTOBJ_RU) $(FONTOBJ_TR)
+FONTOBJ_KM = fnt_km_6x6.o fnt_km_8x8.o fnt_km_8x16.o
+FONTOBJ_ALL = $(FONTOBJ_ST) $(FONTOBJ_L2) $(FONTOBJ_GR) $(FONTOBJ_RU) $(FONTOBJ_TR) $(FONTOBJ_KM)
 FONTOBJ_COMMON = obj/fnt_off_6x6.o obj/fnt_off_8x8.o
 FONTOBJ = $(FONTOBJ_ALL:%=obj/%)
 
