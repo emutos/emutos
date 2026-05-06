@@ -21,7 +21,7 @@ fi atarist
 nl atarist
 ca atarist
 
-cs latin2
+cs cp895
 hu latin2
 pl latin2
 ro latin2

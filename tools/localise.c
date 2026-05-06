@@ -110,6 +110,9 @@ typedef struct                      /* for input control file */
 #define FNT_TR_SMALL    "fnt_tr_6x6"
 #define FNT_TR_MEDIUM   "fnt_tr_8x8"
 #define FNT_TR_LARGE    "fnt_tr_8x16"
+#define FNT_KM_SMALL    "fnt_km_6x6"
+#define FNT_KM_MEDIUM   "fnt_km_8x8"
+#define FNT_KM_LARGE    "fnt_km_8x16"
 
 /*
  *  other globals
@@ -137,6 +140,7 @@ int needed_charsets = 0;            /* charsets required */
 #define NEED_GR_CSET    0x04
 #define NEED_RU_CSET    0x08
 #define NEED_TR_CSET    0x10
+#define NEED_KM_CSET    0x20
 
 char keytable[MAX_CTL_LINES][MAX_STRLEN];   /* holds unique keyboard names from control[] */
 int keytable_count = 0;
@@ -168,6 +172,9 @@ static int decode_charset(char *charset)
 
     if (strcmp(charset, "tr") == 0)
         return NEED_TR_CSET;
+
+    if (strcmp(charset, "km") == 0)
+        return NEED_KM_CSET;
 
     return -1;
 }
@@ -450,6 +457,10 @@ static void write_font_stuff(FILE *fp)
         fprintf(fp, "#define CHARSET_RU %d\n", index++);
     if (needed_charsets & NEED_TR_CSET)
         fprintf(fp, "#define CHARSET_TR %d\n", index++);
+
+    if (needed_charsets & NEED_KM_CSET)
+       fprintf(fp, "#define CHARSET_KM %d\n", index++);
+
     fprintf(fp, "\n");
 
     /*
@@ -486,6 +497,14 @@ static void write_font_stuff(FILE *fp)
         fprintf(fp,"extern const Fonthead %s;\n", FNT_TR_MEDIUM);
         fprintf(fp,"extern const Fonthead %s;\n", FNT_TR_LARGE);
     }
+
+    if (needed_charsets & NEED_KM_CSET)
+    {
+        fprintf(fp,"extern const Fonthead %s;\n", FNT_KM_SMALL);
+        fprintf(fp,"extern const Fonthead %s;\n", FNT_KM_MEDIUM);
+        fprintf(fp,"extern const Fonthead %s;\n", FNT_KM_LARGE);
+    }
+
     fprintf(fp, "\n");
 
     /*
@@ -502,6 +521,10 @@ static void write_font_stuff(FILE *fp)
         fprintf(fp, "    { &%s, &%s, &%s },\n", FNT_RU_SMALL, FNT_RU_MEDIUM, FNT_RU_LARGE);
     if (needed_charsets & NEED_TR_CSET)
         fprintf(fp, "    { &%s, &%s, &%s },\n", FNT_TR_SMALL, FNT_TR_MEDIUM, FNT_TR_LARGE);
+
+    if (needed_charsets & NEED_KM_CSET)
+        fprintf(fp, "    { &%s, &%s, &%s },\n", FNT_KM_SMALL, FNT_KM_MEDIUM, FNT_KM_LARGE);
+
     fprintf(fp, "};\n\n");
 }
 
