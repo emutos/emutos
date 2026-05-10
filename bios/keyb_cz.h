@@ -1,7 +1,7 @@
 /*
  * keyb_cz.h - Czech keyboard layout definition
  *
- * Copyright (C) 2002-2015 The EmuTOS development team
+ * Copyright (C) 2002-2026 The EmuTOS development team
  *
  * Authors:
  *  Jan Krupka
@@ -11,13 +11,10 @@
  */
 
 static const UBYTE keytbl_cz_norm[] = {
-       0, 0x1b,  '+', 0x88, 0xa8, 0x87, 0xa9, 0x91,
-    0x98, 0xa0, 0xa1, 0x82,  '=', DEAD(0), 0x08, 0x09,
-     'q',  'w',  'e',  'r',  't',  'z',  'u',  'i',
-     'o',  'p', 0xa3, 0x83, 0x0d,    0,  'a',  's',
-     'd',  'f',  'g',  'h',  'j',  'k',  'l', 0x96,
-    0x9f,  '#',    0,  '~',  'y',  'x',  'c',  'v',
-     'b',  'n',  'm',  ',',  '.',  '-',    0,    0,
+       0, 0x1b,  '+', 0x88, 0xa8, 0x87, 0xa9, 0x91, 0x98,  0xa0, 0xa1, 0x82,  '=', DEAD(0), 0x08, 0x09,
+     'q',  'w',  'e',  'r',  't',  'z',  'u',  'i',   'o',  'p', 0xa3,  ')', 0x0d,    0,  
+     'a',  's',  'd',  'f',  'g',  'h',  'j',  'k',   'l', 0x96, 0x5c,  '#',    0,  '~',  
+     'y',  'x',  'c',  'v',  'b',  'n',  'm',  ',',  '.',  '-',     0,    0,
        0,  ' ',    0,    0,    0,    0,    0,    0,
        0,    0,    0,    0,    0,    0,    0,    0,
        0,    0,  '-',    0,    0,    0,  '+',    0,
@@ -30,13 +27,10 @@ static const UBYTE keytbl_cz_norm[] = {
 };
 
 static const UBYTE keytbl_cz_shft[] = {
-       0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',
-     '7',  '8',  '9',  '0',  '?',  DEAD(1), 0x08, 0x09,
-     'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',
-     'O',  'P', 0x97, 0x85, 0x0d,    0,  'A',  'S',
-     'D',  'F',  'G',  'H',  'J',  'K',  'L', 0xa6,
-    0x86,  '^',    0,  '|',  'Y',  'X',  'C',  'V',
-     'B',  'N',  'M',  ';',  ':',  '_',    0,    0,
+       0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',  '7',  '8',  '9',  '0',  '?',  DEAD(1), 0x08, 0x09,
+     'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',  'O',  'P', 0x97,  '(', 0x0d,    0,  
+     'A',  'S',  'D',  'F',  'G',  'H',  'J',  'K',  'L', 0xa6, 0x86,  '^',    0,  '|',
+     'Y',  'X',  'C',  'V',  'B',  'N',  'M',  ';',  ':',  '_',    0,    0,
        0,  ' ',    0,    0,    0,    0,    0,    0,
        0,    0,    0,    0,    0,    0,    0,  '7',
      '8',    0,  '_',  '4',    0,  '6',  '+',    0,
@@ -49,13 +43,10 @@ static const UBYTE keytbl_cz_shft[] = {
 };
 
 static const UBYTE keytbl_cz_caps[] = {
-       0, 0x1b,  '!', 0x89, 0x9b, 0x80, 0x9e, 0x92,
-    0x9d, 0x8f, 0x8b, 0x90,  '=', 0x27, 0x08, 0x09,
-     'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',
-     'O',  'P', 0x97, 0x85, 0x0d,    0,  'A',  'S',
-     'D',  'F',  'G',  'H',  'J',  'K',  'L', 0xa6,
-    0x86,  '#',    0,  '~',  'Y',  'X',  'C',  'V',
-     'B',  'N',  'M',  ',',  '.',  '-',    0,    0,
+       0, 0x1b,  '!', 0x89, 0x9b, 0x80, 0x9e, 0x92, 0x9d, 0x8f, 0x8b, 0x90,  '=', 0x27,     0x08, 0x09,
+     'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',  'O',  'P', 0x97,  '+', 0x0d,    0,
+     'A',  'S',  'D',  'F',  'G',  'H',  'J',  'K',  'L', 0xa6, 0x86,  '#',    0,  '~',
+     'Y',  'X',  'C',  'V',  'B',  'N',  'M',  ',',  '.',  '-',    0,    0,
        0,  ' ',    0,    0,    0,    0,    0,    0,
        0,    0,    0,    0,    0,    0,    0,    0,
        0,    0,  '-',    0,    0,    0,  '+',    0,
@@ -67,9 +58,6 @@ static const UBYTE keytbl_cz_caps[] = {
        0,    0,    0,    0,    0,    0,    0,    0,
      
 };
-
-
-/* TODO - the tables below were not filled by the tool */
 
 static const UBYTE keytbl_cz_altnorm[] = {
     0x1a, '@',
@@ -166,4 +154,3 @@ static const struct keytbl keytbl_cz = {
     keytbl_cz_dead,
     0
 };
-
