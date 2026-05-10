@@ -100,7 +100,8 @@ static const UBYTE keytbl_cz_dead0[] = {
      'o', 0xa2,
      'u', 0xa3,
      'l', 0x8c,
-     'r', 0xaa,
+     'r', 0xa9,
+     'u', 0xa3,
      'y', 0x98,
 
      'A', 0x8f,
@@ -109,7 +110,7 @@ static const UBYTE keytbl_cz_dead0[] = {
      'O', 0x95,
      'U', 0x97,
      'L', 0x8a,
-     'R', 0xab,
+     'R', 0x9e,
      'Y', 0x9d,
 
      ' ', 0x27,
@@ -127,7 +128,8 @@ static const UBYTE keytbl_cz_dead1[] = {
     'o', 0x93,
     'r', 0xa9, 
     's', 0xa8, 
-    't', 0x9f, 
+    't', 0x9f,
+    'u', 0x96, 
     'z', 0x91,
 
     'A', 0x8f,
@@ -137,14 +139,15 @@ static const UBYTE keytbl_cz_dead1[] = {
     'L', 0x9c, 
     'N', 0xa5,
     'O', 0xa7,
-    'R', 0xab, 
+    'R', 0x9e, 
     'S', 0x9b, 
-    'T', 0x86, 
+    'T', 0x86,
+    'U', 0xa6, 
     'Z', 0x92,
 
     ' ', 0x60, 
     DEAD(1), 0x60,
-
+    0
 };
 
 
@@ -160,6 +163,7 @@ static const struct keytbl keytbl_cz = {
     keytbl_cz_altnorm,
     keytbl_cz_altshft,
     keytbl_cz_altcaps,
-    NULL,
+    keytbl_cz_dead,
     0
 };
+
