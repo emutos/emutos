@@ -88,7 +88,7 @@ static const UBYTE keytbl_cz_dead0[] = {
      'o', 0xa2,
      'u', 0xa3,
      'l', 0x8c,
-     'r', 0xa9,
+     'r', 0xaa,
      'u', 0xa3,
      'y', 0x98,
 
@@ -98,7 +98,7 @@ static const UBYTE keytbl_cz_dead0[] = {
      'O', 0x95,
      'U', 0x97,
      'L', 0x8a,
-     'R', 0x9e,
+     'R', 0xab,
      'Y', 0x9d,
 
      ' ', 0x27,

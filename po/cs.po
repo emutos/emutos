@@ -9,7 +9,7 @@ msgstr ""
 "Last-Translator: Jan Krupka <krupkaj@centrum.cz>\n"
 "Language-Team: Czech\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=ST_KAMENICKY\n"
+"Content-Type: text/plain; charset=KEYBCS2\n"
 "Content-Transfer-Encoding: 8bit\n"
 
 #: bios/bios.c
@@ -274,6 +274,10 @@ msgid "ITEM SELECTOR"
 msgstr "VùBâR POLOíEK"
 
 #: desk/desk_rsc.c
+msgid "Name: ________.___"
+msgstr "JmÇno: ________.___"
+
+#: desk/desk_rsc.c
 msgid "Number of folders:         _____"
 msgstr "Poáet adres†©ñ:          _____ "
 
@@ -300,10 +304,6 @@ msgstr "Ano"
 #: desk/desk_rsc.c
 msgid "No"
 msgstr "Ne"
-
-#: desk/desk_rsc.c
-msgid "Name: ________.___"
-msgstr "JmÇno: ________.___"
 
 #: desk/desk_rsc.c
 msgid "Size:   __________"
@@ -379,7 +379,7 @@ msgstr "Jmenovka: ________.___"
 
 #: desk/desk_rsc.c
 msgid " Desk "
-msgstr " Desk "
+msgstr " Plocha "
 
 #: desk/desk_rsc.c
 msgid " File "
@@ -387,7 +387,7 @@ msgstr " Soubor "
 
 #: desk/desk_rsc.c
 msgid " View "
-msgstr " Zobrazit "
+msgstr " Zobrazen° "
 
 #: desk/desk_rsc.c
 msgid " Options "
@@ -395,7 +395,7 @@ msgstr " Moënosti "
 
 #: desk/desk_rsc.c
 msgid "  Desktop info..."
-msgstr "  Info o desktopu..."
+msgstr "  O desktopu..."
 
 #: desk/desk_rsc.c
 msgid "  Open"
@@ -403,7 +403,7 @@ msgstr "  Otev©°t"
 
 #: desk/desk_rsc.c
 msgid "  Info/Rename..."
-msgstr "  Info/JmÇno..."
+msgstr "  P©ejmenovat..."
 
 #: desk/desk_rsc.c
 msgid "  Search..."
@@ -440,6 +440,10 @@ msgstr "  Smazat..."
 #: desk/desk_rsc.c
 msgid "  Format floppy..."
 msgstr "  Form†tovat disketu..."
+
+#: desk/desk_rsc.c
+msgid "  Eject floppy"
+msgstr "  Vysunout floppy"
 
 #: desk/desk_rsc.c
 msgid "  Execute EmuCON"
@@ -547,7 +551,7 @@ msgstr "Verze"
 
 #: desk/desk_rsc.c
 msgid "Copyright \275 2001-"
-msgstr "Copyright (C) 2001-"
+msgstr "Copyright \275 2001-"
 
 #: desk/desk_rsc.c
 msgid "The EmuTOS development team"
@@ -559,15 +563,15 @@ msgstr "Zaloëeno na 'GPL' zdroj°ch"
 
 #: desk/desk_rsc.c
 msgid "\275 1987 Digital Research, Inc."
-msgstr "(C) 1987 Digital Research, Inc."
+msgstr "\275 1987 Digital Research, Inc."
 
 #: desk/desk_rsc.c
 msgid "\275 1999 Caldera Thin Clients, Inc."
-msgstr "(C) 1999 Caldera Thin Clients, Inc."
+msgstr "\275 1999 Caldera Thin Clients, Inc."
 
 #: desk/desk_rsc.c
 msgid "\275 2001 Lineo, Inc."
-msgstr "(C) 2001 Lineo, Inc."
+msgstr "\275 2001 Lineo, Inc."
 
 #: desk/desk_rsc.c
 msgid "EmuTOS is distributed under the GPL"
@@ -599,7 +603,7 @@ msgstr "Jednotka"
 
 #: desk/desk_rsc.c
 msgid "Trash can"
-msgstr "Popelnice"
+msgstr "Ko®"
 
 #: desk/desk_rsc.c
 msgid "Printer"
@@ -802,16 +806,20 @@ msgid "FORMAT FLOPPY DISKETTE"
 msgstr "FORMèTOVAT FLOPPY DISK"
 
 #: desk/desk_rsc.c
-msgid "Single sided"
-msgstr "Jednostrannà"
+msgid "SS 360 K"
+msgstr "SS 360 K"
 
 #: desk/desk_rsc.c
-msgid "Double sided"
-msgstr "Oboustrannà"
+msgid "DS 720 K"
+msgstr "DS 720 K"
 
 #: desk/desk_rsc.c
-msgid "High density"
-msgstr "Vysok† hustota"
+msgid "DS 800 K"
+msgstr "DS 800 K"
+
+#: desk/desk_rsc.c
+msgid "HD 1.44 M"
+msgstr "HD 1.44 M"
 
 #: desk/desk_rsc.c
 msgid "SET BACKGROUND"
@@ -847,7 +855,7 @@ msgstr "INFORMACE O SOUBORU"
 
 #: desk/desk_rsc.c
 msgid "FOLDER INFORMATION"
-msgstr "INFORMACE O ODRESèûI"
+msgstr "INFORMACE O ADRESèûI"
 
 #: desk/desk_rsc.c
 msgid "COPY FILE(S)"
@@ -1299,7 +1307,7 @@ msgid "[1]["
 "No more files.]"
 "[  OK  ]"
 msgstr "[1]["
-"í†dne dal®° soubory.]"
+"í†dnÇ dal®° soubory.]"
 "[  OK  ]"
 
 #: desk/desk_rsc.c
