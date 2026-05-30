@@ -457,9 +457,8 @@ static void write_font_stuff(FILE *fp)
         fprintf(fp, "#define CHARSET_RU %d\n", index++);
     if (needed_charsets & NEED_TR_CSET)
         fprintf(fp, "#define CHARSET_TR %d\n", index++);
-
     if (needed_charsets & NEED_KM_CSET)
-       fprintf(fp, "#define CHARSET_KM %d\n", index++);
+        fprintf(fp, "#define CHARSET_KM %d\n", index++);
 
     fprintf(fp, "\n");
 
@@ -497,7 +496,6 @@ static void write_font_stuff(FILE *fp)
         fprintf(fp,"extern const Fonthead %s;\n", FNT_TR_MEDIUM);
         fprintf(fp,"extern const Fonthead %s;\n", FNT_TR_LARGE);
     }
-
     if (needed_charsets & NEED_KM_CSET)
     {
         fprintf(fp,"extern const Fonthead %s;\n", FNT_KM_SMALL);
@@ -521,7 +519,6 @@ static void write_font_stuff(FILE *fp)
         fprintf(fp, "    { &%s, &%s, &%s },\n", FNT_RU_SMALL, FNT_RU_MEDIUM, FNT_RU_LARGE);
     if (needed_charsets & NEED_TR_CSET)
         fprintf(fp, "    { &%s, &%s, &%s },\n", FNT_TR_SMALL, FNT_TR_MEDIUM, FNT_TR_LARGE);
-
     if (needed_charsets & NEED_KM_CSET)
         fprintf(fp, "    { &%s, &%s, &%s },\n", FNT_KM_SMALL, FNT_KM_MEDIUM, FNT_KM_LARGE);
 

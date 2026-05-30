@@ -12,8 +12,8 @@
 
 static const UBYTE keytbl_cz_norm[] = {
        0, 0x1b,  '+', 0x88, 0xa8, 0x87, 0xa9, 0x91, 0x98,  0xa0, 0xa1, 0x82,  '=', DEAD(0), 0x08, 0x09,
-     'q',  'w',  'e',  'r',  't',  'z',  'u',  'i',   'o',  'p', 0xa3,  ')', 0x0d,    0,  
-     'a',  's',  'd',  'f',  'g',  'h',  'j',  'k',   'l', 0x96, 0x5c,  '#',    0,  '~',  
+     'q',  'w',  'e',  'r',  't',  'z',  'u',  'i',   'o',  'p', 0xa3,  ')', 0x0d,    0,
+     'a',  's',  'd',  'f',  'g',  'h',  'j',  'k',   'l', 0x96, 0x5c,  '#',    0,  '~',
      'y',  'x',  'c',  'v',  'b',  'n',  'm',  ',',  '.',  '-',     0,    0,
        0,  ' ',    0,    0,    0,    0,    0,    0,
        0,    0,    0,    0,    0,    0,    0,    0,
@@ -28,7 +28,7 @@ static const UBYTE keytbl_cz_norm[] = {
 
 static const UBYTE keytbl_cz_shft[] = {
        0, 0x1b,  '1',  '2',  '3',  '4',  '5',  '6',  '7',  '8',  '9',  '0',  '?',  DEAD(1), 0x08, 0x09,
-     'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',  'O',  'P', 0x97,  '(', 0x0d,    0,  
+     'Q',  'W',  'E',  'R',  'T',  'Z',  'U',  'I',  'O',  'P', 0x97,  '(', 0x0d,    0,
      'A',  'S',  'D',  'F',  'G',  'H',  'J',  'K',  'L', 0xa6, 0x86,  '^',    0,  '|',
      'Y',  'X',  'C',  'V',  'B',  'N',  'M',  ';',  ':',  '_',    0,    0,
        0,  ' ',    0,    0,    0,    0,    0,    0,
@@ -56,7 +56,7 @@ static const UBYTE keytbl_cz_caps[] = {
      '8',  '9',  '4',  '5',  '6',  '1',  '2',  '3',
      '0',  '.', 0x0d,    0,    0,    0,    0,    0,
        0,    0,    0,    0,    0,    0,    0,    0,
-     
+
 };
 
 static const UBYTE keytbl_cz_altnorm[] = {
@@ -102,38 +102,38 @@ static const UBYTE keytbl_cz_dead0[] = {
      'Y', 0x9d,
 
      ' ', 0x27,
-     DEAD(0), 0x27, 
+     DEAD(0), 0x27,
      0
 };
 
 static const UBYTE keytbl_cz_dead1[] = {
     'a', 0x84,
     'c', 0x87,
-    'd', 0x83, 
+    'd', 0x83,
     'e', 0x88,
-    'l', 0x8c, 
+    'l', 0x8c,
     'n', 0xa4,
     'o', 0x93,
-    'r', 0xa9, 
-    's', 0xa8, 
+    'r', 0xa9,
+    's', 0xa8,
     't', 0x9f,
-    'u', 0x96, 
+    'u', 0x96,
     'z', 0x91,
 
     'A', 0x8f,
     'C', 0x80,
-    'D', 0x85, 
+    'D', 0x85,
     'E', 0x89,
-    'L', 0x9c, 
+    'L', 0x9c,
     'N', 0xa5,
     'O', 0xa7,
-    'R', 0x9e, 
-    'S', 0x9b, 
+    'R', 0x9e,
+    'S', 0x9b,
     'T', 0x86,
-    'U', 0xa6, 
+    'U', 0xa6,
     'Z', 0x92,
 
-    ' ', 0x60, 
+    ' ', 0x60,
     DEAD(1), 0x60,
     0
 };
