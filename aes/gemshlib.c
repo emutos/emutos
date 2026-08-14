@@ -604,10 +604,9 @@ static WORD sh_ldapp(SHELL *psh)
         p_nameit(rlr, fname);
         p_setappdir(rlr, D.s_cmd);
         if (aes_run_rom_program(deskstart))
-        {
             KDEBUG(("sh_ldapp(): ROM desktop terminated abnormally\n"));
-            wm_new();           /* run wind_new() to clean up */
-        }
+        /* desktop leaves windows open pointing into its now-freed memory */
+        wm_new();
         return 0;
     }
 

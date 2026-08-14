@@ -1264,6 +1264,7 @@ void wm_init(void)
     {
         D.w_win[i].w_flags = 0x0;
         D.w_win[i].w_rlist = NULL;
+        D.w_win[i].w_pname = D.w_win[i].w_pinfo = "";
         W_TREE[i].ob_type = G_IBOX;
     }
     W_TREE[ROOT].ob_type = G_BOX;
@@ -1875,6 +1876,13 @@ void wm_calc(WORD wtype, UWORD kind, WORD x, WORD y, WORD w, WORD h,
 void wm_new(void)
 {
     int wh;
+
+    /*
+     * drop name/info strings before releasing locks below: unsync() may
+     * dispatch another process, which could redraw with the stale pointers
+     */
+    for (wh = 0; wh < NUM_WIN; wh++)
+        D.w_win[wh].w_pname = D.w_win[wh].w_pinfo = "";
 
     /* Remove locks: */
     while(ml_ocnt > 0)
