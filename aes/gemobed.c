@@ -159,7 +159,8 @@ static WORD find_pos(char *str, WORD pos)
 {
     WORD i;
 
-    for (i = 0; pos > 0; i++)
+    /* stop at end of str[]: a malformed TEDINFO may have fewer '_' than characters */
+    for (i = 0; (pos > 0) && str[i]; i++)
     {
         if (str[i] == '_')
             pos--;
@@ -334,7 +335,7 @@ static WORD ob_delit(WORD idx)
 
 WORD ob_edit(OBJECT *tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
 {
-    WORD    pos, len;
+    WORD    pos, len, maxlen;
     WORD    ii, no_redraw, start, finish, nstart, nfinish;
     WORD    dist, tmp_back, cur_pos;
     char    bin_char;
@@ -345,13 +346,23 @@ WORD ob_edit(OBJECT *tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
     /* copy TEDINFO struct to local struct */
     ob_getsp(tree, obj, &edblk);
 
-    /* copy passed in strings to local strings */
-    strcpy(D.g_tmpstr, edblk.te_ptmplt);
-    strcpy(D.g_rawstr, edblk.te_ptext);
-    len = ii = strlencpy(D.g_valstr, edblk.te_pvalid);
+    /* clamp client-supplied te_txtlen: also used as 'te_txtlen - 2' below.
+     * the floor of 2 only affects our own bookkeeping (it keeps ins_char()
+     * from underflowing D.g_rawstr[]); we still write back to the client's
+     * te_ptext bounded by our own buffer size below, not by this clamped
+     * value, so a client declaring a tiny/zero te_txtlen isn't truncated
+     * any harder than it already was before this field was validated. */
+    edblk.te_txtlen = min(max(edblk.te_txtlen, (WORD)2), (WORD)sizeof(D.g_rawstr));
 
-    /* expand out valid str */
-    while ((ii > 0) && (len < edblk.te_tmplen))
+    /* client-supplied strings are unbounded: truncate them to fit our buffers */
+    strlcpy(D.g_tmpstr, edblk.te_ptmplt, sizeof(D.g_tmpstr));
+    strlcpy(D.g_rawstr, edblk.te_ptext, sizeof(D.g_rawstr));
+    strlcpy(D.g_valstr, edblk.te_pvalid, sizeof(D.g_valstr));
+    len = ii = strlen(D.g_valstr);
+
+    /* expand out valid str; te_tmplen is client-supplied too, so clamp it as well */
+    maxlen = min(edblk.te_tmplen, (WORD)(sizeof(D.g_valstr)-1));
+    while ((ii > 0) && (len < maxlen))
         D.g_valstr[len++] = D.g_valstr[ii-1];
     D.g_valstr[len] = '\0';
 
@@ -369,6 +380,11 @@ WORD ob_edit(OBJECT *tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
          * both template & data.  now update D.g_fmtstr with in_char;
          * return it; strip out junk & update ptext string.
          */
+
+        /* clamp client-supplied idx, used below to index D.g_rawstr/D.g_valstr */
+        if ((*idx < 0) || (*idx > (WORD)strlen(D.g_rawstr)))
+            *idx = strlen(D.g_rawstr);
+
         no_redraw = TRUE;
 
         /* find cursor & turn it off */
@@ -441,9 +457,20 @@ WORD ob_edit(OBJECT *tree, WORD obj, WORD in_char, WORD *idx, WORD kind)
             break;
         }   /* switch(in_char) */
 
-        strcpy(edblk.te_ptext, D.g_rawstr);
+        /*
+         * only write back if something actually changed: D.g_rawstr may be
+         * truncated relative to the client's original string (te_txtlen can
+         * exceed our internal buffer size), and unconditionally writing it
+         * back would silently lose data on a no-op such as a cursor move.
+         * D.g_rawstr can never exceed sizeof(D.g_rawstr), so bounding the
+         * copy to that is enough to keep us from overrunning our own
+         * buffer; we deliberately don't re-clamp to the client's declared
+         * te_txtlen here, since that's the same amount of trust the
+         * unbounded strcpy() this replaced already placed in the client.
+         */
         if (!no_redraw)
         {
+            strlcpy(edblk.te_ptext, D.g_rawstr, sizeof(D.g_rawstr));
             ob_format(edblk.te_just, D.g_rawstr, D.g_tmpstr, D.g_fmtstr);
             ob_stfn(*idx, &nstart, &nfinish);
             start = min(start, nstart);

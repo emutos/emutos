@@ -12,6 +12,6 @@
 #define OPTIMOPT_H
 
 const char *scasb(const char *p, char b);
-WORD expand_string(WORD *dest, const char *src);
+WORD expand_string(WORD *dest, const char *src, UWORD dest_words);
 
 #endif

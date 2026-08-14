@@ -38,24 +38,44 @@ scasb_end:
         rts
 
 /*
- *  WORD expand_string(WORD *dest,const char *src)
+ *  WORD expand_string(WORD *dest,const char *src,UWORD dest_words)
  *
  *  expand an unsigned byte string to an array of words, returning the
- *  length of the source string.  note that this code is optimised for
- *  the 68000: in order to obtain the fastest code, we copy the null
+ *  length of the expanded string.  at most dest_words words are stored
+ *  in dest, including the terminating zero word, so an over-long source
+ *  string is truncated to dest_words-1 characters instead of running off
+ *  the end of the destination array.  note that this code is optimised
+ *  for the 68000: in order to obtain the fastest code, we copy the null
  *  byte too, but it is not included in the length value returned.
  */
 
 _expand_string:
         movea.l 8(sp),a0        // a0 -> source
         movea.l 4(sp),a1        // a1 -> dest
-        move.l  a0,d0           // remember source start
+        moveq   #0,d0
+        move.w  12(sp),d0       // d0 = size of dest in words
+        subq.l  #1,d0           // ... as a loop counter
+        jmi     expand_none     // no room at all
         clr.w   d1              // work reg
 copy_loop:
         move.b  (a0)+,d1        // 68000: 8 cycles
         move.w  d1,(a1)+        // 8 cycles
-        jne     copy_loop       // 10 cycles when taken
-        sub.l   d0,a0
-        move.l  a0,d0
-        subq.l  #1,d0           // d0.l = length
+#ifdef __mcoldfire__
+        jeq     copy_done
+        subq.l  #1,d0
+        jpl     copy_loop
+#else
+        dbeq    d0,copy_loop    // 10 cycles when taken
+        jeq     copy_done
+#endif
+        moveq   #0,d1           // truncated: overwrite the last character
+        move.w  d1,-2(a1)       //  with the terminator
+copy_done:
+        move.l  a1,d0
+        sub.l   4(sp),d0        // bytes stored in dest
+        lsr.l   #1,d0
+        subq.l  #1,d0           // d0.l = length, excluding terminator
+        rts
+expand_none:
+        moveq   #0,d0
         rts

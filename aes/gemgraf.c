@@ -484,8 +484,15 @@ static void gsx_tcalc(WORD font, char *ptext, WORD *ptextw, WORD *ptexth, WORD *
     wc = ch_width(font);
     hc = ch_height(font);
 
+    /* client-supplied font is unchecked: bail out on anything but IBM/SMALL */
+    if (hc == 0)
+    {
+        *ptextw = *ptexth = *pnumchs = 0;
+        return;
+    }
+
     /* figure out the width of the text string in pixels */
-    *pnumchs = expand_string(intin, ptext);
+    *pnumchs = expand_string(intin, ptext, ARRAY_SIZE(intin));
     *ptextw = min(*ptextw, *pnumchs * wc);
 
     /* figure out the height of the text */

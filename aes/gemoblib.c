@@ -715,8 +715,9 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
         {
         case G_FTEXT:
         case G_FBOXTEXT:
-            strcpy(D.g_rawstr, edblk.te_ptext);
-            strcpy(D.g_tmpstr, edblk.te_ptmplt);
+            /* client-supplied strings are unbounded: truncate to fit our buffers */
+            strlcpy(D.g_rawstr, edblk.te_ptext, sizeof(D.g_rawstr));
+            strlcpy(D.g_tmpstr, edblk.te_ptmplt, sizeof(D.g_tmpstr));
             ob_format(edblk.te_just, D.g_rawstr, D.g_tmpstr, D.g_fmtstr);
             FALLTHROUGH; /* to gr_gtext */
         case G_BOXCHAR:
@@ -802,7 +803,7 @@ static void just_draw(OBJECT *tree, WORD obj, WORD sx, WORD sy)
         (obtype == G_TITLE) ||
         (obtype == G_BUTTON))
     {
-        len = expand_string(intin, (char *)spec);
+        len = expand_string(intin, (char *)spec, ARRAY_SIZE(intin));
         if (len)
         {
             tcol = BLACK;

@@ -31,3 +31,4 @@
 /local.mk
 /dsm.txt
 /tests/*/*.tos
+/tests/*/*.prg

@@ -317,9 +317,10 @@ static WORD dr_fnode(UWORD last_state, UWORD curr_state, WORD x, WORD y,
         bb_fill(MD_XOR, FIS_SOLID, IP_SOLID, x, y, w, h);
     else
     {
-        len = format_fnode(fnode, temp);    /* convert to text */
+        format_fnode(fnode, temp);          /* convert to text */
         gsx_attr(TRUE, MD_TRANS, BLACK);
-        expand_string(intin, temp);
+        /* use the length expand_string() actually stored, in case it was truncated */
+        len = expand_string(intin, temp, ARRAY_SIZE(intin));
         gsx_tblt(IBM, x, y, len);
         gsx_attr(FALSE, MD_XOR, BLACK);
     }
