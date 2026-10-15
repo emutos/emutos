@@ -60,7 +60,7 @@ msgstr "Segure <Control> para pular AUTO/ACC"
 
 #: bios/initinfo.c
 msgid "Hold <Alternate> to skip HDD boot"
-msgstr "Segure <Alternate> para pular boot pelo HD"
+msgstr "Segure <Alternate> para pular boot no HD"
 
 #: bios/initinfo.c
 msgid "Press key 'X' to boot from X:"
@@ -151,17 +151,17 @@ msgstr "[2][A aplicação não encontrou o|diretório ou arquivo que|se tentou acess
 msgid ""
 "[1][This application does not|have room to open another|document.  To make "
 "room,|close any document that|you do not need.][  OK  ]"
-msgstr ""
+msgstr "Não há mais espaço disponível na|aplicação para abrir documentos.|Feche algum documento que você|não esteja mais usando.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid ""
 "[1][An item with this name|already exists in the|directory, or this item|is "
 "set to Read Only status.][  OK  ]"
-msgstr ""
+msgstr "[1][Um item com este nome já|existe neste diretório,|ou está com permissão de somente|leitura.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[1][The drive you specified|does not exist.][Cancel]"
-msgstr ""
+msgstr "[1][O volume especificado|não existe.][Cancelar]"
 
 #: aes/gem_rsc.c
 msgid ""
@@ -850,7 +850,7 @@ msgstr "[2][Abortar a operação?][ Sim | Não ]"
 
 #: desk/desk_rsc.c
 msgid "[2][Do you want to delete all|the files on drive %c: ?][Yes| No ]"
-msgstr "[2][Deseja mesmo apagar todos|os arquivos em %c: ?][Sim|Não]"
+msgstr "[2][Deseja mesmo apagar todos|os arquivos em %c: ?][ Sim | Não ]"
 
 #: desk/desk_rsc.c
 msgid ""
@@ -862,17 +862,17 @@ msgstr "[1][Desculpe, mas não é possível|instalar mais ícones|ou aplicações.][  
 msgid ""
 "[2][You cannot create a folder|with that name. Please retry|with a new name, "
 "or cancel.][Cancel|Retry]"
-msgstr ""
+msgstr "[2][Você não pode criar um|diretório com este nome.|Tente ou nome ou cancele.][ Cancelar | Retentar ]"
 
 #: desk/desk_rsc.c
 msgid "[1][Drive %c: does not have|enough room for this|operation.][  OK  ]"
-msgstr ""
+msgstr "[1][Volume %c: não tem mais|espaço disonível para|a operação.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
 "[3][You cannot create or|access a folder this far|down the directory path.]"
 "[  OK  ]"
-msgstr ""
+msgstr "[3][Você não pode criar|or acessar um diretório|tão distante da raiz.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
@@ -886,12 +886,12 @@ msgstr ""
 
 #: desk/desk_rsc.c
 msgid "[1][%s|is a printer.][  OK  ]"
-msgstr ""
+msgstr "[1][%s|é uma impressora.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
 "[1][You cannot drag applications,|files or folders onto the|Desktop.][  OK  ]"
-msgstr ""
+msgstr "[1][Você não pode arrastar aplicações,|arquivos ou diretórios para|a mesa.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2][Save Desktop?][  OK  |Cancel]"
@@ -899,17 +899,17 @@ msgstr "[2][Salvar Mesa?][  OK  |Cancelar]"
 
 #: desk/desk_rsc.c
 msgid "[2][Do you want to remove icons|or delete files?][Icons|Files|Cancel]"
-msgstr ""
+msgstr "[2][Você deseja remover ícones|ou apagar arqiovps?][Ícones|Arquivos|Cancelar]"
 
 #: desk/desk_rsc.c
 msgid "[1][Invalid function key value.][  OK  ]"
-msgstr ""
+msgstr "[1][Valor inválido de tecla de função.[[  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
 "[2][Function key already assigned.|Do you want to reassign it?][  OK  |"
 "Cancel]"
-msgstr ""
+msgstr "[2][Tecla de função já definida|Você deseja redefinir?][  OK  |Cancelar]"
 
 #: desk/desk_rsc.c
 msgid "[3][Not enough memory to|initialise EmuDesk.|You must reboot.][  OK  ]"
@@ -945,7 +945,7 @@ msgstr "[1][Drive %s: não existe.][ Cancelar ]"
 
 #: desk/desk_rsc.c
 msgid "[1][No drive identifier.][ Retry ]"
-msgstr ""
+msgstr "[1][Sem identificador de volume.][ Retentar ]"
 
 #: desk/desk_rsc.c
 msgid "[1][Cannot delete file|%s][ Skip | Retry | Abort ]"
@@ -1034,11 +1034,11 @@ msgstr "Limpar tela"
 
 #: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dest>"
-msgstr ""
+msgstr "Copia arquivos"
 
 #: cli/cmdint.c
 msgid "If <filespec> matches multiple files,"
-msgstr ""
+msgstr "Se <filespec> "
 
 #: cli/cmdint.c
 msgid "<dest> must be a directory"
@@ -1046,11 +1046,11 @@ msgstr "<dest> deve ser um diretório"
 
 #: cli/cmdint.c
 msgid "Copy <string> ... to standard output"
-msgstr ""
+msgstr "Copia <string> ... para a saída padrão"
 
 #: cli/cmdint.c
 msgid "Strings may be surrounded by \"\""
-msgstr ""
+msgstr "Texto deve ser delimitado por \"\""
 
 #: cli/cmdint.c
 msgid "Exit EmuCON2"
@@ -1058,23 +1058,23 @@ msgstr "Encerra o EmuCON2"
 
 #: cli/cmdint.c
 msgid "Get help about <cmd> or list available commands"
-msgstr ""
+msgstr "Exibe a ajuda do <cmd> ou exibe os disponíveis"
 
 #: cli/cmdint.c
 msgid "Use HELP ALL for help on all commands"
-msgstr ""
+msgstr "Use HELP ALL para ajuda de todos os comandos"
 
 #: cli/cmdint.c
 msgid "Use HELP EDIT for help on line editing"
-msgstr ""
+msgstr "Use HELP EDIT para ajuda na edição da linha"
 
 #: cli/cmdint.c
 msgid "List files (default terse, horizontal)"
-msgstr ""
+msgstr "Lista os arquivos (listagem simples por padrão)"
 
 #: cli/cmdint.c
 msgid "Specify -l for detailed list"
-msgstr ""
+msgstr "Use -l para uma listagem detalhada"
 
 #: cli/cmdint.c
 msgid "Create directory <dir>"
@@ -1082,39 +1082,39 @@ msgstr "Cria o diretório <dir>"
 
 #: cli/cmdint.c
 msgid "Set or display console settings:"
-msgstr ""
+msgstr "Define ou exibe as ajustes do console:"
 
 #: cli/cmdint.c
 msgid "res for screen resolution (0,1)[ST] (0,1,2,4,7)[TT];"
-msgstr ""
+msgstr "resolução da tela (0,1)[ST] (0,1,2,4,7)[TT];"
 
 #: cli/cmdint.c
 msgid "delay/rate for the keyboard"
-msgstr ""
+msgstr "atraso/taxa po teclado"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> to standard output,"
-msgstr ""
+msgstr "Copia <filespec> para a saída padrão,"
 
 #: cli/cmdint.c
 msgid "pausing every screenful"
-msgstr ""
+msgstr "pausando sempre que preencher a tela"
 
 #: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dir>,"
-msgstr ""
+msgstr "Copia arquivos combinando com <filespec>,"
 
 #: cli/cmdint.c
 msgid "then delete input files"
-msgstr ""
+msgstr "para <dir> e os apaga da origem"
 
 #: cli/cmdint.c
 msgid "Set search path for external programs"
-msgstr ""
+msgstr "Define caminho de busca para programas"
 
 #: cli/cmdint.c
 msgid "or display current search path"
-msgstr ""
+msgstr "ou exibe o caminho atual de busca"
 
 #: cli/cmdint.c
 msgid "Display current drive and directory"
@@ -1122,11 +1122,11 @@ msgstr "Mostra volume e diretório correntes"
 
 #: cli/cmdint.c
 msgid "Rename <oldname> to <newname>"
-msgstr "Remomeia <antigo> para <novo>"
+msgstr "Remomeia <oldname> para <newname>"
 
 #: cli/cmdint.c
 msgid "Delete files matching <filespec>"
-msgstr "Apaga os arquivos combinando em <padrão>"
+msgstr "Apaga os arquivos combinando em <filespec>"
 
 #: cli/cmdint.c
 msgid "Specify -q to be prompted each time"
@@ -1286,15 +1286,15 @@ msgstr "mais de um redirecionamento"
 
 #: cli/cmdparse.c
 msgid "no filename for redirection"
-msgstr ""
+msgstr "sem arquivo ou redirecionamento"
 
 #: cli/cmdparse.c
 msgid "error in quoted field"
-msgstr ""
+msgstr "erro em campo entre aspas"
 
 #: cli/cmdparse.c
 msgid "error parsing line"
-msgstr ""
+msgstr "erro analisando linha"
 
 #: cli/cmdutil.c
 msgid "file not found"
