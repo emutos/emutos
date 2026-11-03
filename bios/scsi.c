@@ -190,7 +190,7 @@ typedef struct
  * BYTES_PER_CLOCK to calculate the timeout, which means that we assume
  * the data transfer rate is at least (CLOCKS_PER_SEC * BYTES_PER_CLOCK)
  */
-#define BYTES_PER_CLOCK 1024                /* convenient for division */
+#define BYTES_PER_CLOCK 64                  /* convenient for division */
 
 
 /*
