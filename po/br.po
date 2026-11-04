@@ -60,7 +60,7 @@ msgstr "Segure <Control> para pular AUTO/ACC"
 
 #: bios/initinfo.c
 msgid "Hold <Alternate> to skip HDD boot"
-msgstr "Segure <Alternate> para pular boot no HD"
+msgstr "Segure <Alternate> para pular o HDD"
 
 #: bios/initinfo.c
 msgid "Press key 'X' to boot from X:"
@@ -68,7 +68,7 @@ msgstr "Pressione 'X' para iniciar em X:"
 
 #: bios/initinfo.c
 msgid "Press <Esc> to run an early console"
-msgstr "Pressione <Esc> para executar o console"
+msgstr "Pressione <Esc> para ir ao console"
 
 #: bios/initinfo.c
 msgid "Hold <Shift> to pause this screen"
@@ -80,7 +80,7 @@ msgid ""
 "*** Press any key to continue ***"
 msgstr ""
 "\n"
-"*** Tecle algo para continuar***"
+"*** Tecle algo para continuar ***"
 
 #: bdos/osmem.c
 msgid ""
@@ -113,13 +113,13 @@ msgstr "Cancelar"
 
 #: aes/gem_rsc.c
 msgid "[1][The disk in drive %c: is|physically write-protected.][Cancel|Retry]"
-msgstr "[1][O disco na unidade %c: está|protegido contra escrita.][Cancelar|Retentar]"
+msgstr "[1][O disco na unidade %c: está pro-|tegido contra escrita.][Cancelar|Retentar]"
 
 #: aes/gem_rsc.c
 msgid ""
 "[2][Drive %c: is not responding.|Please check the disk drive,|or insert a "
 "disk.][Cancel|Retry]"
-msgstr "[2][A unidade %c: não responde.|Verifique a unidade, ou|insira um disco.][Cancelar|Retentar]"
+msgstr "[2][A unidade %c: não responde. Ve-|rifique a unidade, ou insira um|disco.][Cancelar|Retentar]"
 
 #: aes/gem_rsc.c
 msgid "[1][Data on the disk in drive %c:|may be damaged.][Cancel|Retry]"
@@ -129,45 +129,45 @@ msgstr "[1][Dados do disco no volume %c:|podem estar corrompidos.][Cancelar|Rete
 msgid ""
 "[2][This application cannot read|data on the disk in drive %c:.][Cancel|"
 "Retry]"
-msgstr "[2][Esta aplicação não pode|ler os dados do volume em %c:l[Cancelar|Retentar]"
+msgstr "[2][Esta aplicação não pode ler os|dados do volume em %c:.][Cancelar|Retentar]"
 
 #: aes/gem_rsc.c
 msgid "[1][Your output device is not|receiving data.][Cancel|Retry]"
-msgstr "[1][O dispositivo de saída não|est[a recebendo dados.][Cancelar|Retentar]"
+msgstr "[1][O dispositivo de saída não está|recebendo dados.][Cancelar|Retentar]"
 
 #: aes/gem_rsc.c
 msgid ""
 "[3][An error has occurred in GEM.|Please contact the EmuTOS|Development "
 "Team.][Cancel]"
-msgstr "[3]Ocorreu um erro no GEM.|Por favor, contacte o time de|desenvolvimento do EmuTOS.][Cancel]"
+msgstr "[3][Ocorreu um erro no GEM. Por fa-|vor, contacte o time de desen-|volvimento do EmuTOS.][Cancel]"
 
 #: aes/gem_rsc.c
 msgid ""
 "[2][This application cannot|find the folder or file|you just tried to "
 "access.][  OK  ]"
-msgstr "[2][A aplicação não encontrou o|diretório ou arquivo que|se tentou acessar.][  OK  ]"
+msgstr "[2][A aplicação não encontrou o di-|retório ou arquivo que se ten-|tou acessar.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid ""
 "[1][This application does not|have room to open another|document.  To make "
 "room,|close any document that|you do not need.][  OK  ]"
-msgstr "Não há mais espaço disponível na|aplicação para abrir documentos.|Feche algum documento que você|não esteja mais usando.][  OK  ]"
+msgstr "[1][Não há mais espaço disponível na|aplicação para abrir documentos.|Feche algum documento que você|não esteja mais usando.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid ""
 "[1][An item with this name|already exists in the|directory, or this item|is "
 "set to Read Only status.][  OK  ]"
-msgstr "[1][Um item com este nome já|existe neste diretório,|ou está com permissão de somente|leitura.][  OK  ]"
+msgstr "[1][Um item com este nome já exis-|te neste diretório, ou está com|permissão de somente leitura.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[1][The drive you specified|does not exist.][Cancel]"
-msgstr "[1][O volume especificado|não existe.][Cancelar]"
+msgstr "[1][O volume especificado não existe.][Cancelar]"
 
 #: aes/gem_rsc.c
 msgid ""
 "[1][There is not enough memory|in your computer for the|application you just "
 "tried|to run.][  OK  ]"
-msgstr "[1][Memória insuficiente no computador|para executar a aplicação que você|você selecionou.][  OK  ]"
+msgstr "[1][Memória insuficiente no computa-|dor para executar a aplicação|que você você selecionou.][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "[3][TOS error #%u.][Cancel]"
@@ -175,11 +175,11 @@ msgstr "[3][Erro #%u do TOS.][Cancelar]"
 
 #: aes/gem_rsc.c
 msgid "[3][Unsupported AES function #%d.][Cancel]"
-msgstr "[3]Função #%d não suportada pelo AES.][Cancelar]"
+msgstr "[3][Função do AES #%d não suportada.][Cancelar]"
 
 #: aes/gem_rsc.c
 msgid "[1][Not enough memory for|this directory][  OK  ]"
-msgstr "[1][Sem memória para abrir|este diretório][  OK  ]"
+msgstr "[1][Sem memória para abrir este di-|retório][  OK  ]"
 
 #: aes/gem_rsc.c
 msgid "ITEM SELECTOR"
@@ -827,14 +827,14 @@ msgstr "[1][Erro de impressão!][ Retentar ][ Cancelar ]"
 
 #: desk/desk_rsc.c
 msgid "[1][This document type has no|associated application.][  OK  ]"
-msgstr "[1][O tipo deste documento não|tem aplicação associada.][  OK  ]"
+msgstr "[1][O tipo deste documento não tem|uma aplicação associada.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
 "[1][The GEM Desktop has no more|windows.  Please close a|window that you are "
 "not|using.][  OK  ]"
 msgstr ""
-"[1][O ambiente GEM não tem mais|Janelas.  Feche algumas|que não esteja mais|usando.][  OK  ]"
+"[1][O ambiente GEM não tem mais ja-|nelas. Feche algumas que não es-|teja mais|usando.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1][Illegal directory operation!][ Skip | Abort ]"
@@ -850,40 +850,39 @@ msgstr "[2][Abortar a operação?][ Sim | Não ]"
 
 #: desk/desk_rsc.c
 msgid "[2][Do you want to delete all|the files on drive %c: ?][Yes| No ]"
-msgstr "[2][Deseja mesmo apagar todos|os arquivos em %c: ?][ Sim | Não ]"
+msgstr "[2][Deseja mesmo apagar todos os|arquivos em %c: ?][S im| Não ]"
 
 #: desk/desk_rsc.c
 msgid ""
 "[1][Sorry, the desktop cannot|install any more icons|or applications.]"
 "[  OK  ]"
-msgstr "[1][Desculpe, mas não é possível|instalar mais ícones|ou aplicações.][  OK  ]"
+msgstr "[1][Desculpe, mas não é possível|instalar mais ícones ou aplica-|ções.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
 "[2][You cannot create a folder|with that name. Please retry|with a new name, "
 "or cancel.][Cancel|Retry]"
-msgstr "[2][Você não pode criar um|diretório com este nome.|Tente ou nome ou cancele.][ Cancelar | Retentar ]"
+msgstr "[2][Você não pode criar um diretório|com este nome. Tente outro nome|ou cancele.][ Cancelar | Retentar ]"
 
 #: desk/desk_rsc.c
 msgid "[1][Drive %c: does not have|enough room for this|operation.][  OK  ]"
-msgstr "[1][Volume %c: não tem mais|espaço disonível para|a operação.][  OK  ]"
+msgstr "[1][Volume %c: não tem mais espaço|disponível para|a operação.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
 "[3][You cannot create or|access a folder this far|down the directory path.]"
 "[  OK  ]"
-msgstr "[3][Você não pode criar|or acessar um diretório|tão distante da raiz.][  OK  ]"
+msgstr "[3][Você não pode criar ou acessar|um diretório tão longe da raiz.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
 "[3][You cannot create or access|a file or folder with that|name, because the "
 "pathname|is too long.][  OK  ]"
-msgstr "[3][Você não pode criar ou acessar|um arquivo ou diretório com es-|te nome pois o caminho é muito|
-longo.][  OK  ]"
+msgstr "[3][Você não pode criar ou acessar|um arquivo ou diretório com este|nome pois o caminho é muito lon-|go.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1][%s is used to|permanently delete files|or folders.][  OK  ]"
-msgstr "[1][%s é usado para apagar|permanentemente arquivos|ou diretórios.][  OK  ]"
+msgstr "[1][%s é usado para apagar|permanentemente arquivos ou di-|retórios.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1][%s|is a printer.][  OK  ]"
@@ -892,35 +891,36 @@ msgstr "[1][%s|é uma impressora.][  OK  ]"
 #: desk/desk_rsc.c
 msgid ""
 "[1][You cannot drag applications,|files or folders onto the|Desktop.][  OK  ]"
-msgstr "[1][Você não pode arrastar aplicações,|arquivos ou diretórios para|a mesa.][  OK  ]"
+                                           
+msgstr "[1][Você não pode arrastar aplica-|ções, arquivos ou diretórios pa-|ra a mesa.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2][Save Desktop?][  OK  |Cancel]"
-msgstr "[2][Salvar Mesa?][  OK  |Cancelar]"
+msgstr "[2][Salvar Mesa?][   OK   |Cancelar]"
 
 #: desk/desk_rsc.c
 msgid "[2][Do you want to remove icons|or delete files?][Icons|Files|Cancel]"
-msgstr "[2][Você deseja remover ícones|ou apagar arqiovps?][Ícones|Arquivos|Cancelar]"
+msgstr "[2][Você deseja remover ícones ou|apagar arquivos?][Ícones|Arquivos|Cancelar]"
 
 #: desk/desk_rsc.c
 msgid "[1][Invalid function key value.][  OK  ]"
-msgstr "[1][Valor inválido de tecla de função.[[  OK  ]"
+msgstr "[1][Valor ilegal de tecla de função.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
 "[2][Function key already assigned.|Do you want to reassign it?][  OK  |"
 "Cancel]"
-msgstr "[2][Tecla de função já definida|Você deseja redefinir?][  OK  |Cancelar]"
+msgstr "[2][Tecla de função já definida!|Você deseja redefinir?][   OK   |Cancelar]"
 
 #: desk/desk_rsc.c
 msgid "[3][Not enough memory to|initialise EmuDesk.|You must reboot.][  OK  ]"
-msgstr "[3][Memória insuficiente|para abrir o EmuDesk.|Você deve reinicar.][  OK  ]"
+msgstr "[3][Memória insuficiente para abrir|o EmuDesk. Você deve reinicar!][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
 "[2][%s not found.|Do you want to remove the|icon or locate the item?][Remove|"
 "Locate|Cancel]"
-msgstr "%s não encontrado.|Você deseja remover o|ícone ou localizá-lo?][Remover|Localizar|Cancelar]"
+msgstr "[2][%s não encontrado.|Você deseja remover o ícone ou|localizá-lo?][Remover|Localizar|Cancelar]"
 
 #: desk/desk_rsc.c
 msgid "[1][Please select icon type.][Desktop|Window|Cancel]"
@@ -928,7 +928,7 @@ msgstr "[1][Selecione o tipo de ícone.][Mesa|Janela|Cancelar]"
 
 #: desk/desk_rsc.c
 msgid "[1][No matching file type.][  OK  ]"
-msgstr "[1][Tipo de arquivo não encontrado.][  OK  ]"
+msgstr "[1][Tipo de arquivo não corresponde.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
@@ -978,7 +978,7 @@ msgstr "[1][Impossível ler arquivo|%s][ Pular | Abortar ]"
 
 #: desk/desk_rsc.c
 msgid "[1][Cannot write file|%s][ Skip | Abort ]"
-msgstr "[1][Impossível escrever arquivo|%s][ Pular | Abortar ]"
+msgstr "[1][Impossível escrever arquivo|%s][ Pular |Abortar]"
 
 #: desk/desk_rsc.c
 msgid "[1][Rename error!][ Retry | Cancel ]"
@@ -986,7 +986,7 @@ msgstr "[1][Erro ao renomear!][ Retentar | Cancelar ]"
 
 #: desk/desk_rsc.c
 msgid "[1][Failed to set default|directory.][  OK  ]"
-msgstr "[1][Falha em definir diretório|padrão.][  OK  ]"
+msgstr "[1][Falha em definir diretório padrão.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[1][Illegal .INF file format.][  OK  ]"
@@ -994,7 +994,7 @@ msgstr "[1][Formato de arquivo .INF ilegal.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid "[2][Continue to search?][  OK  |Cancel]"
-msgstr "[2][Continuar a pesquisa?][  OK  |Cancelar]"
+msgstr "[2][Continuar a pesquisa?][   OK   |Cancelar]"
 
 #: desk/desk_rsc.c
 msgid "[1][No more files.][  OK  ]"
@@ -1002,8 +1002,8 @@ msgstr "[1][Sem mais arquivos.][  OK  ]"
 
 #: desk/desk_rsc.c
 msgid ""
-"[2][Last key is already assigned.|Do you want to reassign it?][  OK  |Cancel]"
-msgstr "[2][Tecla já está assinalada.|Você deseja reassinalar?][  OK  ][Cancelar]"
+"[2][Last key is already assigned.|Do you want to reassign it?][  OK  |Cancel]"         
+msgstr "[2][Tecla já está assinalada. Você|deseja reassinalar?][   OK   ][Cancelar]"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> ... to standard output"
@@ -1026,8 +1026,8 @@ msgid "<mode> specifies the new attribute(s):"
 msgstr "<mode> espeficica novo(s) atributo(s):"
 
 #: cli/cmdint.c
-msgid "r=read-only  h=hidden  s=system  -=none"
-msgstr "r=só leitura  h=oculto  s=sistema  -=nada"
+msgid  "r=read-only  h=hidden  s=system  -=none"
+msgstr "r=só leitura h=oculto  s=sistema  -=nada"
 
 #: cli/cmdint.c
 msgid "Clear screen"
@@ -1035,19 +1035,19 @@ msgstr "Limpar tela"
 
 #: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dest>"
-msgstr "Copia arquivos"
+msgstr "Copia arquivos em <filespec> p/ <dest>"
 
 #: cli/cmdint.c
 msgid "If <filespec> matches multiple files,"
-msgstr "Se <filespec> "
+msgstr "Se <filespec> indica vários arquivos,"
 
 #: cli/cmdint.c
 msgid "<dest> must be a directory"
-msgstr "<dest> deve ser um diretório"
+msgstr "<dest> deverá ser um diretório"
 
 #: cli/cmdint.c
 msgid "Copy <string> ... to standard output"
-msgstr "Copia <string> ... para a saída padrão"
+msgstr "Copia <string> ... para saída padrão"
 
 #: cli/cmdint.c
 msgid "Strings may be surrounded by \"\""
@@ -1063,7 +1063,7 @@ msgstr "Exibe a ajuda do <cmd> ou exibe os disponíveis"
 
 #: cli/cmdint.c
 msgid "Use HELP ALL for help on all commands"
-msgstr "Use HELP ALL para ajuda de todos os comandos"
+msgstr "Use HELP ALL para todos os comandos"
 
 #: cli/cmdint.c
 msgid "Use HELP EDIT for help on line editing"
@@ -1071,11 +1071,11 @@ msgstr "Use HELP EDIT para ajuda na edição da linha"
 
 #: cli/cmdint.c
 msgid "List files (default terse, horizontal)"
-msgstr "Lista os arquivos (listagem simples por padrão)"
+msgstr "Lista arquivos (simples, horizontal)"
 
 #: cli/cmdint.c
 msgid "Specify -l for detailed list"
-msgstr "Use -l para uma listagem detalhada"
+msgstr "Use -l para uma lista detalhada"
 
 #: cli/cmdint.c
 msgid "Create directory <dir>"
@@ -1091,7 +1091,7 @@ msgstr "resolução da tela (0,1)[ST] (0,1,2,4,7)[TT];"
 
 #: cli/cmdint.c
 msgid "delay/rate for the keyboard"
-msgstr "atraso/taxa po teclado"
+msgstr "atraso/taxa p/ o teclado"
 
 #: cli/cmdint.c
 msgid "Copy <filespec> to standard output,"
@@ -1099,7 +1099,7 @@ msgstr "Copia <filespec> para a saída padrão,"
 
 #: cli/cmdint.c
 msgid "pausing every screenful"
-msgstr "pausando sempre que preencher a tela"
+msgstr "pausando sempre que encher a tela"
 
 #: cli/cmdint.c
 msgid "Copy files matching <filespec> to <dir>,"
@@ -1127,7 +1127,7 @@ msgstr "Remomeia <oldname> para <newname>"
 
 #: cli/cmdint.c
 msgid "Delete files matching <filespec>"
-msgstr "Apaga os arquivos combinando em <filespec>"
+msgstr "Apaga arquivos combinando em <filespec>"
 
 #: cli/cmdint.c
 msgid "Specify -q to be prompted each time"
@@ -1183,11 +1183,11 @@ msgstr "  Resolução:     "
 
 #: cli/cmdint.c
 msgid "  Keyboard delay: "
-msgstr "  Atraso das teclas: "
+msgstr "  Atraso de teclas: "
 
 #: cli/cmdint.c
 msgid "  Keyboard rate:  "
-msgstr "  Repetição das teclas:  "
+msgstr "  Repetição de teclas:  "
 
 #: cli/cmdint.c
 msgid "(empty)"
