@@ -150,6 +150,8 @@ EmuTOS multi-lingual:
 - Turkish translation
     Levent Karakaþ <levent at mektup.at>
 
+- Brazilian Portuguese translation
+    Giovanni Nunes <giovanni.nunes@gmail>
 
 Thanks also to all mailing list contributors for their help, and
 especially:
