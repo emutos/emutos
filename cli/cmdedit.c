@@ -377,7 +377,7 @@ PRIVATE char *start_of_current_word(char *line,WORD pos)
 {
 char *p;
 
-    for (p = line+pos; p > line; p--) {
+    for (p = line+pos; p >= line; p--) {
         if (*p == ' ')
             return p + 1;
     }
