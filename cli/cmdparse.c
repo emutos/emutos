@@ -108,6 +108,23 @@ WORD n, inquotes;
 /*
  *  scans buffer for next arg, handles quoted args
  *
+ *  note that the only function of double quotes in an argument is to
+ *  allow the space character to be included in an argument
+ *
+ *  rules for quoted args are as follows:
+ *    . an argument may contain 0 or 2 double quotes
+ *    . if an argument contains 2 double quotes, they must introduce and
+ *      terminate that argument
+ *    . double quotes are never included in the argument returned to
+ *      the caller of this function
+ *
+ *  some examples:
+ *      "abcdef"    -> valid, returns abcdef
+ *      "abc def"   -> valid, returns abc def as a single argument
+ *      "abc        -> error
+ *      abc"        -> error
+ *      "abc"def"   -> error
+ *
  *  returns:
  *      1   arg is normal
  *      0   no more args
@@ -138,16 +155,19 @@ WORD inquotes = 0;
     }
 
     for ( ; *p; p++) {
-        if (*p == DBLQUOTE) {
-            if (!inquotes)
-                return QUOTING_ERROR;
+        if (*p == DBLQUOTE) {       /* we have a double quote */
+            if (!inquotes)              /* if we didn't start with one, */
+                return QUOTING_ERROR;   /*  it's an error               */
             inquotes = 0;
+            if ((*(p+1) != ' ')         /* if not followed by space */
+             && (*(p+1) != '\0'))       /* or end-of-line,          */
+                return QUOTING_ERROR;   /*  it's also an error      */
             continue;
         }
-        if (inquotes)
+        if (inquotes)               /* everything else is OK in a quoted string */
             continue;
-        if (*p == ' ') {
-            *p++ = '\0';
+        if (*p == ' ') {            /* not quoted & we have a space: */
+            *p++ = '\0';            /*  convert it to end of string  */
             break;
         }
     }
