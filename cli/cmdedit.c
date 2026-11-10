@@ -1,7 +1,7 @@
 /*
  * EmuCON2 command history handling
  *
- * Copyright (C) 2013-2024 The EmuTOS development team
+ * Copyright (C) 2013-2026 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -31,6 +31,7 @@ PRIVATE void erase_line(char *start,WORD len);
 PRIVATE LONG getfirstnondot(const char *buffer,WORD executable_only);
 PRIVATE LONG getnextfile(WORD executable_only);
 PRIVATE char *insertion_point(char *start);
+PRIVATE WORD is_first_word(char *line, char *pos);
 PRIVATE WORD next_history(char *line);
 PRIVATE WORD next_word_count(const char *line,WORD pos,WORD len);
 PRIVATE WORD previous_history(char *line);
@@ -267,7 +268,7 @@ WORD n, word = 0;
             rc = -1L;       /* force getfirstnondot() */
         }
         if (rc < 0L)        /* no more files */
-            rc = getfirstnondot(fsfbuf,start==line);
+            rc = getfirstnondot(fsfbuf,is_first_word(line,start));
         if (rc == 0L) {
             erase_line(insert,*pos-(insert-line));
             for (q = insert, p = dta->d_fname; *p; ) {
@@ -399,6 +400,21 @@ char *p, *ins = NULL;
     }
 
     return ins;
+}
+
+/*
+ *  return TRUE iff pos points to the first word in the line
+ *
+ *  check backwards from 'pos', looking for any non-space
+ *  characters; if there are any, return FALSE
+ */
+PRIVATE WORD is_first_word(char *line, char *pos)
+{
+    while(--pos >= line)
+        if (*pos != ' ')
+            return FALSE;
+
+    return TRUE;
 }
 
 /*
