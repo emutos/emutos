@@ -1052,7 +1052,7 @@ WORD drive;
 
     strupper(filespec);
 
-    for (q = p; (*q != PATHSEP) && (q >= filespec); q--)
+    for (q = p; (q >= filespec) && (*q != PATHSEP); q--)
         if (*q == '*')  /* wildcard, no more tweaks */
             return;
 
