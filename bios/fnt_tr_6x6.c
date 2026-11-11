@@ -88,32 +88,30 @@ static const UWORD dat_table[] =
 };
 
 const Fonthead fnt_tr_6x6 = {
-    1,                  /*   WORD font_id       */
-    8,                  /*   WORD point         */
-    "6x6 Turkish font", /*   char name[32]      */
-    0,                  /*   UWORD first_ade    */
-    255,                /*   UWORD last_ade     */
-    4,                  /*   UWORD top          */
-    4,                  /*   UWORD ascent       */
-    3,                  /*   UWORD half         */
-    1,                  /*   UWORD descent      */
-    1,                  /*   UWORD bottom       */
-    5,                  /*   UWORD max_char_width*/
-    6,                  /*   UWORD max_cell_width*/
-    0,                  /*   UWORD left_offset  */
-    3,                  /*   UWORD right_offset */
-    1,                  /*   UWORD thicken      */
-    1,                  /*   UWORD ul_size      */
-    0x5555,             /*   UWORD lighten      */
-    0xAAAA,             /*   UWORD skew         */
-    F_STDFORM | F_MONOSPACE,/*   UWORD flags        */
-
-    0,                  /*   UBYTE *hor_table   */
-    off_6x6_table,      /*   UWORD *off_table   */
-    dat_table,          /*   UWORD *dat_table   */
-    192,                /*   UWORD form_width   */
-    6,                  /*   UWORD form_height  */
-
-    0,                  /*   Fonthead * next_font    */
-    0                   /*   reserved by Atari  */
+    1,  /* font_id */
+    8,  /* point */
+    "6x6 Turkish font",  /* name */
+    0,  /* first_ade */
+    255,  /* last_ade */
+    4,  /* top */
+    4,  /* ascent */
+    3,  /* half */
+    1,  /* descent */
+    1,  /* bottom */
+    5,  /* max_char_width */
+    6,  /* max_cell_width */
+    0,  /* left_offset */
+    3,  /* right_offset */
+    1,  /* thicken */
+    1,  /* ul_size */
+    0x5555,  /* lighten */
+    0xAAAA,  /* skew */
+    F_STDFORM | F_MONOSPACE,  /* flags */
+    0,  /* hor_table */
+    off_6x6_table,  /* off_table */
+    dat_table,  /* dat_table */
+    192,  /* form_width */
+    6,  /* form_height */
+    0,  /* next_font */
+    0  /* reserved */
 };

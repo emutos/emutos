@@ -276,7 +276,7 @@ static const UWORD dat_table[] =
 const Fonthead fnt_l2_8x16 = {
     1,  /* font_id */
     10,  /* point */
-    "MiNT ISO-8859-2 8x16",  /*   char name[32] */
+    "MiNT ISO-8859-2 8x16",  /* name */
     0,  /* first_ade */
     255,  /* last_ade */
     13,  /* top */
@@ -298,6 +298,6 @@ const Fonthead fnt_l2_8x16 = {
     dat_table,  /* dat_table */
     256,  /* form_width */
     16,  /* form_height */
-    0,   /* Fonthead * next_font */
-    0    /*   reserved by Atari  */
+    0,  /* next_font */
+    0  /* reserved */
 };

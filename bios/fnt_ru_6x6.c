@@ -92,7 +92,7 @@ static const UWORD dat_table[] =
 const Fonthead fnt_ru_6x6 = {
     1,  /* font_id */
     8,  /* point */
-    "6x6 Russian font",  /*   char name[32]     */
+    "6x6 Russian font",  /* name */
     0,  /* first_ade */
     255,  /* last_ade */
     4,  /* top */
@@ -106,14 +106,14 @@ const Fonthead fnt_ru_6x6 = {
     3,  /* right_offset */
     1,  /* thicken */
     1,  /* ul_size */
-    0x5555, /* lighten */
-    0xaaaa, /* skew */
+    0x5555,  /* lighten */
+    0xaaaa,  /* skew */
     F_STDFORM | F_MONOSPACE,  /* flags */
-    0,                  /*   UBYTE *hor_table   */
-    off_6x6_table,      /*   UWORD *off_table   */
-    dat_table,          /*   UWORD *dat_table   */
+    0,  /* hor_table */
+    off_6x6_table,  /* off_table */
+    dat_table,  /* dat_table */
     192,  /* form_width */
     6,  /* form_height */
-    0,  /* Fonthead * next_font */
-    0                   /*   reserved by Atari  */
+    0,  /* next_font */
+    0  /* reserved */
 };

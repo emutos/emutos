@@ -277,7 +277,7 @@ static const UWORD dat_table[] =
 const Fonthead fnt_km_8x16 = {
     1,  /* font_id */
     10,  /* point */
-    "8x16 system font",  /*   BYTE name[32]	*/
+    "8x16 system font",  /* name */
     0,  /* first_ade */
     255,  /* last_ade */
     13,  /* top */
@@ -294,11 +294,11 @@ const Fonthead fnt_km_8x16 = {
     0x5555,  /* lighten */
     0x5555,  /* skew */
     F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* flags */
-    0,			/*   UBYTE *hor_table	*/
-    off_8x16_table,		/*   UWORD *off_table	*/
-    dat_table,		/*   UWORD *dat_table	*/
+    0,  /* hor_table */
+    off_8x16_table,  /* off_table */
+    dat_table,  /* dat_table */
     256,  /* form_width */
     16,  /* form_height */
-    0,  /* Fonthead * next_font */
-    0   /* UWORD next_seg */
+    0,  /* next_font */
+    0  /* reserved */
 };

@@ -272,30 +272,30 @@ static const UWORD dat_table[] =
 };
 
 const Fonthead fnt_st_8x16 = {
-    1,                  /* WORD font_id */
-    10,                 /* WORD point */
-    "8x16 system font", /* char name[32] */
-    0,                  /* WORD first_ade */
-    255,                /* WORD last_ade */
-    13,                 /* UWORD top */
-    11,                 /* UWORD ascent */
-    8,                  /* UWORD half */
-    2,                  /* UWORD descent */
-    2,                  /* UWORD bottom */
-    7,                  /* UWORD max_char_width */
-    8,                  /* UWORD max_cell_width */
-    1,                  /* UWORD left_offset */
-    7,                  /* UWORD right_offset */
-    1,                  /* UWORD thicken */
-    1,                  /* UWORD ul_size */
-    0x5555,             /* UWORD lighten */
-    0x5555,             /* UWORD skew */
-    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* UWORD flags */
-    0,                  /* UBYTE *hor_table */
-    off_8x16_table,     /* UWORD *off_table */
-    dat_table,          /* UWORD *dat_table */
-    256,                /* UWORD form_width */
-    16,                 /* UWORD form_height */
-    0,                  /* Fonthead * next_font */
-    0                   /* reserved by Atari */
+    1,  /* font_id */
+    10,  /* point */
+    "8x16 system font",  /* name */
+    0,  /* first_ade */
+    255,  /* last_ade */
+    13,  /* top */
+    11,  /* ascent */
+    8,  /* half */
+    2,  /* descent */
+    2,  /* bottom */
+    7,  /* max_char_width */
+    8,  /* max_cell_width */
+    1,  /* left_offset */
+    7,  /* right_offset */
+    1,  /* thicken */
+    1,  /* ul_size */
+    0x5555,  /* lighten */
+    0x5555,  /* skew */
+    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* flags */
+    0,  /* hor_table */
+    off_8x16_table,  /* off_table */
+    dat_table,  /* dat_table */
+    256,  /* form_width */
+    16,  /* form_height */
+    0,  /* next_font */
+    0  /* reserved */
 };
