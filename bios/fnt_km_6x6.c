@@ -109,7 +109,7 @@ const Fonthead fnt_km_6x6 = {
     1,  /* ul_size */
     0x5555,  /* lighten */
     0xaaaa,  /* skew */
-    F_STDFORM | F_MONOSPACE | F_DEFAULT,  /* flags */
+    F_STDFORM | F_MONOSPACE,  /* flags */
     0,  /* hor_table */
     off_6x6_table,  /* off_table */
     dat_table,  /* dat_table */
