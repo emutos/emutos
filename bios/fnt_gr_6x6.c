@@ -113,7 +113,7 @@ const Fonthead fnt_gr_6x6 = {
     1,  /* thicken */
     1,  /* ul_size */
     0x5555,  /* lighten */
-    0x5555,  /* skew */
+    0xaaaa,  /* skew */
     F_STDFORM | F_MONOSPACE,  /* flags */
     0,  /* hor_table */
     off_6x6_table,  /* off_table */
