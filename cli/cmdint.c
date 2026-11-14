@@ -535,7 +535,7 @@ LONG rc;
             if (getyn() != 'y')
                 continue;
         }
-        rc = Fdelete(*argv);
+        rc = Fdelete(dta->d_fname);
         if (rc < 0L) {
             if (rc == EACCDN)
                 rc = CANT_DELETE;
