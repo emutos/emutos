@@ -1,7 +1,7 @@
 /*
  * EmuCON2 builtin commands
  *
- * Copyright (C) 2013-2024 The EmuTOS development team
+ * Copyright (C) 2013-2026 The EmuTOS development team
  *
  * Authors:
  *  RFB    Roger Burrows
@@ -509,6 +509,8 @@ PRIVATE LONG run_rm(WORD argc,char **argv)
 {
 WORD prompt = 0;
 LONG rc;
+char name[MAXPATHLEN];
+char *p;
 
     argc--;
     argv++;
@@ -528,14 +530,16 @@ LONG rc;
             return 0;
     }
 
+    p = extract_path(name,*argv);
     for (rc = Fsfirst(*argv,0x17); rc == 0; rc = Fsnext()) {
+        strcpy(p,dta->d_fname);     /* add name to path */
         if (prompt) {
             message(_("Delete file "));
             message(dta->d_fname);
             if (getyn() != 'y')
                 continue;
         }
-        rc = Fdelete(dta->d_fname);
+        rc = Fdelete(name);
         if (rc < 0L) {
             if (rc == EACCDN)
                 rc = CANT_DELETE;
