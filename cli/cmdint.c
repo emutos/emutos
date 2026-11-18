@@ -535,7 +535,7 @@ char *p;
         strcpy(p,dta->d_fname);     /* add name to path */
         if (prompt) {
             message(_("Delete file "));
-            message(dta->d_fname);
+            message(name);
             if (getyn() != 'y')
                 continue;
         }
