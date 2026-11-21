@@ -87,6 +87,9 @@ WORD esetsmear(WORD mode);
 #define TTRGB_LTYELLOW  0x0ff9
 #define TTRGB_WHITE     0x0fff
 
+int screen_is_pal(void);
+void screen_toggle_pal(void);
+
 #endif /* CONF_WITH_ATARI_VIDEO */
 
 /* set screen address, mode, ... */
