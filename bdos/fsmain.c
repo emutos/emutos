@@ -416,9 +416,15 @@ void xsetdta(DTAINFO *addr)     /* set transfer address to addr */
  * only allowed drives which existed in the drive map, but this caused
  * problems with BetaDOS, which expects to be able to select drive P:
  * even if it does not exist.
+ *
+ * However, to improve compatibility with TOS 1 - 3, unlike TOS 4.04, we
+ * ignore the upper byte of the parameter, since some poorly written
+ * applications just set the lower byte, and TOS 1-3 accepts that.
  */
 long xsetdrv(int drv)
 {
+    drv &= 0xFF;
+
     if ((drv >= 0) && (drv < BLKDEVNUM))
         run->p_curdrv = drv;
 
