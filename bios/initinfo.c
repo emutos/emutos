@@ -27,6 +27,7 @@
 #include "blkdev.h"     /* for BLKDEVNUM */
 #include "font.h"
 #include "tosvars.h"
+#include "screen.h"
 #include "machine.h"
 #include "processor.h"
 #include "xbiosbind.h"
@@ -44,6 +45,7 @@
 
 #if FULL_INITINFO
 
+#define TAB_ASCII   0x09
 #define ESC_ASCII   0x1b
 #define DEL_ASCII   0x7f
 
@@ -358,7 +360,11 @@ WORD initinfo(ULONG *pshiftbits)
 #if WITH_CLI
     display_message(_("Press <Esc> to run an early console"));
 #endif
-    cprintf("\r\n");
+#if CONF_WITH_ATARI_VIDEO
+    if (screen_is_pal()) {
+        display_message(_("Press <Tab> to switch PAL mode"));
+    }
+#endif /* CONF_WITH_ATARI_VIDEO */
 
     /* centre 'hold shift' message in all languages */
     display_inverse(_("Hold <Shift> to pause this screen"),0);
@@ -421,6 +427,12 @@ WORD initinfo(ULONG *pshiftbits)
                 /* eat spurious Delete key press */
                 continue;
             } else
+#if CONF_WITH_ATARI_VIDEO
+            if (screen_is_pal() && c == TAB_ASCII) {
+                /* <Tab>: toggle PAL mode */
+                *(volatile UBYTE *) SYNCMODE ^= 0x02;
+            } else
+#endif /* CONF_WITH_ATARI_VIDEO */
 #if WITH_CLI
             if (c == ESC_ASCII) {
                 bootflags |= BOOTFLAG_EARLY_CLI;
