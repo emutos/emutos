@@ -198,6 +198,7 @@ PRIVATE WORD edit_line(char *line,WORD *pos,WORD *len,WORD scancode,WORD prevcod
 char *start, *p, *q;
 LONG rc;
 WORD n, word = 0;
+WORD remember;
 
     switch(scancode) {
     case ARROW_UP:
@@ -250,7 +251,14 @@ WORD n, word = 0;
         }
         break;
     case TAB:           /* tab completion */
-        line[*pos] = '\0';  /* terminate line so we don't see residual data */
+        /*
+         * we terminate the line at the point where the cursor is so that we don't see any
+         * subsequent characters on the line when attempting tab completion.  we remember
+         * the overwritten character in order to restore it (and thus the original line)
+         * if tab completion fails.
+         */
+        remember = line[*pos];
+        line[*pos] = '\0';
         start = start_of_current_word(line,*pos);
         if (prevcode != TAB)
             insert = insertion_point(start);    /* where we insert the names */
@@ -277,7 +285,10 @@ WORD n, word = 0;
             }
             *q = '\0';
             *pos = *len = q - line;
+            remember = 0;   /* tab completion succeeded: we mustn't restore */
         }
+        if (remember)               /* tab completion failed, so     */
+            line[*pos] = remember;  /* restore overwritten character */
         break;
     default:
         return -1;      /* we didn't process this key */
